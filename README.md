@@ -10,6 +10,7 @@
 
 ## Table of Contents
 
+- [Skills Catalog](#skills-catalog)
 - [Overview](#overview)
 - [Features](#features)
 - [Prerequisites](#prerequisites)
@@ -24,6 +25,28 @@
 - [Contributing](#contributing)
 - [License](#license)
 - [Acknowledgments](#acknowledgments)
+
+---
+
+## Skills Catalog
+
+**Ready-to-use skills for the community!** Browse and install production-ready skills from our curated catalog.
+
+| Skill | Description | Install |
+|-------|-------------|---------|
+| **[code-documenter](catalog/code-documenter/)** | Generate docs for Python, JS/TS, Java, Go, Rust | `./scripts/install-from-catalog.sh code-documenter` |
+| **[commit-message](catalog/commit-message/)** | Generate conventional commit messages | `./scripts/install-from-catalog.sh commit-message` |
+| **[test-generator](catalog/test-generator/)** | Generate comprehensive unit tests | `./scripts/install-from-catalog.sh test-generator` |
+| **[pr-description](catalog/pr-description/)** | Generate PR descriptions from git history | `./scripts/install-from-catalog.sh pr-description` |
+
+```bash
+# Quick install
+./scripts/install-from-catalog.sh --list        # See all skills
+./scripts/install-from-catalog.sh code-documenter  # Install one
+./scripts/install-from-catalog.sh --all         # Install all
+```
+
+See the full **[Skills Catalog](catalog/README.md)** for details and contribution guidelines.
 
 ---
 
