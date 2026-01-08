@@ -1,0 +1,5 @@
+{
+  "description": "Configuration for platxa-skill-generator meta-skill",
+  "skip_token_validation": true,
+  "reason": "Meta-skill containing extensive documentation about skill creation (118k+ words in references/)"
+}

@@ -532,15 +532,12 @@ MIT License - See [LICENSE](LICENSE) for details.
 ## Acknowledgments
 
 - **[Anthropic](https://anthropic.com)** - For Claude Code and the Agent Skills specification
-- **[Code-Agent](https://github.com/djpatel/code-agent)** - For workflow patterns and quality gate architecture
-- **Open Source Community** - For documentation best practices and patterns
 
 ---
 
 ## Additional Resources
 
-- [Anthropic Agent Skills Specification](https://github.com/anthropics/skills)
-- [Claude Code Documentation](https://docs.anthropic.com/en/docs/claude-code)
+- [Claude Code](https://claude.com/product/claude-code)
 - [Agent Skills Engineering Blog](https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills)
 
 ---

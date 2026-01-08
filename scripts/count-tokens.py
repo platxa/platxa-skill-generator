@@ -5,6 +5,8 @@ Usage: count-tokens.py <skill-directory> [--json] [--warn-threshold N]
 
 Provides accurate token counts using tiktoken (cl100k_base encoding)
 with fallback to word-based estimation.
+
+Supports .skillconfig file for custom limits (useful for meta-skills).
 """
 
 from __future__ import annotations
@@ -42,16 +44,49 @@ class TokenReport(TypedDict):
     method: str
     warnings: list[str]
     passed: bool
+    custom_limits: bool
 
 
-# Budget limits
-LIMITS = {
+# Default budget limits
+DEFAULT_LIMITS = {
     'skill_md_tokens': 5000,
     'skill_md_lines': 500,
     'single_ref_tokens': 2000,
     'total_ref_tokens': 10000,
     'total_skill_tokens': 15000,
 }
+
+
+def load_skill_config(skill_dir: Path) -> dict:
+    """Load custom limits from .skillconfig if present.
+
+    The .skillconfig file can contain:
+    - skip_token_validation: true  (skip all token checks)
+    - limits: { total_ref_tokens: 200000, ... }  (custom limits)
+
+    Returns:
+        Dict with 'skip_validation' bool and 'limits' dict
+    """
+    config_path = skill_dir / ".skillconfig"
+    result = {'skip_validation': False, 'limits': DEFAULT_LIMITS.copy()}
+
+    if not config_path.exists():
+        return result
+
+    try:
+        config = json.loads(config_path.read_text())
+
+        # Check for skip flag
+        if config.get('skip_token_validation', False):
+            result['skip_validation'] = True
+
+        # Merge custom limits
+        if 'limits' in config:
+            result['limits'].update(config['limits'])
+
+        return result
+    except (json.JSONDecodeError, OSError):
+        return result
 
 
 def count_tokens_tiktoken(text: str) -> int:
@@ -94,6 +129,11 @@ def analyze_skill(skill_dir: Path, warn_threshold: int = 80) -> TokenReport:
     warnings: list[str] = []
     skill_name = skill_dir.name
 
+    # Load custom config if present
+    config = load_skill_config(skill_dir)
+    limits = config['limits']
+    custom_limits = config['limits'] != DEFAULT_LIMITS or config['skip_validation']
+
     # Check SKILL.md
     skill_md = skill_dir / "SKILL.md"
     if not skill_md.exists():
@@ -106,34 +146,65 @@ def analyze_skill(skill_dir: Path, warn_threshold: int = 80) -> TokenReport:
             total_tokens=0,
             method="none",
             warnings=["SKILL.md not found"],
-            passed=False
+            passed=False,
+            custom_limits=False
         )
 
     skill_content = skill_md.read_text()
     skill_md_tokens, method = count_tokens(skill_content)
     skill_md_lines = count_lines(skill_content)
 
-    # Check SKILL.md limits
-    if skill_md_tokens > LIMITS['skill_md_tokens']:
-        warnings.append(
-            f"SKILL.md exceeds token limit: {skill_md_tokens} > {LIMITS['skill_md_tokens']}"
-        )
-    elif skill_md_tokens > LIMITS['skill_md_tokens'] * warn_threshold / 100:
-        warnings.append(
-            f"SKILL.md approaching token limit: {skill_md_tokens} ({warn_threshold}% of {LIMITS['skill_md_tokens']})"
+    # Skip validation if configured
+    if config['skip_validation']:
+        # Still count but don't enforce limits
+        ref_files: list[FileTokens] = []
+        ref_total_tokens = 0
+        refs_dir = skill_dir / "references"
+        if refs_dir.exists():
+            for ref_file in sorted(refs_dir.rglob("*.md")):
+                content = ref_file.read_text()
+                tokens, _ = count_tokens(content)
+                lines = count_lines(content)
+                rel_path = str(ref_file.relative_to(skill_dir))
+                ref_files.append(FileTokens(
+                    path=rel_path, tokens=tokens, lines=lines, method=method
+                ))
+                ref_total_tokens += tokens
+
+        return TokenReport(
+            skill_name=skill_name,
+            skill_md_tokens=skill_md_tokens,
+            skill_md_lines=skill_md_lines,
+            ref_total_tokens=ref_total_tokens,
+            ref_files=ref_files,
+            total_tokens=skill_md_tokens + ref_total_tokens,
+            method=method,
+            warnings=["Token validation skipped (.skillconfig)"],
+            passed=True,
+            custom_limits=True
         )
 
-    if skill_md_lines > LIMITS['skill_md_lines']:
+    # Check SKILL.md limits
+    if skill_md_tokens > limits['skill_md_tokens']:
         warnings.append(
-            f"SKILL.md exceeds line limit: {skill_md_lines} > {LIMITS['skill_md_lines']}"
+            f"SKILL.md exceeds token limit: {skill_md_tokens} > {limits['skill_md_tokens']}"
         )
-    elif skill_md_lines > LIMITS['skill_md_lines'] * warn_threshold / 100:
+    elif skill_md_tokens > limits['skill_md_tokens'] * warn_threshold / 100:
         warnings.append(
-            f"SKILL.md approaching line limit: {skill_md_lines} ({warn_threshold}% of {LIMITS['skill_md_lines']})"
+            f"SKILL.md approaching token limit: {skill_md_tokens} ({warn_threshold}% of {limits['skill_md_tokens']})"
+        )
+
+    if skill_md_lines > limits['skill_md_lines']:
+        warnings.append(
+            f"SKILL.md exceeds line limit: {skill_md_lines} > {limits['skill_md_lines']}"
+        )
+    elif skill_md_lines > limits['skill_md_lines'] * warn_threshold / 100:
+        warnings.append(
+            f"SKILL.md approaching line limit: {skill_md_lines} ({warn_threshold}% of {limits['skill_md_lines']})"
         )
 
     # Check references
-    ref_files: list[FileTokens] = []
+    ref_files = []
     ref_total_tokens = 0
 
     refs_dir = skill_dir / "references"
@@ -153,44 +224,44 @@ def analyze_skill(skill_dir: Path, warn_threshold: int = 80) -> TokenReport:
             ref_total_tokens += tokens
 
             # Check per-file limit
-            if tokens > LIMITS['single_ref_tokens']:
+            if tokens > limits['single_ref_tokens']:
                 warnings.append(
-                    f"{rel_path} exceeds limit: {tokens} > {LIMITS['single_ref_tokens']}"
+                    f"{rel_path} exceeds limit: {tokens} > {limits['single_ref_tokens']}"
                 )
-            elif tokens > LIMITS['single_ref_tokens'] * warn_threshold / 100:
+            elif tokens > limits['single_ref_tokens'] * warn_threshold / 100:
                 warnings.append(
-                    f"{rel_path} approaching limit: {tokens} ({warn_threshold}% of {LIMITS['single_ref_tokens']})"
+                    f"{rel_path} approaching limit: {tokens} ({warn_threshold}% of {limits['single_ref_tokens']})"
                 )
 
     # Check total references
-    if ref_total_tokens > LIMITS['total_ref_tokens']:
+    if ref_total_tokens > limits['total_ref_tokens']:
         warnings.append(
-            f"Total references exceed limit: {ref_total_tokens} > {LIMITS['total_ref_tokens']}"
+            f"Total references exceed limit: {ref_total_tokens} > {limits['total_ref_tokens']}"
         )
-    elif ref_total_tokens > LIMITS['total_ref_tokens'] * warn_threshold / 100:
+    elif ref_total_tokens > limits['total_ref_tokens'] * warn_threshold / 100:
         warnings.append(
-            f"Total references approaching limit: {ref_total_tokens} ({warn_threshold}% of {LIMITS['total_ref_tokens']})"
+            f"Total references approaching limit: {ref_total_tokens} ({warn_threshold}% of {limits['total_ref_tokens']})"
         )
 
     # Total skill tokens
     total_tokens = skill_md_tokens + ref_total_tokens
 
-    if total_tokens > LIMITS['total_skill_tokens']:
+    if total_tokens > limits['total_skill_tokens']:
         warnings.append(
-            f"Total skill exceeds limit: {total_tokens} > {LIMITS['total_skill_tokens']}"
+            f"Total skill exceeds limit: {total_tokens} > {limits['total_skill_tokens']}"
         )
-    elif total_tokens > LIMITS['total_skill_tokens'] * warn_threshold / 100:
+    elif total_tokens > limits['total_skill_tokens'] * warn_threshold / 100:
         warnings.append(
-            f"Total skill approaching limit: {total_tokens} ({warn_threshold}% of {LIMITS['total_skill_tokens']})"
+            f"Total skill approaching limit: {total_tokens} ({warn_threshold}% of {limits['total_skill_tokens']})"
         )
 
     # Determine pass/fail
     passed = (
-        skill_md_tokens <= LIMITS['skill_md_tokens'] and
-        skill_md_lines <= LIMITS['skill_md_lines'] and
-        ref_total_tokens <= LIMITS['total_ref_tokens'] and
-        total_tokens <= LIMITS['total_skill_tokens'] and
-        all(f['tokens'] <= LIMITS['single_ref_tokens'] for f in ref_files)
+        skill_md_tokens <= limits['skill_md_tokens'] and
+        skill_md_lines <= limits['skill_md_lines'] and
+        ref_total_tokens <= limits['total_ref_tokens'] and
+        total_tokens <= limits['total_skill_tokens'] and
+        all(f['tokens'] <= limits['single_ref_tokens'] for f in ref_files)
     )
 
     return TokenReport(
@@ -202,20 +273,23 @@ def analyze_skill(skill_dir: Path, warn_threshold: int = 80) -> TokenReport:
         total_tokens=total_tokens,
         method=method,
         warnings=warnings,
-        passed=passed
+        passed=passed,
+        custom_limits=custom_limits
     )
 
 
 def print_report(report: TokenReport) -> None:
     """Print human-readable token report."""
     print(f"Token Count Report: {report['skill_name']}")
+    if report.get('custom_limits'):
+        print("(Using custom limits from .skillconfig)")
     print("━" * 50)
     print()
 
     # SKILL.md
     print("SKILL.md:")
-    print(f"  Tokens: {report['skill_md_tokens']:,} / {LIMITS['skill_md_tokens']:,}")
-    print(f"  Lines:  {report['skill_md_lines']:,} / {LIMITS['skill_md_lines']:,}")
+    print(f"  Tokens: {report['skill_md_tokens']:,} / {DEFAULT_LIMITS['skill_md_tokens']:,}")
+    print(f"  Lines:  {report['skill_md_lines']:,} / {DEFAULT_LIMITS['skill_md_lines']:,}")
     print()
 
     # References
@@ -223,12 +297,12 @@ def print_report(report: TokenReport) -> None:
         print("References:")
         for f in report['ref_files']:
             print(f"  {f['path']}: {f['tokens']:,} tokens")
-        print(f"  ────────────────────────────")
-        print(f"  Total: {report['ref_total_tokens']:,} / {LIMITS['total_ref_tokens']:,}")
+        print("  ────────────────────────────")
+        print(f"  Total: {report['ref_total_tokens']:,} / {DEFAULT_LIMITS['total_ref_tokens']:,}")
         print()
 
     # Total
-    print(f"Total Skill: {report['total_tokens']:,} / {LIMITS['total_skill_tokens']:,} tokens")
+    print(f"Total Skill: {report['total_tokens']:,} / {DEFAULT_LIMITS['total_skill_tokens']:,} tokens")
     print(f"Method: {report['method']}")
     print()
 

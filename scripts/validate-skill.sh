@@ -1,14 +1,34 @@
 #!/usr/bin/env bash
 # Validate a Claude Code skill against the Agent Skills specification
 # Usage: validate-skill.sh <skill-directory>
+#
+# Supports .skillconfig for custom limits (useful for meta-skills)
 
 set -euo pipefail
 
 SKILL_DIR="${1:-.}"
 SKILL_MD="$SKILL_DIR/SKILL.md"
+SKILL_CONFIG="$SKILL_DIR/.skillconfig"
 ERRORS=0
 WARNINGS=0
 SCORE=10
+
+# Default limits
+LIMIT_REF_TOKENS=10000
+SKIP_TOKEN_VALIDATION=false
+
+# Load custom config if present
+if [[ -f "$SKILL_CONFIG" ]]; then
+    # Check for skip_token_validation
+    if grep -q '"skip_token_validation".*:.*true' "$SKILL_CONFIG" 2>/dev/null; then
+        SKIP_TOKEN_VALIDATION=true
+    fi
+    # Check for custom total_ref_tokens limit
+    CUSTOM_LIMIT=$(grep -o '"total_ref_tokens"[[:space:]]*:[[:space:]]*[0-9]*' "$SKILL_CONFIG" 2>/dev/null | grep -o '[0-9]*' || echo "")
+    if [[ -n "$CUSTOM_LIMIT" ]]; then
+        LIMIT_REF_TOKENS=$CUSTOM_LIMIT
+    fi
+fi
 
 error() { echo "❌ ERROR: $1"; ((ERRORS++)); SCORE=$((SCORE - 2)); }
 warn() { echo "⚠️  WARN: $1"; ((WARNINGS++)); SCORE=$((SCORE - 1)); }
@@ -113,10 +133,12 @@ if [[ -d "$SKILL_DIR/references" ]]; then
         REF_WORDS=$((REF_WORDS + $(wc -w < "$ref")))
     done
     REF_TOKENS=$((REF_WORDS * 13 / 10))
-    if [[ $REF_TOKENS -gt 10000 ]]; then
-        error "References too large: ~$REF_TOKENS tokens (max 10000)"
+    if [[ "$SKIP_TOKEN_VALIDATION" == "true" ]]; then
+        ok "References tokens: ~$REF_TOKENS (validation skipped via .skillconfig)"
+    elif [[ $REF_TOKENS -gt $LIMIT_REF_TOKENS ]]; then
+        error "References too large: ~$REF_TOKENS tokens (max $LIMIT_REF_TOKENS)"
     else
-        ok "References tokens: ~$REF_TOKENS/10000"
+        ok "References tokens: ~$REF_TOKENS/$LIMIT_REF_TOKENS"
     fi
 fi
 
