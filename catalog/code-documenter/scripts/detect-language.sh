@@ -26,9 +26,12 @@ py_count=$(find "$DIR" -name "*.py" -type f 2>/dev/null | wc -l)
 if [[ $py_count -gt 0 ]]; then
     file_counts[python]=$py_count
 
-    # Detect docstring style
+    # Detect docstring style by counting matches
+    # shellcheck disable=SC2126  # grep|wc is clearer for counting matches across files
     google_count=$(grep -r 'Args:' "$DIR" --include="*.py" 2>/dev/null | wc -l || echo 0)
+    # shellcheck disable=SC2126
     numpy_count=$(grep -r 'Parameters' "$DIR" --include="*.py" 2>/dev/null | grep -v 'Args:' | wc -l || echo 0)
+    # shellcheck disable=SC2126
     sphinx_count=$(grep -r ':param' "$DIR" --include="*.py" 2>/dev/null | wc -l || echo 0)
 
     if [[ $google_count -ge $numpy_count && $google_count -ge $sphinx_count ]]; then
@@ -50,7 +53,8 @@ if [[ $((ts_count + js_count)) -gt 0 ]]; then
     tsdoc_count=$(grep -r '@packageDocumentation\|@remarks' "$DIR" --include="*.ts" --include="*.tsx" 2>/dev/null | wc -l || echo 0)
     jsdoc_count=$(grep -r '@param\|@returns' "$DIR" --include="*.ts" --include="*.tsx" --include="*.js" 2>/dev/null | wc -l || echo 0)
 
-    if [[ $tsdoc_count -gt 0 ]]; then
+    # Prefer TSDoc if TSDoc-specific markers found and dominant, otherwise JSDoc
+    if [[ $tsdoc_count -gt 0 && $tsdoc_count -ge $jsdoc_count ]]; then
         doc_styles[typescript]="tsdoc"
     else
         doc_styles[typescript]="jsdoc"

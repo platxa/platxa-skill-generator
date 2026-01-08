@@ -105,7 +105,8 @@ list_skills() {
 
 validate_skill() {
     local skill_dir="$1"
-    local skill_name=$(basename "$skill_dir")
+    local skill_name
+    skill_name=$(basename "$skill_dir")
 
     echo -e "${BLUE}[Validating]${NC} $skill_name"
 

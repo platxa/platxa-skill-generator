@@ -72,6 +72,7 @@ echo "Scanning $SCRIPT_COUNT script(s)..."
 echo ""
 
 # Dangerous patterns for bash
+# shellcheck disable=SC2016  # Intentionally literal strings for pattern matching
 BASH_DANGEROUS=(
     'rm -rf /'
     'rm -rf /*'

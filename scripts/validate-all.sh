@@ -23,7 +23,6 @@ NC='\033[0m'
 # Results tracking
 declare -A RESULTS
 TOTAL_ERRORS=0
-TOTAL_WARNINGS=0
 
 usage() {
     echo "Usage: $0 <skill-directory> [--verbose] [--json]"
@@ -78,7 +77,6 @@ SKILL_NAME=$(basename "$SKILL_DIR")
 run_validator() {
     local name="$1"
     local cmd="$2"
-    local result
 
     if ! $JSON_OUTPUT; then
         echo -e "\n${BLUE}[$name]${NC}"
@@ -167,16 +165,18 @@ fi
 SCRIPTS_DIR="$SKILL_DIR/scripts"
 if [[ -d "$SCRIPTS_DIR" ]]; then
     # Check bash scripts with shellcheck
+    # Note: tr converts newlines to spaces to prevent newlines from being interpreted as command separators
+    # -S warning: Only fail on warnings and errors, not style suggestions
     if command -v shellcheck &>/dev/null; then
-        SHELL_SCRIPTS=$(find "$SCRIPTS_DIR" -name "*.sh" 2>/dev/null || echo "")
-        if [[ -n "$SHELL_SCRIPTS" ]]; then
-            run_validator "Shellcheck" "shellcheck -s bash $SHELL_SCRIPTS" || OVERALL_PASS=false
+        SHELL_SCRIPTS=$(find "$SCRIPTS_DIR" -name "*.sh" -type f 2>/dev/null | tr '\n' ' ')
+        if [[ -n "${SHELL_SCRIPTS// /}" ]]; then
+            run_validator "Shellcheck" "shellcheck -S warning -s bash $SHELL_SCRIPTS" || OVERALL_PASS=false
         fi
     fi
 
     # Check Python scripts with syntax check
-    PY_SCRIPTS=$(find "$SCRIPTS_DIR" -name "*.py" 2>/dev/null || echo "")
-    if [[ -n "$PY_SCRIPTS" ]]; then
+    PY_SCRIPTS=$(find "$SCRIPTS_DIR" -name "*.py" -type f 2>/dev/null | tr '\n' ' ')
+    if [[ -n "${PY_SCRIPTS// /}" ]]; then
         run_validator "Python Syntax" "python3 -m py_compile $PY_SCRIPTS" || OVERALL_PASS=false
     fi
 fi

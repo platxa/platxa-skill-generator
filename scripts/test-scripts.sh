@@ -197,13 +197,9 @@ test_bash_script() {
     content=$(cat "$script_path")
     if [[ "$content" == *"--help"* ]] || [[ "$content" == *"-h"* ]]; then
         ((TESTS_RUN++)) || true
-        local help_output
         local help_exit
-        if help_output=$(timeout 5 bash "$script_path" --help 2>&1); then
-            help_exit=$?
-        else
-            help_exit=$?
-        fi
+        timeout 5 bash "$script_path" --help &>/dev/null
+        help_exit=$?
 
         # Exit codes 0, 1, 2 are acceptable for help
         if [[ $help_exit -le 2 ]]; then
@@ -217,13 +213,9 @@ test_bash_script() {
     # 5. Dry run test (if supported)
     if [[ "$content" == *"--dry-run"* ]]; then
         ((TESTS_RUN++)) || true
-        local dryrun_output
         local dryrun_exit
-        if dryrun_output=$(timeout 10 bash "$script_path" --dry-run 2>&1); then
-            dryrun_exit=$?
-        else
-            dryrun_exit=$?
-        fi
+        timeout 10 bash "$script_path" --dry-run &>/dev/null
+        dryrun_exit=$?
 
         if [[ $dryrun_exit -eq 0 ]]; then
             pass "Dry run"
@@ -351,24 +343,18 @@ test_in_sandbox() {
     # Create temporary directory
     local tmpdir
     tmpdir=$(mktemp -d)
-    trap "rm -rf $tmpdir" EXIT
+    trap 'rm -rf "$tmpdir"' EXIT
 
     # Copy script to sandbox
     cp "$script_path" "$tmpdir/"
     chmod +x "$tmpdir/$script_name"
 
-    # Create minimal environment
-    local env_vars="HOME=$tmpdir PATH=/usr/bin:/bin TERM=dumb"
-
     ((TESTS_RUN++)) || true
 
-    # Execute with timeout
+    # Execute with timeout in minimal environment
     local sandbox_exit
-    if timeout 30 env -i $env_vars "$tmpdir/$script_name" --help &>/dev/null 2>&1; then
-        sandbox_exit=$?
-    else
-        sandbox_exit=$?
-    fi
+    timeout 30 env -i HOME="$tmpdir" PATH=/usr/bin:/bin TERM=dumb "$tmpdir/$script_name" --help &>/dev/null
+    sandbox_exit=$?
 
     if [[ $sandbox_exit -le 2 ]]; then
         pass "Sandbox execution"
