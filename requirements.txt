@@ -1,0 +1,4 @@
+# Runtime dependencies (optional)
+# tiktoken is optional - provides accurate token counting
+# If not installed, count-tokens.py falls back to word-based estimation
+tiktoken>=0.5.0
