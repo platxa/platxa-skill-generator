@@ -1,0 +1,86 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install pytest tiktoken pyyaml
+
+      - name: Make scripts executable
+        run: |
+          chmod +x scripts/*.sh
+
+      - name: Run pytest
+        run: |
+          pytest tests/ -v
+
+  validate-main-skill:
+    name: Validate Main Skill
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install tiktoken
+
+      - name: Make scripts executable
+        run: |
+          chmod +x scripts/*.sh
+
+      - name: Validate platxa-skill-generator
+        run: |
+          ./scripts/validate-all.sh .
+
+      - name: Check token budget
+        run: |
+          python3 scripts/count-tokens.py .
+
+  lint-scripts:
+    name: Lint Shell Scripts
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install shellcheck
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y shellcheck
+
+      - name: Run shellcheck
+        run: |
+          echo "Checking scripts..."
+          shellcheck scripts/*.sh --severity=warning || true
+
+          echo ""
+          echo "Checking catalog scripts..."
+          find catalog -name "*.sh" -exec shellcheck {} --severity=warning \; || true

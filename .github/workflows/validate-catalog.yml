@@ -1,0 +1,159 @@
+name: Validate Catalog Skills
+
+on:
+  pull_request:
+    paths:
+      - 'catalog/**'
+  push:
+    paths:
+      - 'catalog/**'
+    branches:
+      - main
+
+jobs:
+  validate-skills:
+    name: Validate Skills
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install tiktoken
+
+      - name: Make scripts executable
+        run: |
+          chmod +x scripts/*.sh
+
+      - name: Get changed skills
+        id: changed-skills
+        run: |
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            # Get skills changed in PR
+            CHANGED=$(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | grep "^catalog/" | cut -d'/' -f2 | sort -u | tr '\n' ' ')
+          else
+            # Validate all skills on push to main
+            CHANGED=$(ls -d catalog/*/ 2>/dev/null | xargs -n1 basename | tr '\n' ' ')
+          fi
+          echo "skills=$CHANGED" >> $GITHUB_OUTPUT
+          echo "Changed skills: $CHANGED"
+
+      - name: Validate changed skills
+        run: |
+          SKILLS="${{ steps.changed-skills.outputs.skills }}"
+          FAILED=0
+
+          if [ -z "$SKILLS" ]; then
+            echo "No skills to validate"
+            exit 0
+          fi
+
+          for skill in $SKILLS; do
+            SKILL_DIR="catalog/$skill"
+            if [ -d "$SKILL_DIR" ]; then
+              echo ""
+              echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+              echo "Validating: $skill"
+              echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+              if ./scripts/validate-all.sh "$SKILL_DIR"; then
+                echo "✓ $skill passed all validations"
+              else
+                echo "✗ $skill failed validation"
+                FAILED=1
+              fi
+            fi
+          done
+
+          if [ $FAILED -eq 1 ]; then
+            echo ""
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo "✗ VALIDATION FAILED"
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            exit 1
+          fi
+
+          echo ""
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "✓ ALL VALIDATIONS PASSED"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+      - name: Check token budgets
+        run: |
+          SKILLS="${{ steps.changed-skills.outputs.skills }}"
+
+          if [ -z "$SKILLS" ]; then
+            exit 0
+          fi
+
+          echo "Token Budget Report"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+          for skill in $SKILLS; do
+            SKILL_DIR="catalog/$skill"
+            if [ -d "$SKILL_DIR" ]; then
+              echo ""
+              python3 scripts/count-tokens.py "$SKILL_DIR"
+            fi
+          done
+
+  validate-structure:
+    name: Validate Catalog Structure
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check catalog README is updated
+        if: github.event_name == 'pull_request'
+        run: |
+          # Get new skills added in this PR
+          NEW_SKILLS=$(git diff --name-only --diff-filter=A ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | grep "^catalog/.*/SKILL.md" | cut -d'/' -f2)
+
+          if [ -n "$NEW_SKILLS" ]; then
+            echo "New skills detected: $NEW_SKILLS"
+            echo ""
+            echo "Checking if catalog/README.md mentions new skills..."
+
+            for skill in $NEW_SKILLS; do
+              if ! grep -q "$skill" catalog/README.md; then
+                echo "⚠️  Warning: $skill not found in catalog/README.md"
+                echo "Please update the catalog README to include your new skill."
+              else
+                echo "✓ $skill found in catalog/README.md"
+              fi
+            done
+          fi
+
+      - name: Verify skill directory structure
+        run: |
+          echo "Verifying skill directory structure..."
+
+          for skill_dir in catalog/*/; do
+            skill=$(basename "$skill_dir")
+
+            # Check SKILL.md exists
+            if [ ! -f "${skill_dir}SKILL.md" ]; then
+              echo "✗ $skill: Missing SKILL.md"
+              exit 1
+            fi
+
+            # Check SKILL.md has frontmatter
+            if ! head -1 "${skill_dir}SKILL.md" | grep -q "^---"; then
+              echo "✗ $skill: SKILL.md missing YAML frontmatter"
+              exit 1
+            fi
+
+            echo "✓ $skill: Structure valid"
+          done
+
+          echo ""
+          echo "All skill directories have valid structure."
