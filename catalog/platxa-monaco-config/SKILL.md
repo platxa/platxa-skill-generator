@@ -31,6 +31,40 @@ This skill helps configure Monaco editor settings for the Platxa IDE:
 | **Performance** | Large file optimization, tokenization limits |
 | **Accessibility** | Screen reader support, high contrast themes |
 
+## Workflow
+
+When configuring Monaco editor, follow this workflow:
+
+### Step 1: Identify Configuration Need
+
+Determine what you want to configure:
+- **Editor behavior** → Use editor options (fontSize, tabSize, wordWrap)
+- **Visual appearance** → Use themes and color customization
+- **Keyboard shortcuts** → Use keybindings (default, Vim, Emacs)
+- **Performance issues** → Use large file optimizations
+
+### Step 2: Choose a Preset or Custom
+
+- **Standard use case**: Apply a preset from Configuration Presets section
+- **Custom needs**: Start with a preset, then override specific options
+
+### Step 3: Apply Configuration
+
+```typescript
+// Option 1: At creation time
+const editor = monaco.editor.create(container, { ...options });
+
+// Option 2: Update existing editor
+editor.updateOptions({ fontSize: 16, minimap: { enabled: false } });
+```
+
+### Step 4: Verify Changes
+
+Test the configuration:
+1. Check visual appearance matches expectations
+2. Verify keybindings work correctly
+3. Test performance with representative file sizes
+
 ## Quick Start
 
 ### Apply a Preset
@@ -413,6 +447,18 @@ monaco.editor.setTheme('myTheme');  // Must call after defineTheme
 2. Disable minimap: `minimap: { enabled: false }`
 3. Reduce tokenization: `maxTokenizationLineLength: 5000`
 4. Check for memory leaks: dispose unused editors
+
+## Output Checklist
+
+After configuring Monaco editor, verify:
+
+- [ ] Editor renders correctly with specified dimensions
+- [ ] Theme applies (check syntax highlighting colors)
+- [ ] Font family and size display correctly
+- [ ] Keybindings work (test Ctrl+F for find, Ctrl+/ for comment)
+- [ ] If using Vim/Emacs mode, verify mode indicator and commands
+- [ ] Performance acceptable (no lag on scroll/type)
+- [ ] `automaticLayout: true` if container is resizable
 
 ## Related Resources
 

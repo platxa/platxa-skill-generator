@@ -30,8 +30,8 @@ if [[ -f "$SKILL_CONFIG" ]]; then
     fi
 fi
 
-error() { echo "❌ ERROR: $1"; ((ERRORS++)); SCORE=$((SCORE - 2)); }
-warn() { echo "⚠️  WARN: $1"; ((WARNINGS++)); SCORE=$((SCORE - 1)); }
+error() { echo "❌ ERROR: $1"; ((ERRORS++)) || true; SCORE=$((SCORE - 2)); }
+warn() { echo "⚠️  WARN: $1"; ((WARNINGS++)) || true; SCORE=$((SCORE - 1)); }
 ok() { echo "✓ $1"; }
 
 echo "═══════════════════════════════════════════════════"
