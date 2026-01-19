@@ -37,6 +37,7 @@ cd platxa-skill-generator
 | [test-generator](#test-generator) | Generate unit tests with comprehensive coverage | Builder | Ready |
 | [pr-description](#pr-description) | Generate PR descriptions from git history | Builder | Ready |
 | [platxa-frontend-builder](#platxa-frontend-builder) | Generate React/Next.js components with TypeScript and Tailwind | Builder | Ready |
+| [platxa-sidecar-builder](#platxa-sidecar-builder) | Build Node.js sidecar services for real-time code editing | Builder | Ready |
 
 ---
 
@@ -153,6 +154,32 @@ Assistant: [Generates TypeScript component with proper types, Tailwind styling, 
 ```
 
 **Related Skills**: Uses `platxa-monaco-config` for editor integration.
+
+---
+
+### platxa-sidecar-builder
+
+**Type**: Builder | **Category**: Backend Services
+
+Builds Node.js sidecar services for real-time collaborative code editing platforms:
+- File watching with chokidar
+- Git operations with simple-git
+- WebSocket servers with ws library
+- Yjs CRDT integration for real-time sync
+- REST APIs with Fastify
+- Kubernetes native sidecar deployment
+
+```bash
+./scripts/install-from-catalog.sh platxa-sidecar-builder
+```
+
+**Usage**:
+```
+User: Create a sidecar that watches files and syncs with clients
+Assistant: [Generates Node.js service with file watcher, WebSocket, and REST API]
+```
+
+**Related Skills**: Uses `platxa-yjs-server` for Yjs patterns.
 
 ---
 
@@ -279,4 +306,4 @@ MIT License - See [LICENSE](../LICENSE) for details.
 
 ---
 
-**Catalog Version**: 1.0.0 | **Skills Count**: 5
+**Catalog Version**: 1.0.0 | **Skills Count**: 6
