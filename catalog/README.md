@@ -36,6 +36,7 @@ cd platxa-skill-generator
 | [commit-message](#commit-message) | Generate conventional commit messages from staged changes | Automation | Ready |
 | [test-generator](#test-generator) | Generate unit tests with comprehensive coverage | Builder | Ready |
 | [pr-description](#pr-description) | Generate PR descriptions from git history | Builder | Ready |
+| [platxa-frontend-builder](#platxa-frontend-builder) | Generate React/Next.js components with TypeScript and Tailwind | Builder | Ready |
 
 ---
 
@@ -127,6 +128,31 @@ Generates pull request descriptions from commits and diff:
 User: Generate a PR description for this branch
 Assistant: [Analyzes commits, generates structured PR description]
 ```
+
+---
+
+### platxa-frontend-builder
+
+**Type**: Builder | **Category**: Frontend Development
+
+Generates production-ready React/Next.js components for the Platxa platform:
+- Server Components (data fetching, layouts)
+- Client Components (interactive UI, forms)
+- Form components with React Hook Form + Zod validation
+- Data tables with TypeScript generics
+- Accessible UI primitives with ARIA attributes
+
+```bash
+./scripts/install-from-catalog.sh platxa-frontend-builder
+```
+
+**Usage**:
+```
+User: Create a user profile card with avatar, name, and email
+Assistant: [Generates TypeScript component with proper types, Tailwind styling, accessibility]
+```
+
+**Related Skills**: Uses `platxa-monaco-config` for editor integration.
 
 ---
 
@@ -253,4 +279,4 @@ MIT License - See [LICENSE](../LICENSE) for details.
 
 ---
 
-**Catalog Version**: 1.0.0 | **Skills Count**: 4
+**Catalog Version**: 1.0.0 | **Skills Count**: 5
