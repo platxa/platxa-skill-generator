@@ -196,6 +196,38 @@ To add a new skill type:
 4. Create examples in README.md
 5. Update validation scripts if needed
 
+## Adding External Skills via Manifest
+
+To add a new upstream skill source to the catalog:
+
+1. **Add the source** to `catalog/manifest.yaml` under `sources:` (if new repo):
+   ```yaml
+   sources:
+     my-source:
+       repo: https://github.com/org/repo
+       path: skills
+   ```
+
+2. **Add the skill entry** under `skills:`:
+   ```yaml
+   skills:
+     my-new-skill:
+       source: my-source
+       ref: main
+       tier: 2          # 1=essential, 2=useful, 3=experimental
+       category: devtools
+   ```
+
+3. **Sync and validate**:
+   ```bash
+   ./scripts/sync-catalog.sh sync
+   ./scripts/validate-all.sh catalog/my-new-skill
+   ```
+
+4. **Add overrides** (optional): Place files in `catalog/overrides/my-new-skill/` to customize the upstream skill.
+
+5. **Submit PR** with the manifest change and any overrides.
+
 ## Questions?
 
 - Open an issue for general questions

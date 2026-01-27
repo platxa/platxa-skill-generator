@@ -15,6 +15,8 @@
 #   --force     Overwrite existing skills without prompting
 #   --validate  Run validation before installing (default: on)
 #   --no-validate  Skip validation
+#   --tier N    Only install skills with tier <= N (from manifest.yaml)
+#   --category X Only install skills matching category X (from manifest.yaml)
 #
 
 set -euo pipefail
@@ -36,6 +38,8 @@ CATALOG_DIR="$PROJECT_DIR/catalog"
 INSTALL_TARGET="user"
 VALIDATE=true
 FORCE=false
+FILTER_TIER=""
+FILTER_CATEGORY=""
 
 # Parse arguments
 SKILL_NAME=""
@@ -58,12 +62,16 @@ Options:
   --all         Install all skills from catalog
   --force       Overwrite existing skills without prompting
   --no-validate Skip validation before install
+  --tier N      Only install skills with tier <= N (requires manifest.yaml)
+  --category X  Only install skills matching category X (requires manifest.yaml)
 
 Examples:
   $(basename "$0") code-documenter              # Install to user skills
   $(basename "$0") code-documenter --project    # Install to project skills
   $(basename "$0") --list                        # List available skills
   $(basename "$0") --all                         # Install all skills
+  $(basename "$0") --all --tier 1               # Install tier 0-1 skills only
+  $(basename "$0") --all --category frontend    # Install frontend skills only
 EOF
 }
 
@@ -200,6 +208,38 @@ install_skill() {
     echo ""
 }
 
+# Check if a skill passes tier/category filters using manifest.yaml
+skill_passes_filter() {
+    local skill_name="$1"
+    local manifest="$CATALOG_DIR/manifest.yaml"
+
+    # No filters set → always pass
+    if [[ -z "$FILTER_TIER" ]] && [[ -z "$FILTER_CATEGORY" ]]; then
+        return 0
+    fi
+
+    # No manifest → can't filter, pass by default
+    if [[ ! -f "$manifest" ]]; then
+        echo -e "  ${YELLOW}⚠${NC} No manifest.yaml found; ignoring --tier/--category filters"
+        return 0
+    fi
+
+    python3 - "$manifest" "$skill_name" "$FILTER_TIER" "$FILTER_CATEGORY" << 'PYEOF'
+import sys, yaml
+manifest_path, skill_name, tier_filter, cat_filter = sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4]
+with open(manifest_path) as f:
+    m = yaml.safe_load(f)
+skill = m.get("skills", {}).get(skill_name)
+if skill is None:
+    sys.exit(0)  # Not in manifest, allow install
+if tier_filter and skill.get("tier", 99) > int(tier_filter):
+    sys.exit(1)
+if cat_filter and skill.get("category", "") != cat_filter:
+    sys.exit(1)
+sys.exit(0)
+PYEOF
+}
+
 install_all() {
     local count=0
     local failed=0
@@ -211,6 +251,9 @@ install_all() {
     for skill_dir in "$CATALOG_DIR"/*/; do
         if [[ -f "${skill_dir}SKILL.md" ]]; then
             skill_name=$(basename "$skill_dir")
+            if ! skill_passes_filter "$skill_name"; then
+                continue
+            fi
             if install_skill "$skill_name"; then
                 count=$((count + 1))
             else
@@ -253,6 +296,14 @@ while [[ $# -gt 0 ]]; do
         --no-validate)
             VALIDATE=false
             shift
+            ;;
+        --tier)
+            FILTER_TIER="$2"
+            shift 2
+            ;;
+        --category)
+            FILTER_CATEGORY="$2"
+            shift 2
             ;;
         --help|-h)
             usage

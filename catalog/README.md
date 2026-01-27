@@ -198,6 +198,8 @@ Assistant: [Generates Node.js service with file watcher, WebSocket, and REST API
 | `--list` | List all available skills |
 | `--all` | Install all skills |
 | `--force` | Overwrite existing without prompting |
+| `--tier N` | Only install skills with tier <= N |
+| `--category X` | Only install skills matching category X |
 
 ### Method 2: Manual Copy
 
@@ -278,6 +280,51 @@ We welcome community contributions!
 
 ---
 
+## Skill Tiers
+
+Skills are classified by quality tier in `manifest.yaml`:
+
+| Tier | Description | Examples |
+|------|-------------|---------|
+| 0 | Platxa internal (local only) | platxa-frontend-builder, platxa-k8s-ops |
+| 1 | Essential / high-quality upstream | frontend-design, mcp-builder, systematic-debugging |
+| 2 | Useful / recommended | canvas-design, composition-patterns |
+| 3 | Experimental / niche | algorithmic-art, using-git-worktrees |
+
+Install by tier: `./scripts/install-from-catalog.sh --all --tier 1`
+
+---
+
+## External vs Local Skills
+
+Skills come from two sources:
+
+- **Local** (`local: true` in manifest): Created and maintained in this repo. Never overwritten by sync.
+- **External**: Synced from upstream GitHub repos (anthropics/skills, vercel-labs/agent-skills, obra/superpowers).
+
+### Syncing External Skills
+
+```bash
+# Fetch all external skills from upstream
+./scripts/sync-catalog.sh sync
+
+# Update a single skill
+./scripts/sync-catalog.sh update frontend-design
+
+# See what's available
+./scripts/sync-catalog.sh list-external
+./scripts/sync-catalog.sh list-local
+
+# Check for differences
+./scripts/sync-catalog.sh diff
+```
+
+### Customizing Upstream Skills
+
+Place override files in `catalog/overrides/<skill-name>/` to patch upstream skills without modifying them directly. Overrides are applied automatically during sync.
+
+---
+
 ## Roadmap
 
 ### Planned Skills
@@ -306,4 +353,4 @@ MIT License - See [LICENSE](../LICENSE) for details.
 
 ---
 
-**Catalog Version**: 1.0.0 | **Skills Count**: 6
+**Catalog Version**: 1.1.0 | **Local Skills**: 16 | **External Skills**: 30+
