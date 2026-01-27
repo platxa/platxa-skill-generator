@@ -77,23 +77,56 @@ fi
 
 info "Frontmatter found"
 
-# Validate YAML syntax (if yq is available)
-if command -v yq &>/dev/null; then
-    if echo "$FRONTMATTER" | yq eval '.' - &>/dev/null; then
-        info "Valid YAML syntax"
-    else
-        error "Invalid YAML syntax"
-    fi
-else
-    warn "yq not installed, skipping YAML syntax validation"
+# Parse frontmatter with Python yaml.safe_load (always available, no yq dependency)
+# Outputs one field per line to avoid bash IFS delimiter collapsing on empty fields
+PARSED=$(python3 -c "
+import yaml, sys
+try:
+    data = yaml.safe_load(sys.stdin)
+    if not isinstance(data, dict):
+        print('__YAML_ERROR__')
+        sys.exit(0)
+    name = str(data.get('name', '') or '')
+    desc = str(data.get('description', '') or '')
+    # Accept both 'tools' and 'allowed-tools'
+    tools_key = ''
+    tools_list = []
+    if 'allowed-tools' in data:
+        tools_key = 'allowed-tools'
+        tools_list = data['allowed-tools'] or []
+    elif 'tools' in data:
+        tools_key = 'tools'
+        tools_list = data['tools'] or []
+    tools_csv = ','.join(str(t) for t in tools_list) if tools_list else ''
+    model = str(data.get('model', '') or '')
+    fields = '|'.join(str(k) for k in data.keys())
+    # One field per line — bash readarray handles empty lines correctly
+    for val in [name, desc, tools_key, tools_csv, model, fields]:
+        print(val)
+except yaml.YAMLError:
+    print('__YAML_ERROR__')
+" <<< "$FRONTMATTER")
+
+if [[ "$PARSED" == "__YAML_ERROR__" ]]; then
+    error "Invalid YAML syntax"
+    exit 1
 fi
+
+info "Valid YAML syntax"
+
+# Read fields line-by-line (readarray preserves empty lines, unlike IFS read)
+mapfile -t PARSED_LINES <<< "$PARSED"
+NAME="${PARSED_LINES[0]}"
+DESC="${PARSED_LINES[1]}"
+TOOLS_KEY="${PARSED_LINES[2]}"
+TOOLS_CSV="${PARSED_LINES[3]}"
+MODEL="${PARSED_LINES[4]}"
+FIELD_NAMES="${PARSED_LINES[5]}"
 
 echo ""
 echo "Checking required fields..."
 
 # Check name field
-NAME=$(echo "$FRONTMATTER" | grep -E '^name:' | sed 's/^name:\s*//' | tr -d '"' | tr -d "'" || echo "")
-
 if [[ -z "$NAME" ]]; then
     error "Missing required field: name"
 else
@@ -122,14 +155,6 @@ else
     fi
 fi
 
-# Check description field
-DESC=$(echo "$FRONTMATTER" | sed -n '/^description:/,/^[a-z]/p' | head -n -1 | sed 's/^description:\s*//' | tr -d '\n' | sed 's/^|//' || echo "")
-
-# Try simpler extraction if multiline didn't work
-if [[ -z "$DESC" ]]; then
-    DESC=$(echo "$FRONTMATTER" | grep -E '^description:' | sed 's/^description:\s*//' || echo "")
-fi
-
 if [[ -z "$DESC" ]]; then
     error "Missing required field: description"
 else
@@ -154,28 +179,22 @@ fi
 echo ""
 echo "Checking optional fields..."
 
-# Check tools field - accept both "tools:" and "allowed-tools:" (Anthropic spec uses allowed-tools)
-TOOLS_FIELD=$(echo "$FRONTMATTER" | grep -E '^(tools|allowed-tools):' | head -1 || echo "")
-
-if [[ -n "$TOOLS_FIELD" ]]; then
-    # Determine which field name was used
-    TOOLS_KEY=$(echo "$TOOLS_FIELD" | sed 's/:.*//')
-    # Extract all lines that look like tool entries (lines starting with - after the tools key)
-    TOOLS=$(echo "$FRONTMATTER" | sed -n "/^${TOOLS_KEY}:/,/^[a-z_-]*:/p" | grep -E '^\s*-' | sed 's/^\s*-\s*//' || echo "")
-
-    if [[ -n "$TOOLS" ]]; then
-        TOOL_COUNT=$(echo "$TOOLS" | wc -l)
+# Check tools field (already parsed: TOOLS_KEY and TOOLS_CSV from Python)
+if [[ -n "$TOOLS_KEY" ]]; then
+    if [[ -n "$TOOLS_CSV" ]]; then
+        IFS=',' read -ra TOOL_ARRAY <<< "$TOOLS_CSV"
+        TOOL_COUNT=${#TOOL_ARRAY[@]}
         info "tools field present with $TOOL_COUNT tools"
 
         # Validate tool names
         VALID_TOOLS="Read Write Edit MultiEdit Glob Grep LS Bash Task WebFetch WebSearch AskUserQuestion TodoWrite KillShell BashOutput NotebookEdit"
 
-        while IFS= read -r TOOL; do
+        for TOOL in "${TOOL_ARRAY[@]}"; do
             [[ -z "$TOOL" ]] && continue
             if ! echo "$VALID_TOOLS" | grep -qw "$TOOL"; then
                 error "Invalid tool: $TOOL"
             fi
-        done <<< "$TOOLS"
+        done
     else
         info "tools field present but empty"
     fi
@@ -183,9 +202,7 @@ else
     info "No tools field (optional)"
 fi
 
-# Check model field
-MODEL=$(echo "$FRONTMATTER" | grep -E '^model:' | sed 's/^model:\s*//' || echo "")
-
+# Check model field (already parsed from Python)
 if [[ -n "$MODEL" ]]; then
     if [[ "$MODEL" =~ ^(opus|sonnet|haiku)$ ]]; then
         info "model field valid: $MODEL"
@@ -194,26 +211,19 @@ if [[ -n "$MODEL" ]]; then
     fi
 fi
 
-# Check subagent_type field
-SUBAGENT=$(echo "$FRONTMATTER" | grep -E '^subagent_type:' | sed 's/^subagent_type:\s*//' || echo "")
-
-if [[ -n "$SUBAGENT" ]]; then
-    info "subagent_type field present: $SUBAGENT"
-fi
-
 # Check for unknown fields
 echo ""
 echo "Checking for unknown fields..."
 
-KNOWN_FIELDS="name description tools allowed-tools model subagent_type run_in_background license"
-FIELD_NAMES=$(echo "$FRONTMATTER" | grep -E '^[a-z_-]+:' | sed 's/:.*$//' || echo "")
+KNOWN_FIELDS="name description tools allowed-tools model subagent_type run_in_background license metadata"
 
-while IFS= read -r field; do
+IFS='|' read -ra FIELD_ARRAY <<< "$FIELD_NAMES"
+for field in "${FIELD_ARRAY[@]}"; do
     [[ -z "$field" ]] && continue
     if ! echo "$KNOWN_FIELDS" | grep -qw "$field"; then
         warn "Unknown field will be ignored: $field"
     fi
-done <<< "$FIELD_NAMES"
+done
 
 # Summary
 echo ""
