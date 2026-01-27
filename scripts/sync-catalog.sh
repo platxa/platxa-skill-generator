@@ -215,11 +215,10 @@ resolve_cache_sha() {
 # Sync a single skill from cache to catalog
 sync_skill() {
     local skill_name="$1"
-    local skill_info source_name ref sha skills_path source_dir
+    local skill_info source_name sha skills_path source_dir
 
     skill_info=$(parse_manifest skill "$skill_name")
     source_name=$(echo "$skill_info" | python3 -c "import sys,json; print(json.load(sys.stdin)['source'])")
-    ref=$(echo "$skill_info" | python3 -c "import sys,json; print(json.load(sys.stdin).get('ref','main'))")
     sha=$(echo "$skill_info" | python3 -c "import sys,json; print(json.load(sys.stdin).get('sha',''))")
     skills_path=$(parse_manifest source "$source_name" | python3 -c "import sys,json; print(json.load(sys.stdin)['path'])")
 
