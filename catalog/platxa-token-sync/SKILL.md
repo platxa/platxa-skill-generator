@@ -1,8 +1,13 @@
 ---
 name: platxa-token-sync
 description: Transform Brand Kit design tokens (OKLCH colors, spacing, typography) into Odoo-compatible SCSS variables. Bridges the gap between modern design systems and Odoo's theming architecture.
-version: 1.0.0
-allowed-tools: Read, Write, Bash, Glob
+allowed-tools:
+  - Read
+  - Write
+  - Bash
+  - Glob
+metadata:
+  version: "1.0.0"
 ---
 
 # Platxa Token Sync

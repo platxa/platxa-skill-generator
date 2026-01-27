@@ -1,8 +1,13 @@
 ---
 name: platxa-odoo-page
 description: Generate complete Odoo website pages (About, Contact, Services, Team, FAQ, Pricing) with QWeb templates, SEO metadata, breadcrumbs, and proper Odoo structure.
-version: 1.0.0
-allowed-tools: Read, Write, Glob, Grep
+allowed-tools:
+  - Read
+  - Write
+  - Glob
+  - Grep
+metadata:
+  version: "1.0.0"
 ---
 
 # Platxa Odoo Page Generator

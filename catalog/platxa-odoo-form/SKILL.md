@@ -1,8 +1,13 @@
 ---
 name: platxa-odoo-form
 description: Generate Odoo website forms with CRM lead integration, field validation, conditional logic, and multi-step wizards.
-version: 1.0.0
-allowed-tools: Read, Write, Glob, Grep
+allowed-tools:
+  - Read
+  - Write
+  - Glob
+  - Grep
+metadata:
+  version: "1.0.0"
 ---
 
 # Platxa Odoo Form Generator

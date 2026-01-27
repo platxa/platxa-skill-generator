@@ -1,8 +1,14 @@
 ---
 name: platxa-preview-service
 description: Live preview service for Odoo themes with real-time token updates, SCSS compilation, and WebSocket hot reload.
-version: 1.0.0
-allowed-tools: Read, Write, Bash, Glob, Grep
+allowed-tools:
+  - Read
+  - Write
+  - Bash
+  - Glob
+  - Grep
+metadata:
+  version: "1.0.0"
 ---
 
 # Platxa Preview Service

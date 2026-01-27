@@ -1,8 +1,13 @@
 ---
 name: platxa-odoo-blog
 description: Generate Odoo blog templates with post layouts, category pages, author profiles, and SEO optimization.
-version: 1.0.0
-allowed-tools: Read, Write, Glob, Grep
+allowed-tools:
+  - Read
+  - Write
+  - Glob
+  - Grep
+metadata:
+  version: "1.0.0"
 ---
 
 # Platxa Odoo Blog Generator
