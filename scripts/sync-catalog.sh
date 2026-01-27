@@ -8,6 +8,8 @@
 #   ./scripts/sync-catalog.sh list-external   # List external skills
 #   ./scripts/sync-catalog.sh list-local      # List local-only skills
 #   ./scripts/sync-catalog.sh diff            # Show changes vs upstream
+#   ./scripts/sync-catalog.sh status          # Show last sync state per skill
+#   ./scripts/sync-catalog.sh list-categories # List all skill categories
 #
 # Requires: git, python3 (for YAML parsing)
 
@@ -28,6 +30,7 @@ MANIFEST="$CATALOG_DIR/manifest.yaml"
 OVERRIDES_DIR="$CATALOG_DIR/overrides"
 CACHE_DIR="/tmp/skill-sync-cache"
 LOCK_FILE="/tmp/skill-sync.lock"
+SYNC_STATE="$CATALOG_DIR/sync-state.yaml"
 
 # ── Helpers ──────────────────────────────────────────────────────
 
@@ -171,6 +174,41 @@ if injected > 0:
 PYEOF
 }
 
+# Record sync state for a skill (resolved SHA + timestamp)
+record_sync_state() {
+    local skill_name="$1" source_name="$2" resolved_sha="$3"
+    local timestamp
+    timestamp=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+
+    python3 - "$SYNC_STATE" "$skill_name" "$source_name" "$resolved_sha" "$timestamp" << 'PYEOF'
+import sys, yaml, os
+
+state_path, skill, source, sha, ts = sys.argv[1:6]
+
+state = {}
+if os.path.exists(state_path):
+    with open(state_path) as f:
+        state = yaml.safe_load(f) or {}
+
+skills = state.setdefault("skills", {})
+skills[skill] = {
+    "source": source,
+    "sha": sha,
+    "synced_at": ts,
+}
+
+with open(state_path, "w") as f:
+    yaml.dump(state, f, default_flow_style=False, sort_keys=True)
+PYEOF
+}
+
+# Resolve the current HEAD SHA for a source cache
+resolve_cache_sha() {
+    local source_name="$1"
+    local cache="$CACHE_DIR/$source_name"
+    git -C "$cache" rev-parse HEAD 2>/dev/null || echo "unknown"
+}
+
 # Sync a single skill from cache to catalog
 sync_skill() {
     local skill_name="$1"
@@ -221,6 +259,15 @@ sync_skill() {
         echo -e "  ${BLUE}[Patch]${NC} Injecting sections from patch.yaml for $skill_name"
         apply_patch_yaml "$target_dir/SKILL.md" "$patch_file"
     fi
+
+    # Record sync state
+    local resolved_sha
+    if [[ -n "$sha" ]]; then
+        resolved_sha="$sha"
+    else
+        resolved_sha=$(resolve_cache_sha "$source_name")
+    fi
+    record_sync_state "$skill_name" "$source_name" "$resolved_sha"
 
     echo -e "  ${GREEN}✓${NC} $skill_name"
     return 0
@@ -389,6 +436,63 @@ print(f'\nTotal: {len(loc)} local skill(s)')
 "
 }
 
+cmd_status() {
+    echo -e "${BOLD}Sync State${NC}"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+    if [[ ! -f "$SYNC_STATE" ]]; then
+        echo "No sync state recorded. Run 'sync' first."
+        return 0
+    fi
+
+    python3 - "$SYNC_STATE" << 'PYEOF'
+import sys, yaml
+
+with open(sys.argv[1]) as f:
+    state = yaml.safe_load(f) or {}
+
+skills = state.get("skills", {})
+if not skills:
+    print("No skills recorded in sync state.")
+    sys.exit(0)
+
+for name in sorted(skills):
+    s = skills[name]
+    sha_short = s.get("sha", "?")[:12]
+    synced_at = s.get("synced_at", "?")
+    source = s.get("source", "?")
+    print(f"  {name:40s} {source:12s} {sha_short}  ({synced_at})")
+
+print(f"\nTotal: {len(skills)} synced skill(s)")
+PYEOF
+}
+
+cmd_list_categories() {
+    echo -e "${BOLD}Skill Categories${NC}"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    python3 - "$MANIFEST" << 'PYEOF'
+import sys, yaml
+from collections import defaultdict
+
+with open(sys.argv[1]) as f:
+    m = yaml.safe_load(f)
+
+skills = m.get("skills", {})
+by_category = defaultdict(list)
+for name, info in skills.items():
+    cat = info.get("category", "uncategorized")
+    by_category[cat].append(name)
+
+for cat in sorted(by_category):
+    names = sorted(by_category[cat])
+    print(f"\n  {cat} ({len(names)}):")
+    for n in names:
+        print(f"    - {n}")
+
+print(f"\n{len(by_category)} categories, {len(skills)} total skills")
+PYEOF
+}
+
 cmd_diff() {
     echo -e "${BOLD}Diff: catalog vs upstream${NC}"
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
@@ -436,6 +540,8 @@ Usage:
   $(basename "$0") list-external     List external skills and their status
   $(basename "$0") list-local        List local-only skills
   $(basename "$0") diff              Compare catalog vs upstream cache
+  $(basename "$0") status            Show last sync state per skill
+  $(basename "$0") list-categories   List all skill categories
 
 Options:
   --help, -h    Show this help
@@ -453,6 +559,8 @@ case "${1:-}" in
     list-external)  cmd_list_external ;;
     list-local)     cmd_list_local ;;
     diff)           cmd_diff ;;
+    status)         cmd_status ;;
+    list-categories) cmd_list_categories ;;
     --help|-h)      usage ;;
     *)              usage; exit 1 ;;
 esac
