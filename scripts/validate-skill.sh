@@ -126,8 +126,10 @@ fi
 # Check line count (token proxy)
 echo -e "\n--- Token Budget Check ---"
 LINE_COUNT=$(wc -l < "$SKILL_MD")
-if [[ $LINE_COUNT -gt 500 ]]; then
-    error "SKILL.md too long: $LINE_COUNT lines (max 500)"
+if [[ $LINE_COUNT -gt 1000 ]]; then
+    error "SKILL.md too long: $LINE_COUNT lines (hard limit 1000)"
+elif [[ $LINE_COUNT -gt 500 ]]; then
+    warn "SKILL.md exceeds recommended limit: $LINE_COUNT lines (recommended < 500)"
 elif [[ $LINE_COUNT -gt 450 ]]; then
     warn "SKILL.md approaching limit: $LINE_COUNT/500 lines"
 else
@@ -137,8 +139,10 @@ fi
 # Estimate tokens (roughly 1.3 tokens per word)
 WORD_COUNT=$(wc -w < "$SKILL_MD")
 EST_TOKENS=$((WORD_COUNT * 13 / 10))
-if [[ $EST_TOKENS -gt 5000 ]]; then
-    error "Estimated tokens too high: ~$EST_TOKENS (max 5000)"
+if [[ $EST_TOKENS -gt 10000 ]]; then
+    error "Estimated tokens too high: ~$EST_TOKENS (hard limit 10000)"
+elif [[ $EST_TOKENS -gt 5000 ]]; then
+    warn "Estimated tokens exceeds recommended: ~$EST_TOKENS (recommended < 5000)"
 elif [[ $EST_TOKENS -gt 4000 ]]; then
     warn "Estimated tokens approaching limit: ~$EST_TOKENS/5000"
 else

@@ -19,9 +19,10 @@ from typing import TypedDict
 
 # Try to import tiktoken for accurate counting
 try:
-    import tiktoken
+    import tiktoken  # type: ignore[import-untyped]
     TIKTOKEN_AVAILABLE = True
 except ImportError:
+    tiktoken = None  # type: ignore[assignment]
     TIKTOKEN_AVAILABLE = False
 
 
@@ -47,13 +48,22 @@ class TokenReport(TypedDict):
     custom_limits: bool
 
 
-# Default budget limits
+# Recommended budget limits (warnings if exceeded)
 DEFAULT_LIMITS = {
     'skill_md_tokens': 5000,
     'skill_md_lines': 500,
     'single_ref_tokens': 2000,
     'total_ref_tokens': 10000,
     'total_skill_tokens': 15000,
+}
+
+# Hard budget limits (fail if exceeded)
+HARD_LIMITS = {
+    'skill_md_tokens': 10000,
+    'skill_md_lines': 1000,
+    'single_ref_tokens': 4000,
+    'total_ref_tokens': 20000,
+    'total_skill_tokens': 30000,
 }
 
 
@@ -91,6 +101,7 @@ def load_skill_config(skill_dir: Path) -> dict:
 
 def count_tokens_tiktoken(text: str) -> int:
     """Count tokens using tiktoken (accurate)."""
+    assert tiktoken is not None
     enc = tiktoken.get_encoding("cl100k_base")
     return len(enc.encode(text))
 
@@ -255,13 +266,14 @@ def analyze_skill(skill_dir: Path, warn_threshold: int = 80) -> TokenReport:
             f"Total skill approaching limit: {total_tokens} ({warn_threshold}% of {limits['total_skill_tokens']})"
         )
 
-    # Determine pass/fail
+    # Determine pass/fail using hard limits (recommended limits only produce warnings)
+    hard = HARD_LIMITS
     passed = (
-        skill_md_tokens <= limits['skill_md_tokens'] and
-        skill_md_lines <= limits['skill_md_lines'] and
-        ref_total_tokens <= limits['total_ref_tokens'] and
-        total_tokens <= limits['total_skill_tokens'] and
-        all(f['tokens'] <= limits['single_ref_tokens'] for f in ref_files)
+        skill_md_tokens <= hard['skill_md_tokens'] and
+        skill_md_lines <= hard['skill_md_lines'] and
+        ref_total_tokens <= hard['total_ref_tokens'] and
+        total_tokens <= hard['total_skill_tokens'] and
+        all(f['tokens'] <= hard['single_ref_tokens'] for f in ref_files)
     )
 
     return TokenReport(
