@@ -50,27 +50,7 @@ skills:
     sha: 69c0b1a0674149f27b61b2635f935524b6add202
     tier: 1
     category: design
-  canvas-design:
-    source: anthropic
-    ref: main
-    tier: 2
-    category: design
-  brand-guidelines:
-    source: anthropic
-    ref: main
-    tier: 2
-    category: design
-  theme-factory:
-    source: anthropic
-    ref: main
-    tier: 2
-    category: design
   mcp-builder:
-    source: anthropic
-    ref: main
-    tier: 1
-    category: devtools
-  skill-creator:
     source: anthropic
     ref: main
     tier: 1
@@ -85,41 +65,6 @@ skills:
     ref: main
     tier: 1
     category: testing
-  doc-coauthoring:
-    source: anthropic
-    ref: main
-    tier: 2
-    category: documentation
-  algorithmic-art:
-    source: anthropic
-    ref: main
-    tier: 3
-    category: creative
-  internal-comms:
-    source: anthropic
-    ref: main
-    tier: 3
-    category: communication
-  slack-gif-creator:
-    source: anthropic
-    ref: main
-    tier: 3
-    category: creative
-  pdf:
-    source: anthropic
-    ref: main
-    tier: 2
-    category: documents
-  pptx:
-    source: anthropic
-    ref: main
-    tier: 2
-    category: documents
-  docx:
-    source: anthropic
-    ref: main
-    tier: 2
-    category: documents
   xlsx:
     source: anthropic
     ref: main
@@ -174,16 +119,6 @@ skills:
     ref: main
     tier: 1
     category: workflow
-  requesting-code-review:
-    source: obra
-    ref: main
-    tier: 2
-    category: workflow
-  receiving-code-review:
-    source: obra
-    ref: main
-    tier: 2
-    category: workflow
   subagent-driven-development:
     source: obra
     ref: main
@@ -199,27 +134,11 @@ skills:
     ref: main
     tier: 2
     category: workflow
-  finishing-a-development-branch:
-    source: obra
-    ref: main
-    tier: 2
-    category: workflow
-  using-git-worktrees:
-    source: obra
-    ref: main
-    tier: 3
-    category: git
   using-superpowers:
     source: obra
     ref: main
     tier: 3
     category: workflow
-  writing-skills:
-    source: obra
-    ref: main
-    tier: 3
-    category: devtools
-
   # ── Local: Platxa skills (never synced) ────
   code-documenter:
     local: true
