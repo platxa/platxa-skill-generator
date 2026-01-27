@@ -81,14 +81,15 @@ SKILL_NAME=$(basename "$SKILL_DIR")
 
 run_validator() {
     local name="$1"
-    local cmd="$2"
+    shift
+    # Remaining args are the command and its arguments (no eval needed)
 
     if ! $JSON_OUTPUT; then
         echo -e "\n${BLUE}[$name]${NC}"
     fi
 
     if $VERBOSE; then
-        if eval "$cmd"; then
+        if "$@"; then
             RESULTS[$name]="PASS"
             return 0
         else
@@ -99,7 +100,7 @@ run_validator() {
     else
         # Capture output
         local output
-        if output=$(eval "$cmd" 2>&1); then
+        if output=$("$@" 2>&1); then
             RESULTS[$name]="PASS"
             if ! $JSON_OUTPUT; then
                 echo -e "${GREEN}✓ PASSED${NC}"
@@ -129,7 +130,7 @@ OVERALL_PASS=true
 
 # 1. Structure validation
 if [[ -x "$SCRIPT_DIR/validate-structure.sh" ]]; then
-    run_validator "Structure" "$SCRIPT_DIR/validate-structure.sh '$SKILL_DIR'" || OVERALL_PASS=false
+    run_validator "Structure" "$SCRIPT_DIR/validate-structure.sh" "$SKILL_DIR" || OVERALL_PASS=false
 else
     if ! $JSON_OUTPUT; then
         echo -e "\n${YELLOW}[Structure]${NC} Skipped - validator not found"
@@ -139,7 +140,7 @@ fi
 
 # 2. Frontmatter validation
 if [[ -x "$SCRIPT_DIR/validate-frontmatter.sh" ]]; then
-    run_validator "Frontmatter" "$SCRIPT_DIR/validate-frontmatter.sh '$SKILL_DIR'" || OVERALL_PASS=false
+    run_validator "Frontmatter" "$SCRIPT_DIR/validate-frontmatter.sh" "$SKILL_DIR" || OVERALL_PASS=false
 else
     if ! $JSON_OUTPUT; then
         echo -e "\n${YELLOW}[Frontmatter]${NC} Skipped - validator not found"
@@ -149,9 +150,9 @@ fi
 
 # 3. Token count validation
 if [[ -x "$SCRIPT_DIR/count-tokens.py" ]]; then
-    run_validator "Tokens" "python3 '$SCRIPT_DIR/count-tokens.py' '$SKILL_DIR'" || OVERALL_PASS=false
+    run_validator "Tokens" python3 "$SCRIPT_DIR/count-tokens.py" "$SKILL_DIR" || OVERALL_PASS=false
 elif command -v python3 &>/dev/null && [[ -f "$SCRIPT_DIR/count-tokens.py" ]]; then
-    run_validator "Tokens" "python3 '$SCRIPT_DIR/count-tokens.py' '$SKILL_DIR'" || OVERALL_PASS=false
+    run_validator "Tokens" python3 "$SCRIPT_DIR/count-tokens.py" "$SKILL_DIR" || OVERALL_PASS=false
 else
     if ! $JSON_OUTPUT; then
         echo -e "\n${YELLOW}[Tokens]${NC} Skipped - Python not available"
@@ -161,7 +162,11 @@ fi
 
 # 4. Main skill validation (if exists)
 if [[ -x "$SCRIPT_DIR/validate-skill.sh" ]]; then
-    run_validator "Skill" "$SCRIPT_DIR/validate-skill.sh '$SKILL_DIR' $PROFILE" || OVERALL_PASS=false
+    if [[ -n "$PROFILE" ]]; then
+        run_validator "Skill" "$SCRIPT_DIR/validate-skill.sh" "$SKILL_DIR" "$PROFILE" || OVERALL_PASS=false
+    else
+        run_validator "Skill" "$SCRIPT_DIR/validate-skill.sh" "$SKILL_DIR" || OVERALL_PASS=false
+    fi
 else
     RESULTS["Skill"]="SKIP"
 fi
@@ -186,14 +191,24 @@ if [[ -d "$SCRIPTS_DIR" ]]; then
     if command -v shellcheck &>/dev/null; then
         SHELL_SCRIPT_COUNT=$(find "$SCRIPTS_DIR" -name "*.sh" -type f 2>/dev/null | wc -l)
         if [[ "$SHELL_SCRIPT_COUNT" -gt 0 ]]; then
-            run_validator "Shellcheck" "run_shellcheck_stdin '$SCRIPTS_DIR'" || OVERALL_PASS=false
+            run_validator "Shellcheck" run_shellcheck_stdin "$SCRIPTS_DIR" || OVERALL_PASS=false
         fi
     fi
 
     # Check Python scripts with syntax check
-    PY_SCRIPTS=$(find "$SCRIPTS_DIR" -name "*.py" -type f 2>/dev/null | tr '\n' ' ')
-    if [[ -n "${PY_SCRIPTS// /}" ]]; then
-        run_validator "Python Syntax" "python3 -m py_compile $PY_SCRIPTS" || OVERALL_PASS=false
+    py_syntax_check() {
+        local rc=0
+        while IFS= read -r -d '' pyfile; do
+            if ! python3 -m py_compile "$pyfile" 2>&1; then
+                rc=1
+            fi
+        done < <(find "$1" -name "*.py" -type f -print0 2>/dev/null)
+        return $rc
+    }
+
+    PY_COUNT=$(find "$SCRIPTS_DIR" -name "*.py" -type f 2>/dev/null | wc -l)
+    if [[ "$PY_COUNT" -gt 0 ]]; then
+        run_validator "Python Syntax" py_syntax_check "$SCRIPTS_DIR" || OVERALL_PASS=false
     fi
 fi
 
