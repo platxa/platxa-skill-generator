@@ -6,12 +6,28 @@
 
 set -euo pipefail
 
-SKILL_DIR="${1:-.}"
+SKILL_DIR=""
+PROFILE="strict"  # strict (default) or spec
+
+# Parse arguments
+for arg in "$@"; do
+    case "$arg" in
+        --profile=*) PROFILE="${arg#--profile=}" ;;
+        *) SKILL_DIR="$arg" ;;
+    esac
+done
+
+SKILL_DIR="${SKILL_DIR:-.}"
 SKILL_MD="$SKILL_DIR/SKILL.md"
 SKILL_CONFIG="$SKILL_DIR/.skillconfig"
 ERRORS=0
 WARNINGS=0
 SCORE=10
+
+if [[ "$PROFILE" != "strict" && "$PROFILE" != "spec" ]]; then
+    echo "Error: Invalid profile '$PROFILE'. Use 'strict' or 'spec'." >&2
+    exit 1
+fi
 
 # Default limits
 LIMIT_REF_TOKENS=10000
@@ -86,21 +102,25 @@ else
     fi
 fi
 
-# Check for required sections
-echo -e "\n--- Section Check ---"
+# Check for recommended sections
+echo -e "\n--- Section Check (profile: $PROFILE) ---"
 for section in "Overview" "Workflow" "Examples"; do
     if grep -q "^## $section" "$SKILL_MD"; then
         ok "Section: $section"
-    else
+    elif [[ "$PROFILE" == "strict" ]]; then
         warn "Missing recommended section: $section"
+    else
+        echo "ℹ️  INFO: Optional section not present: $section"
     fi
 done
 
 # Check for Output Checklist
 if grep -q "^## Output Checklist" "$SKILL_MD" || grep -q "^## Checklist" "$SKILL_MD"; then
     ok "Section: Output Checklist"
-else
+elif [[ "$PROFILE" == "strict" ]]; then
     warn "Missing recommended section: Output Checklist"
+else
+    echo "ℹ️  INFO: Optional section not present: Output Checklist"
 fi
 
 # Check line count (token proxy)
