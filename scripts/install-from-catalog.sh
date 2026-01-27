@@ -46,6 +46,7 @@ CHECK_REQUIRES=false
 SKILL_NAME=""
 INSTALL_ALL=false
 LIST_SKILLS=false
+LIST_CATEGORIES=false
 
 usage() {
     cat << EOF
@@ -59,7 +60,8 @@ Usage:
 Options:
   --user        Install to ~/.claude/skills/ (default)
   --project     Install to .claude/skills/
-  --list        List all available skills
+  --list             List all available skills
+  --list-categories  List skill categories with counts
   --all         Install all skills from catalog
   --force       Overwrite existing skills without prompting
   --no-validate Skip validation before install
@@ -210,6 +212,38 @@ install_skill() {
     echo ""
 }
 
+list_categories() {
+    local manifest="$CATALOG_DIR/manifest.yaml"
+    if [[ ! -f "$manifest" ]]; then
+        echo -e "${RED}Error:${NC} No manifest.yaml found in catalog"
+        return 1
+    fi
+
+    echo -e "${BOLD}Skill Categories${NC}"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    python3 - "$manifest" << 'PYEOF'
+import sys, yaml
+from collections import defaultdict
+
+with open(sys.argv[1]) as f:
+    m = yaml.safe_load(f)
+
+skills = m.get("skills", {})
+by_category = defaultdict(list)
+for name, info in skills.items():
+    cat = info.get("category", "uncategorized")
+    by_category[cat].append(name)
+
+for cat in sorted(by_category):
+    names = sorted(by_category[cat])
+    print(f"\n  {cat} ({len(names)}):")
+    for n in names:
+        print(f"    - {n}")
+
+print(f"\n{len(by_category)} categories, {len(skills)} total skills")
+PYEOF
+}
+
 # Check if a skill passes tier/category filters using manifest.yaml
 skill_passes_filter() {
     local skill_name="$1"
@@ -344,6 +378,10 @@ while [[ $# -gt 0 ]]; do
             LIST_SKILLS=true
             shift
             ;;
+        --list-categories)
+            LIST_CATEGORIES=true
+            shift
+            ;;
         --all)
             INSTALL_ALL=true
             shift
@@ -399,6 +437,8 @@ done
 # Execute requested action
 if [[ "$LIST_SKILLS" == true ]]; then
     list_skills
+elif [[ "$LIST_CATEGORIES" == true ]]; then
+    list_categories
 elif [[ "$INSTALL_ALL" == true ]]; then
     install_all
 elif [[ -n "$SKILL_NAME" ]]; then
