@@ -14,7 +14,8 @@ if [[ ! -f "$SKILL_MD" ]]; then
     exit 1
 fi
 
-SKILL_NAME=$(grep "^name:" "$SKILL_MD" | head -1 | sed 's/name: *//' | tr -d '"' | tr -d "'")
+# Extract name from frontmatter only (between first --- and second ---)
+SKILL_NAME=$(sed -n '2,/^---$/p' "$SKILL_MD" | sed '$d' | grep "^name:" | head -1 | sed 's/name: *//' | tr -d '"' | tr -d "'")
 if [[ -z "$SKILL_NAME" ]]; then
     echo "❌ ERROR: Could not extract skill name from SKILL.md"
     exit 1
