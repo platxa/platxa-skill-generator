@@ -25,9 +25,9 @@ NC='\033[0m'
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
-CATALOG_DIR="$PROJECT_DIR/catalog"
-MANIFEST="$CATALOG_DIR/manifest.yaml"
-OVERRIDES_DIR="$CATALOG_DIR/overrides"
+CATALOG_DIR="${CATALOG_DIR:-$PROJECT_DIR/catalog}"
+MANIFEST="${MANIFEST:-$CATALOG_DIR/manifest.yaml}"
+OVERRIDES_DIR="${OVERRIDES_DIR:-$CATALOG_DIR/overrides}"
 CACHE_DIR="/tmp/skill-sync-cache"
 LOCK_FILE="/tmp/skill-sync.lock"
 SYNC_STATE="$CATALOG_DIR/.sync-state.json"
@@ -573,17 +573,20 @@ EOF
 
 # ── Main ─────────────────────────────────────────────────────────
 
-[[ ! -f "$MANIFEST" ]] && die "Manifest not found: $MANIFEST"
+# Source guard: allow sourcing for function access without executing main
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+    [[ ! -f "$MANIFEST" ]] && die "Manifest not found: $MANIFEST"
 
-case "${1:-}" in
-    sync)           cmd_sync "${2:-}" ;;
-    update)         [[ -z "${2:-}" ]] && die "Usage: $(basename "$0") update <skill-name>"
-                    cmd_update "$2" ;;
-    list-external)  cmd_list_external ;;
-    list-local)     cmd_list_local ;;
-    diff)           cmd_diff ;;
-    status)         cmd_status ;;
-    list-categories) cmd_list_categories ;;
-    --help|-h)      usage ;;
-    *)              usage; exit 1 ;;
-esac
+    case "${1:-}" in
+        sync)           cmd_sync "${2:-}" ;;
+        update)         [[ -z "${2:-}" ]] && die "Usage: $(basename "$0") update <skill-name>"
+                        cmd_update "$2" ;;
+        list-external)  cmd_list_external ;;
+        list-local)     cmd_list_local ;;
+        diff)           cmd_diff ;;
+        status)         cmd_status ;;
+        list-categories) cmd_list_categories ;;
+        --help|-h)      usage ;;
+        *)              usage; exit 1 ;;
+    esac
+fi
