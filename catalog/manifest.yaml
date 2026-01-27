@@ -1,0 +1,287 @@
+# Platxa Skill Catalog Manifest
+# Declarative listing of all skills: external (synced from upstream) and local.
+#
+# Usage:
+#   ./scripts/sync-catalog.sh sync       # Fetch/update all external skills
+#   ./scripts/sync-catalog.sh list-external
+#   ./scripts/sync-catalog.sh list-local
+#
+# Fields per skill:
+#   source:   Name of the upstream source (required for external)
+#   ref:      Git branch/tag to track (default: main)
+#   sha:      Pin to a specific git commit (optional; takes precedence over ref)
+#   tier:     0=internal, 1=essential, 2=useful, 3=experimental
+#   category: Grouping label
+#   local:    true for skills not synced from upstream
+
+version: "1.0"
+
+# ──────────────────────────────────────────────
+# Upstream sources
+# ──────────────────────────────────────────────
+sources:
+  anthropic:
+    repo: https://github.com/anthropics/skills
+    path: skills
+  vercel:
+    repo: https://github.com/vercel-labs/agent-skills
+    path: skills
+  obra:
+    repo: https://github.com/obra/superpowers
+    path: skills
+
+# ──────────────────────────────────────────────
+# Skills
+# ──────────────────────────────────────────────
+# Tier classification:
+#   0 - Platxa internal (local only)
+#   1 - Essential / high-quality upstream
+#   2 - Useful / recommended upstream
+#   3 - Experimental / niche
+
+skills:
+  # ── External: anthropic ────────────────────
+  # To pin a skill to a specific commit, add sha: <commit-hash>
+  # sha takes precedence over ref when both are present.
+  # Example: sha: abc123def456...
+  frontend-design:
+    source: anthropic
+    ref: main
+    sha: 69c0b1a0674149f27b61b2635f935524b6add202
+    tier: 1
+    category: design
+  canvas-design:
+    source: anthropic
+    ref: main
+    tier: 2
+    category: design
+  brand-guidelines:
+    source: anthropic
+    ref: main
+    tier: 2
+    category: design
+  theme-factory:
+    source: anthropic
+    ref: main
+    tier: 2
+    category: design
+  mcp-builder:
+    source: anthropic
+    ref: main
+    tier: 1
+    category: devtools
+  skill-creator:
+    source: anthropic
+    ref: main
+    tier: 1
+    category: devtools
+  web-artifacts-builder:
+    source: anthropic
+    ref: main
+    tier: 1
+    category: frontend
+  webapp-testing:
+    source: anthropic
+    ref: main
+    tier: 1
+    category: testing
+  doc-coauthoring:
+    source: anthropic
+    ref: main
+    tier: 2
+    category: documentation
+  algorithmic-art:
+    source: anthropic
+    ref: main
+    tier: 3
+    category: creative
+  internal-comms:
+    source: anthropic
+    ref: main
+    tier: 3
+    category: communication
+  slack-gif-creator:
+    source: anthropic
+    ref: main
+    tier: 3
+    category: creative
+  pdf:
+    source: anthropic
+    ref: main
+    tier: 2
+    category: documents
+  pptx:
+    source: anthropic
+    ref: main
+    tier: 2
+    category: documents
+  docx:
+    source: anthropic
+    ref: main
+    tier: 2
+    category: documents
+  xlsx:
+    source: anthropic
+    ref: main
+    tier: 2
+    category: documents
+
+  # ── External: vercel ───────────────────────
+  react-best-practices:
+    source: vercel
+    ref: main
+    tier: 1
+    category: frontend
+  composition-patterns:
+    source: vercel
+    ref: main
+    tier: 2
+    category: frontend
+  web-design-guidelines:
+    source: vercel
+    ref: main
+    tier: 2
+    category: design
+  react-native-skills:
+    source: vercel
+    ref: main
+    tier: 2
+    category: mobile
+
+  # ── External: obra ─────────────────────────
+  systematic-debugging:
+    source: obra
+    ref: main
+    tier: 1
+    category: debugging
+  test-driven-development:
+    source: obra
+    ref: main
+    tier: 1
+    category: testing
+  writing-plans:
+    source: obra
+    ref: main
+    tier: 1
+    category: workflow
+  executing-plans:
+    source: obra
+    ref: main
+    tier: 1
+    category: workflow
+  verification-before-completion:
+    source: obra
+    ref: main
+    tier: 1
+    category: workflow
+  requesting-code-review:
+    source: obra
+    ref: main
+    tier: 2
+    category: workflow
+  receiving-code-review:
+    source: obra
+    ref: main
+    tier: 2
+    category: workflow
+  subagent-driven-development:
+    source: obra
+    ref: main
+    tier: 2
+    category: workflow
+  brainstorming:
+    source: obra
+    ref: main
+    tier: 2
+    category: workflow
+  dispatching-parallel-agents:
+    source: obra
+    ref: main
+    tier: 2
+    category: workflow
+  finishing-a-development-branch:
+    source: obra
+    ref: main
+    tier: 2
+    category: workflow
+  using-git-worktrees:
+    source: obra
+    ref: main
+    tier: 3
+    category: git
+  using-superpowers:
+    source: obra
+    ref: main
+    tier: 3
+    category: workflow
+  writing-skills:
+    source: obra
+    ref: main
+    tier: 3
+    category: devtools
+
+  # ── Local: Platxa skills (never synced) ────
+  code-documenter:
+    local: true
+    tier: 0
+    category: devtools
+  commit-message:
+    local: true
+    tier: 0
+    category: git
+  test-generator:
+    local: true
+    tier: 0
+    category: testing
+  pr-description:
+    local: true
+    tier: 0
+    category: git
+  platxa-frontend-builder:
+    local: true
+    tier: 0
+    category: frontend
+  platxa-sidecar-builder:
+    local: true
+    tier: 0
+    category: backend
+  platxa-error-handling:
+    local: true
+    tier: 0
+    category: backend
+  platxa-jwt-auth:
+    local: true
+    tier: 0
+    category: security
+  platxa-k8s-ops:
+    local: true
+    tier: 0
+    category: infrastructure
+  platxa-k8s-scaling:
+    local: true
+    tier: 0
+    category: infrastructure
+  platxa-logging:
+    local: true
+    tier: 0
+    category: observability
+  platxa-monaco-config:
+    local: true
+    tier: 0
+    category: frontend
+  platxa-monitoring:
+    local: true
+    tier: 0
+    category: observability
+  platxa-secrets-management:
+    local: true
+    tier: 0
+    category: security
+  platxa-testing:
+    local: true
+    tier: 0
+    category: testing
+  platxa-yjs-server:
+    local: true
+    tier: 0
+    category: backend

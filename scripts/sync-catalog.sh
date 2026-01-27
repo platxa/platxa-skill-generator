@@ -92,7 +92,7 @@ PYEOF
 # Clone or update a source repo (sparse checkout of skills/ dir only)
 ensure_source_cache() {
     local source_name="$1"
-    local repo ref skills_path
+    local repo skills_path
     repo=$(parse_manifest source "$source_name" | python3 -c "import sys,json; print(json.load(sys.stdin)['repo'])")
     skills_path=$(parse_manifest source "$source_name" | python3 -c "import sys,json; print(json.load(sys.stdin)['path'])")
 
@@ -110,15 +110,40 @@ ensure_source_cache() {
     fi
 }
 
+# Checkout a specific SHA for a skill (when sha field is present in manifest)
+checkout_skill_sha() {
+    local source_name="$1"
+    local sha="$2"
+    local skills_path="$3"
+    local skill_name="$4"
+    local cache="$CACHE_DIR/$source_name"
+
+    echo -e "  ${BLUE}[SHA pin]${NC} $skill_name → ${sha:0:8}"
+    git -C "$cache" fetch --depth 1 origin "$sha" 2>/dev/null || {
+        echo -e "  ${YELLOW}⚠${NC} Failed to fetch SHA $sha for $skill_name"
+        return 1
+    }
+    git -C "$cache" checkout "$sha" -- "$skills_path/$skill_name" 2>/dev/null || {
+        echo -e "  ${YELLOW}⚠${NC} Failed to checkout $skill_name at SHA $sha"
+        return 1
+    }
+}
+
 # Sync a single skill from cache to catalog
 sync_skill() {
     local skill_name="$1"
-    local skill_info source_name ref skills_path source_dir
+    local skill_info source_name ref sha skills_path source_dir
 
     skill_info=$(parse_manifest skill "$skill_name")
     source_name=$(echo "$skill_info" | python3 -c "import sys,json; print(json.load(sys.stdin)['source'])")
     ref=$(echo "$skill_info" | python3 -c "import sys,json; print(json.load(sys.stdin).get('ref','main'))")
+    sha=$(echo "$skill_info" | python3 -c "import sys,json; print(json.load(sys.stdin).get('sha',''))")
     skills_path=$(parse_manifest source "$source_name" | python3 -c "import sys,json; print(json.load(sys.stdin)['path'])")
+
+    # If SHA is pinned, fetch and checkout that specific commit
+    if [[ -n "$sha" ]]; then
+        checkout_skill_sha "$source_name" "$sha" "$skills_path" "$skill_name" || return 1
+    fi
 
     source_dir="$CACHE_DIR/$source_name/$skills_path/$skill_name"
     local target_dir="$CATALOG_DIR/$skill_name"
