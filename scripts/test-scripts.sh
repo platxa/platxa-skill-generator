@@ -117,9 +117,9 @@ if [[ ! -d "$SCRIPTS_DIR" ]]; then
 fi
 
 # Find all scripts
-SCRIPTS=$(find "$SCRIPTS_DIR" \( -name "*.sh" -o -name "*.py" \) -type f 2>/dev/null || echo "")
+SCRIPT_COUNT=$(find "$SCRIPTS_DIR" \( -name "*.sh" -o -name "*.py" \) -type f 2>/dev/null | wc -l)
 
-if [[ -z "$SCRIPTS" ]]; then
+if [[ "$SCRIPT_COUNT" -eq 0 ]]; then
     if $JSON_OUTPUT; then
         echo '{"passed": true, "message": "No scripts found", "tests_run": 0}'
     else
@@ -127,8 +127,6 @@ if [[ -z "$SCRIPTS" ]]; then
     fi
     exit 0
 fi
-
-SCRIPT_COUNT=$(echo "$SCRIPTS" | wc -l)
 if ! $JSON_OUTPUT; then
     echo "Found $SCRIPT_COUNT script(s)"
     echo ""
@@ -369,7 +367,7 @@ test_in_sandbox() {
 #######################################
 # Main test loop
 #######################################
-for script in $SCRIPTS; do
+while IFS= read -r -d '' script; do
     if [[ "$script" == *.sh ]]; then
         test_bash_script "$script"
     elif [[ "$script" == *.py ]]; then
@@ -379,7 +377,7 @@ for script in $SCRIPTS; do
     if $SANDBOX; then
         test_in_sandbox "$script"
     fi
-done
+done < <(find "$SCRIPTS_DIR" \( -name "*.sh" -o -name "*.py" \) -type f -print0 2>/dev/null)
 
 #######################################
 # Output results

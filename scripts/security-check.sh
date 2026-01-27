@@ -60,14 +60,13 @@ if [[ ! -d "$SCRIPTS_DIR" ]]; then
     exit 0
 fi
 
-SCRIPTS=$(find "$SCRIPTS_DIR" \( -name "*.sh" -o -name "*.py" \) -type f 2>/dev/null || echo "")
+SCRIPT_COUNT=$(find "$SCRIPTS_DIR" \( -name "*.sh" -o -name "*.py" \) -type f 2>/dev/null | wc -l)
 
-if [[ -z "$SCRIPTS" ]]; then
+if [[ "$SCRIPT_COUNT" -eq 0 ]]; then
     info "No scripts found"
     exit 0
 fi
 
-SCRIPT_COUNT=$(echo "$SCRIPTS" | wc -l)
 echo "Scanning $SCRIPT_COUNT script(s)..."
 echo ""
 
@@ -125,8 +124,8 @@ CREDENTIAL_PATTERNS=(
     'OPENAI_API_KEY'
 )
 
-# Check each script
-for script in $SCRIPTS; do
+# Check each script (find -print0 + while read avoids word-splitting on spaces)
+while IFS= read -r -d '' script; do
     script_name=$(basename "$script")
     echo "Checking: $script_name"
 
@@ -194,7 +193,7 @@ for script in $SCRIPTS; do
         warn "$script_name: World-writable permissions being set"
     fi
 
-done
+done < <(find "$SCRIPTS_DIR" \( -name "*.sh" -o -name "*.py" \) -type f -print0 2>/dev/null)
 
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
