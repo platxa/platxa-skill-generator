@@ -171,10 +171,10 @@ jobs:
           for skill_dir in catalog/*/; do
             skill=$(basename "$skill_dir")
 
-            # Check SKILL.md exists
+            # Skip non-skill directories (e.g. overrides/)
             if [ ! -f "${skill_dir}SKILL.md" ]; then
-              echo "✗ $skill: Missing SKILL.md"
-              exit 1
+              echo "⊘ $skill: Skipped (not a skill directory)"
+              continue
             fi
 
             # Check SKILL.md has frontmatter
