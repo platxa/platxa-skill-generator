@@ -139,12 +139,10 @@ d = json.loads(sys.stdin.read())
 print(d.get('skill_md_tokens', 0))
 print(d.get('skill_md_lines', 0))
 print(d.get('ref_total_tokens', 0))
-print(d.get('exit_code', 0))
 " <<< "$TOKEN_JSON")
         MD_TOKENS="${TOKEN_VALS[0]}"
         LINE_COUNT="${TOKEN_VALS[1]}"
         REF_TOKENS="${TOKEN_VALS[2]}"
-        TOKEN_EXIT="${TOKEN_VALS[3]}"
 
         # SKILL.md lines
         if [[ $LINE_COUNT -gt 1000 ]]; then
