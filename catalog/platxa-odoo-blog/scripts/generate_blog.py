@@ -18,7 +18,6 @@ import sys
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Literal
-from xml.sax.saxutils import escape as xml_escape
 
 
 # ============================================================================
