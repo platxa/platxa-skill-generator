@@ -40,6 +40,7 @@ usage() {
 VERBOSE=false
 JSON_OUTPUT=false
 SKILL_DIR=""
+PROFILE=""
 
 while [[ $# -gt 0 ]]; do
     case $1 in
@@ -52,6 +53,10 @@ while [[ $# -gt 0 ]]; do
             ;;
         --json)
             JSON_OUTPUT=true
+            shift
+            ;;
+        --profile=*)
+            PROFILE="$1"
             shift
             ;;
         *)
@@ -156,7 +161,7 @@ fi
 
 # 4. Main skill validation (if exists)
 if [[ -x "$SCRIPT_DIR/validate-skill.sh" ]]; then
-    run_validator "Skill" "$SCRIPT_DIR/validate-skill.sh '$SKILL_DIR'" || OVERALL_PASS=false
+    run_validator "Skill" "$SCRIPT_DIR/validate-skill.sh '$SKILL_DIR' $PROFILE" || OVERALL_PASS=false
 else
     RESULTS["Skill"]="SKIP"
 fi
