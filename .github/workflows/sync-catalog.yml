@@ -1,0 +1,58 @@
+name: Sync Catalog from Upstream
+
+on:
+  schedule:
+    # Weekly on Monday at 06:00 UTC
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install PyYAML
+        run: pip install pyyaml
+
+      - name: Run sync-catalog.sh
+        run: ./scripts/sync-catalog.sh sync
+
+      - name: Check for changes
+        id: diff
+        run: |
+          if git diff --quiet && git diff --cached --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "## Sync Summary" >> "$GITHUB_STEP_SUMMARY"
+            echo '```' >> "$GITHUB_STEP_SUMMARY"
+            git diff --stat >> "$GITHUB_STEP_SUMMARY"
+            echo '```' >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Create Pull Request
+        if: steps.diff.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: chore/sync-catalog
+          commit-message: 'chore: sync catalog from upstream'
+          title: 'chore: sync catalog from upstream'
+          body: |
+            Automated weekly sync of external skills from upstream repos.
+
+            **Sources:** anthropic, vercel, obra
+
+            Review the diff below for changes.
+          labels: catalog, automated
+          delete-branch: true
