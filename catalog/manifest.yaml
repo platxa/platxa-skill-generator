@@ -257,6 +257,7 @@ skills:
     local: true
     tier: 0
     category: infrastructure
+    compatibility: "Requires kubectl, helm"
   platxa-k8s-scaling:
     local: true
     tier: 0

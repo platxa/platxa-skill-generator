@@ -40,6 +40,7 @@ VALIDATE=true
 FORCE=false
 FILTER_TIER=""
 FILTER_CATEGORY=""
+CHECK_REQUIRES=false
 
 # Parse arguments
 SKILL_NAME=""
@@ -64,6 +65,7 @@ Options:
   --no-validate Skip validation before install
   --tier N      Only install skills with tier <= N (requires manifest.yaml)
   --category X  Only install skills matching category X (requires manifest.yaml)
+  --requires    Check compatibility requirements before installing
 
 Examples:
   $(basename "$0") code-documenter              # Install to user skills
@@ -240,6 +242,72 @@ sys.exit(0)
 PYEOF
 }
 
+# Check if a skill's compatibility requirements are met.
+# Parses "Requires X, Y" from manifest compatibility field or SKILL.md frontmatter.
+# Returns 0 if all tools found, 1 if any missing.
+check_compatibility() {
+    local skill_name="$1"
+    local manifest="$CATALOG_DIR/manifest.yaml"
+    local skill_md="$CATALOG_DIR/$skill_name/SKILL.md"
+
+    # Extract compatibility string from manifest or frontmatter
+    local compat
+    compat=$(python3 - "$manifest" "$skill_name" "$skill_md" << 'PYEOF'
+import sys, yaml, os, re
+
+manifest_path, skill_name, skill_md_path = sys.argv[1:4]
+
+# Try manifest first
+compat = ""
+if os.path.exists(manifest_path):
+    with open(manifest_path) as f:
+        m = yaml.safe_load(f) or {}
+    skill = m.get("skills", {}).get(skill_name, {})
+    compat = skill.get("compatibility", "")
+
+# Fall back to SKILL.md frontmatter
+if not compat and os.path.exists(skill_md_path):
+    with open(skill_md_path) as f:
+        content = f.read()
+    # Parse YAML frontmatter between --- delimiters
+    fm_match = re.match(r'^---\n(.*?)\n---', content, re.DOTALL)
+    if fm_match:
+        try:
+            fm = yaml.safe_load(fm_match.group(1)) or {}
+            compat = fm.get("compatibility", "")
+        except yaml.YAMLError:
+            pass
+
+print(compat)
+PYEOF
+    )
+
+    if [[ -z "$compat" ]]; then
+        return 0  # No requirements specified
+    fi
+
+    # Parse "Requires X, Y, Z" pattern
+    local tools_str="${compat#Requires }"
+    tools_str="${tools_str#requires }"
+
+    local missing=()
+    IFS=',' read -ra tools <<< "$tools_str"
+    for tool in "${tools[@]}"; do
+        tool=$(echo "$tool" | xargs)  # trim whitespace
+        [[ -z "$tool" ]] && continue
+        if ! command -v "$tool" &>/dev/null; then
+            missing+=("$tool")
+        fi
+    done
+
+    if [[ ${#missing[@]} -gt 0 ]]; then
+        echo -e "  ${YELLOW}⚠${NC} $skill_name: missing required tools: ${missing[*]}"
+        return 1
+    fi
+
+    return 0
+}
+
 install_all() {
     local count=0
     local failed=0
@@ -252,6 +320,9 @@ install_all() {
         if [[ -f "${skill_dir}SKILL.md" ]]; then
             skill_name=$(basename "$skill_dir")
             if ! skill_passes_filter "$skill_name"; then
+                continue
+            fi
+            if [[ "$CHECK_REQUIRES" == true ]] && ! check_compatibility "$skill_name"; then
                 continue
             fi
             if install_skill "$skill_name"; then
@@ -305,6 +376,10 @@ while [[ $# -gt 0 ]]; do
             FILTER_CATEGORY="$2"
             shift 2
             ;;
+        --requires)
+            CHECK_REQUIRES=true
+            shift
+            ;;
         --help|-h)
             usage
             exit 0
@@ -327,6 +402,10 @@ if [[ "$LIST_SKILLS" == true ]]; then
 elif [[ "$INSTALL_ALL" == true ]]; then
     install_all
 elif [[ -n "$SKILL_NAME" ]]; then
+    if [[ "$CHECK_REQUIRES" == true ]] && ! check_compatibility "$SKILL_NAME"; then
+        echo -e "${YELLOW}Skipped${NC} '$SKILL_NAME' due to missing requirements. Use without --requires to install anyway."
+        exit 1
+    fi
     install_skill "$SKILL_NAME"
 else
     usage
