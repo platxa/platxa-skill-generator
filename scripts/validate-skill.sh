@@ -82,7 +82,7 @@ else
     fi
 
     # Check hyphen-case
-    if [[ ! "$NAME" =~ ^[a-z][a-z0-9-]*$ ]]; then
+    if [[ ! "$NAME" =~ ^[a-z][a-z0-9-]*[a-z0-9]$ ]]; then
         error "Name must be hyphen-case (lowercase, hyphens, start with letter)"
     else
         ok "Name is hyphen-case: $NAME"
