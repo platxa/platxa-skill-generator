@@ -30,7 +30,7 @@ MANIFEST="$CATALOG_DIR/manifest.yaml"
 OVERRIDES_DIR="$CATALOG_DIR/overrides"
 CACHE_DIR="/tmp/skill-sync-cache"
 LOCK_FILE="/tmp/skill-sync.lock"
-SYNC_STATE="$CATALOG_DIR/sync-state.yaml"
+SYNC_STATE="$CATALOG_DIR/.sync-state.json"
 
 # ── Helpers ──────────────────────────────────────────────────────
 
@@ -181,15 +181,17 @@ record_sync_state() {
     timestamp=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 
     python3 - "$SYNC_STATE" "$skill_name" "$source_name" "$resolved_sha" "$timestamp" << 'PYEOF'
-import sys, yaml, os
+import sys, json, os
 
 state_path, skill, source, sha, ts = sys.argv[1:6]
 
 state = {}
 if os.path.exists(state_path):
     with open(state_path) as f:
-        state = yaml.safe_load(f) or {}
+        state = json.load(f)
 
+state.setdefault("last_synced", ts)
+state["last_synced"] = ts
 skills = state.setdefault("skills", {})
 skills[skill] = {
     "source": source,
@@ -198,7 +200,8 @@ skills[skill] = {
 }
 
 with open(state_path, "w") as f:
-    yaml.dump(state, f, default_flow_style=False, sort_keys=True)
+    json.dump(state, f, indent=2, sort_keys=True)
+    f.write("\n")
 PYEOF
 }
 
@@ -446,10 +449,14 @@ cmd_status() {
     fi
 
     python3 - "$SYNC_STATE" << 'PYEOF'
-import sys, yaml
+import sys, json
 
 with open(sys.argv[1]) as f:
-    state = yaml.safe_load(f) or {}
+    state = json.load(f)
+
+last = state.get("last_synced", "?")
+print(f"  Last synced: {last}")
+print()
 
 skills = state.get("skills", {})
 if not skills:
@@ -515,7 +522,24 @@ for k in sorted(json.load(sys.stdin).keys()):
         if [[ ! -d "$local_dir" ]]; then
             echo -e "  ${YELLOW}NEW${NC}  $name (not yet synced)"
         elif [[ ! -d "$upstream" ]]; then
-            echo -e "  ${RED}MISS${NC} $name (upstream not cached; run sync first)"
+            # Fall back to sync state if cache is missing
+            if [[ -f "$SYNC_STATE" ]]; then
+                local state_sha
+                state_sha=$(python3 -c "
+import json, sys
+with open('$SYNC_STATE') as f:
+    s = json.load(f)
+sk = s.get('skills', {}).get('$name', {})
+print(sk.get('sha', ''), sk.get('synced_at', ''))
+")
+                if [[ -n "$state_sha" ]]; then
+                    echo -e "  ${BLUE}SYNC${NC} $name (last: ${state_sha})"
+                else
+                    echo -e "  ${YELLOW}NEW${NC}  $name (not yet synced, no cache)"
+                fi
+            else
+                echo -e "  ${RED}MISS${NC} $name (no cache, no sync state; run sync first)"
+            fi
         else
             local changes
             changes=$(diff -rq "$upstream" "$local_dir" 2>/dev/null | head -5 || true)

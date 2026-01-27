@@ -90,6 +90,7 @@ Thumbs.db
 
 # Project specific
 .claude/
+catalog/.sync-state.json
 CLAUDE.md
 references/.claude/
 **/__pycache__/
