@@ -71,11 +71,6 @@ skills:
     ref: main
     tier: 1
     category: frontend
-  composition-patterns:
-    source: vercel
-    ref: main
-    tier: 2
-    category: frontend
   web-design-guidelines:
     source: vercel
     ref: main
