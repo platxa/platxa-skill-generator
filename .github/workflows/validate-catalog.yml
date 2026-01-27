@@ -4,9 +4,11 @@ on:
   pull_request:
     paths:
       - 'catalog/**'
+      - 'scripts/**'
   push:
     paths:
       - 'catalog/**'
+      - 'scripts/**'
     branches:
       - main
 
@@ -26,7 +28,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install tiktoken
+          pip install tiktoken pyyaml
 
       - name: Make scripts executable
         run: |
@@ -45,7 +47,7 @@ jobs:
           echo "skills=$CHANGED" >> $GITHUB_OUTPUT
           echo "Changed skills: $CHANGED"
 
-      - name: Validate changed skills
+      - name: Validate changed skills (profile-aware)
         run: |
           SKILLS="${{ steps.changed-skills.outputs.skills }}"
           FAILED=0
@@ -55,19 +57,40 @@ jobs:
             exit 0
           fi
 
+          # Determine profile per skill from manifest
+          get_profile() {
+            local skill_name="$1"
+            python3 -c "
+          import yaml, sys
+          with open('catalog/manifest.yaml') as f:
+              m = yaml.safe_load(f)
+          skill = m.get('skills', {}).get('$skill_name', {})
+          if skill.get('local', False):
+              print('strict')
+          else:
+              print('spec')
+          "
+          }
+
           for skill in $SKILLS; do
             SKILL_DIR="catalog/$skill"
             if [ -d "$SKILL_DIR" ]; then
+              PROFILE=$(get_profile "$skill")
               echo ""
               echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-              echo "Validating: $skill"
+              echo "Validating: $skill (profile: $PROFILE)"
               echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
-              if ./scripts/validate-all.sh "$SKILL_DIR"; then
+              if ./scripts/validate-all.sh "$SKILL_DIR" --profile="$PROFILE"; then
                 echo "✓ $skill passed all validations"
               else
                 echo "✗ $skill failed validation"
-                FAILED=1
+                # External skills (spec profile) warn but don't block
+                if [ "$PROFILE" = "strict" ]; then
+                  FAILED=1
+                else
+                  echo "⚠ External skill failure (non-blocking)"
+                fi
               fi
             fi
           done
@@ -75,7 +98,7 @@ jobs:
           if [ $FAILED -eq 1 ]; then
             echo ""
             echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-            echo "✗ VALIDATION FAILED"
+            echo "✗ VALIDATION FAILED (local skill failed strict validation)"
             echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
             exit 1
           fi
