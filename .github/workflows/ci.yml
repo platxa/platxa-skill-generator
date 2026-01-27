@@ -49,7 +49,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install tiktoken
+          pip install tiktoken pyyaml
 
       - name: Make scripts executable
         run: |
