@@ -170,12 +170,23 @@ fi
 SCRIPTS_DIR="$SKILL_DIR/scripts"
 if [[ -d "$SCRIPTS_DIR" ]]; then
     # Check bash scripts with shellcheck
-    # Note: tr converts newlines to spaces to prevent newlines from being interpreted as command separators
+    # Pipe via stdin to avoid filesystem access issues (e.g., snap confinement
+    # prevents shellcheck from opening files in /tmp directly)
     # -S warning: Only fail on warnings and errors, not style suggestions
+    run_shellcheck_stdin() {
+        local rc=0
+        while IFS= read -r -d '' script; do
+            if ! shellcheck -S warning -s bash - < "$script" 2>&1; then
+                rc=1
+            fi
+        done < <(find "$1" -name "*.sh" -type f -print0 2>/dev/null)
+        return $rc
+    }
+
     if command -v shellcheck &>/dev/null; then
-        SHELL_SCRIPTS=$(find "$SCRIPTS_DIR" -name "*.sh" -type f 2>/dev/null | tr '\n' ' ')
-        if [[ -n "${SHELL_SCRIPTS// /}" ]]; then
-            run_validator "Shellcheck" "shellcheck -S warning -s bash $SHELL_SCRIPTS" || OVERALL_PASS=false
+        SHELL_SCRIPT_COUNT=$(find "$SCRIPTS_DIR" -name "*.sh" -type f 2>/dev/null | wc -l)
+        if [[ "$SHELL_SCRIPT_COUNT" -gt 0 ]]; then
+            run_validator "Shellcheck" "run_shellcheck_stdin '$SCRIPTS_DIR'" || OVERALL_PASS=false
         fi
     fi
 

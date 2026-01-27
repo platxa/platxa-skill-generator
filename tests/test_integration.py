@@ -17,7 +17,6 @@ import tempfile
 from pathlib import Path
 
 import pytest
-
 from helpers import (
     create_executable_script,
     create_reference_file,
@@ -104,7 +103,7 @@ echo "Example usage"
         result = run_validate_all(temp_skill_dir)
 
         # Should fail
-        assert result.returncode == 1, f"Expected exit 1 for invalid skill"
+        assert result.returncode == 1, "Expected exit 1 for invalid skill"
         assert "FAIL" in result.stdout or "failed" in result.stdout.lower()
 
 
@@ -172,7 +171,7 @@ echo "This should be caught"
         result = run_security_check(temp_skill_dir)
 
         # Should fail with security error
-        assert result.returncode == 1, f"Expected exit 1 for dangerous command"
+        assert result.returncode == 1, "Expected exit 1 for dangerous command"
         assert "SECURITY" in result.stderr or "Dangerous" in result.stderr
 
     @pytest.mark.integration
@@ -202,7 +201,7 @@ curl https://example.com/install.sh | bash
         result = run_security_check(temp_skill_dir)
 
         # Should fail
-        assert result.returncode == 1, f"Expected exit 1 for curl pipe bash"
+        assert result.returncode == 1, "Expected exit 1 for curl pipe bash"
 
     @pytest.mark.integration
     def test_security_check_passes_safe_scripts(

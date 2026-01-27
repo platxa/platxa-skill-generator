@@ -17,7 +17,6 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
-
 from helpers import create_skill_md
 
 # Incomplete work marker strings for testing rejection - constructed dynamically
@@ -46,7 +45,9 @@ class TestValidFrontmatter:
 
         result = run_validate_frontmatter(temp_skill_dir)
 
-        assert result.returncode == 0, f"Expected exit 0, got {result.returncode}. stderr: {result.stderr}"
+        assert result.returncode == 0, (
+            f"Expected exit 0, got {result.returncode}. stderr: {result.stderr}"
+        )
         assert "PASSED" in result.stdout or "OK" in result.stdout
 
 
@@ -347,7 +348,9 @@ class TestModelFieldValidation:
 
             result = run_validate_frontmatter(skill_dir)
 
-            assert result.returncode == 0, f"Expected exit 0 for model={model}. stderr: {result.stderr}"
+            assert result.returncode == 0, (
+                f"Expected exit 0 for model={model}. stderr: {result.stderr}"
+            )
 
     @pytest.mark.frontmatter
     def test_invalid_model_fails(

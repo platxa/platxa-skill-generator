@@ -19,7 +19,6 @@ import json
 from pathlib import Path
 
 import pytest
-
 from helpers import (
     create_reference_file,
     create_skill_md,
@@ -67,9 +66,9 @@ class TestSkillMdLimits:
         temp_skill_dir: Path,
         run_count_tokens,
     ) -> None:
-        """Feature #32: SKILL.md exceeding 5000 token limit fails."""
-        # Generate content that exceeds 5000 tokens (~6500 words)
-        long_content = generate_long_text(6000)
+        """Feature #32: SKILL.md exceeding hard token limit (10000) fails."""
+        # Generate content that exceeds hard limit of 10000 tokens
+        long_content = generate_long_text(11000)
 
         create_skill_md(
             temp_skill_dir,
@@ -80,11 +79,11 @@ class TestSkillMdLimits:
 
         result = run_count_tokens(temp_skill_dir, json_output=True)
 
-        assert result.returncode == 1, f"Expected exit 1 for token limit exceeded"
+        assert result.returncode == 1, "Expected exit 1 for token limit exceeded"
 
         data = json.loads(result.stdout)
         assert data["passed"] is False
-        assert data["skill_md_tokens"] > 5000
+        assert data["skill_md_tokens"] > 10000
         assert any("exceeds" in w.lower() or "limit" in w.lower() for w in data["warnings"])
 
     @pytest.mark.tokens
@@ -93,9 +92,9 @@ class TestSkillMdLimits:
         temp_skill_dir: Path,
         run_count_tokens,
     ) -> None:
-        """Feature #33: SKILL.md exceeding 500 line limit fails."""
-        # Generate content with > 500 lines
-        long_content = generate_long_lines(510)
+        """Feature #33: SKILL.md exceeding hard line limit (1000) fails."""
+        # Generate content with > 1000 lines (hard limit)
+        long_content = generate_long_lines(1010)
 
         create_skill_md(
             temp_skill_dir,
@@ -106,11 +105,11 @@ class TestSkillMdLimits:
 
         result = run_count_tokens(temp_skill_dir, json_output=True)
 
-        assert result.returncode == 1, f"Expected exit 1 for line limit exceeded"
+        assert result.returncode == 1, "Expected exit 1 for line limit exceeded"
 
         data = json.loads(result.stdout)
         assert data["passed"] is False
-        assert data["skill_md_lines"] > 500
+        assert data["skill_md_lines"] > 1000
 
 
 class TestReferenceLimits:
@@ -123,7 +122,7 @@ class TestReferenceLimits:
         temp_skill_dir: Path,
         run_count_tokens,
     ) -> None:
-        """Feature #34: Single reference file exceeding 2000 token limit fails."""
+        """Feature #34: Single reference file exceeding hard limit (4000 tokens) fails."""
         create_skill_md(
             temp_skill_dir,
             name="big-ref-skill",
@@ -133,18 +132,20 @@ class TestReferenceLimits:
         refs_dir = temp_skill_dir / "references"
         refs_dir.mkdir()
 
-        # Create reference > 2000 tokens (~2600 words)
-        long_ref_content = generate_long_text(2500)
-        create_reference_file(refs_dir, "large-ref.md", f"# Large Reference\n\n{long_ref_content}\n")
+        # Create reference > 4000 tokens (hard limit)
+        long_ref_content = generate_long_text(4500)
+        create_reference_file(
+            refs_dir, "large-ref.md", f"# Large Reference\n\n{long_ref_content}\n"
+        )
 
         result = run_count_tokens(temp_skill_dir, json_output=True)
 
-        assert result.returncode == 1, f"Expected exit 1 for single ref limit exceeded"
+        assert result.returncode == 1, "Expected exit 1 for single ref limit exceeded"
 
         data = json.loads(result.stdout)
         assert data["passed"] is False
-        # Check that at least one ref file exceeds limit
-        over_limit = [f for f in data["ref_files"] if f["tokens"] > 2000]
+        # Check that at least one ref file exceeds hard limit
+        over_limit = [f for f in data["ref_files"] if f["tokens"] > 4000]
         assert len(over_limit) > 0
 
     @pytest.mark.tokens
@@ -154,7 +155,7 @@ class TestReferenceLimits:
         temp_skill_dir: Path,
         run_count_tokens,
     ) -> None:
-        """Feature #35: Total references exceeding 10000 token limit fails."""
+        """Feature #35: Total references exceeding hard limit (20000 tokens) fails."""
         create_skill_md(
             temp_skill_dir,
             name="many-refs-skill",
@@ -164,18 +165,18 @@ class TestReferenceLimits:
         refs_dir = temp_skill_dir / "references"
         refs_dir.mkdir()
 
-        # Create 6 reference files, each ~1800 tokens (total > 10000)
+        # Create 6 reference files, each ~3500 tokens (total > 20000 hard limit)
         for i in range(6):
-            ref_content = generate_long_text(1800)
+            ref_content = generate_long_text(3500)
             create_reference_file(refs_dir, f"ref-{i}.md", f"# Reference {i}\n\n{ref_content}\n")
 
         result = run_count_tokens(temp_skill_dir, json_output=True)
 
-        assert result.returncode == 1, f"Expected exit 1 for total refs limit exceeded"
+        assert result.returncode == 1, "Expected exit 1 for total refs limit exceeded"
 
         data = json.loads(result.stdout)
         assert data["passed"] is False
-        assert data["ref_total_tokens"] > 10000
+        assert data["ref_total_tokens"] > 20000
 
 
 class TestTotalSkillLimit:
@@ -188,9 +189,9 @@ class TestTotalSkillLimit:
         temp_skill_dir: Path,
         run_count_tokens,
     ) -> None:
-        """Feature #36: Total skill exceeding 15000 token limit fails."""
-        # Create SKILL.md with ~4000 tokens
-        skill_content = generate_long_text(4000)
+        """Feature #36: Total skill exceeding hard limit (30000 tokens) fails."""
+        # Create SKILL.md with ~9000 tokens
+        skill_content = generate_long_text(9000)
         create_skill_md(
             temp_skill_dir,
             name="huge-skill",
@@ -201,18 +202,18 @@ class TestTotalSkillLimit:
         refs_dir = temp_skill_dir / "references"
         refs_dir.mkdir()
 
-        # Create references totaling ~12000 tokens (total > 15000)
-        for i in range(7):
-            ref_content = generate_long_text(1800)
+        # Create references totaling ~24000 tokens (total > 30000 hard limit)
+        for i in range(8):
+            ref_content = generate_long_text(3000)
             create_reference_file(refs_dir, f"ref-{i}.md", f"# Reference {i}\n\n{ref_content}\n")
 
         result = run_count_tokens(temp_skill_dir, json_output=True)
 
-        assert result.returncode == 1, f"Expected exit 1 for total skill limit exceeded"
+        assert result.returncode == 1, "Expected exit 1 for total skill limit exceeded"
 
         data = json.loads(result.stdout)
         assert data["passed"] is False
-        assert data["total_tokens"] > 15000
+        assert data["total_tokens"] > 30000
 
 
 class TestJsonOutput:
@@ -278,7 +279,7 @@ class TestMissingSkillMd:
         result = run_count_tokens(temp_skill_dir, json_output=True)
 
         # Should fail but not crash
-        assert result.returncode == 1, f"Expected exit 1 for missing SKILL.md"
+        assert result.returncode == 1, "Expected exit 1 for missing SKILL.md"
 
         data = json.loads(result.stdout)
         assert data["passed"] is False

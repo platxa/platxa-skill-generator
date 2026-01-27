@@ -20,6 +20,7 @@ from typing import TypedDict
 # Try to import tiktoken for accurate counting
 try:
     import tiktoken  # type: ignore[import-untyped]
+
     TIKTOKEN_AVAILABLE = True
 except ImportError:
     tiktoken = None  # type: ignore[assignment]
@@ -28,6 +29,7 @@ except ImportError:
 
 class FileTokens(TypedDict):
     """Token count for a single file."""
+
     path: str
     tokens: int
     lines: int
@@ -36,6 +38,7 @@ class FileTokens(TypedDict):
 
 class TokenReport(TypedDict):
     """Complete token count report."""
+
     skill_name: str
     skill_md_tokens: int
     skill_md_lines: int
@@ -50,20 +53,20 @@ class TokenReport(TypedDict):
 
 # Recommended budget limits (warnings if exceeded)
 DEFAULT_LIMITS = {
-    'skill_md_tokens': 5000,
-    'skill_md_lines': 500,
-    'single_ref_tokens': 2000,
-    'total_ref_tokens': 10000,
-    'total_skill_tokens': 15000,
+    "skill_md_tokens": 5000,
+    "skill_md_lines": 500,
+    "single_ref_tokens": 2000,
+    "total_ref_tokens": 10000,
+    "total_skill_tokens": 15000,
 }
 
 # Hard budget limits (fail if exceeded)
 HARD_LIMITS = {
-    'skill_md_tokens': 10000,
-    'skill_md_lines': 1000,
-    'single_ref_tokens': 4000,
-    'total_ref_tokens': 20000,
-    'total_skill_tokens': 30000,
+    "skill_md_tokens": 10000,
+    "skill_md_lines": 1000,
+    "single_ref_tokens": 4000,
+    "total_ref_tokens": 20000,
+    "total_skill_tokens": 30000,
 }
 
 
@@ -78,7 +81,7 @@ def load_skill_config(skill_dir: Path) -> dict:
         Dict with 'skip_validation' bool and 'limits' dict
     """
     config_path = skill_dir / ".skillconfig"
-    result = {'skip_validation': False, 'limits': DEFAULT_LIMITS.copy()}
+    result = {"skip_validation": False, "limits": DEFAULT_LIMITS.copy()}
 
     if not config_path.exists():
         return result
@@ -87,12 +90,12 @@ def load_skill_config(skill_dir: Path) -> dict:
         config = json.loads(config_path.read_text())
 
         # Check for skip flag
-        if config.get('skip_token_validation', False):
-            result['skip_validation'] = True
+        if config.get("skip_token_validation", False):
+            result["skip_validation"] = True
 
         # Merge custom limits
-        if 'limits' in config:
-            result['limits'].update(config['limits'])
+        if "limits" in config:
+            result["limits"].update(config["limits"])
 
         return result
     except (json.JSONDecodeError, OSError):
@@ -123,7 +126,7 @@ def count_tokens(text: str) -> tuple[int, str]:
 
 def count_lines(text: str) -> int:
     """Count lines in text."""
-    return len(text.split('\n'))
+    return len(text.split("\n"))
 
 
 def analyze_skill(skill_dir: Path, warn_threshold: int = 80) -> TokenReport:
@@ -142,8 +145,8 @@ def analyze_skill(skill_dir: Path, warn_threshold: int = 80) -> TokenReport:
 
     # Load custom config if present
     config = load_skill_config(skill_dir)
-    limits = config['limits']
-    custom_limits = config['limits'] != DEFAULT_LIMITS or config['skip_validation']
+    limits = config["limits"]
+    custom_limits = config["limits"] != DEFAULT_LIMITS or config["skip_validation"]
 
     # Check SKILL.md
     skill_md = skill_dir / "SKILL.md"
@@ -158,7 +161,7 @@ def analyze_skill(skill_dir: Path, warn_threshold: int = 80) -> TokenReport:
             method="none",
             warnings=["SKILL.md not found"],
             passed=False,
-            custom_limits=False
+            custom_limits=False,
         )
 
     skill_content = skill_md.read_text()
@@ -166,7 +169,7 @@ def analyze_skill(skill_dir: Path, warn_threshold: int = 80) -> TokenReport:
     skill_md_lines = count_lines(skill_content)
 
     # Skip validation if configured
-    if config['skip_validation']:
+    if config["skip_validation"]:
         # Still count but don't enforce limits
         ref_files: list[FileTokens] = []
         ref_total_tokens = 0
@@ -177,9 +180,9 @@ def analyze_skill(skill_dir: Path, warn_threshold: int = 80) -> TokenReport:
                 tokens, _ = count_tokens(content)
                 lines = count_lines(content)
                 rel_path = str(ref_file.relative_to(skill_dir))
-                ref_files.append(FileTokens(
-                    path=rel_path, tokens=tokens, lines=lines, method=method
-                ))
+                ref_files.append(
+                    FileTokens(path=rel_path, tokens=tokens, lines=lines, method=method)
+                )
                 ref_total_tokens += tokens
 
         return TokenReport(
@@ -192,24 +195,24 @@ def analyze_skill(skill_dir: Path, warn_threshold: int = 80) -> TokenReport:
             method=method,
             warnings=["Token validation skipped (.skillconfig)"],
             passed=True,
-            custom_limits=True
+            custom_limits=True,
         )
 
     # Check SKILL.md limits
-    if skill_md_tokens > limits['skill_md_tokens']:
+    if skill_md_tokens > limits["skill_md_tokens"]:
         warnings.append(
             f"SKILL.md exceeds token limit: {skill_md_tokens} > {limits['skill_md_tokens']}"
         )
-    elif skill_md_tokens > limits['skill_md_tokens'] * warn_threshold / 100:
+    elif skill_md_tokens > limits["skill_md_tokens"] * warn_threshold / 100:
         warnings.append(
             f"SKILL.md approaching token limit: {skill_md_tokens} ({warn_threshold}% of {limits['skill_md_tokens']})"
         )
 
-    if skill_md_lines > limits['skill_md_lines']:
+    if skill_md_lines > limits["skill_md_lines"]:
         warnings.append(
             f"SKILL.md exceeds line limit: {skill_md_lines} > {limits['skill_md_lines']}"
         )
-    elif skill_md_lines > limits['skill_md_lines'] * warn_threshold / 100:
+    elif skill_md_lines > limits["skill_md_lines"] * warn_threshold / 100:
         warnings.append(
             f"SKILL.md approaching line limit: {skill_md_lines} ({warn_threshold}% of {limits['skill_md_lines']})"
         )
@@ -226,30 +229,25 @@ def analyze_skill(skill_dir: Path, warn_threshold: int = 80) -> TokenReport:
             lines = count_lines(content)
 
             rel_path = str(ref_file.relative_to(skill_dir))
-            ref_files.append(FileTokens(
-                path=rel_path,
-                tokens=tokens,
-                lines=lines,
-                method=method
-            ))
+            ref_files.append(FileTokens(path=rel_path, tokens=tokens, lines=lines, method=method))
             ref_total_tokens += tokens
 
             # Check per-file limit
-            if tokens > limits['single_ref_tokens']:
+            if tokens > limits["single_ref_tokens"]:
                 warnings.append(
                     f"{rel_path} exceeds limit: {tokens} > {limits['single_ref_tokens']}"
                 )
-            elif tokens > limits['single_ref_tokens'] * warn_threshold / 100:
+            elif tokens > limits["single_ref_tokens"] * warn_threshold / 100:
                 warnings.append(
                     f"{rel_path} approaching limit: {tokens} ({warn_threshold}% of {limits['single_ref_tokens']})"
                 )
 
     # Check total references
-    if ref_total_tokens > limits['total_ref_tokens']:
+    if ref_total_tokens > limits["total_ref_tokens"]:
         warnings.append(
             f"Total references exceed limit: {ref_total_tokens} > {limits['total_ref_tokens']}"
         )
-    elif ref_total_tokens > limits['total_ref_tokens'] * warn_threshold / 100:
+    elif ref_total_tokens > limits["total_ref_tokens"] * warn_threshold / 100:
         warnings.append(
             f"Total references approaching limit: {ref_total_tokens} ({warn_threshold}% of {limits['total_ref_tokens']})"
         )
@@ -257,11 +255,11 @@ def analyze_skill(skill_dir: Path, warn_threshold: int = 80) -> TokenReport:
     # Total skill tokens
     total_tokens = skill_md_tokens + ref_total_tokens
 
-    if total_tokens > limits['total_skill_tokens']:
+    if total_tokens > limits["total_skill_tokens"]:
         warnings.append(
             f"Total skill exceeds limit: {total_tokens} > {limits['total_skill_tokens']}"
         )
-    elif total_tokens > limits['total_skill_tokens'] * warn_threshold / 100:
+    elif total_tokens > limits["total_skill_tokens"] * warn_threshold / 100:
         warnings.append(
             f"Total skill approaching limit: {total_tokens} ({warn_threshold}% of {limits['total_skill_tokens']})"
         )
@@ -269,11 +267,11 @@ def analyze_skill(skill_dir: Path, warn_threshold: int = 80) -> TokenReport:
     # Determine pass/fail using hard limits (recommended limits only produce warnings)
     hard = HARD_LIMITS
     passed = (
-        skill_md_tokens <= hard['skill_md_tokens'] and
-        skill_md_lines <= hard['skill_md_lines'] and
-        ref_total_tokens <= hard['total_ref_tokens'] and
-        total_tokens <= hard['total_skill_tokens'] and
-        all(f['tokens'] <= hard['single_ref_tokens'] for f in ref_files)
+        skill_md_tokens <= hard["skill_md_tokens"]
+        and skill_md_lines <= hard["skill_md_lines"]
+        and ref_total_tokens <= hard["total_ref_tokens"]
+        and total_tokens <= hard["total_skill_tokens"]
+        and all(f["tokens"] <= hard["single_ref_tokens"] for f in ref_files)
     )
 
     return TokenReport(
@@ -286,14 +284,14 @@ def analyze_skill(skill_dir: Path, warn_threshold: int = 80) -> TokenReport:
         method=method,
         warnings=warnings,
         passed=passed,
-        custom_limits=custom_limits
+        custom_limits=custom_limits,
     )
 
 
 def print_report(report: TokenReport) -> None:
     """Print human-readable token report."""
     print(f"Token Count Report: {report['skill_name']}")
-    if report.get('custom_limits'):
+    if report.get("custom_limits"):
         print("(Using custom limits from .skillconfig)")
     print("━" * 50)
     print()
@@ -305,29 +303,31 @@ def print_report(report: TokenReport) -> None:
     print()
 
     # References
-    if report['ref_files']:
+    if report["ref_files"]:
         print("References:")
-        for f in report['ref_files']:
+        for f in report["ref_files"]:
             print(f"  {f['path']}: {f['tokens']:,} tokens")
         print("  ────────────────────────────")
         print(f"  Total: {report['ref_total_tokens']:,} / {DEFAULT_LIMITS['total_ref_tokens']:,}")
         print()
 
     # Total
-    print(f"Total Skill: {report['total_tokens']:,} / {DEFAULT_LIMITS['total_skill_tokens']:,} tokens")
+    print(
+        f"Total Skill: {report['total_tokens']:,} / {DEFAULT_LIMITS['total_skill_tokens']:,} tokens"
+    )
     print(f"Method: {report['method']}")
     print()
 
     # Warnings
-    if report['warnings']:
+    if report["warnings"]:
         print("Warnings:")
-        for w in report['warnings']:
+        for w in report["warnings"]:
             print(f"  ⚠ {w}")
         print()
 
     # Result
     print("━" * 50)
-    if report['passed']:
+    if report["passed"]:
         print("✓ PASSED - Within token budget")
     else:
         print("✗ FAILED - Exceeds token budget")
@@ -335,24 +335,11 @@ def print_report(report: TokenReport) -> None:
 
 def main() -> int:
     """Main entry point."""
-    parser = argparse.ArgumentParser(
-        description="Count tokens in skill files"
-    )
+    parser = argparse.ArgumentParser(description="Count tokens in skill files")
+    parser.add_argument("skill_dir", type=Path, help="Path to skill directory")
+    parser.add_argument("--json", action="store_true", help="Output as JSON")
     parser.add_argument(
-        "skill_dir",
-        type=Path,
-        help="Path to skill directory"
-    )
-    parser.add_argument(
-        "--json",
-        action="store_true",
-        help="Output as JSON"
-    )
-    parser.add_argument(
-        "--warn-threshold",
-        type=int,
-        default=80,
-        help="Warning threshold percentage (default: 80)"
+        "--warn-threshold", type=int, default=80, help="Warning threshold percentage (default: 80)"
     )
 
     args = parser.parse_args()
@@ -368,7 +355,7 @@ def main() -> int:
     else:
         print_report(report)
 
-    return 0 if report['passed'] else 1
+    return 0 if report["passed"] else 1
 
 
 if __name__ == "__main__":

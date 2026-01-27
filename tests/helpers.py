@@ -216,7 +216,7 @@ def create_complete_skill(
         name=name,
         description=description,
         tools=tools,
-        content=f"""# {name.replace('-', ' ').title()}
+        content=f"""# {name.replace("-", " ").title()}
 
 This is a test skill for validation testing.
 
@@ -280,14 +280,29 @@ def generate_long_text(tokens: int, method: str = "words") -> str:
     """
     try:
         import tiktoken
+
         encoding = tiktoken.get_encoding("cl100k_base")
     except ImportError:
         # Fallback if tiktoken not available - use conservative estimate
         words_needed = tokens  # 1:1 ratio as fallback
         base_words = [
-            "the", "skill", "provides", "functionality", "for", "testing",
-            "validation", "code", "development", "automation", "system",
-            "process", "data", "output", "input", "configuration", "setup",
+            "the",
+            "skill",
+            "provides",
+            "functionality",
+            "for",
+            "testing",
+            "validation",
+            "code",
+            "development",
+            "automation",
+            "system",
+            "process",
+            "data",
+            "output",
+            "input",
+            "configuration",
+            "setup",
         ]
         words = []
         for i in range(words_needed):
