@@ -172,8 +172,18 @@ sync_skill() {
 # ── Subcommands ──────────────────────────────────────────────────
 
 cmd_sync() {
+    local dry_run=false
+    if [[ "${1:-}" == "--dry-run" ]]; then
+        dry_run=true
+    fi
+
     acquire_lock
-    echo -e "${BOLD}Syncing external skills from manifest${NC}"
+
+    if $dry_run; then
+        echo -e "${BOLD}Dry-run: previewing sync (no files will be modified)${NC}"
+    else
+        echo -e "${BOLD}Syncing external skills from manifest${NC}"
+    fi
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
     # Collect unique sources needed
@@ -192,8 +202,12 @@ print('\n'.join(sorted(set(v['source'] for v in ext.values()))))")
     done <<< "$sources_needed"
 
     echo ""
-    echo -e "${BOLD}Syncing skills...${NC}"
-    local added=0 failed=0 total=0
+    if $dry_run; then
+        echo -e "${BOLD}Preview of sync results:${NC}"
+    else
+        echo -e "${BOLD}Syncing skills...${NC}"
+    fi
+    local added=0 failed=0 unchanged=0 total=0
     local skill_names
     skill_names=$(parse_manifest external | python3 -c "
 import sys, json
@@ -203,10 +217,39 @@ for k in sorted(json.load(sys.stdin).keys()):
     while IFS= read -r name; do
         [[ -z "$name" ]] && continue
         total=$((total + 1))
-        if sync_skill "$name"; then
-            added=$((added + 1))
+
+        if $dry_run; then
+            # Determine what would happen without modifying files
+            local skill_info source_name skills_path source_dir target_dir
+            skill_info=$(parse_manifest skill "$name")
+            source_name=$(echo "$skill_info" | python3 -c "import sys,json; print(json.load(sys.stdin)['source'])")
+            skills_path=$(parse_manifest source "$source_name" | python3 -c "import sys,json; print(json.load(sys.stdin)['path'])")
+            source_dir="$CACHE_DIR/$source_name/$skills_path/$name"
+            target_dir="$CATALOG_DIR/$name"
+
+            if [[ ! -d "$source_dir" ]]; then
+                echo -e "  ${RED}MISSING${NC}   $name (not found in upstream)"
+                failed=$((failed + 1))
+            elif [[ ! -d "$target_dir" ]]; then
+                echo -e "  ${GREEN}NEW${NC}       $name"
+                added=$((added + 1))
+            else
+                local changes
+                changes=$(diff -rq "$source_dir" "$target_dir" 2>/dev/null | head -1 || true)
+                if [[ -z "$changes" ]]; then
+                    echo -e "  ${BLUE}UNCHANGED${NC} $name"
+                    unchanged=$((unchanged + 1))
+                else
+                    echo -e "  ${YELLOW}UPDATED${NC}   $name"
+                    added=$((added + 1))
+                fi
+            fi
         else
-            failed=$((failed + 1))
+            if sync_skill "$name"; then
+                added=$((added + 1))
+            else
+                failed=$((failed + 1))
+            fi
         fi
     done <<< "$skill_names"
 
@@ -216,24 +259,29 @@ for k in sorted(json.load(sys.stdin).keys()):
 
     echo ""
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-    echo -e "Synced: ${GREEN}$added${NC} | Failed: ${RED}$failed${NC} | Local (skipped): ${BLUE}$local_count${NC}"
+    if $dry_run; then
+        echo -e "Would sync: ${GREEN}$added${NC} | Missing: ${RED}$failed${NC} | Unchanged: ${BLUE}$unchanged${NC} | Local (skipped): ${BLUE}$local_count${NC}"
+        echo -e "${YELLOW}No files were modified (dry-run).${NC}"
+    else
+        echo -e "Synced: ${GREEN}$added${NC} | Failed: ${RED}$failed${NC} | Local (skipped): ${BLUE}$local_count${NC}"
 
-    # Optionally validate
-    if [[ -x "$SCRIPT_DIR/validate-all.sh" ]] && [[ $added -gt 0 ]]; then
-        echo ""
-        echo -e "${BOLD}Running validation on synced skills (profile: spec)...${NC}"
-        local valid=0 invalid=0
-        while IFS= read -r name; do
-            [[ -z "$name" ]] && continue
-            [[ ! -d "$CATALOG_DIR/$name" ]] && continue
-            if "$SCRIPT_DIR/validate-all.sh" "$CATALOG_DIR/$name" --profile=spec > /dev/null 2>&1; then
-                valid=$((valid + 1))
-            else
-                echo -e "  ${YELLOW}⚠${NC} $name failed validation"
-                invalid=$((invalid + 1))
-            fi
-        done <<< "$skill_names"
-        echo -e "Valid: ${GREEN}$valid${NC} | Invalid: ${YELLOW}$invalid${NC}"
+        # Optionally validate
+        if [[ -x "$SCRIPT_DIR/validate-all.sh" ]] && [[ $added -gt 0 ]]; then
+            echo ""
+            echo -e "${BOLD}Running validation on synced skills (profile: spec)...${NC}"
+            local valid=0 invalid=0
+            while IFS= read -r name; do
+                [[ -z "$name" ]] && continue
+                [[ ! -d "$CATALOG_DIR/$name" ]] && continue
+                if "$SCRIPT_DIR/validate-all.sh" "$CATALOG_DIR/$name" --profile=spec > /dev/null 2>&1; then
+                    valid=$((valid + 1))
+                else
+                    echo -e "  ${YELLOW}⚠${NC} $name failed validation"
+                    invalid=$((invalid + 1))
+                fi
+            done <<< "$skill_names"
+            echo -e "Valid: ${GREEN}$valid${NC} | Invalid: ${YELLOW}$invalid${NC}"
+        fi
     fi
 }
 
@@ -326,6 +374,7 @@ ${BOLD}Skill Catalog Sync${NC}
 
 Usage:
   $(basename "$0") sync              Fetch/update all external skills
+  $(basename "$0") sync --dry-run    Preview sync without modifying catalog
   $(basename "$0") update <name>     Update a single external skill
   $(basename "$0") list-external     List external skills and their status
   $(basename "$0") list-local        List local-only skills
@@ -341,7 +390,7 @@ EOF
 [[ ! -f "$MANIFEST" ]] && die "Manifest not found: $MANIFEST"
 
 case "${1:-}" in
-    sync)           cmd_sync ;;
+    sync)           cmd_sync "${2:-}" ;;
     update)         [[ -z "${2:-}" ]] && die "Usage: $(basename "$0") update <skill-name>"
                     cmd_update "$2" ;;
     list-external)  cmd_list_external ;;
