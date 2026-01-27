@@ -154,12 +154,14 @@ fi
 echo ""
 echo "Checking optional fields..."
 
-# Check tools field - extract all tool entries under tools: section
-HAS_TOOLS=$(echo "$FRONTMATTER" | grep -E '^tools:' || echo "")
+# Check tools field - accept both "tools:" and "allowed-tools:" (Anthropic spec uses allowed-tools)
+TOOLS_FIELD=$(echo "$FRONTMATTER" | grep -E '^(tools|allowed-tools):' | head -1 || echo "")
 
-if [[ -n "$HAS_TOOLS" ]]; then
-    # Extract all lines that look like tool entries (lines starting with - after tools:)
-    TOOLS=$(echo "$FRONTMATTER" | sed -n '/^tools:/,/^[a-z_]*:/p' | grep -E '^\s*-' | sed 's/^\s*-\s*//' || echo "")
+if [[ -n "$TOOLS_FIELD" ]]; then
+    # Determine which field name was used
+    TOOLS_KEY=$(echo "$TOOLS_FIELD" | sed 's/:.*//')
+    # Extract all lines that look like tool entries (lines starting with - after the tools key)
+    TOOLS=$(echo "$FRONTMATTER" | sed -n "/^${TOOLS_KEY}:/,/^[a-z_-]*:/p" | grep -E '^\s*-' | sed 's/^\s*-\s*//' || echo "")
 
     if [[ -n "$TOOLS" ]]; then
         TOOL_COUNT=$(echo "$TOOLS" | wc -l)
@@ -203,8 +205,8 @@ fi
 echo ""
 echo "Checking for unknown fields..."
 
-KNOWN_FIELDS="name description tools model subagent_type run_in_background"
-FIELD_NAMES=$(echo "$FRONTMATTER" | grep -E '^[a-z_]+:' | sed 's/:.*$//' || echo "")
+KNOWN_FIELDS="name description tools allowed-tools model subagent_type run_in_background license"
+FIELD_NAMES=$(echo "$FRONTMATTER" | grep -E '^[a-z_-]+:' | sed 's/:.*$//' || echo "")
 
 while IFS= read -r field; do
     [[ -z "$field" ]] && continue

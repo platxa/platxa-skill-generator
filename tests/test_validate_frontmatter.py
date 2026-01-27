@@ -299,6 +299,33 @@ class TestToolsFieldValidation:
         assert result.returncode == 0, f"Expected exit 0 for valid tools. stderr: {result.stderr}"
 
     @pytest.mark.frontmatter
+    def test_allowed_tools_field_name_passes(
+        self,
+        temp_skill_dir: Path,
+        run_validate_frontmatter,
+    ) -> None:
+        """allowed-tools: field name (Anthropic spec) is accepted like tools:."""
+        skill_md = temp_skill_dir / "SKILL.md"
+        skill_md.write_text("""---
+name: allowed-tools-skill
+description: A skill using allowed-tools field name per Anthropic spec.
+allowed-tools:
+  - Read
+  - Write
+  - Bash
+---
+
+# Content
+""")
+
+        result = run_validate_frontmatter(temp_skill_dir)
+
+        assert result.returncode == 0, (
+            f"Expected exit 0 for allowed-tools field. stderr: {result.stderr}"
+        )
+        assert "PASSED" in result.stdout
+
+    @pytest.mark.frontmatter
     def test_invalid_tool_fails(
         self,
         temp_skill_dir: Path,
