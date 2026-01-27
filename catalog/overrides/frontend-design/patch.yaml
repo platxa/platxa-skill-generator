@@ -1,8 +1,34 @@
 # Patch: inject sections into upstream frontend-design skill
 # Sections listed here are appended to SKILL.md only if not already present.
+# This brings the Anthropic skill up to strict profile quality.
 
 sections:
   Overview: |
     Frontend Design generates distinctive, production-grade web interfaces
     with high visual quality. It produces React/Next.js components styled
     with Tailwind CSS and shadcn/ui, avoiding generic AI aesthetics.
+
+  Workflow: |
+    1. Analyze the user's requirements and identify the interface type
+    2. Choose a bold aesthetic direction and commit to it
+    3. Build the component with semantic HTML, Tailwind, and React
+    4. Apply finishing touches: micro-interactions, shadows, transitions
+    5. Verify the output against the checklist below
+
+  Examples: |
+    ```
+    User: "Build a dashboard for analytics"
+    → Generates a responsive React dashboard with charts, cards, and navigation
+    ```
+
+    ```
+    User: "Create a landing page for a SaaS product"
+    → Produces a full-page layout with hero, features, pricing, and CTA sections
+    ```
+
+  Output Checklist: |
+    - [ ] Semantic HTML structure
+    - [ ] Responsive across breakpoints
+    - [ ] Consistent color palette and typography
+    - [ ] Accessible (keyboard navigation, contrast ratios)
+    - [ ] No generic AI aesthetic patterns
