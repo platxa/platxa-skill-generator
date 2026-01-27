@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # validate-frontmatter.sh - Validate SKILL.md frontmatter
 #
 # Usage: validate-frontmatter.sh <skill-directory>

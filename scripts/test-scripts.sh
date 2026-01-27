@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # test-scripts.sh - Test skill scripts for correct execution
 #
 # Usage: test-scripts.sh <skill-directory> [--verbose] [--sandbox]

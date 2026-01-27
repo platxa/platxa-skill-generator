@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # validate-all.sh - Run all skill validators
 #
 # Usage: validate-all.sh <skill-directory> [--verbose] [--json]

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # security-check.sh - Scan scripts for dangerous patterns
 #
 # Usage: security-check.sh <skill-directory>

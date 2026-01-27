@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # validate-structure.sh - Validate skill directory structure
 #
 # Usage: validate-structure.sh <skill-directory>
