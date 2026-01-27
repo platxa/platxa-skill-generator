@@ -65,12 +65,6 @@ skills:
     ref: main
     tier: 1
     category: testing
-  xlsx:
-    source: anthropic
-    ref: main
-    tier: 2
-    category: documents
-
   # ── External: vercel ───────────────────────
   react-best-practices:
     source: vercel
