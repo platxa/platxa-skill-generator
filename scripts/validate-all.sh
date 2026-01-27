@@ -212,6 +212,16 @@ if [[ -d "$SCRIPTS_DIR" ]]; then
     fi
 fi
 
+# 6. Duplicate detection
+if command -v python3 &>/dev/null && [[ -f "$SCRIPT_DIR/check-duplicates.py" ]]; then
+    run_validator "Duplicates" python3 "$SCRIPT_DIR/check-duplicates.py" "$SKILL_DIR" || OVERALL_PASS=false
+else
+    if ! $JSON_OUTPUT; then
+        echo -e "\n${YELLOW}[Duplicates]${NC} Skipped - Python not available"
+    fi
+    RESULTS["Duplicates"]="SKIP"
+fi
+
 # Output results
 if $JSON_OUTPUT; then
     # JSON output
