@@ -38,12 +38,20 @@ jobs:
         id: changed-skills
         run: |
           if [ "${{ github.event_name }}" == "pull_request" ]; then
-            # Get skills changed in PR
-            CHANGED=$(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | grep "^catalog/" | cut -d'/' -f2 | sort -u | tr '\n' ' ')
+            # Get skills changed in PR (only dirs containing SKILL.md)
+            CANDIDATES=$(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | grep "^catalog/" | cut -d'/' -f2 | sort -u)
           else
             # Validate all skills on push to main
-            CHANGED=$(ls -d catalog/*/ 2>/dev/null | xargs -n1 basename | tr '\n' ' ')
+            CANDIDATES=$(ls -d catalog/*/ 2>/dev/null | xargs -n1 basename)
           fi
+          # Filter to actual skill directories (must have SKILL.md)
+          CHANGED=""
+          for c in $CANDIDATES; do
+            if [ -f "catalog/$c/SKILL.md" ]; then
+              CHANGED="$CHANGED $c"
+            fi
+          done
+          CHANGED=$(echo "$CHANGED" | xargs)
           echo "skills=$CHANGED" >> $GITHUB_OUTPUT
           echo "Changed skills: $CHANGED"
 
