@@ -1,0 +1,55 @@
+{
+  "meta": {
+    "name": "Platxa Brand Kit",
+    "version": "1.0.0"
+  },
+  "colors": {
+    "primary": {
+      "oklch": [0.52, 0.18, 300],
+      "hex": "#8B35A8",
+      "role": "brand"
+    },
+    "accent": {
+      "oklch": [0.75, 0.15, 180],
+      "hex": "#2ECCC4",
+      "role": "cta"
+    },
+    "neutral": {
+      "dark": {
+        "oklch": [0.20, 0.02, 270],
+        "hex": "#1C1C21"
+      },
+      "light": {
+        "oklch": [0.95, 0.01, 270],
+        "hex": "#F0F0F0"
+      },
+      "background": {
+        "oklch": [0.98, 0.005, 270],
+        "hex": "#FAFAFA"
+      }
+    }
+  },
+  "spacing": {
+    "unit": 8,
+    "scale": {
+      "xs": 4,
+      "sm": 8,
+      "md": 16,
+      "lg": 24,
+      "xl": 32,
+      "2xl": 48,
+      "3xl": 64
+    }
+  },
+  "typography": {
+    "families": {
+      "sans": "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
+      "mono": "'JetBrains Mono', 'Fira Code', monospace"
+    },
+    "sizes": {
+      "base": "16px",
+      "sm": "14px",
+      "lg": "18px"
+    }
+  }
+}
