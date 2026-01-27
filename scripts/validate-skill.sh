@@ -152,10 +152,9 @@ fi
 # Check references total if present
 if [[ -d "$SKILL_DIR/references" ]]; then
     REF_WORDS=0
-    for ref in "$SKILL_DIR/references"/*.md "$SKILL_DIR/references"/**/*.md; do
-        [[ -f "$ref" ]] || continue
+    while IFS= read -r -d '' ref; do
         REF_WORDS=$((REF_WORDS + $(wc -w < "$ref")))
-    done
+    done < <(find "$SKILL_DIR/references" -name "*.md" -type f -print0 2>/dev/null)
     REF_TOKENS=$((REF_WORDS * 13 / 10))
     if [[ "$SKIP_TOKEN_VALIDATION" == "true" ]]; then
         ok "References tokens: ~$REF_TOKENS (validation skipped via .skillconfig)"
