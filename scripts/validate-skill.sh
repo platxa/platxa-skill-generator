@@ -123,46 +123,62 @@ else
     echo "ℹ️  INFO: Optional section not present: Output Checklist"
 fi
 
-# Check line count (token proxy)
+# Token budget check — delegate to count-tokens.py (single source of truth)
 echo -e "\n--- Token Budget Check ---"
-LINE_COUNT=$(wc -l < "$SKILL_MD")
-if [[ $LINE_COUNT -gt 1000 ]]; then
-    error "SKILL.md too long: $LINE_COUNT lines (hard limit 1000)"
-elif [[ $LINE_COUNT -gt 500 ]]; then
-    warn "SKILL.md exceeds recommended limit: $LINE_COUNT lines (recommended < 500)"
-elif [[ $LINE_COUNT -gt 450 ]]; then
-    warn "SKILL.md approaching limit: $LINE_COUNT/500 lines"
-else
-    ok "SKILL.md line count: $LINE_COUNT/500 lines"
-fi
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+TOKEN_SCRIPT="$SCRIPT_DIR/count-tokens.py"
 
-# Estimate tokens (roughly 1.3 tokens per word)
-WORD_COUNT=$(wc -w < "$SKILL_MD")
-EST_TOKENS=$((WORD_COUNT * 13 / 10))
-if [[ $EST_TOKENS -gt 10000 ]]; then
-    error "Estimated tokens too high: ~$EST_TOKENS (hard limit 10000)"
-elif [[ $EST_TOKENS -gt 5000 ]]; then
-    warn "Estimated tokens exceeds recommended: ~$EST_TOKENS (recommended < 5000)"
-elif [[ $EST_TOKENS -gt 4000 ]]; then
-    warn "Estimated tokens approaching limit: ~$EST_TOKENS/5000"
-else
-    ok "Estimated tokens: ~$EST_TOKENS/5000"
-fi
+if [[ -f "$TOKEN_SCRIPT" ]] && command -v python3 &>/dev/null; then
+    # Parse JSON output from count-tokens.py
+    TOKEN_JSON=$(python3 "$TOKEN_SCRIPT" "$SKILL_DIR" --json 2>/dev/null || echo "")
+    if [[ -n "$TOKEN_JSON" ]]; then
+        # Extract values via Python (reliable JSON parsing)
+        mapfile -t TOKEN_VALS < <(python3 -c "
+import json, sys
+d = json.loads(sys.stdin.read())
+print(d.get('skill_md_tokens', 0))
+print(d.get('skill_md_lines', 0))
+print(d.get('ref_total_tokens', 0))
+print(d.get('exit_code', 0))
+" <<< "$TOKEN_JSON")
+        MD_TOKENS="${TOKEN_VALS[0]}"
+        LINE_COUNT="${TOKEN_VALS[1]}"
+        REF_TOKENS="${TOKEN_VALS[2]}"
+        TOKEN_EXIT="${TOKEN_VALS[3]}"
 
-# Check references total if present
-if [[ -d "$SKILL_DIR/references" ]]; then
-    REF_WORDS=0
-    while IFS= read -r -d '' ref; do
-        REF_WORDS=$((REF_WORDS + $(wc -w < "$ref")))
-    done < <(find "$SKILL_DIR/references" -name "*.md" -type f -print0 2>/dev/null)
-    REF_TOKENS=$((REF_WORDS * 13 / 10))
-    if [[ "$SKIP_TOKEN_VALIDATION" == "true" ]]; then
-        ok "References tokens: ~$REF_TOKENS (validation skipped via .skillconfig)"
-    elif [[ $REF_TOKENS -gt $LIMIT_REF_TOKENS ]]; then
-        error "References too large: ~$REF_TOKENS tokens (max $LIMIT_REF_TOKENS)"
+        # SKILL.md lines
+        if [[ $LINE_COUNT -gt 1000 ]]; then
+            error "SKILL.md too long: $LINE_COUNT lines (hard limit 1000)"
+        elif [[ $LINE_COUNT -gt 500 ]]; then
+            warn "SKILL.md exceeds recommended limit: $LINE_COUNT lines (recommended < 500)"
+        else
+            ok "SKILL.md line count: $LINE_COUNT/500 lines"
+        fi
+
+        # SKILL.md tokens
+        if [[ $MD_TOKENS -gt 10000 ]]; then
+            error "SKILL.md tokens too high: $MD_TOKENS (hard limit 10000)"
+        elif [[ $MD_TOKENS -gt 5000 ]]; then
+            warn "SKILL.md tokens exceeds recommended: $MD_TOKENS (recommended < 5000)"
+        else
+            ok "SKILL.md tokens: $MD_TOKENS/5000"
+        fi
+
+        # References tokens
+        if [[ -d "$SKILL_DIR/references" ]]; then
+            if [[ "$SKIP_TOKEN_VALIDATION" == "true" ]]; then
+                ok "References tokens: $REF_TOKENS (validation skipped via .skillconfig)"
+            elif [[ $REF_TOKENS -gt $LIMIT_REF_TOKENS ]]; then
+                error "References too large: $REF_TOKENS tokens (max $LIMIT_REF_TOKENS)"
+            else
+                ok "References tokens: $REF_TOKENS/$LIMIT_REF_TOKENS"
+            fi
+        fi
     else
-        ok "References tokens: ~$REF_TOKENS/$LIMIT_REF_TOKENS"
+        warn "count-tokens.py produced no output, skipping token check"
     fi
+else
+    warn "count-tokens.py or python3 not available, skipping token check"
 fi
 
 # Check scripts are executable

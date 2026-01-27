@@ -1,10 +1,12 @@
-"""Tests for validate-skill.sh softened token/line thresholds.
+"""Tests for validate-skill.sh token/line thresholds.
+
+Token counts are produced by count-tokens.py (tiktoken cl100k_base).
 
 Tests cover:
 - Warning (score -1) at 501-1000 lines, still passes (score >= 7)
 - Error (score -2) at 1001+ lines, fails
-- Warning (score -1) at 5001-10000 estimated tokens, still passes
-- Error (score -2) at 10001+ estimated tokens, fails
+- Warning (score -1) at 5001-10000 tokens, still passes
+- Error (score -2) at 10001+ tokens, fails
 """
 
 from __future__ import annotations
@@ -41,13 +43,12 @@ echo test
 """
 
 
-def _words_for_estimated_tokens(target_tokens: int) -> str:
-    """Generate words that produce approximately target_tokens via the bash estimator.
+def _words_for_token_count(target_tokens: int) -> str:
+    """Generate text that produces approximately target_tokens via tiktoken cl100k_base.
 
-    validate-skill.sh estimates: EST_TOKENS = WORD_COUNT * 13 / 10
-    So WORD_COUNT = target_tokens * 10 / 13
+    count-tokens.py (the single source of truth for token counting) uses tiktoken.
+    Simple English words are ~1 token each in cl100k_base, so word_count ≈ token_count.
     """
-    word_count = (target_tokens * 10) // 13 + 1
     base_words = [
         "the",
         "skill",
@@ -67,7 +68,7 @@ def _words_for_estimated_tokens(target_tokens: int) -> str:
         "configuration",
         "setup",
     ]
-    words = [base_words[i % len(base_words)] for i in range(word_count)]
+    words = [base_words[i % len(base_words)] for i in range(target_tokens)]
     return " ".join(words)
 
 
@@ -125,7 +126,7 @@ class TestTokenThresholdWarning:
         self, temp_skill_dir: Path, run_validate_skill
     ) -> None:
         """5001-10000 estimated tokens produces warning but score >= 7 (PASS)."""
-        word_body = _words_for_estimated_tokens(7000)
+        word_body = _words_for_token_count(7000)
         content = _build_content_with_sections(word_body)
         create_skill_md(
             temp_skill_dir,
@@ -148,8 +149,8 @@ class TestTokenThresholdError:
 
     @pytest.mark.profile
     def test_error_emitted_at_12000_tokens(self, temp_skill_dir: Path, run_validate_skill) -> None:
-        """10001+ estimated tokens produces an ERROR message in output."""
-        word_body = _words_for_estimated_tokens(12000)
+        """10001+ tokens (tiktoken) produces an ERROR message in output."""
+        word_body = _words_for_token_count(12000)
         content = _build_content_with_sections(word_body)
         create_skill_md(
             temp_skill_dir,
