@@ -1,0 +1,8 @@
+# Patch: inject sections into upstream frontend-design skill
+# Sections listed here are appended to SKILL.md only if not already present.
+
+sections:
+  Overview: |
+    Frontend Design generates distinctive, production-grade web interfaces
+    with high visual quality. It produces React/Next.js components styled
+    with Tailwind CSS and shadcn/ui, avoiding generic AI aesthetics.

@@ -129,6 +129,48 @@ checkout_skill_sha() {
     }
 }
 
+# Apply patch.yaml section injections to a SKILL.md
+# Only injects sections that don't already exist in the file.
+apply_patch_yaml() {
+    local skill_md="$1"
+    local patch_file="$2"
+
+    [[ -f "$skill_md" ]] || return 1
+    [[ -f "$patch_file" ]] || return 0
+
+    python3 - "$skill_md" "$patch_file" << 'PYEOF'
+import sys, yaml
+
+skill_md_path = sys.argv[1]
+patch_path = sys.argv[2]
+
+with open(skill_md_path) as f:
+    content = f.read()
+
+with open(patch_path) as f:
+    patch = yaml.safe_load(f)
+
+sections = patch.get("sections", {})
+if not sections:
+    sys.exit(0)
+
+injected = 0
+for heading, body in sections.items():
+    # Check if section already exists (## Heading)
+    marker = f"## {heading}"
+    if marker in content:
+        continue
+    # Append section at end of file
+    content = content.rstrip() + f"\n\n{marker}\n\n{body.strip()}\n"
+    injected += 1
+
+if injected > 0:
+    with open(skill_md_path, "w") as f:
+        f.write(content)
+    print(f"    Injected {injected} section(s)")
+PYEOF
+}
+
 # Sync a single skill from cache to catalog
 sync_skill() {
     local skill_name="$1"
@@ -159,10 +201,25 @@ sync_skill() {
     fi
     cp -r "$source_dir" "$target_dir"
 
-    # Apply overrides if any
+    # Apply file overrides if any (excluding patch.yaml which is handled separately)
     if [[ -d "$OVERRIDES_DIR/$skill_name" ]]; then
-        echo -e "  ${BLUE}[Override]${NC} Applying overrides for $skill_name"
-        cp -r "$OVERRIDES_DIR/$skill_name/"* "$target_dir/" 2>/dev/null || true
+        local has_overrides=false
+        while IFS= read -r -d '' override_file; do
+            has_overrides=true
+            local rel_path="${override_file#"$OVERRIDES_DIR/$skill_name/"}"
+            mkdir -p "$target_dir/$(dirname "$rel_path")"
+            cp "$override_file" "$target_dir/$rel_path"
+        done < <(find "$OVERRIDES_DIR/$skill_name" -type f ! -name 'patch.yaml' -print0 2>/dev/null)
+        if $has_overrides; then
+            echo -e "  ${BLUE}[Override]${NC} Applying file overrides for $skill_name"
+        fi
+    fi
+
+    # Apply patch.yaml section injections if present
+    local patch_file="$OVERRIDES_DIR/$skill_name/patch.yaml"
+    if [[ -f "$patch_file" ]]; then
+        echo -e "  ${BLUE}[Patch]${NC} Injecting sections from patch.yaml for $skill_name"
+        apply_patch_yaml "$target_dir/SKILL.md" "$patch_file"
     fi
 
     echo -e "  ${GREEN}✓${NC} $skill_name"
