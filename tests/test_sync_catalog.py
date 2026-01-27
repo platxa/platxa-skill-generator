@@ -172,10 +172,14 @@ sections:
 
         # Source the script and call the function
         result = subprocess.run(
-            ["bash", "-c", f"""
+            [
+                "bash",
+                "-c",
+                f"""
                 source "{SYNC_SCRIPT}"
-                apply_patch_yaml "{skill_md}" "{overrides_dir / 'patch.yaml'}"
-            """],
+                apply_patch_yaml "{skill_md}" "{overrides_dir / "patch.yaml"}"
+            """,
+            ],
             capture_output=True,
             text=True,
             cwd=catalog_dir.parent,
@@ -207,10 +211,14 @@ sections:
 """)
 
         result = subprocess.run(
-            ["bash", "-c", f"""
+            [
+                "bash",
+                "-c",
+                f"""
                 source "{SYNC_SCRIPT}"
-                apply_patch_yaml "{skill_md}" "{overrides_dir / 'patch.yaml'}"
-            """],
+                apply_patch_yaml "{skill_md}" "{overrides_dir / "patch.yaml"}"
+            """,
+            ],
             capture_output=True,
             text=True,
             cwd=catalog_dir.parent,
@@ -239,8 +247,11 @@ class TestOverrideFileCopy:
         # Source the script and call apply_overrides via the file copy logic
         skill_dir = catalog_dir / "local-skill-one"
         result = subprocess.run(
-            ["bash", "-c", f"""
-                OVERRIDES_DIR="{catalog_dir / 'overrides'}"
+            [
+                "bash",
+                "-c",
+                f"""
+                OVERRIDES_DIR="{catalog_dir / "overrides"}"
                 skill_name="local-skill-one"
                 target_dir="{skill_dir}"
                 while IFS= read -r -d '' override_file; do
@@ -248,7 +259,8 @@ class TestOverrideFileCopy:
                     mkdir -p "$target_dir/$(dirname "$rel_path")"
                     cp "$override_file" "$target_dir/$rel_path"
                 done < <(find "$OVERRIDES_DIR/$skill_name" -type f ! -name 'patch.yaml' -print0 2>/dev/null)
-            """],
+            """,
+            ],
             capture_output=True,
             text=True,
         )

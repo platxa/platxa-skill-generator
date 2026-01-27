@@ -102,7 +102,10 @@ def _run_install(catalog_env: dict, *extra_args: str) -> subprocess.CompletedPro
     """Run install-from-catalog.sh --all --user --no-validate --force with extra args."""
     cmd = [
         catalog_env["script"],
-        "--all", "--user", "--no-validate", "--force",
+        "--all",
+        "--user",
+        "--no-validate",
+        "--force",
         *extra_args,
     ]
     return subprocess.run(
@@ -128,21 +131,27 @@ class TestTierFiltering:
     def test_tier_0_installs_only_tier_0(self, catalog_env: dict) -> None:
         """--tier 0 should only install alpha-skill (tier 0)."""
         result = _run_install(catalog_env, "--tier", "0")
-        assert result.returncode == 0, f"Script failed:\nstdout: {result.stdout}\nstderr: {result.stderr}"
+        assert result.returncode == 0, (
+            f"Script failed:\nstdout: {result.stdout}\nstderr: {result.stderr}"
+        )
         installed = _installed_skills(catalog_env)
         assert installed == {"alpha-skill"}, f"Expected only alpha-skill, got {installed}"
 
     def test_tier_1_installs_tier_0_and_1(self, catalog_env: dict) -> None:
         """--tier 1 should install alpha (0), beta (1), delta (1)."""
         result = _run_install(catalog_env, "--tier", "1")
-        assert result.returncode == 0, f"Script failed:\nstdout: {result.stdout}\nstderr: {result.stderr}"
+        assert result.returncode == 0, (
+            f"Script failed:\nstdout: {result.stdout}\nstderr: {result.stderr}"
+        )
         installed = _installed_skills(catalog_env)
         assert installed == {"alpha-skill", "beta-skill", "delta-skill"}, f"Got {installed}"
 
     def test_tier_2_installs_all(self, catalog_env: dict) -> None:
         """--tier 2 should install all 4 skills (max tier is 2)."""
         result = _run_install(catalog_env, "--tier", "2")
-        assert result.returncode == 0, f"Script failed:\nstdout: {result.stdout}\nstderr: {result.stderr}"
+        assert result.returncode == 0, (
+            f"Script failed:\nstdout: {result.stdout}\nstderr: {result.stderr}"
+        )
         installed = _installed_skills(catalog_env)
         assert installed == {"alpha-skill", "beta-skill", "gamma-skill", "delta-skill"}
 
@@ -153,21 +162,27 @@ class TestCategoryFiltering:
     def test_category_backend(self, catalog_env: dict) -> None:
         """--category backend should install alpha and delta."""
         result = _run_install(catalog_env, "--category", "backend")
-        assert result.returncode == 0, f"Script failed:\nstdout: {result.stdout}\nstderr: {result.stderr}"
+        assert result.returncode == 0, (
+            f"Script failed:\nstdout: {result.stdout}\nstderr: {result.stderr}"
+        )
         installed = _installed_skills(catalog_env)
         assert installed == {"alpha-skill", "delta-skill"}, f"Got {installed}"
 
     def test_category_frontend(self, catalog_env: dict) -> None:
         """--category frontend should install beta and gamma."""
         result = _run_install(catalog_env, "--category", "frontend")
-        assert result.returncode == 0, f"Script failed:\nstdout: {result.stdout}\nstderr: {result.stderr}"
+        assert result.returncode == 0, (
+            f"Script failed:\nstdout: {result.stdout}\nstderr: {result.stderr}"
+        )
         installed = _installed_skills(catalog_env)
         assert installed == {"beta-skill", "gamma-skill"}, f"Got {installed}"
 
     def test_category_nonexistent(self, catalog_env: dict) -> None:
         """--category nonexistent should install nothing."""
         result = _run_install(catalog_env, "--category", "nonexistent")
-        assert result.returncode == 0, f"Script failed:\nstdout: {result.stdout}\nstderr: {result.stderr}"
+        assert result.returncode == 0, (
+            f"Script failed:\nstdout: {result.stdout}\nstderr: {result.stderr}"
+        )
         installed = _installed_skills(catalog_env)
         assert installed == set(), f"Expected nothing, got {installed}"
 
@@ -178,13 +193,17 @@ class TestCombinedFilters:
     def test_tier_1_category_frontend(self, catalog_env: dict) -> None:
         """--tier 1 --category frontend should install only beta (tier 1, frontend)."""
         result = _run_install(catalog_env, "--tier", "1", "--category", "frontend")
-        assert result.returncode == 0, f"Script failed:\nstdout: {result.stdout}\nstderr: {result.stderr}"
+        assert result.returncode == 0, (
+            f"Script failed:\nstdout: {result.stdout}\nstderr: {result.stderr}"
+        )
         installed = _installed_skills(catalog_env)
         assert installed == {"beta-skill"}, f"Got {installed}"
 
     def test_tier_0_category_frontend(self, catalog_env: dict) -> None:
         """--tier 0 --category frontend should install nothing (no tier-0 frontend skills)."""
         result = _run_install(catalog_env, "--tier", "0", "--category", "frontend")
-        assert result.returncode == 0, f"Script failed:\nstdout: {result.stdout}\nstderr: {result.stderr}"
+        assert result.returncode == 0, (
+            f"Script failed:\nstdout: {result.stdout}\nstderr: {result.stderr}"
+        )
         installed = _installed_skills(catalog_env)
         assert installed == set(), f"Expected nothing, got {installed}"

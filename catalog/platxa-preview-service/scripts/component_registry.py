@@ -64,8 +64,7 @@ class ComponentDefinition:
             "template": self.template,
             "thumbnail": self.thumbnail,
             "variants": [
-                {"id": v.id, "name": v.name, "defaults": v.defaults}
-                for v in self.variants
+                {"id": v.id, "name": v.name, "defaults": v.defaults} for v in self.variants
             ],
             "options": [
                 {
@@ -103,9 +102,7 @@ class ComponentRegistry:
         if component.id not in self._categories[component.category]:
             self._categories[component.category].append(component.id)
 
-    def get_component(
-        self, category: str, component_id: str
-    ) -> ComponentDefinition | None:
+    def get_component(self, category: str, component_id: str) -> ComponentDefinition | None:
         """Get a component by category and ID."""
         key = f"{category}/{component_id}"
         return self._components.get(key)
@@ -196,9 +193,7 @@ class ComponentRegistry:
                 qweb_template="s_cover",
                 variants=[
                     ComponentVariant("image", "Image Background", {"bg_type": "image"}),
-                    ComponentVariant(
-                        "gradient", "Gradient Background", {"bg_type": "gradient"}
-                    ),
+                    ComponentVariant("gradient", "Gradient Background", {"bg_type": "gradient"}),
                     ComponentVariant("video", "Video Background", {"bg_type": "video"}),
                 ],
                 options=[
@@ -209,9 +204,7 @@ class ComponentRegistry:
                         "center",
                         ["left", "center", "right"],
                     ),
-                    ComponentOption(
-                        "overlay", "Dark Overlay", "boolean", True
-                    ),
+                    ComponentOption("overlay", "Dark Overlay", "boolean", True),
                     ComponentOption(
                         "height", "Height", "select", "full", ["full", "large", "medium"]
                     ),
@@ -226,12 +219,8 @@ class ComponentRegistry:
                 template="hero/hero_split",
                 qweb_template="s_image_text",
                 variants=[
-                    ComponentVariant(
-                        "image_right", "Image Right", {"image_position": "right"}
-                    ),
-                    ComponentVariant(
-                        "image_left", "Image Left", {"image_position": "left"}
-                    ),
+                    ComponentVariant("image_right", "Image Right", {"image_position": "right"}),
+                    ComponentVariant("image_left", "Image Left", {"image_position": "left"}),
                 ],
                 options=[
                     ComponentOption(

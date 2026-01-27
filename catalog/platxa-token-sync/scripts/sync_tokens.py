@@ -19,34 +19,44 @@ import sys
 from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
-from typing import Optional, Dict, List, Tuple, Any
+from typing import Any
 
-logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
+logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger(__name__)
 
 
 @dataclass
 class ColorToken:
     """Represents a color token."""
+
     name: str
     hex_value: str
-    oklch: Optional[Tuple[float, float, float]] = None
+    oklch: tuple[float, float, float] | None = None
     role: str = "custom"
 
 
 @dataclass
 class SpacingToken:
     """Represents spacing tokens."""
+
     unit: int = 8
-    scale: Dict[str, int] = field(default_factory=lambda: {
-        'xs': 4, 'sm': 8, 'md': 16, 'lg': 24,
-        'xl': 32, '2xl': 48, '3xl': 64
-    })
+    scale: dict[str, int] = field(
+        default_factory=lambda: {
+            "xs": 4,
+            "sm": 8,
+            "md": 16,
+            "lg": 24,
+            "xl": 32,
+            "2xl": 48,
+            "3xl": 64,
+        }
+    )
 
 
 @dataclass
 class TypographyToken:
     """Represents typography tokens."""
+
     sans: str = "'Inter', -apple-system, BlinkMacSystemFont, sans-serif"
     mono: str = "'JetBrains Mono', 'Fira Code', monospace"
     base_size: str = "16px"
@@ -55,17 +65,18 @@ class TypographyToken:
 @dataclass
 class TokenSet:
     """Complete set of design tokens."""
-    colors: Dict[str, ColorToken] = field(default_factory=dict)
+
+    colors: dict[str, ColorToken] = field(default_factory=dict)
     spacing: SpacingToken = field(default_factory=SpacingToken)
     typography: TypographyToken = field(default_factory=TypographyToken)
-    meta: Dict[str, str] = field(default_factory=dict)
+    meta: dict[str, str] = field(default_factory=dict)
 
 
 class OKLCHConverter:
     """Convert OKLCH colors to hex."""
 
     @staticmethod
-    def oklch_to_hex(l: float, c: float, h: float) -> str:
+    def oklch_to_hex(lightness: float, c: float, h: float) -> str:
         """
         Convert OKLCH to hex color.
 
@@ -82,13 +93,13 @@ class OKLCHConverter:
         b = c * math.sin(math.radians(h))
 
         # OKLab to linear sRGB
-        l_ = l + 0.3963377774 * a + 0.2158037573 * b
-        m_ = l - 0.1055613458 * a - 0.0638541728 * b
-        s_ = l - 0.0894841775 * a - 1.2914855480 * b
+        l_ = lightness + 0.3963377774 * a + 0.2158037573 * b
+        m_ = lightness - 0.1055613458 * a - 0.0638541728 * b
+        s_ = lightness - 0.0894841775 * a - 1.2914855480 * b
 
-        l_cubed = l_ ** 3
-        m_cubed = m_ ** 3
-        s_cubed = s_ ** 3
+        l_cubed = l_**3
+        m_cubed = m_**3
+        s_cubed = s_**3
 
         # Matrix transformation to linear sRGB
         r_linear = +4.0767416621 * l_cubed - 3.3077115913 * m_cubed + 0.2309699292 * s_cubed
@@ -118,7 +129,7 @@ class OKLCHConverter:
         return f"#{r_int:02X}{g_int:02X}{b_int:02X}"
 
     @staticmethod
-    def parse_oklch(oklch_str: str) -> Optional[Tuple[float, float, float]]:
+    def parse_oklch(oklch_str: str) -> tuple[float, float, float] | None:
         """
         Parse OKLCH string.
 
@@ -129,36 +140,37 @@ class OKLCHConverter:
             Tuple of (lightness, chroma, hue) or None if invalid
         """
         match = re.match(
-            r'oklch\(\s*(\d+(?:\.\d+)?)\s*%?\s+(\d+(?:\.\d+)?)\s+(\d+(?:\.\d+)?)\s*\)',
+            r"oklch\(\s*(\d+(?:\.\d+)?)\s*%?\s+(\d+(?:\.\d+)?)\s+(\d+(?:\.\d+)?)\s*\)",
             oklch_str.strip(),
-            re.IGNORECASE
+            re.IGNORECASE,
         )
         if not match:
             return None
 
-        l = float(match.group(1))
+        lightness = float(match.group(1))
         c = float(match.group(2))
         h = float(match.group(3))
 
         # Normalize lightness if given as percentage
-        if l > 1:
-            l = l / 100
+        if lightness > 1:
+            lightness = lightness / 100
 
-        return (l, c, h)
+        return (lightness, c, h)
 
 
 class ContrastChecker:
     """Check color contrast ratios for accessibility."""
 
     @staticmethod
-    def hex_to_rgb(hex_color: str) -> Tuple[int, int, int]:
+    def hex_to_rgb(hex_color: str) -> tuple[int, int, int]:
         """Convert hex to RGB tuple."""
-        hex_color = hex_color.lstrip('#')
-        return tuple(int(hex_color[i:i+2], 16) for i in (0, 2, 4))
+        hex_color = hex_color.lstrip("#")
+        return tuple(int(hex_color[i : i + 2], 16) for i in (0, 2, 4))
 
     @staticmethod
     def relative_luminance(r: int, g: int, b: int) -> float:
         """Calculate relative luminance per WCAG 2.1."""
+
         def adjust(c: int) -> float:
             c_normalized = c / 255
             if c_normalized <= 0.03928:
@@ -191,7 +203,7 @@ class ContrastChecker:
         return (lighter + 0.05) / (darker + 0.05)
 
     @classmethod
-    def check_wcag_aa(cls, foreground: str, background: str) -> Tuple[float, bool]:
+    def check_wcag_aa(cls, foreground: str, background: str) -> tuple[float, bool]:
         """
         Check if colors pass WCAG AA contrast requirements.
 
@@ -212,11 +224,11 @@ class TokenParser:
 
         # Parse colors
         color_patterns = [
-            (r'--color-primary:\s*([^;]+)', 'primary', 'brand'),
-            (r'--color-accent:\s*([^;]+)', 'accent', 'cta'),
-            (r'--color-neutral(?:-dark)?:\s*([^;]+)', 'neutral_dark', 'neutral'),
-            (r'--color-neutral-light:\s*([^;]+)', 'neutral_light', 'neutral'),
-            (r'--color-background:\s*([^;]+)', 'background', 'background'),
+            (r"--color-primary:\s*([^;]+)", "primary", "brand"),
+            (r"--color-accent:\s*([^;]+)", "accent", "cta"),
+            (r"--color-neutral(?:-dark)?:\s*([^;]+)", "neutral_dark", "neutral"),
+            (r"--color-neutral-light:\s*([^;]+)", "neutral_light", "neutral"),
+            (r"--color-background:\s*([^;]+)", "background", "background"),
         ]
 
         for pattern, name, role in color_patterns:
@@ -229,20 +241,20 @@ class TokenParser:
                 if oklch:
                     hex_val = OKLCHConverter.oklch_to_hex(*oklch)
                     tokens.colors[name] = ColorToken(name, hex_val, oklch, role)
-                elif value.startswith('#'):
+                elif value.startswith("#"):
                     tokens.colors[name] = ColorToken(name, value.upper(), None, role)
 
         # Parse spacing
-        space_match = re.search(r'--space-(?:unit|base):\s*(\d+)px', content)
+        space_match = re.search(r"--space-(?:unit|base):\s*(\d+)px", content)
         if space_match:
             tokens.spacing.unit = int(space_match.group(1))
 
         # Parse typography
-        font_sans_match = re.search(r'--font-(?:family-)?sans:\s*([^;]+)', content)
+        font_sans_match = re.search(r"--font-(?:family-)?sans:\s*([^;]+)", content)
         if font_sans_match:
             tokens.typography.sans = font_sans_match.group(1).strip()
 
-        font_mono_match = re.search(r'--font-(?:family-)?mono:\s*([^;]+)', content)
+        font_mono_match = re.search(r"--font-(?:family-)?mono:\s*([^;]+)", content)
         if font_mono_match:
             tokens.typography.mono = font_mono_match.group(1).strip()
 
@@ -255,64 +267,64 @@ class TokenParser:
         tokens = TokenSet()
 
         # Parse meta
-        if 'meta' in data:
-            tokens.meta = data['meta']
+        if "meta" in data:
+            tokens.meta = data["meta"]
 
         # Parse colors
-        if 'colors' in data:
-            colors = data['colors']
+        if "colors" in data:
+            colors = data["colors"]
 
-            def extract_color(obj: Any, name: str, role: str) -> Optional[ColorToken]:
+            def extract_color(obj: Any, name: str, role: str) -> ColorToken | None:
                 if isinstance(obj, dict):
-                    hex_val = obj.get('hex', '')
-                    oklch = tuple(obj['oklch']) if 'oklch' in obj else None
+                    hex_val = obj.get("hex", "")
+                    oklch = tuple(obj["oklch"]) if "oklch" in obj else None
                     if hex_val:
                         return ColorToken(name, hex_val.upper(), oklch, role)
                 return None
 
-            if 'primary' in colors:
-                token = extract_color(colors['primary'], 'primary', 'brand')
+            if "primary" in colors:
+                token = extract_color(colors["primary"], "primary", "brand")
                 if token:
-                    tokens.colors['primary'] = token
+                    tokens.colors["primary"] = token
 
-            if 'accent' in colors:
-                token = extract_color(colors['accent'], 'accent', 'cta')
+            if "accent" in colors:
+                token = extract_color(colors["accent"], "accent", "cta")
                 if token:
-                    tokens.colors['accent'] = token
+                    tokens.colors["accent"] = token
 
-            if 'neutral' in colors:
-                neutral = colors['neutral']
+            if "neutral" in colors:
+                neutral = colors["neutral"]
                 if isinstance(neutral, dict):
-                    if 'dark' in neutral:
-                        token = extract_color(neutral['dark'], 'neutral_dark', 'neutral')
+                    if "dark" in neutral:
+                        token = extract_color(neutral["dark"], "neutral_dark", "neutral")
                         if token:
-                            tokens.colors['neutral_dark'] = token
-                    if 'light' in neutral:
-                        token = extract_color(neutral['light'], 'neutral_light', 'neutral')
+                            tokens.colors["neutral_dark"] = token
+                    if "light" in neutral:
+                        token = extract_color(neutral["light"], "neutral_light", "neutral")
                         if token:
-                            tokens.colors['neutral_light'] = token
-                    if 'background' in neutral:
-                        token = extract_color(neutral['background'], 'background', 'background')
+                            tokens.colors["neutral_light"] = token
+                    if "background" in neutral:
+                        token = extract_color(neutral["background"], "background", "background")
                         if token:
-                            tokens.colors['background'] = token
+                            tokens.colors["background"] = token
 
         # Parse spacing
-        if 'spacing' in data:
-            spacing = data['spacing']
-            if 'unit' in spacing:
-                tokens.spacing.unit = spacing['unit']
-            if 'scale' in spacing:
-                tokens.spacing.scale = spacing['scale']
+        if "spacing" in data:
+            spacing = data["spacing"]
+            if "unit" in spacing:
+                tokens.spacing.unit = spacing["unit"]
+            if "scale" in spacing:
+                tokens.spacing.scale = spacing["scale"]
 
         # Parse typography
-        if 'typography' in data:
-            typo = data['typography']
-            if 'families' in typo:
-                families = typo['families']
-                if 'sans' in families:
-                    tokens.typography.sans = families['sans']
-                if 'mono' in families:
-                    tokens.typography.mono = families['mono']
+        if "typography" in data:
+            typo = data["typography"]
+            if "families" in typo:
+                families = typo["families"]
+                if "sans" in families:
+                    tokens.typography.sans = families["sans"]
+                if "mono" in families:
+                    tokens.typography.mono = families["mono"]
 
         return tokens
 
@@ -322,29 +334,29 @@ class OdooSCSSGenerator:
 
     # Default fallback colors
     DEFAULT_COLORS = {
-        'primary': '#8B35A8',
-        'accent': '#2ECCC4',
-        'neutral_dark': '#1C1C21',
-        'neutral_light': '#F0F0F0',
-        'background': '#FAFAFA',
+        "primary": "#8B35A8",
+        "accent": "#2ECCC4",
+        "neutral_dark": "#1C1C21",
+        "neutral_light": "#F0F0F0",
+        "background": "#FAFAFA",
     }
 
     def __init__(self, tokens: TokenSet):
         self.tokens = tokens
-        self.warnings: List[str] = []
+        self.warnings: list[str] = []
 
     def _get_color(self, key: str) -> str:
         """Get color value with fallback."""
         if key in self.tokens.colors:
             return self.tokens.colors[key].hex_value
-        return self.DEFAULT_COLORS.get(key, '#888888')
+        return self.DEFAULT_COLORS.get(key, "#888888")
 
-    def _generate_color_variations(self, base_hex: str) -> Dict[str, str]:
+    def _generate_color_variations(self, base_hex: str) -> dict[str, str]:
         """Generate lighter/darker variations of a color."""
         # Simple lightness adjustment (proper implementation would use OKLCH)
         rgb = ContrastChecker.hex_to_rgb(base_hex)
 
-        def adjust_lightness(rgb: Tuple[int, int, int], factor: float) -> str:
+        def adjust_lightness(rgb: tuple[int, int, int], factor: float) -> str:
             if factor > 1:
                 # Lighten
                 r = round(rgb[0] + (255 - rgb[0]) * (factor - 1))
@@ -363,16 +375,16 @@ class OdooSCSSGenerator:
             return f"#{r:02X}{g:02X}{b:02X}"
 
         return {
-            'light': adjust_lightness(rgb, 1.3),
-            'dark': adjust_lightness(rgb, 0.7),
+            "light": adjust_lightness(rgb, 1.3),
+            "dark": adjust_lightness(rgb, 0.7),
         }
 
-    def _check_contrasts(self) -> List[str]:
+    def _check_contrasts(self) -> list[str]:
         """Check color contrasts and return warnings."""
         warnings = []
 
-        primary = self._get_color('primary')
-        background = self._get_color('background')
+        primary = self._get_color("primary")
+        background = self._get_color("background")
 
         ratio, passes = ContrastChecker.check_wcag_aa(primary, background)
         if not passes:
@@ -381,7 +393,7 @@ class OdooSCSSGenerator:
                 f"{ratio:.2f}:1 (minimum 4.5:1 required)"
             )
 
-        accent = self._get_color('accent')
+        accent = self._get_color("accent")
         ratio, passes = ContrastChecker.check_wcag_aa(accent, background)
         if not passes:
             warnings.append(
@@ -395,21 +407,31 @@ class OdooSCSSGenerator:
         """Generate Odoo SCSS variables."""
         self.warnings = self._check_contrasts()
 
-        timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        version = self.tokens.meta.get('version', '1.0.0')
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        version = self.tokens.meta.get("version", "1.0.0")
 
         # Get colors with fallbacks
-        primary = self._get_color('primary')
-        accent = self._get_color('accent')
-        dark = self._get_color('neutral_dark')
-        light = self._get_color('neutral_light')
-        background = self._get_color('background')
+        primary = self._get_color("primary")
+        accent = self._get_color("accent")
+        dark = self._get_color("neutral_dark")
+        light = self._get_color("neutral_light")
+        background = self._get_color("background")
 
         # Generate spacing scale
         unit = self.tokens.spacing.unit
-        spacers = [0, unit // 2, unit, unit + unit // 2, unit * 2, unit * 3, unit * 4, unit * 6, unit * 8]
+        spacers = [
+            0,
+            unit // 2,
+            unit,
+            unit + unit // 2,
+            unit * 2,
+            unit * 3,
+            unit * 4,
+            unit * 6,
+            unit * 8,
+        ]
 
-        scss = f'''// ============================================
+        scss = f"""// ============================================
 // Platxa Token Sync - Generated Variables
 // Generated: {timestamp}
 // Version: {version}
@@ -474,31 +496,24 @@ $o-spacers: (
     color: $color !important;
   }}
 }}
-'''
+"""
         return scss
 
-    def get_validation_report(self) -> Dict[str, Any]:
+    def get_validation_report(self) -> dict[str, Any]:
         """Generate validation report."""
         return {
-            'timestamp': datetime.now().isoformat(),
-            'colors': {
-                name: {
-                    'hex': token.hex_value,
-                    'oklch': token.oklch,
-                    'role': token.role
-                }
+            "timestamp": datetime.now().isoformat(),
+            "colors": {
+                name: {"hex": token.hex_value, "oklch": token.oklch, "role": token.role}
                 for name, token in self.tokens.colors.items()
             },
-            'spacing': {
-                'unit': self.tokens.spacing.unit,
-                'scale': self.tokens.spacing.scale
+            "spacing": {"unit": self.tokens.spacing.unit, "scale": self.tokens.spacing.scale},
+            "typography": {
+                "sans": self.tokens.typography.sans,
+                "mono": self.tokens.typography.mono,
             },
-            'typography': {
-                'sans': self.tokens.typography.sans,
-                'mono': self.tokens.typography.mono
-            },
-            'warnings': self.warnings,
-            'passed': len(self.warnings) == 0
+            "warnings": self.warnings,
+            "passed": len(self.warnings) == 0,
         }
 
 
@@ -506,18 +521,17 @@ def validate_output_path(output_path: str) -> Path:
     """Validate output path for security."""
     resolved = Path(output_path).resolve()
 
-    if '\x00' in str(resolved):
+    if "\x00" in str(resolved):
         raise ValueError("Invalid path: contains null bytes")
 
     cwd = Path.cwd().resolve()
     home = Path.home().resolve()
-    tmp_dir = Path('/tmp').resolve()
+    tmp_dir = Path("/tmp").resolve()
 
     allowed_bases = [cwd, home, tmp_dir]
 
     is_allowed = any(
-        resolved == base or str(resolved).startswith(str(base) + '/')
-        for base in allowed_bases
+        resolved == base or str(resolved).startswith(str(base) + "/") for base in allowed_bases
     )
 
     if not is_allowed:
@@ -529,22 +543,22 @@ def validate_output_path(output_path: str) -> Path:
 def main():
     """Main entry point."""
     parser = argparse.ArgumentParser(
-        description='Transform Brand Kit tokens to Odoo SCSS variables',
+        description="Transform Brand Kit tokens to Odoo SCSS variables",
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog='''
+        epilog="""
 Examples:
   %(prog)s --input tokens.css --output primary_variables.scss
   %(prog)s --input tokens.json --output theme/static/src/scss/ --validate
   %(prog)s --input tokens.css --dry-run
-        '''
+        """,
     )
 
-    parser.add_argument('--input', '-i', required=True, help='Input token file (CSS or JSON)')
-    parser.add_argument('--output', '-o', help='Output SCSS file or directory')
-    parser.add_argument('--validate', '-v', action='store_true', help='Run validation checks')
-    parser.add_argument('--report', '-r', help='Save validation report to JSON file')
-    parser.add_argument('--dry-run', action='store_true', help='Preview output without writing')
-    parser.add_argument('--quiet', '-q', action='store_true', help='Suppress info messages')
+    parser.add_argument("--input", "-i", required=True, help="Input token file (CSS or JSON)")
+    parser.add_argument("--output", "-o", help="Output SCSS file or directory")
+    parser.add_argument("--validate", "-v", action="store_true", help="Run validation checks")
+    parser.add_argument("--report", "-r", help="Save validation report to JSON file")
+    parser.add_argument("--dry-run", action="store_true", help="Preview output without writing")
+    parser.add_argument("--quiet", "-q", action="store_true", help="Suppress info messages")
 
     args = parser.parse_args()
 
@@ -557,10 +571,10 @@ Examples:
         logger.error(f"Input file not found: {input_path}")
         sys.exit(1)
 
-    content = input_path.read_text(encoding='utf-8')
+    content = input_path.read_text(encoding="utf-8")
 
     # Parse tokens based on file extension
-    if input_path.suffix.lower() == '.json':
+    if input_path.suffix.lower() == ".json":
         tokens = TokenParser.parse_json(content)
     else:
         tokens = TokenParser.parse_css(content)
@@ -586,10 +600,10 @@ Examples:
 
         # If directory, use default filename
         if output_path.is_dir() or not output_path.suffix:
-            output_path = output_path / 'primary_variables.scss'
+            output_path = output_path / "primary_variables.scss"
             output_path.parent.mkdir(parents=True, exist_ok=True)
 
-        output_path.write_text(scss_output, encoding='utf-8')
+        output_path.write_text(scss_output, encoding="utf-8")
         logger.info(f"Generated: {output_path}")
     else:
         print(scss_output)
@@ -598,7 +612,7 @@ Examples:
     if args.report:
         report_path = validate_output_path(args.report)
         report = generator.get_validation_report()
-        report_path.write_text(json.dumps(report, indent=2), encoding='utf-8')
+        report_path.write_text(json.dumps(report, indent=2), encoding="utf-8")
         logger.info(f"Report saved: {report_path}")
 
     # Exit with appropriate code
@@ -609,5 +623,5 @@ Examples:
     sys.exit(0)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

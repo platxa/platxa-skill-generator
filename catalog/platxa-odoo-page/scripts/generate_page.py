@@ -15,78 +15,74 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
-import re
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any
 from xml.sax.saxutils import escape as xml_escape
-
 
 # ============================================================================
 # Page Type Definitions
 # ============================================================================
 
 PAGE_COMPOSITIONS: dict[str, list[str]] = {
-    'about': ['hero', 'story', 'values', 'team_preview', 'cta'],
-    'contact': ['hero_small', 'contact_info', 'contact_form', 'map'],
-    'services': ['hero', 'services_intro', 'services_grid', 'process', 'cta'],
-    'team': ['hero', 'team_intro', 'team_grid', 'cta'],
-    'faq': ['hero_small', 'faq_intro', 'faq_accordion', 'contact_cta'],
-    'pricing': ['hero', 'pricing_intro', 'pricing_table', 'faq_preview', 'cta'],
-    'portfolio': ['hero', 'portfolio_intro', 'portfolio_grid', 'cta'],
-    'landing': ['hero_full', 'features', 'benefits', 'testimonials', 'pricing_preview', 'cta'],
+    "about": ["hero", "story", "values", "team_preview", "cta"],
+    "contact": ["hero_small", "contact_info", "contact_form", "map"],
+    "services": ["hero", "services_intro", "services_grid", "process", "cta"],
+    "team": ["hero", "team_intro", "team_grid", "cta"],
+    "faq": ["hero_small", "faq_intro", "faq_accordion", "contact_cta"],
+    "pricing": ["hero", "pricing_intro", "pricing_table", "faq_preview", "cta"],
+    "portfolio": ["hero", "portfolio_intro", "portfolio_grid", "cta"],
+    "landing": ["hero_full", "features", "benefits", "testimonials", "pricing_preview", "cta"],
 }
 
 PAGE_DEFAULTS: dict[str, dict[str, str]] = {
-    'about': {
-        'title': 'About Us',
-        'description': 'Learn about our company, mission, values, and the team behind our success.',
-        'menu_label': 'About',
-        'sequence': '20',
+    "about": {
+        "title": "About Us",
+        "description": "Learn about our company, mission, values, and the team behind our success.",
+        "menu_label": "About",
+        "sequence": "20",
     },
-    'contact': {
-        'title': 'Contact Us',
-        'description': 'Get in touch with us. We\'d love to hear from you.',
-        'menu_label': 'Contact',
-        'sequence': '90',
+    "contact": {
+        "title": "Contact Us",
+        "description": "Get in touch with us. We'd love to hear from you.",
+        "menu_label": "Contact",
+        "sequence": "90",
     },
-    'services': {
-        'title': 'Our Services',
-        'description': 'Discover our comprehensive range of services designed to meet your needs.',
-        'menu_label': 'Services',
-        'sequence': '30',
+    "services": {
+        "title": "Our Services",
+        "description": "Discover our comprehensive range of services designed to meet your needs.",
+        "menu_label": "Services",
+        "sequence": "30",
     },
-    'team': {
-        'title': 'Our Team',
-        'description': 'Meet the dedicated professionals who make it all happen.',
-        'menu_label': 'Team',
-        'sequence': '40',
+    "team": {
+        "title": "Our Team",
+        "description": "Meet the dedicated professionals who make it all happen.",
+        "menu_label": "Team",
+        "sequence": "40",
     },
-    'faq': {
-        'title': 'FAQ',
-        'description': 'Find answers to commonly asked questions about our products and services.',
-        'menu_label': 'FAQ',
-        'sequence': '70',
+    "faq": {
+        "title": "FAQ",
+        "description": "Find answers to commonly asked questions about our products and services.",
+        "menu_label": "FAQ",
+        "sequence": "70",
     },
-    'pricing': {
-        'title': 'Pricing',
-        'description': 'Simple, transparent pricing that scales with your needs.',
-        'menu_label': 'Pricing',
-        'sequence': '50',
+    "pricing": {
+        "title": "Pricing",
+        "description": "Simple, transparent pricing that scales with your needs.",
+        "menu_label": "Pricing",
+        "sequence": "50",
     },
-    'portfolio': {
-        'title': 'Our Work',
-        'description': 'Explore our portfolio of successful projects and case studies.',
-        'menu_label': 'Portfolio',
-        'sequence': '35',
+    "portfolio": {
+        "title": "Our Work",
+        "description": "Explore our portfolio of successful projects and case studies.",
+        "menu_label": "Portfolio",
+        "sequence": "35",
     },
-    'landing': {
-        'title': 'Welcome',
-        'description': 'Discover how we can help you achieve your goals.',
-        'menu_label': 'Home',
-        'sequence': '10',
+    "landing": {
+        "title": "Welcome",
+        "description": "Discover how we can help you achieve your goals.",
+        "menu_label": "Home",
+        "sequence": "10",
     },
 }
 
@@ -95,18 +91,20 @@ PAGE_DEFAULTS: dict[str, dict[str, str]] = {
 # Data Classes
 # ============================================================================
 
+
 @dataclass
 class PageConfig:
     """Configuration for a single page."""
+
     page_type: str
     module_name: str
-    title: str = ''
-    description: str = ''
-    menu_label: str = ''
-    url: str = ''
+    title: str = ""
+    description: str = ""
+    menu_label: str = ""
+    url: str = ""
     sequence: int = 10
     with_seo: bool = True
-    company_name: str = 'Company Name'
+    company_name: str = "Company Name"
     sections: list[str] = field(default_factory=list)
 
     def __post_init__(self) -> None:
@@ -114,42 +112,43 @@ class PageConfig:
         defaults = PAGE_DEFAULTS.get(self.page_type, {})
 
         if not self.title:
-            self.title = defaults.get('title', self.page_type.title())
+            self.title = defaults.get("title", self.page_type.title())
         if not self.description:
-            self.description = defaults.get('description', f'{self.title} page')
+            self.description = defaults.get("description", f"{self.title} page")
         if not self.menu_label:
-            self.menu_label = defaults.get('menu_label', self.title)
+            self.menu_label = defaults.get("menu_label", self.title)
         if not self.url:
-            self.url = f'/{self.page_type}'
+            self.url = f"/{self.page_type}"
         if not self.sections:
-            self.sections = PAGE_COMPOSITIONS.get(self.page_type, ['hero', 'cta'])
+            self.sections = PAGE_COMPOSITIONS.get(self.page_type, ["hero", "cta"])
         if self.sequence == 10:
-            self.sequence = int(defaults.get('sequence', '10'))
+            self.sequence = int(defaults.get("sequence", "10"))
 
     @property
     def template_id(self) -> str:
         """Generate template ID."""
-        return f'page_{self.page_type}'
+        return f"page_{self.page_type}"
 
     @property
     def page_record_id(self) -> str:
         """Generate page record ID."""
-        return f'page_{self.page_type}'
+        return f"page_{self.page_type}"
 
     @property
     def menu_record_id(self) -> str:
         """Generate menu record ID."""
-        return f'menu_{self.page_type}'
+        return f"menu_{self.page_type}"
 
     @property
     def seo_template_id(self) -> str:
         """Generate SEO template ID."""
-        return f'page_{self.page_type}_seo'
+        return f"page_{self.page_type}_seo"
 
 
 # ============================================================================
 # Section Templates
 # ============================================================================
+
 
 class SectionGenerator:
     """Generates QWeb section templates."""
@@ -157,7 +156,7 @@ class SectionGenerator:
     @staticmethod
     def hero(config: PageConfig) -> str:
         """Full-width hero with parallax background."""
-        return f'''
+        return f"""
                 <!-- Hero Section -->
                 <section class="s_cover parallax s_parallax_is_fixed pt160 pb160 o_cc o_cc1"
                          data-scroll-background-ratio="1">
@@ -171,12 +170,12 @@ class SectionGenerator:
                             </div>
                         </div>
                     </div>
-                </section>'''
+                </section>"""
 
     @staticmethod
     def hero_small(config: PageConfig) -> str:
         """Compact hero for interior pages with breadcrumb."""
-        return f'''
+        return f"""
                 <!-- Hero Section (Compact) -->
                 <section class="s_text_block pt96 pb96 o_cc o_cc1">
                     <div class="container text-center">
@@ -190,12 +189,12 @@ class SectionGenerator:
                             </ol>
                         </nav>
                     </div>
-                </section>'''
+                </section>"""
 
     @staticmethod
     def hero_full(config: PageConfig) -> str:
         """Full-screen hero for landing pages."""
-        return f'''
+        return f"""
                 <!-- Full Hero Section -->
                 <section class="s_cover parallax s_parallax_is_fixed o_cc o_cc1"
                          data-scroll-background-ratio="1"
@@ -214,12 +213,12 @@ class SectionGenerator:
                             </div>
                         </div>
                     </div>
-                </section>'''
+                </section>"""
 
     @staticmethod
     def story(config: PageConfig) -> str:
         """Company story section."""
-        return '''
+        return """
                 <!-- Our Story Section -->
                 <section class="s_text_block pt64 pb64">
                     <div class="container">
@@ -238,12 +237,12 @@ class SectionGenerator:
                             </div>
                         </div>
                     </div>
-                </section>'''
+                </section>"""
 
     @staticmethod
     def values(config: PageConfig) -> str:
         """Core values section with icons."""
-        return '''
+        return """
                 <!-- Our Values Section -->
                 <section class="s_features pt64 pb64 o_cc o_cc5">
                     <div class="container">
@@ -272,12 +271,12 @@ class SectionGenerator:
                             </div>
                         </div>
                     </div>
-                </section>'''
+                </section>"""
 
     @staticmethod
     def team_preview(config: PageConfig) -> str:
         """Preview of team members with link to full team page."""
-        return '''
+        return """
                 <!-- Team Preview Section -->
                 <section class="s_company_team pt64 pb64">
                     <div class="container">
@@ -324,12 +323,12 @@ class SectionGenerator:
                             <a href="/team" class="btn btn-outline-primary">View Full Team</a>
                         </div>
                     </div>
-                </section>'''
+                </section>"""
 
     @staticmethod
     def team_intro(config: PageConfig) -> str:
         """Team page introduction."""
-        return '''
+        return """
                 <!-- Team Introduction -->
                 <section class="s_text_block pt64 pb32">
                     <div class="container">
@@ -342,12 +341,12 @@ class SectionGenerator:
                             </div>
                         </div>
                     </div>
-                </section>'''
+                </section>"""
 
     @staticmethod
     def team_grid(config: PageConfig) -> str:
         """Full team member grid."""
-        return '''
+        return """
                 <!-- Team Grid -->
                 <section class="s_company_team pb64">
                     <div class="container">
@@ -422,12 +421,12 @@ class SectionGenerator:
                             </div>
                         </div>
                     </div>
-                </section>'''
+                </section>"""
 
     @staticmethod
     def contact_info(config: PageConfig) -> str:
         """Contact information cards."""
-        return '''
+        return """
                 <!-- Contact Information -->
                 <section class="s_text_block pt64 pb32">
                     <div class="container">
@@ -480,12 +479,12 @@ class SectionGenerator:
                             </div>
                         </div>
                     </div>
-                </section>'''
+                </section>"""
 
     @staticmethod
     def contact_form(config: PageConfig) -> str:
         """Contact form section."""
-        return '''
+        return """
                 <!-- Contact Form -->
                 <section class="s_website_form pt32 pb64">
                     <div class="container">
@@ -533,12 +532,12 @@ class SectionGenerator:
                             </div>
                         </div>
                     </div>
-                </section>'''
+                </section>"""
 
     @staticmethod
     def map(config: PageConfig) -> str:
         """Map placeholder section."""
-        return '''
+        return """
                 <!-- Map Section -->
                 <section class="s_google_map">
                     <div class="container-fluid px-0">
@@ -551,12 +550,12 @@ class SectionGenerator:
                             </div>
                         </div>
                     </div>
-                </section>'''
+                </section>"""
 
     @staticmethod
     def services_intro(config: PageConfig) -> str:
         """Services introduction."""
-        return '''
+        return """
                 <!-- Services Introduction -->
                 <section class="s_text_block pt64 pb32">
                     <div class="container">
@@ -569,12 +568,12 @@ class SectionGenerator:
                             </div>
                         </div>
                     </div>
-                </section>'''
+                </section>"""
 
     @staticmethod
     def services_grid(config: PageConfig) -> str:
         """Services grid with cards."""
-        return '''
+        return """
                 <!-- Services Grid -->
                 <section class="s_features pb64">
                     <div class="container">
@@ -659,12 +658,12 @@ class SectionGenerator:
                             </div>
                         </div>
                     </div>
-                </section>'''
+                </section>"""
 
     @staticmethod
     def process(config: PageConfig) -> str:
         """Process/workflow section."""
-        return '''
+        return """
                 <!-- Our Process -->
                 <section class="s_process pt64 pb64 o_cc o_cc5">
                     <div class="container">
@@ -704,12 +703,12 @@ class SectionGenerator:
                             </div>
                         </div>
                     </div>
-                </section>'''
+                </section>"""
 
     @staticmethod
     def faq_intro(config: PageConfig) -> str:
         """FAQ introduction."""
-        return '''
+        return """
                 <!-- FAQ Introduction -->
                 <section class="s_text_block pt64 pb32">
                     <div class="container">
@@ -722,12 +721,12 @@ class SectionGenerator:
                             </div>
                         </div>
                     </div>
-                </section>'''
+                </section>"""
 
     @staticmethod
     def faq_accordion(config: PageConfig) -> str:
         """FAQ accordion section."""
-        return '''
+        return """
                 <!-- FAQ Accordion -->
                 <section class="s_faq_collapse pb64">
                     <div class="container">
@@ -806,12 +805,12 @@ class SectionGenerator:
                             </div>
                         </div>
                     </div>
-                </section>'''
+                </section>"""
 
     @staticmethod
     def faq_preview(config: PageConfig) -> str:
         """FAQ preview for pricing page."""
-        return '''
+        return """
                 <!-- FAQ Preview -->
                 <section class="s_faq_collapse pt64 pb64 o_cc o_cc5">
                     <div class="container">
@@ -853,12 +852,12 @@ class SectionGenerator:
                             </div>
                         </div>
                     </div>
-                </section>'''
+                </section>"""
 
     @staticmethod
     def pricing_intro(config: PageConfig) -> str:
         """Pricing introduction."""
-        return '''
+        return """
                 <!-- Pricing Introduction -->
                 <section class="s_text_block pt64 pb32">
                     <div class="container">
@@ -871,12 +870,12 @@ class SectionGenerator:
                             </div>
                         </div>
                     </div>
-                </section>'''
+                </section>"""
 
     @staticmethod
     def pricing_table(config: PageConfig) -> str:
         """Pricing table section."""
-        return '''
+        return """
                 <!-- Pricing Table -->
                 <section class="s_comparisons pb64">
                     <div class="container">
@@ -944,12 +943,12 @@ class SectionGenerator:
                             </div>
                         </div>
                     </div>
-                </section>'''
+                </section>"""
 
     @staticmethod
     def pricing_preview(config: PageConfig) -> str:
         """Pricing preview for landing pages."""
-        return '''
+        return """
                 <!-- Pricing Preview -->
                 <section class="s_comparisons pt64 pb64">
                     <div class="container">
@@ -972,12 +971,12 @@ class SectionGenerator:
                             </div>
                         </div>
                     </div>
-                </section>'''
+                </section>"""
 
     @staticmethod
     def portfolio_intro(config: PageConfig) -> str:
         """Portfolio introduction."""
-        return '''
+        return """
                 <!-- Portfolio Introduction -->
                 <section class="s_text_block pt64 pb32">
                     <div class="container">
@@ -990,12 +989,12 @@ class SectionGenerator:
                             </div>
                         </div>
                     </div>
-                </section>'''
+                </section>"""
 
     @staticmethod
     def portfolio_grid(config: PageConfig) -> str:
         """Portfolio project grid."""
-        return '''
+        return """
                 <!-- Portfolio Grid -->
                 <section class="s_image_gallery pb64">
                     <div class="container">
@@ -1080,12 +1079,12 @@ class SectionGenerator:
                             </div>
                         </div>
                     </div>
-                </section>'''
+                </section>"""
 
     @staticmethod
     def features(config: PageConfig) -> str:
         """Features section for landing pages."""
-        return '''
+        return """
                 <!-- Features Section -->
                 <section class="s_features pt80 pb80">
                     <div class="container">
@@ -1172,12 +1171,12 @@ class SectionGenerator:
                             </div>
                         </div>
                     </div>
-                </section>'''
+                </section>"""
 
     @staticmethod
     def benefits(config: PageConfig) -> str:
         """Benefits section for landing pages."""
-        return '''
+        return """
                 <!-- Benefits Section -->
                 <section class="s_text_image pt80 pb80 o_cc o_cc5">
                     <div class="container">
@@ -1217,12 +1216,12 @@ class SectionGenerator:
                             </div>
                         </div>
                     </div>
-                </section>'''
+                </section>"""
 
     @staticmethod
     def testimonials(config: PageConfig) -> str:
         """Testimonials section."""
-        return '''
+        return """
                 <!-- Testimonials Section -->
                 <section class="s_quotes pt80 pb80">
                     <div class="container">
@@ -1302,12 +1301,12 @@ class SectionGenerator:
                             </div>
                         </div>
                     </div>
-                </section>'''
+                </section>"""
 
     @staticmethod
     def cta(config: PageConfig) -> str:
         """Primary call-to-action section."""
-        return '''
+        return """
                 <!-- Call to Action -->
                 <section class="s_call_to_action pt80 pb80 o_cc o_cc1">
                     <div class="container text-center">
@@ -1317,12 +1316,12 @@ class SectionGenerator:
                         </p>
                         <a href="/contact" class="btn btn-lg btn-secondary">Contact Us</a>
                     </div>
-                </section>'''
+                </section>"""
 
     @staticmethod
     def contact_cta(config: PageConfig) -> str:
         """Contact-focused CTA for FAQ page."""
-        return '''
+        return """
                 <!-- Contact CTA -->
                 <section class="s_call_to_action pt64 pb64 o_cc o_cc1">
                     <div class="container text-center">
@@ -1332,7 +1331,7 @@ class SectionGenerator:
                         </p>
                         <a href="/contact" class="btn btn-lg btn-secondary">Contact Support</a>
                     </div>
-                </section>'''
+                </section>"""
 
     def generate_section(self, section_name: str, config: PageConfig) -> str:
         """Generate a section by name."""
@@ -1349,6 +1348,7 @@ class SectionGenerator:
 # XML Generators
 # ============================================================================
 
+
 class PageXMLGenerator:
     """Generates Odoo page XML files."""
 
@@ -1357,9 +1357,8 @@ class PageXMLGenerator:
 
     def generate_template(self, config: PageConfig) -> str:
         """Generate QWeb page template."""
-        sections = '\n'.join(
-            self.section_gen.generate_section(section, config)
-            for section in config.sections
+        sections = "\n".join(
+            self.section_gen.generate_section(section, config) for section in config.sections
         )
 
         return f'''<?xml version="1.0" encoding="UTF-8"?>
@@ -1410,7 +1409,7 @@ class PageXMLGenerator:
 
     def generate_seo_template(self, config: PageConfig) -> str:
         """Generate SEO metadata template."""
-        full_title = f'{config.title} | {config.company_name}'
+        full_title = f"{config.title} | {config.company_name}"
 
         return f'''<?xml version="1.0" encoding="UTF-8"?>
 <odoo>
@@ -1451,6 +1450,7 @@ class PageXMLGenerator:
 # File Operations
 # ============================================================================
 
+
 def validate_output_path(output_path: Path, base_dir: Path) -> bool:
     """Validate output path is within allowed directory."""
     try:
@@ -1466,38 +1466,38 @@ def generate_page(config: PageConfig, output_dir: Path, with_seo: bool = True) -
     # Validate output directory
     cwd = Path.cwd()
     if not validate_output_path(output_dir, cwd):
-        raise ValueError(f'Output directory must be within {cwd}')
+        raise ValueError(f"Output directory must be within {cwd}")
 
     generator = PageXMLGenerator()
     files_created: dict[str, Path] = {}
 
     # Create directories
-    views_dir = output_dir / 'views' / 'pages'
-    data_dir = output_dir / 'data'
+    views_dir = output_dir / "views" / "pages"
+    data_dir = output_dir / "data"
 
     views_dir.mkdir(parents=True, exist_ok=True)
     data_dir.mkdir(parents=True, exist_ok=True)
 
     # Generate template
-    template_file = views_dir / f'page_{config.page_type}.xml'
+    template_file = views_dir / f"page_{config.page_type}.xml"
     template_file.write_text(generator.generate_template(config))
-    files_created['template'] = template_file
+    files_created["template"] = template_file
 
     # Generate page record
-    page_file = data_dir / f'page_{config.page_type}.xml'
+    page_file = data_dir / f"page_{config.page_type}.xml"
     page_file.write_text(generator.generate_page_record(config))
-    files_created['page_record'] = page_file
+    files_created["page_record"] = page_file
 
     # Generate menu record
-    menu_file = data_dir / f'menu_{config.page_type}.xml'
+    menu_file = data_dir / f"menu_{config.page_type}.xml"
     menu_file.write_text(generator.generate_menu_record(config))
-    files_created['menu_record'] = menu_file
+    files_created["menu_record"] = menu_file
 
     # Generate SEO template
     if with_seo:
-        seo_file = views_dir / f'page_{config.page_type}_seo.xml'
+        seo_file = views_dir / f"page_{config.page_type}_seo.xml"
         seo_file.write_text(generator.generate_seo_template(config))
-        files_created['seo_template'] = seo_file
+        files_created["seo_template"] = seo_file
 
     return files_created
 
@@ -1507,7 +1507,7 @@ def generate_multiple_pages(
     module_name: str,
     output_dir: Path,
     with_seo: bool = True,
-    company_name: str = 'Company Name'
+    company_name: str = "Company Name",
 ) -> dict[str, dict[str, Path]]:
     """Generate multiple pages."""
     results: dict[str, dict[str, Path]] = {}
@@ -1526,9 +1526,9 @@ def generate_multiple_pages(
         try:
             files = generate_page(config, output_dir, with_seo)
             results[page_type] = files
-            print(f'Generated {page_type} page: {len(files)} files')
+            print(f"Generated {page_type} page: {len(files)} files")
         except Exception as e:
-            print(f'Error generating {page_type} page: {e}')
+            print(f"Error generating {page_type} page: {e}")
 
     return results
 
@@ -1537,96 +1537,97 @@ def generate_multiple_pages(
 # CLI Interface
 # ============================================================================
 
+
 def main() -> int:
     """Main entry point."""
     parser = argparse.ArgumentParser(
-        description='Generate Odoo website pages with QWeb templates',
+        description="Generate Odoo website pages with QWeb templates",
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog='''
+        epilog="""
 Examples:
   %(prog)s --type about --module theme_company
   %(prog)s --pages about,contact,services --module theme_company --with-seo
   %(prog)s --type landing --module theme_company --title "Welcome" --company "Acme Corp"
-        ''',
+        """,
     )
 
     parser.add_argument(
-        '--type',
+        "--type",
         choices=list(PAGE_COMPOSITIONS.keys()),
-        help='Single page type to generate',
+        help="Single page type to generate",
     )
     parser.add_argument(
-        '--pages',
-        help='Comma-separated list of page types to generate',
+        "--pages",
+        help="Comma-separated list of page types to generate",
     )
     parser.add_argument(
-        '--module',
-        help='Odoo module name (e.g., theme_company)',
+        "--module",
+        help="Odoo module name (e.g., theme_company)",
     )
     parser.add_argument(
-        '--output',
+        "--output",
         type=Path,
-        default=Path('.'),
-        help='Output directory (default: current directory)',
+        default=Path("."),
+        help="Output directory (default: current directory)",
     )
     parser.add_argument(
-        '--title',
-        help='Custom page title (for single page)',
+        "--title",
+        help="Custom page title (for single page)",
     )
     parser.add_argument(
-        '--description',
-        help='Custom page description (for single page)',
+        "--description",
+        help="Custom page description (for single page)",
     )
     parser.add_argument(
-        '--company',
-        default='Company Name',
-        help='Company name for SEO metadata',
+        "--company",
+        default="Company Name",
+        help="Company name for SEO metadata",
     )
     parser.add_argument(
-        '--with-seo',
-        action='store_true',
+        "--with-seo",
+        action="store_true",
         default=True,
-        help='Generate SEO metadata templates (default: True)',
+        help="Generate SEO metadata templates (default: True)",
     )
     parser.add_argument(
-        '--no-seo',
-        action='store_true',
-        help='Skip SEO metadata generation',
+        "--no-seo",
+        action="store_true",
+        help="Skip SEO metadata generation",
     )
     parser.add_argument(
-        '--list-types',
-        action='store_true',
-        help='List available page types and exit',
+        "--list-types",
+        action="store_true",
+        help="List available page types and exit",
     )
     parser.add_argument(
-        '--json',
-        action='store_true',
-        help='Output results as JSON',
+        "--json",
+        action="store_true",
+        help="Output results as JSON",
     )
 
     args = parser.parse_args()
 
     # List types
     if args.list_types:
-        print('Available page types:')
+        print("Available page types:")
         for page_type, sections in PAGE_COMPOSITIONS.items():
             defaults = PAGE_DEFAULTS.get(page_type, {})
-            print(f'  {page_type}: {defaults.get("title", page_type.title())}')
-            print(f'    Sections: {", ".join(sections)}')
+            print(f"  {page_type}: {defaults.get('title', page_type.title())}")
+            print(f"    Sections: {', '.join(sections)}")
         return 0
 
     # Validate arguments
     if not args.type and not args.pages:
-        parser.error('Either --type or --pages is required')
+        parser.error("Either --type or --pages is required")
 
     if not args.module:
-        parser.error('--module is required when generating pages')
+        parser.error("--module is required when generating pages")
 
     with_seo = not args.no_seo
 
     # Generate pages
     if args.pages:
-        page_types = [p.strip() for p in args.pages.split(',')]
+        page_types = [p.strip() for p in args.pages.split(",")]
         results = generate_multiple_pages(
             page_types,
             args.module,
@@ -1638,33 +1639,32 @@ Examples:
         config = PageConfig(
             page_type=args.type,
             module_name=args.module,
-            title=args.title or '',
-            description=args.description or '',
+            title=args.title or "",
+            description=args.description or "",
             company_name=args.company,
         )
         try:
             files = generate_page(config, args.output, with_seo)
             results = {args.type: files}
         except Exception as e:
-            print(f'Error: {e}', file=sys.stderr)
+            print(f"Error: {e}", file=sys.stderr)
             return 1
 
     # Output results
     if args.json:
         json_results = {
-            page_type: {k: str(v) for k, v in files.items()}
-            for page_type, files in results.items()
+            page_type: {k: str(v) for k, v in files.items()} for page_type, files in results.items()
         }
         print(json.dumps(json_results, indent=2))
     else:
-        print(f'\nGenerated {len(results)} page(s) in {args.output}')
+        print(f"\nGenerated {len(results)} page(s) in {args.output}")
         for page_type, files in results.items():
-            print(f'\n{page_type}:')
+            print(f"\n{page_type}:")
             for file_type, path in files.items():
-                print(f'  {file_type}: {path}')
+                print(f"  {file_type}: {path}")
 
     return 0
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())
