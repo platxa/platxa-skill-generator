@@ -194,3 +194,23 @@ skills:
     local: true
     tier: 0
     category: backend
+  platxa-odoo-blog:
+    local: true
+    tier: 0
+    category: odoo
+  platxa-odoo-form:
+    local: true
+    tier: 0
+    category: odoo
+  platxa-odoo-page:
+    local: true
+    tier: 0
+    category: odoo
+  platxa-preview-service:
+    local: true
+    tier: 0
+    category: frontend
+  platxa-token-sync:
+    local: true
+    tier: 0
+    category: frontend
