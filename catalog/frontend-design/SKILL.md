@@ -40,3 +40,37 @@ Interpret creatively and make unexpected choices that feel genuinely designed fo
 **IMPORTANT**: Match implementation complexity to the aesthetic vision. Maximalist designs need elaborate code with extensive animations and effects. Minimalist or refined designs need restraint, precision, and careful attention to spacing, typography, and subtle details. Elegance comes from executing the vision well.
 
 Remember: Claude is capable of extraordinary creative work. Don't hold back, show what can truly be created when thinking outside the box and committing fully to a distinctive vision.
+
+## Overview
+
+Frontend Design generates distinctive, production-grade web interfaces
+with high visual quality. It produces React/Next.js components styled
+with Tailwind CSS and shadcn/ui, avoiding generic AI aesthetics.
+
+## Workflow
+
+1. Analyze the user's requirements and identify the interface type
+2. Choose a bold aesthetic direction and commit to it
+3. Build the component with semantic HTML, Tailwind, and React
+4. Apply finishing touches: micro-interactions, shadows, transitions
+5. Verify the output against the checklist below
+
+## Examples
+
+```
+User: "Build a dashboard for analytics"
+→ Generates a responsive React dashboard with charts, cards, and navigation
+```
+
+```
+User: "Create a landing page for a SaaS product"
+→ Produces a full-page layout with hero, features, pricing, and CTA sections
+```
+
+## Output Checklist
+
+- [ ] Semantic HTML structure
+- [ ] Responsive across breakpoints
+- [ ] Consistent color palette and typography
+- [ ] Accessible (keyboard navigation, contrast ratios)
+- [ ] No generic AI aesthetic patterns
