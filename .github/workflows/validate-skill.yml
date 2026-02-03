@@ -297,3 +297,40 @@ jobs:
 
           echo ""
           echo "All skill directories have valid structure."
+
+      - name: Validate frontmatter on all skills
+        run: |
+          echo "Validating SKILL.md frontmatter for all skills..."
+          chmod +x scripts/validate-frontmatter.sh
+
+          SKILLS=$(python3 -c "
+          import yaml
+          with open('skills/manifest.yaml') as f:
+              m = yaml.safe_load(f)
+          print(' '.join(m.get('skills', {}).keys()))
+          ")
+
+          FAILED=0
+          for skill in $SKILLS; do
+            skill_dir="skills/$skill"
+            if [ ! -d "$skill_dir" ]; then
+              continue
+            fi
+
+            if ! ./scripts/validate-frontmatter.sh "$skill_dir" > /dev/null 2>&1; then
+              echo "✗ $skill: Frontmatter validation failed"
+              ./scripts/validate-frontmatter.sh "$skill_dir" 2>&1 | grep -E "ERROR" || true
+              FAILED=1
+            else
+              echo "✓ $skill: Frontmatter valid"
+            fi
+          done
+
+          if [ $FAILED -eq 1 ]; then
+            echo ""
+            echo "Some skills have invalid frontmatter. Fix errors above."
+            exit 1
+          fi
+
+          echo ""
+          echo "All skills pass frontmatter validation."
