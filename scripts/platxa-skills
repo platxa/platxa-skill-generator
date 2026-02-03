@@ -4,7 +4,7 @@
 Usage:
     platxa-skills validate <skill-directory> [--profile=strict|spec] [--verbose]
     platxa-skills score <skill-directory> [--json] [--threshold=N]
-    platxa-skills install <name-or-path> [--user | --project] [--force]
+    platxa-skills install <name-or-path> [--global | --project] [--agent=AGENT] [--force]
     platxa-skills search <query>
     platxa-skills list [--category=CAT] [--json]
     platxa-skills init <name> [--type=TYPE]
@@ -246,16 +246,21 @@ AGENT_PATHS: dict[str, str] = {
 
 
 def _resolve_agent_base(args: argparse.Namespace) -> Path:
-    """Resolve the install base directory from --agent, --user, --project flags."""
+    """Resolve the install base directory from --agent, --global, --user, --project flags.
+
+    Priority: --global/--user → ~/.<agent>/skills/
+              --project (or default) → ./<agent>/skills/
+    """
+    use_global = getattr(args, "global_", False) or getattr(args, "user", False)
     agent = getattr(args, "agent", None)
-    if agent:
-        rel = AGENT_PATHS.get(agent, f".{agent}/skills")
-        if args.project:
-            return Path(rel)
+    rel = AGENT_PATHS.get(agent, ".claude/skills") if agent else ".claude/skills"
+
+    if use_global:
         return Path.home() / rel
-    if args.project:
-        return Path(".claude/skills")
-    return Path.home() / ".claude" / "skills"
+    if getattr(args, "project", False):
+        return Path(rel)
+    # Default: project-level
+    return Path(rel)
 
 
 def cmd_install(args: argparse.Namespace) -> int:
@@ -546,9 +551,14 @@ def main() -> int:
     )
     p_install.add_argument("skill", help="Skill name or path to skill directory")
     p_install.add_argument(
-        "--user", action="store_true", help="Install to ~/.claude/skills/ (default)"
+        "--global", action="store_true", dest="global_", help="Install to ~/.<agent>/skills/"
     )
-    p_install.add_argument("--project", action="store_true", help="Install to .claude/skills/")
+    p_install.add_argument(
+        "--user", action="store_true", help="Alias for --global (install to ~/.<agent>/skills/)"
+    )
+    p_install.add_argument(
+        "--project", action="store_true", help="Install to ./<agent>/skills/ (default)"
+    )
     p_install.add_argument("--force", action="store_true", help="Overwrite existing installation")
     p_install.add_argument(
         "--agent",
