@@ -234,10 +234,11 @@ class TestNoScriptsDirectory:
     """Tests for skills without scripts."""
 
     def test_no_scripts_dir_passes(self, tmp_path: Path) -> None:
-        """A skill with no scripts/ directory passes cleanly."""
+        """A skill with no scripts/ directory passes — Phase 1 still runs."""
         skill_dir = tmp_path / "test-skill"
         skill_dir.mkdir()
         (skill_dir / "SKILL.md").write_text("---\nname: test-skill\n---\n")
         result = _run_security_check(skill_dir)
         assert result.returncode == 0
-        assert "No scripts directory" in result.stdout
+        assert "Phase 1" in result.stdout
+        assert "Phase 2" not in result.stdout

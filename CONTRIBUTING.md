@@ -29,6 +29,134 @@ This project follows the [Contributor Covenant Code of Conduct](https://www.cont
    git checkout -b feature/your-feature-name
    ```
 
+## Submitting a New Skill (PR-Based)
+
+The skills registry uses GitHub PRs as the submission pipeline.
+Every skill goes through automated validation before merging.
+
+### Step 1: Fork and Clone
+
+```bash
+# Fork via GitHub UI, then:
+git clone https://github.com/YOUR-USERNAME/platxa-skill-generator.git
+cd platxa-skill-generator
+git checkout -b add/my-skill-name
+```
+
+### Step 2: Create Your Skill
+
+Create a directory under `skills/` with a `SKILL.md`:
+
+```bash
+mkdir -p skills/my-skill-name
+```
+
+Write `skills/my-skill-name/SKILL.md` with valid frontmatter:
+
+```yaml
+---
+name: my-skill-name
+description: One sentence describing what this skill does and when to use it.
+allowed-tools:
+  - Read
+  - Write
+  - Glob
+  - Grep
+metadata:
+  version: "1.0.0"
+  tags:
+    - relevant-tag
+---
+
+# My Skill Name
+
+Instructions for the AI agent go here...
+```
+
+Optionally add supporting files:
+
+```
+skills/my-skill-name/
+├── SKILL.md              # Required
+├── references/           # Optional domain expertise
+│   └── patterns.md
+├── scripts/              # Optional helper scripts
+│   └── helper.sh
+└── templates/            # Optional output templates
+    └── template.md
+```
+
+### Step 3: Register in Manifest
+
+Add your skill to `skills/manifest.yaml`:
+
+```yaml
+skills:
+  # ... existing skills ...
+  my-skill-name:
+    local: true
+    tier: 2              # 1=essential, 2=useful, 3=experimental
+    category: devtools   # devtools, frontend, backend, testing, security, etc.
+```
+
+### Step 4: Validate Locally
+
+```bash
+# Run all validations (structure, frontmatter, tokens, duplicates, security)
+./scripts/validate-all.sh skills/my-skill-name
+
+# Check token budget
+python3 scripts/count-tokens.py skills/my-skill-name
+
+# Check for duplicates against existing skills
+python3 scripts/check-duplicates.py skills/my-skill-name
+```
+
+All checks must pass. Token budgets:
+- SKILL.md: ≤ 5,000 tokens (recommended), ≤ 10,000 (hard limit)
+- References total: ≤ 10,000 tokens (recommended)
+- Total skill: ≤ 15,000 tokens (recommended)
+
+### Step 5: Open a Pull Request
+
+```bash
+git add skills/my-skill-name/ skills/manifest.yaml
+git commit -m "feat: add my-skill-name skill"
+git push origin add/my-skill-name
+```
+
+Open a PR against `main`. The CI pipeline will automatically:
+1. Run `validate-all.sh` with profile-aware validation
+2. Check token budgets
+3. Run duplicate detection
+4. Post a validation report as a PR comment
+
+### What Happens After Submission
+
+| Step | Action | Automated? |
+|------|--------|------------|
+| Validation | CI runs all quality checks | Yes |
+| PR Comment | Bot posts validation report with scores | Yes |
+| Review | Maintainers review content quality | No |
+| Merge | PR merged to main | No |
+| Publish | `index.json` and Pages site regenerated | Yes |
+| Discovery | Skill appears in `.well-known/skills/` | Yes |
+
+### Skill Quality Checklist
+
+- [ ] SKILL.md has valid YAML frontmatter (name, description)
+- [ ] Name is hyphen-case, ≤ 64 characters, no consecutive hyphens
+- [ ] Description is ≤ 1,024 characters, no placeholders
+- [ ] Only uses valid `allowed-tools` (Read, Write, Edit, Glob, Grep, Bash, Task, etc.)
+- [ ] Token budget within limits
+- [ ] No duplicate or near-duplicate of existing skills
+- [ ] No placeholder content (TODO, TBD, FIXME)
+- [ ] Contains real domain expertise, not generic instructions
+- [ ] Scripts are executable and pass security checks
+- [ ] Tested on real projects
+
+---
+
 ## How to Contribute
 
 ### Types of Contributions
@@ -37,6 +165,7 @@ We welcome contributions in these areas:
 
 | Type | Description |
 |------|-------------|
+| **New Skills** | Submit a skill via the PR workflow above |
 | **Bug Fixes** | Fix issues in existing functionality |
 | **New Skill Types** | Add new skill type templates |
 | **Pattern Improvements** | Enhance implementation patterns |
@@ -200,7 +329,7 @@ To add a new skill type:
 
 To add a new upstream skill source to the catalog:
 
-1. **Add the source** to `catalog/manifest.yaml` under `sources:` (if new repo):
+1. **Add the source** to `skills/manifest.yaml` under `sources:` (if new repo):
    ```yaml
    sources:
      my-source:
@@ -221,10 +350,10 @@ To add a new upstream skill source to the catalog:
 3. **Sync and validate**:
    ```bash
    ./scripts/sync-catalog.sh sync
-   ./scripts/validate-all.sh catalog/my-new-skill
+   ./scripts/validate-all.sh skills/my-new-skill
    ```
 
-4. **Add overrides** (optional): Place files in `catalog/overrides/my-new-skill/` to customize the upstream skill.
+4. **Add overrides** (optional): Place files in `skills/overrides/my-new-skill/` to customize the upstream skill.
 
 5. **Submit PR** with the manifest change and any overrides.
 

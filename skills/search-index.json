@@ -1,0 +1,420 @@
+[
+  {
+    "name": "brainstorming",
+    "description": "You MUST use this before any creative work - creating features, building components, adding functionality, or modifying behavior. Explores user intent, requirements and design before implementation.",
+    "category": "workflow",
+    "tier": 2,
+    "tokens": 522,
+    "source": "obra",
+    "tags": []
+  },
+  {
+    "name": "code-documenter",
+    "description": "Automatically generates and improves code documentation across Python, JavaScript/TypeScript, Java, Go, and Rust. Detects language conventions, applies appropriate docstring standards, and validates documentation quality.",
+    "category": "devtools",
+    "tier": 0,
+    "tokens": 3605,
+    "source": "local",
+    "tags": [
+      "automation",
+      "documentation",
+      "developer-tools"
+    ]
+  },
+  {
+    "name": "commit-message",
+    "description": "Generate conventional commit messages by analyzing staged git changes. Detects change type, suggests scope, and formats messages following the Conventional Commits specification.",
+    "category": "git",
+    "tier": 0,
+    "tokens": 2475,
+    "source": "local",
+    "tags": [
+      "automation",
+      "git",
+      "workflow"
+    ]
+  },
+  {
+    "name": "dispatching-parallel-agents",
+    "description": "Use when facing 2+ independent tasks that can be worked on without shared state or sequential dependencies",
+    "category": "workflow",
+    "tier": 2,
+    "tokens": 1405,
+    "source": "obra",
+    "tags": []
+  },
+  {
+    "name": "executing-plans",
+    "description": "Use when you have a written implementation plan to execute in a separate session with review checkpoints",
+    "category": "workflow",
+    "tier": 1,
+    "tokens": 562,
+    "source": "obra",
+    "tags": []
+  },
+  {
+    "name": "frontend-design",
+    "description": "Create distinctive, production-grade frontend interfaces with high design quality. Use this skill when the user asks to build web components, pages, artifacts, posters, or applications (examples include websites, landing pages, dashboards, React components, HTML/CSS layouts, or when styling/beautifying any web UI). Generates creative, polished code and UI design that avoids generic AI aesthetics.",
+    "category": "design",
+    "tier": 1,
+    "tokens": 1084,
+    "source": "anthropic",
+    "tags": []
+  },
+  {
+    "name": "mcp-builder",
+    "description": "Guide for creating high-quality MCP (Model Context Protocol) servers that enable LLMs to interact with external services through well-designed tools. Use when building MCP servers to integrate external APIs or services, whether in Python (FastMCP) or Node/TypeScript (MCP SDK).",
+    "category": "devtools",
+    "tier": 1,
+    "tokens": 1922,
+    "source": "anthropic",
+    "tags": []
+  },
+  {
+    "name": "platxa-error-handling",
+    "description": "Guide for structured error handling across Platxa stack. Covers error types, retry patterns with exponential backoff, logging, and HTTP response mapping for Python, TypeScript, and Go.",
+    "category": "backend",
+    "tier": 0,
+    "tokens": 7013,
+    "source": "local",
+    "tags": [
+      "guide",
+      "error-handling",
+      "retry",
+      "logging"
+    ]
+  },
+  {
+    "name": "platxa-frontend-builder",
+    "description": "Generate production-ready React/Next.js components for Platxa platform. Creates Server/Client components, forms, data tables, and UI primitives following App Router patterns, TypeScript best practices, and Tailwind/Shadcn styling.",
+    "category": "frontend",
+    "tier": 0,
+    "tokens": 7468,
+    "source": "local",
+    "tags": [
+      "builder",
+      "react",
+      "nextjs",
+      "frontend",
+      "typescript"
+    ]
+  },
+  {
+    "name": "platxa-jwt-auth",
+    "description": "Generate RS256 JWT authentication with JWKS endpoint for Platxa services. Creates secure token infrastructure with key rotation support.",
+    "category": "security",
+    "tier": 0,
+    "tokens": 6318,
+    "source": "local",
+    "tags": [
+      "builder",
+      "authentication",
+      "jwt",
+      "security",
+      "rs256"
+    ]
+  },
+  {
+    "name": "platxa-k8s-ops",
+    "description": "Kubernetes operations automation for Platxa platform. Debug instances, manage clusters, scale deployments, and perform infrastructure operations with guided workflows.",
+    "category": "infrastructure",
+    "tier": 0,
+    "tokens": 6064,
+    "source": "local",
+    "tags": [
+      "automation",
+      "kubernetes",
+      "devops",
+      "infrastructure"
+    ]
+  },
+  {
+    "name": "platxa-k8s-scaling",
+    "description": "Kubernetes scaling patterns for Platxa platform. Configure scale-to-zero with waking-service, HPA autoscaling, and per-instance resource management.",
+    "category": "infrastructure",
+    "tier": 0,
+    "tokens": 5551,
+    "source": "local",
+    "tags": [
+      "guide",
+      "kubernetes",
+      "scaling",
+      "hpa",
+      "scale-to-zero"
+    ]
+  },
+  {
+    "name": "platxa-logging",
+    "description": "Structured logging and correlation ID patterns for Platxa services. Covers Python logging, Go slog, TypeScript console patterns, and request tracing across microservices.",
+    "category": "observability",
+    "tier": 0,
+    "tokens": 6683,
+    "source": "local",
+    "tags": [
+      "guide",
+      "logging",
+      "correlation-ids",
+      "observability"
+    ]
+  },
+  {
+    "name": "platxa-monaco-config",
+    "description": "Monaco editor configuration guide for Platxa platform. Configure themes, keybindings, editor options, and optimize performance with ready-to-use presets.",
+    "category": "frontend",
+    "tier": 0,
+    "tokens": 5873,
+    "source": "local",
+    "tags": [
+      "guide",
+      "monaco",
+      "editor",
+      "configuration"
+    ]
+  },
+  {
+    "name": "platxa-monitoring",
+    "description": "Observability guide for Platxa platform using Prometheus metrics and Loki logs. Query metrics, analyze logs, configure alerts, and troubleshoot issues.",
+    "category": "observability",
+    "tier": 0,
+    "tokens": 6739,
+    "source": "local",
+    "tags": [
+      "guide",
+      "monitoring",
+      "prometheus",
+      "loki",
+      "observability"
+    ]
+  },
+  {
+    "name": "platxa-odoo-blog",
+    "description": "Generate Odoo blog templates with post layouts, category pages, author profiles, and SEO optimization.",
+    "category": "odoo",
+    "tier": 0,
+    "tokens": 2953,
+    "source": "local",
+    "tags": []
+  },
+  {
+    "name": "platxa-odoo-form",
+    "description": "Generate Odoo website forms with CRM lead integration, field validation, conditional logic, and multi-step wizards.",
+    "category": "odoo",
+    "tier": 0,
+    "tokens": 4342,
+    "source": "local",
+    "tags": []
+  },
+  {
+    "name": "platxa-odoo-page",
+    "description": "Generate complete Odoo website pages (About, Contact, Services, Team, FAQ, Pricing) with QWeb templates, SEO metadata, breadcrumbs, and proper Odoo structure.",
+    "category": "odoo",
+    "tier": 0,
+    "tokens": 6834,
+    "source": "local",
+    "tags": []
+  },
+  {
+    "name": "platxa-preview-service",
+    "description": "Live preview service for Odoo themes with real-time token updates, SCSS compilation, and WebSocket hot reload.",
+    "category": "frontend",
+    "tier": 0,
+    "tokens": 1764,
+    "source": "local",
+    "tags": []
+  },
+  {
+    "name": "platxa-secrets-management",
+    "description": "Fernet encryption, Kubernetes secrets, and secure token patterns for Platxa services. Covers Python cryptography, K8s Secret objects, key rotation, and constant-time token verification.",
+    "category": "security",
+    "tier": 0,
+    "tokens": 6971,
+    "source": "local",
+    "tags": [
+      "guide",
+      "security",
+      "encryption",
+      "kubernetes",
+      "secrets"
+    ]
+  },
+  {
+    "name": "platxa-sidecar-builder",
+    "description": "Build Node.js sidecar services for real-time code editing platforms. Covers file watching, git operations, WebSocket servers, Yjs CRDT integration, REST APIs, and Kubernetes deployment patterns.",
+    "category": "backend",
+    "tier": 0,
+    "tokens": 7475,
+    "source": "local",
+    "tags": [
+      "builder",
+      "nodejs",
+      "sidecar",
+      "yjs",
+      "websocket",
+      "kubernetes"
+    ]
+  },
+  {
+    "name": "platxa-testing",
+    "description": "Automated testing patterns for Platxa platform using pytest, Vitest, and E2E frameworks. Run tests, generate fixtures, configure CI/CD pipelines.",
+    "category": "testing",
+    "tier": 0,
+    "tokens": 6090,
+    "source": "local",
+    "tags": [
+      "automation",
+      "testing",
+      "pytest",
+      "vitest",
+      "e2e"
+    ]
+  },
+  {
+    "name": "platxa-token-sync",
+    "description": "Transform Brand Kit design tokens (OKLCH colors, spacing, typography) into Odoo-compatible SCSS variables. Bridges the gap between modern design systems and Odoo's theming architecture.",
+    "category": "frontend",
+    "tier": 0,
+    "tokens": 6793,
+    "source": "local",
+    "tags": []
+  },
+  {
+    "name": "platxa-yjs-server",
+    "description": "Yjs WebSocket server implementation guide for real-time collaboration. Configure y-websocket, awareness cursors, and persistence with production-ready patterns.",
+    "category": "backend",
+    "tier": 0,
+    "tokens": 5407,
+    "source": "local",
+    "tags": [
+      "guide",
+      "yjs",
+      "websocket",
+      "collaboration",
+      "crdt"
+    ]
+  },
+  {
+    "name": "pr-description",
+    "description": "Generate comprehensive pull request descriptions by analyzing git commits and diff. Creates structured summaries with changes breakdown, testing instructions, and related issues following team PR templates.",
+    "category": "git",
+    "tier": 0,
+    "tokens": 2467,
+    "source": "local",
+    "tags": [
+      "builder",
+      "git",
+      "workflow"
+    ]
+  },
+  {
+    "name": "vercel-react-best-practices",
+    "description": "React and Next.js performance optimization guidelines from Vercel Engineering. This skill should be used when writing, reviewing, or refactoring React/Next.js code to ensure optimal performance patterns. Triggers on tasks involving React components, Next.js pages, data fetching, bundle optimization, or performance improvements.",
+    "category": "frontend",
+    "tier": 1,
+    "tokens": 1488,
+    "source": "vercel",
+    "tags": []
+  },
+  {
+    "name": "vercel-react-native-skills",
+    "description": "React Native and Expo best practices for building performant mobile apps. Use when building React Native components, optimizing list performance, implementing animations, or working with native modules. Triggers on tasks involving React Native, Expo, mobile performance, or native platform APIs.",
+    "category": "mobile",
+    "tier": 2,
+    "tokens": 1041,
+    "source": "vercel",
+    "tags": []
+  },
+  {
+    "name": "subagent-driven-development",
+    "description": "Use when executing implementation plans with independent tasks in the current session",
+    "category": "workflow",
+    "tier": 2,
+    "tokens": 2269,
+    "source": "obra",
+    "tags": []
+  },
+  {
+    "name": "systematic-debugging",
+    "description": "Use when encountering any bug, test failure, or unexpected behavior, before proposing fixes",
+    "category": "debugging",
+    "tier": 1,
+    "tokens": 2330,
+    "source": "obra",
+    "tags": []
+  },
+  {
+    "name": "test-driven-development",
+    "description": "Use when implementing any feature or bugfix, before writing implementation code",
+    "category": "testing",
+    "tier": 1,
+    "tokens": 2420,
+    "source": "obra",
+    "tags": []
+  },
+  {
+    "name": "test-generator",
+    "description": "Generate unit tests for existing code across Python, JavaScript/TypeScript, Java, Go, and Rust. Creates comprehensive test cases covering happy paths, edge cases, and error handling using appropriate testing frameworks.",
+    "category": "testing",
+    "tier": 0,
+    "tokens": 3392,
+    "source": "local",
+    "tags": [
+      "builder",
+      "testing",
+      "developer-tools"
+    ]
+  },
+  {
+    "name": "using-superpowers",
+    "description": "Use when starting any conversation - establishes how to find and use skills, requiring Skill tool invocation before ANY response including clarifying questions",
+    "category": "workflow",
+    "tier": 3,
+    "tokens": 925,
+    "source": "obra",
+    "tags": []
+  },
+  {
+    "name": "verification-before-completion",
+    "description": "Use when about to claim work is complete, fixed, or passing, before committing or creating PRs - requires running verification commands and confirming output before making any success claims; evidence before assertions always",
+    "category": "workflow",
+    "tier": 1,
+    "tokens": 987,
+    "source": "obra",
+    "tags": []
+  },
+  {
+    "name": "web-artifacts-builder",
+    "description": "Suite of tools for creating elaborate, multi-component claude.ai HTML artifacts using modern frontend web technologies (React, Tailwind CSS, shadcn/ui). Use for complex artifacts requiring state management, routing, or shadcn/ui components - not for simple single-file HTML/JSX artifacts.",
+    "category": "frontend",
+    "tier": 1,
+    "tokens": 702,
+    "source": "anthropic",
+    "tags": []
+  },
+  {
+    "name": "web-design-guidelines",
+    "description": "Review UI code for Web Interface Guidelines compliance. Use when asked to \"review my UI\", \"check accessibility\", \"audit design\", \"review UX\", or \"check my site against best practices\".",
+    "category": "design",
+    "tier": 2,
+    "tokens": 268,
+    "source": "vercel",
+    "tags": []
+  },
+  {
+    "name": "webapp-testing",
+    "description": "Toolkit for interacting with and testing local web applications using Playwright. Supports verifying frontend functionality, debugging UI behavior, capturing browser screenshots, and viewing browser logs.",
+    "category": "testing",
+    "tier": 1,
+    "tokens": 881,
+    "source": "anthropic",
+    "tags": []
+  },
+  {
+    "name": "writing-plans",
+    "description": "Use when you have a spec or requirements for a multi-step task, before touching code",
+    "category": "workflow",
+    "tier": 1,
+    "tokens": 795,
+    "source": "obra",
+    "tags": []
+  }
+]

@@ -212,7 +212,17 @@ if [[ -d "$SCRIPTS_DIR" ]]; then
     fi
 fi
 
-# 6. Duplicate detection
+# 6. Security check
+if [[ -x "$SCRIPT_DIR/security-check.sh" ]]; then
+    run_validator "Security" "$SCRIPT_DIR/security-check.sh" "$SKILL_DIR" || OVERALL_PASS=false
+else
+    if ! $JSON_OUTPUT; then
+        echo -e "\n${YELLOW}[Security]${NC} Skipped - validator not found"
+    fi
+    RESULTS["Security"]="SKIP"
+fi
+
+# 7. Duplicate detection
 if command -v python3 &>/dev/null && [[ -f "$SCRIPT_DIR/check-duplicates.py" ]]; then
     run_validator "Duplicates" python3 "$SCRIPT_DIR/check-duplicates.py" "$SKILL_DIR" || OVERALL_PASS=false
 else
