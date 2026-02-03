@@ -1,0 +1,85 @@
+{
+  "last_synced": "2026-02-03T18:29:54Z",
+  "skills": {
+    "brainstorming": {
+      "sha": "06b92f36820f38175b2ed6ff3f8df45157d54731",
+      "source": "obra",
+      "synced_at": "2026-02-03T18:29:51Z"
+    },
+    "dispatching-parallel-agents": {
+      "sha": "06b92f36820f38175b2ed6ff3f8df45157d54731",
+      "source": "obra",
+      "synced_at": "2026-02-03T18:29:51Z"
+    },
+    "executing-plans": {
+      "sha": "06b92f36820f38175b2ed6ff3f8df45157d54731",
+      "source": "obra",
+      "synced_at": "2026-02-03T18:29:51Z"
+    },
+    "frontend-design": {
+      "sha": "69c0b1a0674149f27b61b2635f935524b6add202",
+      "source": "anthropic",
+      "synced_at": "2026-02-03T18:29:52Z"
+    },
+    "mcp-builder": {
+      "sha": "69c0b1a0674149f27b61b2635f935524b6add202",
+      "source": "anthropic",
+      "synced_at": "2026-02-03T18:29:52Z"
+    },
+    "react-best-practices": {
+      "sha": "e23951b8cad2f4b1e7e176c5731127c1263fe86f",
+      "source": "vercel",
+      "synced_at": "2026-02-03T18:29:52Z"
+    },
+    "react-native-skills": {
+      "sha": "e23951b8cad2f4b1e7e176c5731127c1263fe86f",
+      "source": "vercel",
+      "synced_at": "2026-02-03T18:29:52Z"
+    },
+    "subagent-driven-development": {
+      "sha": "06b92f36820f38175b2ed6ff3f8df45157d54731",
+      "source": "obra",
+      "synced_at": "2026-02-03T18:29:52Z"
+    },
+    "systematic-debugging": {
+      "sha": "06b92f36820f38175b2ed6ff3f8df45157d54731",
+      "source": "obra",
+      "synced_at": "2026-02-03T18:29:53Z"
+    },
+    "test-driven-development": {
+      "sha": "06b92f36820f38175b2ed6ff3f8df45157d54731",
+      "source": "obra",
+      "synced_at": "2026-02-03T18:29:53Z"
+    },
+    "using-superpowers": {
+      "sha": "06b92f36820f38175b2ed6ff3f8df45157d54731",
+      "source": "obra",
+      "synced_at": "2026-02-03T18:29:53Z"
+    },
+    "verification-before-completion": {
+      "sha": "06b92f36820f38175b2ed6ff3f8df45157d54731",
+      "source": "obra",
+      "synced_at": "2026-02-03T18:29:53Z"
+    },
+    "web-artifacts-builder": {
+      "sha": "69c0b1a0674149f27b61b2635f935524b6add202",
+      "source": "anthropic",
+      "synced_at": "2026-02-03T18:29:53Z"
+    },
+    "web-design-guidelines": {
+      "sha": "e23951b8cad2f4b1e7e176c5731127c1263fe86f",
+      "source": "vercel",
+      "synced_at": "2026-02-03T18:29:53Z"
+    },
+    "webapp-testing": {
+      "sha": "69c0b1a0674149f27b61b2635f935524b6add202",
+      "source": "anthropic",
+      "synced_at": "2026-02-03T18:29:53Z"
+    },
+    "writing-plans": {
+      "sha": "06b92f36820f38175b2ed6ff3f8df45157d54731",
+      "source": "obra",
+      "synced_at": "2026-02-03T18:29:54Z"
+    }
+  }
+}

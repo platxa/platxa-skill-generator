@@ -14,12 +14,11 @@ Usage:
       -- python test.py
 """
 
-import argparse
-import socket
 import subprocess
-import sys
+import socket
 import time
-
+import sys
+import argparse
 
 def is_server_ready(port, timeout=30):
     """Wait for server to be ready by polling the port."""
@@ -28,7 +27,7 @@ def is_server_ready(port, timeout=30):
         try:
             with socket.create_connection(('localhost', port), timeout=1):
                 return True
-        except (OSError, ConnectionRefusedError):
+        except (socket.error, ConnectionRefusedError):
             time.sleep(0.5)
     return False
 
@@ -56,7 +55,7 @@ def main():
         sys.exit(1)
 
     servers = []
-    for cmd, port in zip(args.servers, args.ports, strict=False):
+    for cmd, port in zip(args.servers, args.ports):
         servers.append({'cmd': cmd, 'port': port})
 
     server_processes = []
