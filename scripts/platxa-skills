@@ -47,14 +47,101 @@ def _load_module(script_name: str) -> object:
     return mod
 
 
+def _run_security_check(skill_dir: Path) -> bool:
+    """Run security-check.sh on a skill directory. Returns True if clean."""
+    sec_script = SCRIPTS_DIR / "security-check.sh"
+    if not sec_script.exists():
+        return True
+    try:
+        result = subprocess.run(
+            [str(sec_script), str(skill_dir)],
+            capture_output=True,
+            text=True,
+            timeout=60,
+        )
+        return result.returncode == 0
+    except (subprocess.TimeoutExpired, OSError):
+        return False
+
+
 def cmd_validate(args: argparse.Namespace) -> int:
-    """Run all validators on a skill directory."""
-    script_args = [args.skill_dir]
+    """Run all validators and scoring on a skill directory."""
+    skill_dir = Path(args.skill_dir).resolve()
+    if not skill_dir.is_dir():
+        print(f"Error: Not a directory: {args.skill_dir}", file=sys.stderr)
+        return 1
+
+    # Phase 1: Run validate-all.sh (structure, frontmatter, tokens, security, duplicates)
+    validate_script = SCRIPTS_DIR / "validate-all.sh"
+    if not validate_script.exists():
+        print("Error: validate-all.sh not found", file=sys.stderr)
+        return 1
+
+    validate_args = [str(validate_script), str(skill_dir)]
     if args.verbose:
-        script_args.append("--verbose")
+        validate_args.append("--verbose")
     if args.profile:
-        script_args.append(f"--profile={args.profile}")
-    return _run_script("validate-all.sh", script_args)
+        validate_args.append(f"--profile={args.profile}")
+
+    validate_result = subprocess.run(validate_args)
+    validation_passed = validate_result.returncode == 0
+
+    # Phase 2: Run scoring + security check for accurate badge assignment
+    score_mod = _load_module("score-skill.py")
+    score_report = score_mod.score_skill(skill_dir)  # type: ignore[attr-defined]
+    security_passed = _run_security_check(skill_dir)
+    badge = score_mod.assign_badge(  # type: ignore[attr-defined]
+        score_report["overall_score"], security_passed=security_passed
+    )
+    score_report["badge"] = badge
+
+    threshold = args.threshold or 7.0
+    score_passed = score_report["overall_score"] >= threshold
+
+    # Phase 3: Combined report
+    overall = score_report["overall_score"]
+
+    if args.json:
+        combined = {
+            "skill_name": skill_dir.name,
+            "validation_passed": validation_passed,
+            "security_passed": security_passed,
+            "score": score_report,
+            "threshold": threshold,
+            "overall_passed": validation_passed and score_passed,
+        }
+        print(json.dumps(combined, indent=2))
+    else:
+        print()
+        print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+        print("Quality Score")
+        print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+        print()
+
+        for dim_name, dim_data in score_report["dimensions"].items():
+            score = dim_data["score"]
+            weight = dim_data["weight"]
+            bar = "\u2588" * int(score) + "\u2591" * (10 - int(score))
+            notes_str = ""
+            if dim_data["notes"]:
+                notes_str = f"  ({', '.join(dim_data['notes'][:2])})"
+            print(f"  {dim_name:<14} {bar} {score:>4}/10  (w={weight}){notes_str}")
+
+        print()
+        print(f"  {'Overall':<14} {'':>10} {overall:>5}/10.0")
+        print(f"  {'Badge':<14} {'':>10} {badge}")
+        print()
+
+        print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+        if validation_passed and score_passed:
+            print(f"PASSED — validation clean, score {overall}/10.0 ({badge})")
+        elif not validation_passed:
+            print(f"FAILED — validation errors (score {overall}/10.0)")
+        else:
+            print(f"FAILED — score {overall}/10.0 below threshold {threshold}")
+        print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+
+    return 0 if (validation_passed and score_passed) else 1
 
 
 def cmd_score(args: argparse.Namespace) -> int:
@@ -152,7 +239,10 @@ def cmd_init(args: argparse.Namespace) -> int:
 
     # Validate name format
     if not all(c.isalnum() or c == "-" for c in skill_name):
-        print("Error: Skill name must be hyphen-case (lowercase letters, numbers, hyphens)", file=sys.stderr)
+        print(
+            "Error: Skill name must be hyphen-case (lowercase letters, numbers, hyphens)",
+            file=sys.stderr,
+        )
         return 1
 
     target = Path(args.output) if args.output else SKILLS_DIR / skill_name
@@ -224,10 +314,14 @@ def main() -> int:
     subparsers = parser.add_subparsers(dest="command", help="Available commands")
 
     # validate
-    p_validate = subparsers.add_parser("validate", help="Run all validators on a skill")
+    p_validate = subparsers.add_parser(
+        "validate", help="Run all validators and show score with badge"
+    )
     p_validate.add_argument("skill_dir", help="Path to skill directory")
     p_validate.add_argument("-v", "--verbose", action="store_true", help="Show detailed output")
     p_validate.add_argument("--profile", choices=["strict", "spec"], help="Validation profile")
+    p_validate.add_argument("--json", action="store_true", help="Output combined report as JSON")
+    p_validate.add_argument("--threshold", type=float, help="Custom score threshold (default: 7.0)")
 
     # score
     p_score = subparsers.add_parser("score", help="Score a skill across quality dimensions")
@@ -253,7 +347,12 @@ def main() -> int:
     # init
     p_init = subparsers.add_parser("init", help="Initialize a new skill from template")
     p_init.add_argument("name", help="Skill name (hyphen-case)")
-    p_init.add_argument("--type", default="builder", choices=["builder", "guide", "automation", "analyzer", "validator"], help="Skill type template")
+    p_init.add_argument(
+        "--type",
+        default="builder",
+        choices=["builder", "guide", "automation", "analyzer", "validator"],
+        help="Skill type template",
+    )
     p_init.add_argument("-o", "--output", help="Output directory (default: skills/<name>)")
 
     # audit
