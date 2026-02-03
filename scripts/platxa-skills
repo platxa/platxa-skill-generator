@@ -4,7 +4,7 @@
 Usage:
     platxa-skills validate <skill-directory> [--profile=strict|spec] [--verbose]
     platxa-skills score <skill-directory> [--json] [--threshold=N]
-    platxa-skills install <skill-directory> [--user | --project]
+    platxa-skills install <name-or-path> [--user | --project] [--force]
     platxa-skills search <query>
     platxa-skills list [--category=CAT] [--json]
     platxa-skills init <name> [--type=TYPE]
@@ -15,14 +15,17 @@ from __future__ import annotations
 
 import argparse
 import json
+import shutil
 import subprocess
 import sys
+import tempfile
 from importlib.util import module_from_spec, spec_from_file_location
 from pathlib import Path
 
 SCRIPTS_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = SCRIPTS_DIR.parent
 SKILLS_DIR = PROJECT_ROOT / "skills"
+CATALOG_REPO = "https://github.com/platxa/platxa-skill-generator.git"
 
 
 def _run_script(script_name: str, args: list[str]) -> int:
@@ -154,14 +157,115 @@ def cmd_score(args: argparse.Namespace) -> int:
     return _run_script("score-skill.py", script_args)
 
 
+def _fetch_skill_from_github(skill_name: str, target: Path) -> bool:
+    """Fetch a skill from the GitHub catalog repo via sparse checkout."""
+    with tempfile.TemporaryDirectory() as tmp:
+        tmp_path = Path(tmp)
+        result = subprocess.run(
+            [
+                "git",
+                "clone",
+                "--depth",
+                "1",
+                "--filter=blob:none",
+                "--sparse",
+                CATALOG_REPO,
+                str(tmp_path / "repo"),
+            ],
+            capture_output=True,
+            text=True,
+        )
+        if result.returncode != 0:
+            print(f"Error: Failed to clone catalog repo: {result.stderr}", file=sys.stderr)
+            return False
+
+        result = subprocess.run(
+            [
+                "git",
+                "-C",
+                str(tmp_path / "repo"),
+                "sparse-checkout",
+                "set",
+                f"skills/{skill_name}",
+            ],
+            capture_output=True,
+            text=True,
+        )
+        if result.returncode != 0:
+            print(f"Error: Failed to sparse-checkout skill: {result.stderr}", file=sys.stderr)
+            return False
+
+        source = tmp_path / "repo" / "skills" / skill_name
+        if not (source / "SKILL.md").exists():
+            print(f"Error: Skill '{skill_name}' not found in catalog repo", file=sys.stderr)
+            return False
+
+        if target.exists():
+            shutil.rmtree(target)
+        shutil.copytree(source, target)
+        return True
+
+
+def _install_from_directory(source: Path, target: Path) -> bool:
+    """Copy a skill directory to the target location."""
+    if not (source / "SKILL.md").exists():
+        print(f"Error: No SKILL.md found in {source}", file=sys.stderr)
+        return False
+    if target.exists():
+        shutil.rmtree(target)
+    shutil.copytree(source, target)
+    return True
+
+
+def _resolve_skill_source(skill_ref: str) -> tuple[str, Path | None, str]:
+    """Resolve a skill reference to (name, local_source_dir_or_None, label).
+
+    Returns local_source=None when the skill must be fetched from GitHub.
+    """
+    ref_path = Path(skill_ref)
+    if ref_path.is_dir() and (ref_path / "SKILL.md").exists():
+        return ref_path.resolve().name, ref_path.resolve(), f"local path ({skill_ref})"
+
+    catalog_path = SKILLS_DIR / skill_ref
+    if catalog_path.is_dir() and (catalog_path / "SKILL.md").exists():
+        return skill_ref, catalog_path, "local catalog"
+
+    return skill_ref, None, f"GitHub ({CATALOG_REPO})"
+
+
 def cmd_install(args: argparse.Namespace) -> int:
-    """Install a skill to Claude Code."""
-    script_args = [args.skill_dir]
-    if args.user:
-        script_args.append("--user")
-    elif args.project:
-        script_args.append("--project")
-    return _run_script("install-skill.sh", script_args)
+    """Install a skill by name (from catalog/GitHub) or by local path."""
+    skill_name, local_source, source_label = _resolve_skill_source(args.skill)
+
+    base = Path(".claude/skills") if args.project else Path.home() / ".claude" / "skills"
+    target = base / skill_name
+
+    if target.exists() and not args.force:
+        print(f"Skill '{skill_name}' already installed at {target}")
+        print("Use --force to overwrite.")
+        return 1
+
+    print(f"Installing '{skill_name}' from {source_label}")
+    print(f"  Target: {target}")
+    base.mkdir(parents=True, exist_ok=True)
+
+    if local_source is not None:
+        success = _install_from_directory(local_source, target)
+    else:
+        success = _fetch_skill_from_github(skill_name, target)
+
+    if not success:
+        return 1
+
+    # Make scripts executable
+    scripts_dir = target / "scripts"
+    if scripts_dir.is_dir():
+        for script in scripts_dir.iterdir():
+            if script.suffix in (".sh", ".py"):
+                script.chmod(script.stat().st_mode | 0o111)
+
+    print(f"Installed '{skill_name}' to {target}")
+    return 0
 
 
 def cmd_search(args: argparse.Namespace) -> int:
@@ -330,10 +434,15 @@ def main() -> int:
     p_score.add_argument("--threshold", type=float, help="Custom pass threshold")
 
     # install
-    p_install = subparsers.add_parser("install", help="Install a skill to Claude Code")
-    p_install.add_argument("skill_dir", help="Path to skill directory")
-    p_install.add_argument("--user", action="store_true", help="Install to ~/.claude/skills/")
+    p_install = subparsers.add_parser(
+        "install", help="Install a skill by name (from catalog/GitHub) or local path"
+    )
+    p_install.add_argument("skill", help="Skill name or path to skill directory")
+    p_install.add_argument(
+        "--user", action="store_true", help="Install to ~/.claude/skills/ (default)"
+    )
     p_install.add_argument("--project", action="store_true", help="Install to .claude/skills/")
+    p_install.add_argument("--force", action="store_true", help="Overwrite existing installation")
 
     # search
     p_search = subparsers.add_parser("search", help="Search skills by keyword")
