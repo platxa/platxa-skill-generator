@@ -241,7 +241,25 @@ sync_skill() {
     fi
     cp -r "$source_dir" "$target_dir"
 
-    # Apply file overrides if any (excluding patch.yaml which is handled separately)
+    # Apply exclude.txt: remove upstream files/dirs before overlaying overrides
+    local exclude_file="$OVERRIDES_DIR/$skill_name/exclude.txt"
+    if [[ -f "$exclude_file" ]]; then
+        local exclude_count=0
+        while IFS= read -r pattern || [[ -n "$pattern" ]]; do
+            pattern="${pattern#"${pattern%%[![:space:]]*}"}"
+            pattern="${pattern%"${pattern##*[![:space:]]}"}"
+            [[ -z "$pattern" || "$pattern" == \#* ]] && continue
+            while IFS= read -r -d '' match; do
+                rm -rf "$match"
+                ((exclude_count++))
+            done < <(find "$target_dir" -path "$target_dir/$pattern" -print0 2>/dev/null)
+        done < "$exclude_file"
+        if ((exclude_count > 0)); then
+            echo -e "  ${BLUE}[Exclude]${NC} Removed $exclude_count upstream path(s) for $skill_name"
+        fi
+    fi
+
+    # Apply file overrides if any (excluding special config files)
     if [[ -d "$OVERRIDES_DIR/$skill_name" ]]; then
         local has_overrides=false
         while IFS= read -r -d '' override_file; do
@@ -249,7 +267,7 @@ sync_skill() {
             local rel_path="${override_file#"$OVERRIDES_DIR/$skill_name/"}"
             mkdir -p "$target_dir/$(dirname "$rel_path")"
             cp "$override_file" "$target_dir/$rel_path"
-        done < <(find "$OVERRIDES_DIR/$skill_name" -type f ! -name 'patch.yaml' -print0 2>/dev/null)
+        done < <(find "$OVERRIDES_DIR/$skill_name" -type f ! -name 'patch.yaml' ! -name 'exclude.txt' -print0 2>/dev/null)
         if $has_overrides; then
             echo -e "  ${BLUE}[Override]${NC} Applying file overrides for $skill_name"
         fi

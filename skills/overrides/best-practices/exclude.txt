@@ -1,0 +1,7 @@
+# Exclude upstream reference files replaced by condensed overrides
+# Content merged into best-practices-guide.md and prompt-patterns.md
+references/anti-patterns.md
+references/before-after-examples.md
+references/common-workflows.md
+# Exclude unexpected directory that fails structure validation
+agents

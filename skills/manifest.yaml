@@ -29,6 +29,15 @@ sources:
   obra:
     repo: https://github.com/obra/superpowers
     path: skills
+  openai:
+    repo: https://github.com/openai/skills
+    path: skills/.curated
+  huggingface:
+    repo: https://github.com/huggingface/skills
+    path: skills
+  skillcreatorai:
+    repo: https://github.com/skillcreatorai/Ai-Agent-Skills
+    path: skills
 
 # ──────────────────────────────────────────────
 # Skills
@@ -65,6 +74,41 @@ skills:
     ref: main
     tier: 1
     category: testing
+  pdf:
+    source: anthropic
+    ref: main
+    tier: 1
+    category: documents
+  docx:
+    source: anthropic
+    ref: main
+    tier: 1
+    category: documents
+  xlsx:
+    source: anthropic
+    ref: main
+    tier: 1
+    category: documents
+  pptx:
+    source: anthropic
+    ref: main
+    tier: 2
+    category: documents
+  skill-creator:
+    source: anthropic
+    ref: main
+    tier: 2
+    category: devtools
+  algorithmic-art:
+    source: anthropic
+    ref: main
+    tier: 2
+    category: design
+  slack-gif-creator:
+    source: anthropic
+    ref: main
+    tier: 3
+    category: media
   # ── External: vercel ───────────────────────
   react-best-practices:
     source: vercel
@@ -81,6 +125,11 @@ skills:
     ref: main
     tier: 2
     category: mobile
+  composition-patterns:
+    source: vercel
+    ref: main
+    tier: 2
+    category: frontend
 
   # ── External: obra ─────────────────────────
   systematic-debugging:
@@ -125,6 +174,284 @@ skills:
     category: workflow
   using-superpowers:
     source: obra
+    ref: main
+    tier: 3
+    category: workflow
+  using-git-worktrees:
+    source: obra
+    ref: main
+    tier: 1
+    category: git
+  receiving-code-review:
+    source: obra
+    ref: main
+    tier: 2
+    category: workflow
+  requesting-code-review:
+    source: obra
+    ref: main
+    tier: 2
+    category: workflow
+  finishing-a-development-branch:
+    source: obra
+    ref: main
+    tier: 2
+    category: git
+  writing-skills:
+    source: obra
+    ref: main
+    tier: 2
+    category: devtools
+  # ── External: openai ──────────────────────
+  figma:
+    source: openai
+    ref: main
+    tier: 1
+    category: design
+  figma-implement-design:
+    source: openai
+    ref: main
+    tier: 1
+    category: design
+  playwright:
+    source: openai
+    ref: main
+    tier: 1
+    category: testing
+  linear:
+    source: openai
+    ref: main
+    tier: 2
+    category: devtools
+  sentry:
+    source: openai
+    ref: main
+    tier: 2
+    category: observability
+  security-best-practices:
+    source: openai
+    ref: main
+    tier: 1
+    category: security
+  security-threat-model:
+    source: openai
+    ref: main
+    tier: 2
+    category: security
+  security-ownership-map:
+    source: openai
+    ref: main
+    tier: 2
+    category: security
+  jupyter-notebook:
+    source: openai
+    ref: main
+    tier: 2
+    category: devtools
+  gh-fix-ci:
+    source: openai
+    ref: main
+    tier: 1
+    category: devtools
+  gh-address-comments:
+    source: openai
+    ref: main
+    tier: 2
+    category: devtools
+  cloudflare-deploy:
+    source: openai
+    ref: main
+    tier: 2
+    category: infrastructure
+  vercel-deploy:
+    source: openai
+    ref: main
+    tier: 2
+    category: infrastructure
+  netlify-deploy:
+    source: openai
+    ref: main
+    tier: 2
+    category: infrastructure
+  render-deploy:
+    source: openai
+    ref: main
+    tier: 2
+    category: infrastructure
+  notion-knowledge-capture:
+    source: openai
+    ref: main
+    tier: 2
+    category: workflow
+  notion-meeting-intelligence:
+    source: openai
+    ref: main
+    tier: 2
+    category: workflow
+  notion-research-documentation:
+    source: openai
+    ref: main
+    tier: 2
+    category: workflow
+  notion-spec-to-implementation:
+    source: openai
+    ref: main
+    tier: 2
+    category: workflow
+  screenshot:
+    source: openai
+    ref: main
+    tier: 2
+    category: media
+  imagegen:
+    source: openai
+    ref: main
+    tier: 2
+    category: media
+  speech:
+    source: openai
+    ref: main
+    tier: 2
+    category: media
+  transcribe:
+    source: openai
+    ref: main
+    tier: 2
+    category: media
+  sora:
+    source: openai
+    ref: main
+    tier: 3
+    category: media
+  atlas:
+    source: openai
+    ref: main
+    tier: 2
+    category: backend
+  doc:
+    source: openai
+    ref: main
+    tier: 2
+    category: documents
+  develop-web-game:
+    source: openai
+    ref: main
+    tier: 3
+    category: frontend
+  openai-docs:
+    source: openai
+    ref: main
+    tier: 2
+    category: devtools
+  spreadsheet:
+    source: openai
+    ref: main
+    tier: 2
+    category: documents
+  yeet:
+    source: openai
+    ref: main
+    tier: 3
+    category: devtools
+  # ── External: huggingface ─────────────────
+  hugging-face-cli:
+    source: huggingface
+    ref: main
+    tier: 2
+    category: devtools
+  hugging-face-datasets:
+    source: huggingface
+    ref: main
+    tier: 1
+    category: data
+  hugging-face-evaluation:
+    source: huggingface
+    ref: main
+    tier: 1
+    category: data
+  hugging-face-jobs:
+    source: huggingface
+    ref: main
+    tier: 2
+    category: infrastructure
+  hugging-face-model-trainer:
+    source: huggingface
+    ref: main
+    tier: 1
+    category: data
+  hugging-face-paper-publisher:
+    source: huggingface
+    ref: main
+    tier: 2
+    category: devtools
+  hugging-face-tool-builder:
+    source: huggingface
+    ref: main
+    tier: 2
+    category: devtools
+  hugging-face-trackio:
+    source: huggingface
+    ref: main
+    tier: 2
+    category: observability
+  # ── External: skillcreatorai ─────────────
+  backend-development:
+    source: skillcreatorai
+    ref: main
+    tier: 2
+    category: backend
+  python-development:
+    source: skillcreatorai
+    ref: main
+    tier: 2
+    category: backend
+  javascript-typescript:
+    source: skillcreatorai
+    ref: main
+    tier: 2
+    category: frontend
+  database-design:
+    source: skillcreatorai
+    ref: main
+    tier: 2
+    category: backend
+  code-review:
+    source: skillcreatorai
+    ref: main
+    tier: 2
+    category: devtools
+  code-refactoring:
+    source: skillcreatorai
+    ref: main
+    tier: 2
+    category: devtools
+  llm-application-dev:
+    source: skillcreatorai
+    ref: main
+    tier: 2
+    category: backend
+  qa-regression:
+    source: skillcreatorai
+    ref: main
+    tier: 2
+    category: testing
+  code-documentation:
+    source: skillcreatorai
+    ref: main
+    tier: 2
+    category: devtools
+  changelog-generator:
+    source: skillcreatorai
+    ref: main
+    tier: 2
+    category: git
+  best-practices:
+    source: skillcreatorai
+    ref: main
+    tier: 2
+    category: devtools
+  content-research-writer:
+    source: skillcreatorai
     ref: main
     tier: 3
     category: workflow

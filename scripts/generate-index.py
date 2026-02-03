@@ -51,12 +51,15 @@ from typing import Any
 # Standardized category taxonomy — every skill must belong to one of these.
 CATEGORY_TAXONOMY: dict[str, str] = {
     "backend": "Server-side services, APIs, and data processing",
+    "data": "Datasets, ML pipelines, and data management",
     "debugging": "Bug diagnosis and resolution tools",
     "design": "UI/UX design and frontend aesthetics",
     "devtools": "Developer productivity and tooling",
+    "documents": "Document generation, conversion, and processing",
     "frontend": "Client-side components, UI, and web apps",
     "git": "Git workflow automation and commit helpers",
     "infrastructure": "Kubernetes, cloud ops, and deployment",
+    "media": "Image, audio, video generation and processing",
     "mobile": "Mobile and cross-platform app development",
     "observability": "Logging, monitoring, metrics, and tracing",
     "odoo": "Odoo ERP platform development",

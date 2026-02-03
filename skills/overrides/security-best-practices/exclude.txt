@@ -1,0 +1,12 @@
+# Exclude upstream language-specific files (10 files, 90k tokens)
+# Content condensed into references/cross-language-security.md
+references/golang-general-backend-security.md
+references/javascript-express-web-server-security.md
+references/javascript-general-web-frontend-security.md
+references/javascript-jquery-web-frontend-security.md
+references/javascript-typescript-nextjs-web-server-security.md
+references/javascript-typescript-react-web-frontend-security.md
+references/javascript-typescript-vue-web-frontend-security.md
+references/python-django-web-server-security.md
+references/python-fastapi-web-server-security.md
+references/python-flask-web-server-security.md

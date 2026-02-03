@@ -103,9 +103,10 @@ EXFIL_PATTERNS=(
     'curl.*--data.*@'
     'curl.*--upload-file'
     'wget.*--post-file'
-    'cat.*/etc/\(passwd\|shadow\|hosts\)'
-    '\$\(cat\s'               # Command substitution reading files
-    'base64.*</etc/'          # Encoding system files
+    'cat.*/etc/(passwd|shadow|hosts)'   # Reading sensitive system files (ERE syntax)
+    '\$\(cat\s+/etc/'                   # Command substitution reading system config
+    '\$\(cat\s+(~|\$HOME)/\.'           # Command substitution reading hidden dotfiles
+    'base64.*</etc/'                    # Encoding system files
 )
 
 # Dangerous patterns for bash scripts
