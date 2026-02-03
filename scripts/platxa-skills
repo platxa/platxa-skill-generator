@@ -1,0 +1,285 @@
+#!/usr/bin/env python3
+"""platxa-skills - Unified CLI for the Platxa Skills catalog.
+
+Usage:
+    platxa-skills validate <skill-directory> [--profile=strict|spec] [--verbose]
+    platxa-skills score <skill-directory> [--json] [--threshold=N]
+    platxa-skills install <skill-directory> [--user | --project]
+    platxa-skills search <query>
+    platxa-skills list [--category=CAT] [--json]
+    platxa-skills init <name> [--type=TYPE]
+    platxa-skills audit [--json] [--threshold=N] [--category=CAT]
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import subprocess
+import sys
+from importlib.util import module_from_spec, spec_from_file_location
+from pathlib import Path
+
+SCRIPTS_DIR = Path(__file__).resolve().parent
+PROJECT_ROOT = SCRIPTS_DIR.parent
+SKILLS_DIR = PROJECT_ROOT / "skills"
+
+
+def _run_script(script_name: str, args: list[str]) -> int:
+    """Run a shell script from the scripts directory."""
+    script = SCRIPTS_DIR / script_name
+    if not script.exists():
+        print(f"Error: {script_name} not found", file=sys.stderr)
+        return 1
+    result = subprocess.run([str(script), *args])
+    return result.returncode
+
+
+def _load_module(script_name: str) -> object:
+    """Dynamically import a Python script from the scripts directory."""
+    spec = spec_from_file_location(
+        script_name.replace("-", "_").replace(".py", ""),
+        SCRIPTS_DIR / script_name,
+    )
+    assert spec is not None and spec.loader is not None
+    mod = module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def cmd_validate(args: argparse.Namespace) -> int:
+    """Run all validators on a skill directory."""
+    script_args = [args.skill_dir]
+    if args.verbose:
+        script_args.append("--verbose")
+    if args.profile:
+        script_args.append(f"--profile={args.profile}")
+    return _run_script("validate-all.sh", script_args)
+
+
+def cmd_score(args: argparse.Namespace) -> int:
+    """Score a skill across quality dimensions."""
+    script_args = [args.skill_dir]
+    if args.json:
+        script_args.append("--json")
+    if args.threshold:
+        script_args.extend(["--threshold", str(args.threshold)])
+    return _run_script("score-skill.py", script_args)
+
+
+def cmd_install(args: argparse.Namespace) -> int:
+    """Install a skill to Claude Code."""
+    script_args = [args.skill_dir]
+    if args.user:
+        script_args.append("--user")
+    elif args.project:
+        script_args.append("--project")
+    return _run_script("install-skill.sh", script_args)
+
+
+def cmd_search(args: argparse.Namespace) -> int:
+    """Search skills by keyword."""
+    query = args.query.lower()
+    index_path = SKILLS_DIR / "index.json"
+
+    if not index_path.exists():
+        # Generate on-the-fly
+        gen_mod = _load_module("generate-index.py")
+        index = gen_mod.generate_index(SKILLS_DIR)  # type: ignore[attr-defined]
+    else:
+        with open(index_path) as f:
+            index = json.load(f)
+
+    skills = index.get("skills", {})
+    matches = []
+    for name, info in skills.items():
+        text = f"{name} {info.get('description', '')} {info.get('category', '')}".lower()
+        if query in text:
+            matches.append((name, info))
+
+    if not matches:
+        print(f"No skills matching '{args.query}'")
+        return 0
+
+    print(f"Found {len(matches)} skill(s) matching '{args.query}':\n")
+    for name, info in sorted(matches):
+        desc = info.get("description", "")[:80]
+        cat = info.get("category", "")
+        print(f"  {name:<35} [{cat}]")
+        print(f"    {desc}")
+    return 0
+
+
+def cmd_list(args: argparse.Namespace) -> int:
+    """List all skills in the catalog."""
+    index_path = SKILLS_DIR / "index.json"
+
+    if not index_path.exists():
+        gen_mod = _load_module("generate-index.py")
+        index = gen_mod.generate_index(SKILLS_DIR)  # type: ignore[attr-defined]
+    else:
+        with open(index_path) as f:
+            index = json.load(f)
+
+    skills = index.get("skills", {})
+
+    if args.category:
+        skills = {k: v for k, v in skills.items() if v.get("category") == args.category}
+
+    if args.json:
+        print(json.dumps({"skills_count": len(skills), "skills": skills}, indent=2))
+        return 0
+
+    if not skills:
+        print("No skills found.")
+        return 0
+
+    print(f"{'Skill':<35} {'Category':<18} {'Tokens':>6}")
+    print("-" * 62)
+    for name, info in sorted(skills.items()):
+        cat = info.get("category", "")
+        tokens = info.get("token_counts", {}).get("total", "?")
+        print(f"  {name:<33} {cat:<18} {tokens:>6}")
+
+    print(f"\nTotal: {len(skills)} skills")
+    return 0
+
+
+def cmd_init(args: argparse.Namespace) -> int:
+    """Initialize a new skill from template."""
+    skill_name = args.name
+    skill_type = args.type
+
+    # Validate name format
+    if not all(c.isalnum() or c == "-" for c in skill_name):
+        print("Error: Skill name must be hyphen-case (lowercase letters, numbers, hyphens)", file=sys.stderr)
+        return 1
+
+    target = Path(args.output) if args.output else SKILLS_DIR / skill_name
+    if target.exists():
+        print(f"Error: Directory already exists: {target}", file=sys.stderr)
+        return 1
+
+    # Create structure
+    target.mkdir(parents=True)
+    (target / "references").mkdir()
+
+    # Write SKILL.md from template or minimal
+    template_dir = PROJECT_ROOT / "references" / "templates" / skill_type
+    if template_dir.exists():
+        template_file = template_dir / "SKILL.md"
+        if template_file.exists():
+            content = template_file.read_text()
+            content = content.replace("{{name}}", skill_name)
+            (target / "SKILL.md").write_text(content)
+            print(f"Created {target}/SKILL.md from {skill_type} template")
+        else:
+            _write_minimal_skill(target, skill_name)
+    else:
+        _write_minimal_skill(target, skill_name)
+
+    print(f"\nSkill initialized: {target}")
+    print(f"  Type: {skill_type}")
+    print("\nNext steps:")
+    print(f"  1. Edit {target}/SKILL.md with your skill content")
+    print(f"  2. Add reference files to {target}/references/")
+    print(f"  3. Run: platxa-skills validate {target}")
+    return 0
+
+
+def _write_minimal_skill(target: Path, skill_name: str) -> None:
+    """Write a minimal SKILL.md scaffold."""
+    (target / "SKILL.md").write_text(
+        f"---\n"
+        f"name: {skill_name}\n"
+        f"description: TODO - describe what this skill does\n"
+        f"---\n\n"
+        f"# {skill_name.replace('-', ' ').title()}\n\n"
+        f"## Overview\n\n"
+        f"Describe the skill purpose and when to use it.\n\n"
+        f"## Usage\n\n"
+        f"Step-by-step instructions.\n"
+    )
+    print(f"Created {target}/SKILL.md (minimal scaffold)")
+
+
+def cmd_audit(args: argparse.Namespace) -> int:
+    """Run full audit across all catalog skills."""
+    script_args: list[str] = []
+    if args.json:
+        script_args.append("--json")
+    if args.threshold:
+        script_args.extend(["--threshold", str(args.threshold)])
+    if args.category:
+        script_args.extend(["--category", args.category])
+    return _run_script("audit-catalog.py", script_args)
+
+
+def main() -> int:
+    """Main entry point."""
+    parser = argparse.ArgumentParser(
+        prog="platxa-skills",
+        description="Platxa Skills catalog CLI — validate, score, install, and manage Claude Code skills",
+    )
+    subparsers = parser.add_subparsers(dest="command", help="Available commands")
+
+    # validate
+    p_validate = subparsers.add_parser("validate", help="Run all validators on a skill")
+    p_validate.add_argument("skill_dir", help="Path to skill directory")
+    p_validate.add_argument("-v", "--verbose", action="store_true", help="Show detailed output")
+    p_validate.add_argument("--profile", choices=["strict", "spec"], help="Validation profile")
+
+    # score
+    p_score = subparsers.add_parser("score", help="Score a skill across quality dimensions")
+    p_score.add_argument("skill_dir", help="Path to skill directory")
+    p_score.add_argument("--json", action="store_true", help="Output as JSON")
+    p_score.add_argument("--threshold", type=float, help="Custom pass threshold")
+
+    # install
+    p_install = subparsers.add_parser("install", help="Install a skill to Claude Code")
+    p_install.add_argument("skill_dir", help="Path to skill directory")
+    p_install.add_argument("--user", action="store_true", help="Install to ~/.claude/skills/")
+    p_install.add_argument("--project", action="store_true", help="Install to .claude/skills/")
+
+    # search
+    p_search = subparsers.add_parser("search", help="Search skills by keyword")
+    p_search.add_argument("query", help="Search query")
+
+    # list
+    p_list = subparsers.add_parser("list", help="List all skills in the catalog")
+    p_list.add_argument("--category", help="Filter by category")
+    p_list.add_argument("--json", action="store_true", help="Output as JSON")
+
+    # init
+    p_init = subparsers.add_parser("init", help="Initialize a new skill from template")
+    p_init.add_argument("name", help="Skill name (hyphen-case)")
+    p_init.add_argument("--type", default="builder", choices=["builder", "guide", "automation", "analyzer", "validator"], help="Skill type template")
+    p_init.add_argument("-o", "--output", help="Output directory (default: skills/<name>)")
+
+    # audit
+    p_audit = subparsers.add_parser("audit", help="Run full audit across all catalog skills")
+    p_audit.add_argument("--json", action="store_true", help="Output as JSON")
+    p_audit.add_argument("--threshold", type=float, help="Custom pass threshold")
+    p_audit.add_argument("--category", help="Filter by category")
+
+    args = parser.parse_args()
+
+    if not args.command:
+        parser.print_help()
+        return 0
+
+    commands = {
+        "validate": cmd_validate,
+        "score": cmd_score,
+        "install": cmd_install,
+        "search": cmd_search,
+        "list": cmd_list,
+        "init": cmd_init,
+        "audit": cmd_audit,
+    }
+
+    return commands[args.command](args)
+
+
+if __name__ == "__main__":
+    sys.exit(main())
