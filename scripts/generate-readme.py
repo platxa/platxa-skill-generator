@@ -17,14 +17,12 @@ from __future__ import annotations
 
 import argparse
 import sys
+from importlib.util import module_from_spec, spec_from_file_location
 from pathlib import Path
 
 SCRIPTS_DIR = Path(__file__).parent
 PROJECT_ROOT = SCRIPTS_DIR.parent
 SKILLS_DIR = PROJECT_ROOT / "skills"
-
-# Import generate_index from generate-index.py
-from importlib.util import module_from_spec, spec_from_file_location
 
 _spec = spec_from_file_location("generate_index_mod", SCRIPTS_DIR / "generate-index.py")
 assert _spec is not None and _spec.loader is not None
@@ -325,7 +323,7 @@ def main() -> int:
         output = args.output or (args.skills_dir / "README.md")
         output.write_text(readme)
         # Count skills in output
-        table_lines = [l for l in readme.splitlines() if l.startswith("| [")]
+        table_lines = [line for line in readme.splitlines() if line.startswith("| [")]
         print(f"Generated {output}: {len(table_lines)} skills", file=sys.stderr)
 
     return 0

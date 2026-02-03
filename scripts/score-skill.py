@@ -23,13 +23,11 @@ import argparse
 import json
 import re
 import sys
+from importlib.util import module_from_spec, spec_from_file_location
 from pathlib import Path
 from typing import Any
 
 SCRIPTS_DIR = Path(__file__).parent
-
-# Import token counting
-from importlib.util import module_from_spec, spec_from_file_location
 
 _spec = spec_from_file_location("count_tokens_mod", SCRIPTS_DIR / "count-tokens.py")
 assert _spec is not None and _spec.loader is not None
@@ -676,9 +674,9 @@ def print_human_readable(report: dict[str, Any]) -> None:
     print()
 
     if passed:
-        print(f"✓ PASSED (>= 7.0)")
+        print("✓ PASSED (>= 7.0)")
     else:
-        print(f"✗ FAILED (< 7.0)")
+        print("✗ FAILED (< 7.0)")
 
     print(f"{'='*50}")
 

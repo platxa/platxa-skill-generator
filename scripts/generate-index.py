@@ -43,15 +43,13 @@ import json
 import re
 import sys
 from datetime import datetime, timezone
+from importlib.util import module_from_spec, spec_from_file_location
 from pathlib import Path
 from typing import Any
 
 # Add scripts dir to path so we can import count-tokens functions
 SCRIPTS_DIR = Path(__file__).parent
 sys.path.insert(0, str(SCRIPTS_DIR))
-
-# Import token counting from count-tokens.py (renamed for import)
-from importlib.util import module_from_spec, spec_from_file_location
 
 _spec = spec_from_file_location("count_tokens_mod", SCRIPTS_DIR / "count-tokens.py")
 assert _spec is not None and _spec.loader is not None

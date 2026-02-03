@@ -1,0 +1,11 @@
+{
+  "include": [
+    "scripts",
+    "tests"
+  ],
+  "exclude": [
+    "skills"
+  ],
+  "pythonVersion": "3.11",
+  "typeCheckingMode": "standard"
+}

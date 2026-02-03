@@ -26,14 +26,12 @@ import argparse
 import json
 import shutil
 import sys
+from importlib.util import module_from_spec, spec_from_file_location
 from pathlib import Path
 
 SCRIPTS_DIR = Path(__file__).parent
 PROJECT_ROOT = SCRIPTS_DIR.parent
 SKILLS_DIR = PROJECT_ROOT / "skills"
-
-# Import generate_index from generate-index.py
-from importlib.util import module_from_spec, spec_from_file_location
 
 _spec = spec_from_file_location("generate_index_mod", SCRIPTS_DIR / "generate-index.py")
 assert _spec is not None and _spec.loader is not None
