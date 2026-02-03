@@ -384,10 +384,47 @@ def cmd_list(args: argparse.Namespace) -> int:
     return 0
 
 
+SKILL_TYPES = {
+    "builder": "Create artifacts (code, configs, documents)",
+    "guide": "Teach/explain concepts with step-by-step instructions",
+    "automation": "Automate repetitive tasks with triggers and scripts",
+    "analyzer": "Inspect, audit, and report on code or systems",
+    "validator": "Verify quality with rules, thresholds, and pass/fail",
+}
+
+
+def _prompt_skill_type() -> str:
+    """Interactively prompt user to select a skill type."""
+    print("Select skill type:\n")
+    types = list(SKILL_TYPES.items())
+    for i, (name, desc) in enumerate(types, 1):
+        print(f"  {i}) {name:<14} — {desc}")
+    print()
+
+    while True:
+        try:
+            choice = input("Enter number [1-5]: ").strip()
+        except (EOFError, KeyboardInterrupt):
+            print()
+            return "builder"
+        if choice.isdigit() and 1 <= int(choice) <= len(types):
+            selected = types[int(choice) - 1][0]
+            print(f"  → {selected}\n")
+            return selected
+        print("  Invalid choice, try again.")
+
+
 def cmd_init(args: argparse.Namespace) -> int:
     """Initialize a new skill from template."""
     skill_name = args.name
     skill_type = args.type
+
+    # Interactive type selection when --type not explicitly provided
+    if skill_type is None:
+        if sys.stdin.isatty():
+            skill_type = _prompt_skill_type()
+        else:
+            skill_type = "builder"
 
     # Validate name format
     if not all(c.isalnum() or c == "-" for c in skill_name):
@@ -506,9 +543,9 @@ def main() -> int:
     p_init.add_argument("name", help="Skill name (hyphen-case)")
     p_init.add_argument(
         "--type",
-        default="builder",
+        default=None,
         choices=["builder", "guide", "automation", "analyzer", "validator"],
-        help="Skill type template",
+        help="Skill type template (interactive prompt if omitted)",
     )
     p_init.add_argument("-o", "--output", help="Output directory (default: skills/<name>)")
 
