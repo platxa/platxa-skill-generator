@@ -59,11 +59,17 @@ def build_readme(skills_dir: Path) -> str:
     # Header
     lines.append("# Claude Code Skills Registry")
     lines.append("")
-    lines.append("> A curated, quality-verified collection of production-ready skills for Claude Code CLI.")
+    lines.append(
+        "> A curated, quality-verified collection of production-ready skills for Claude Code CLI."
+    )
     lines.append(">")
-    lines.append("> **Maintained by**: [Platxa](https://platxa.com) | **License**: MIT | **Compatible with**: `npx skills`")
+    lines.append(
+        "> **Maintained by**: [Platxa](https://platxa.com) | **License**: MIT | **Compatible with**: `npx skills`"
+    )
     lines.append("")
-    lines.append(f"**{len(skills)} skills** across **{len(categories)} categories** — {local_count} local, {external_count} external")
+    lines.append(
+        f"**{len(skills)} skills** across **{len(categories)} categories** — {local_count} local, {external_count} external"
+    )
     lines.append("")
     lines.append("---")
     lines.append("")
@@ -95,8 +101,8 @@ def build_readme(skills_dir: Path) -> str:
     # Skills Table
     lines.append("## Skills Index")
     lines.append("")
-    lines.append("| Skill | Description | Category | Tier | Tokens | Source | Install |")
-    lines.append("|-------|-------------|----------|------|--------|--------|---------|")
+    lines.append("| Skill | Trust | Description | Category | Tier | Tokens | Source | Install |")
+    lines.append("|-------|-------|-------------|----------|------|--------|--------|---------|")
 
     for name, skill in sorted(skills.items(), key=lambda x: (x[1]["tier"], x[1]["category"], x[0])):
         desc = skill.get("description", "")
@@ -112,8 +118,11 @@ def build_readme(skills_dir: Path) -> str:
         tokens = skill.get("token_counts", {}).get("total", 0)
         source = SOURCE_LABELS.get(skill.get("source", ""), skill.get("source", ""))
         install_cmd = f"`./scripts/install-from-catalog.sh {name}`"
+        badge_img = f"![trust](badges/{name}.svg)"
 
-        lines.append(f"| [{name}](skills/{name}/SKILL.md) | {desc} | {cat} | {tier_label} | {tokens:,} | {source} | {install_cmd} |")
+        lines.append(
+            f"| [{name}](skills/{name}/SKILL.md) | {badge_img} | {desc} | {cat} | {tier_label} | {tokens:,} | {source} | {install_cmd} |"
+        )
 
     lines.append("")
     lines.append("---")
@@ -242,8 +251,12 @@ def build_readme(skills_dir: Path) -> str:
     # External vs Local
     lines.append("## External vs Local Skills")
     lines.append("")
-    lines.append(f"- **Local** ({local_count} skills): Created and maintained in this repo. Never overwritten by sync.")
-    lines.append(f"- **External** ({external_count} skills): Synced from upstream repos (Anthropic, Vercel, Obra).")
+    lines.append(
+        f"- **Local** ({local_count} skills): Created and maintained in this repo. Never overwritten by sync."
+    )
+    lines.append(
+        f"- **External** ({external_count} skills): Synced from upstream repos (Anthropic, Vercel, Obra)."
+    )
     lines.append("")
     lines.append("```bash")
     lines.append("# Sync external skills from upstream")
@@ -260,7 +273,9 @@ def build_readme(skills_dir: Path) -> str:
     # Contributing
     lines.append("## Contributing")
     lines.append("")
-    lines.append("See [CONTRIBUTING.md](../CONTRIBUTING.md) for the full PR-based submission guide.")
+    lines.append(
+        "See [CONTRIBUTING.md](../CONTRIBUTING.md) for the full PR-based submission guide."
+    )
     lines.append("")
     lines.append("```bash")
     lines.append("# Quick validation before submitting")
@@ -279,7 +294,9 @@ def build_readme(skills_dir: Path) -> str:
     lines.append("")
     lines.append("---")
     lines.append("")
-    lines.append(f"*Auto-generated from registry data. {len(skills)} skills across {len(categories)} categories.*")
+    lines.append(
+        f"*Auto-generated from registry data. {len(skills)} skills across {len(categories)} categories.*"
+    )
     lines.append("")
 
     return "\n".join(lines)
