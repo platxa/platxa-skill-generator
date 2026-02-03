@@ -5,10 +5,12 @@ on:
     paths:
       - 'skills/**'
       - 'scripts/**'
+      - '.claude-plugin/**'
   push:
     paths:
       - 'skills/**'
       - 'scripts/**'
+      - '.claude-plugin/**'
     branches:
       - main
 
