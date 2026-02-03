@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "generated_at": "2026-02-03T17:23:00Z",
+  "generated_at": "2026-02-03T17:24:25Z",
   "skills_count": 37,
   "skills": {
     "brainstorming": {
@@ -798,5 +798,20 @@
     "observability": 2,
     "mobile": 1,
     "debugging": 1
+  },
+  "category_taxonomy": {
+    "backend": "Server-side services, APIs, and data processing",
+    "debugging": "Bug diagnosis and resolution tools",
+    "design": "UI/UX design and frontend aesthetics",
+    "devtools": "Developer productivity and tooling",
+    "frontend": "Client-side components, UI, and web apps",
+    "git": "Git workflow automation and commit helpers",
+    "infrastructure": "Kubernetes, cloud ops, and deployment",
+    "mobile": "Mobile and cross-platform app development",
+    "observability": "Logging, monitoring, metrics, and tracing",
+    "odoo": "Odoo ERP platform development",
+    "security": "Authentication, encryption, and secrets",
+    "testing": "Test generation, coverage, and automation",
+    "workflow": "Agent orchestration and development workflows"
   }
 }

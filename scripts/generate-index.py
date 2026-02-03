@@ -47,6 +47,23 @@ from importlib.util import module_from_spec, spec_from_file_location
 from pathlib import Path
 from typing import Any
 
+# Standardized category taxonomy — every skill must belong to one of these.
+CATEGORY_TAXONOMY: dict[str, str] = {
+    "backend": "Server-side services, APIs, and data processing",
+    "debugging": "Bug diagnosis and resolution tools",
+    "design": "UI/UX design and frontend aesthetics",
+    "devtools": "Developer productivity and tooling",
+    "frontend": "Client-side components, UI, and web apps",
+    "git": "Git workflow automation and commit helpers",
+    "infrastructure": "Kubernetes, cloud ops, and deployment",
+    "mobile": "Mobile and cross-platform app development",
+    "observability": "Logging, monitoring, metrics, and tracing",
+    "odoo": "Odoo ERP platform development",
+    "security": "Authentication, encryption, and secrets",
+    "testing": "Test generation, coverage, and automation",
+    "workflow": "Agent orchestration and development workflows",
+}
+
 # Add scripts dir to path so we can import count-tokens functions
 SCRIPTS_DIR = Path(__file__).parent
 sys.path.insert(0, str(SCRIPTS_DIR))
@@ -157,10 +174,18 @@ def build_skill_entry(
     # Get token counts
     token_report = analyze_skill(skill_dir)
 
+    category = manifest_info.get("category", "uncategorized")
+    if category not in CATEGORY_TAXONOMY:
+        print(
+            f"Warning: {dir_name} has unknown category '{category}', "
+            f"valid: {', '.join(sorted(CATEGORY_TAXONOMY))}",
+            file=sys.stderr,
+        )
+
     entry: dict[str, Any] = {
         "name": fm["name"],
         "description": fm.get("description", ""),
-        "category": manifest_info.get("category", "uncategorized"),
+        "category": category,
         "tier": manifest_info.get("tier", 0),
         "source": source,
         "token_counts": {
@@ -232,6 +257,7 @@ def generate_index(skills_dir: Path) -> dict[str, Any]:
         "skills_count": len(skills),
         "skills": skills,
         "categories": sorted_categories,
+        "category_taxonomy": CATEGORY_TAXONOMY,
     }
 
 
