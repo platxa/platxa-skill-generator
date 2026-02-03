@@ -236,11 +236,33 @@ def _resolve_skill_source(skill_ref: str) -> tuple[str, Path | None, str]:
     return skill_ref, None, f"GitHub ({CATALOG_REPO})"
 
 
+AGENT_PATHS: dict[str, str] = {
+    "claude": ".claude/skills",
+    "cursor": ".cursor/skills",
+    "copilot": ".github/copilot/skills",
+    "codex": ".codex/skills",
+    "windsurf": ".windsurf/skills",
+}
+
+
+def _resolve_agent_base(args: argparse.Namespace) -> Path:
+    """Resolve the install base directory from --agent, --user, --project flags."""
+    agent = getattr(args, "agent", None)
+    if agent:
+        rel = AGENT_PATHS.get(agent, f".{agent}/skills")
+        if args.project:
+            return Path(rel)
+        return Path.home() / rel
+    if args.project:
+        return Path(".claude/skills")
+    return Path.home() / ".claude" / "skills"
+
+
 def cmd_install(args: argparse.Namespace) -> int:
     """Install a skill by name (from catalog/GitHub) or by local path."""
     skill_name, local_source, source_label = _resolve_skill_source(args.skill)
 
-    base = Path(".claude/skills") if args.project else Path.home() / ".claude" / "skills"
+    base = _resolve_agent_base(args)
     target = base / skill_name
 
     if target.exists() and not args.force:
@@ -528,6 +550,11 @@ def main() -> int:
     )
     p_install.add_argument("--project", action="store_true", help="Install to .claude/skills/")
     p_install.add_argument("--force", action="store_true", help="Overwrite existing installation")
+    p_install.add_argument(
+        "--agent",
+        choices=["claude", "cursor", "copilot", "codex", "windsurf"],
+        help="Target agent (default: claude). Sets install path accordingly.",
+    )
 
     # search
     p_search = subparsers.add_parser("search", help="Search skills by keyword")
