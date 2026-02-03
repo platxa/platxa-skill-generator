@@ -1,0 +1,164 @@
+name: 'Platxa Skill Validator'
+description: 'Validate Claude Code skills against Platxa quality standards'
+author: 'Platxa'
+
+inputs:
+  skill-directory:
+    description: 'Path to the skill directory to validate'
+    required: true
+  profile:
+    description: 'Validation profile: strict (local) or spec (external)'
+    required: false
+    default: 'strict'
+  threshold:
+    description: 'Minimum quality score to pass (0.0-10.0)'
+    required: false
+    default: '7.0'
+  token-budget:
+    description: 'Check token budget compliance'
+    required: false
+    default: 'true'
+  security-check:
+    description: 'Run security checks'
+    required: false
+    default: 'true'
+
+outputs:
+  passed:
+    description: 'Whether all validations passed (true/false)'
+    value: ${{ steps.validate.outputs.passed }}
+  score:
+    description: 'Quality score (0.0-10.0)'
+    value: ${{ steps.validate.outputs.score }}
+  badge:
+    description: 'Badge level (Verified/Reviewed/Unverified/Flagged)'
+    value: ${{ steps.validate.outputs.badge }}
+  tokens:
+    description: 'Total token count'
+    value: ${{ steps.validate.outputs.tokens }}
+  report:
+    description: 'Markdown validation report'
+    value: ${{ steps.validate.outputs.report }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Checkout platxa-skill-generator
+      uses: actions/checkout@v4
+      with:
+        repository: platxa/platxa-skill-generator
+        path: .platxa-validator
+        sparse-checkout: scripts
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      shell: bash
+      run: pip install tiktoken pyyaml
+
+    - name: Make scripts executable
+      shell: bash
+      run: chmod +x .platxa-validator/scripts/*.sh
+
+    - name: Run validation
+      id: validate
+      shell: bash
+      run: |
+        SKILL_DIR="${{ inputs.skill-directory }}"
+        PROFILE="${{ inputs.profile }}"
+        THRESHOLD="${{ inputs.threshold }}"
+        PASSED="true"
+        REPORT=""
+
+        if [ ! -d "$SKILL_DIR" ]; then
+          echo "passed=false" >> $GITHUB_OUTPUT
+          echo "score=0" >> $GITHUB_OUTPUT
+          echo "badge=Flagged" >> $GITHUB_OUTPUT
+          echo "report=Error: Directory not found: $SKILL_DIR" >> $GITHUB_OUTPUT
+          exit 1
+        fi
+
+        # Structure validation
+        STRUCT_OUT=$(.platxa-validator/scripts/validate-all.sh "$SKILL_DIR" --profile="$PROFILE" 2>&1) || true
+        STRUCT_EXIT=$?
+        if [ $STRUCT_EXIT -ne 0 ]; then
+          PASSED="false"
+          REPORT="Structure/frontmatter validation failed"
+        fi
+
+        # Token budget
+        TOKENS="?"
+        if [ "${{ inputs.token-budget }}" = "true" ]; then
+          TOKEN_OUT=$(python3 .platxa-validator/scripts/count-tokens.py "$SKILL_DIR" --json 2>&1) || true
+          TOKENS=$(echo "$TOKEN_OUT" | python3 -c "import sys,json; print(json.load(sys.stdin)['total_tokens'])" 2>/dev/null || echo "?")
+          TOKEN_OK=$(echo "$TOKEN_OUT" | python3 -c "import sys,json; print('yes' if json.load(sys.stdin)['passed'] else 'no')" 2>/dev/null || echo "?")
+          if [ "$TOKEN_OK" = "no" ]; then
+            PASSED="false"
+            REPORT="${REPORT:+$REPORT; }Token budget exceeded"
+          fi
+        fi
+
+        # Security check
+        SEC_PASSED="true"
+        if [ "${{ inputs.security-check }}" = "true" ]; then
+          SEC_OUT=$(.platxa-validator/scripts/security-check.sh "$SKILL_DIR" 2>&1) || true
+          if [ $? -ne 0 ]; then
+            SEC_PASSED="false"
+            PASSED="false"
+            REPORT="${REPORT:+$REPORT; }Security issues found"
+          fi
+        fi
+
+        # Quality scoring
+        SCORE_OUT=$(python3 -c "
+        import sys
+        sys.path.insert(0, '.platxa-validator/scripts')
+        from importlib.util import spec_from_file_location, module_from_spec
+        spec = spec_from_file_location('sm', '.platxa-validator/scripts/score-skill.py')
+        mod = module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        from pathlib import Path
+        report = mod.score_skill(Path('$SKILL_DIR'))
+        sec = $SEC_PASSED == 'true'
+        badge = mod.assign_badge(report['overall_score'], security_passed=sec)
+        print(f'{report[\"overall_score\"]:.1f}')
+        print(badge)
+        " 2>/dev/null) || true
+
+        SCORE=$(echo "$SCORE_OUT" | head -1)
+        BADGE=$(echo "$SCORE_OUT" | tail -1)
+
+        if [ -z "$SCORE" ]; then
+          SCORE="0"
+          BADGE="Flagged"
+        fi
+
+        # Check threshold
+        BELOW=$(python3 -c "print('yes' if float('$SCORE') < float('$THRESHOLD') else 'no')" 2>/dev/null || echo "yes")
+        if [ "$BELOW" = "yes" ]; then
+          PASSED="false"
+          REPORT="${REPORT:+$REPORT; }Score $SCORE below threshold $THRESHOLD"
+        fi
+
+        echo "passed=$PASSED" >> $GITHUB_OUTPUT
+        echo "score=$SCORE" >> $GITHUB_OUTPUT
+        echo "badge=$BADGE" >> $GITHUB_OUTPUT
+        echo "tokens=$TOKENS" >> $GITHUB_OUTPUT
+
+        if [ -z "$REPORT" ]; then
+          REPORT="All validations passed (score: $SCORE, badge: $BADGE)"
+        fi
+        echo "report=$REPORT" >> $GITHUB_OUTPUT
+
+        echo "Validation: passed=$PASSED score=$SCORE badge=$BADGE tokens=$TOKENS"
+        if [ "$PASSED" = "false" ]; then
+          exit 1
+        fi
+
+    - name: Cleanup
+      if: always()
+      shell: bash
+      run: rm -rf .platxa-validator
