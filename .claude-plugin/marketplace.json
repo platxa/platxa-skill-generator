@@ -1,0 +1,82 @@
+{
+  "name": "platxa-skills",
+  "owner": {
+    "name": "Platxa",
+    "email": "skills@platxa.com"
+  },
+  "metadata": {
+    "description": "Platxa skills catalog for Claude Code — Odoo development, infrastructure, frontend, testing, and workflow automation",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "platxa-platform",
+      "description": "Platxa platform skills for Odoo development, infrastructure, security, and observability",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/platxa-error-handling",
+        "./skills/platxa-frontend-builder",
+        "./skills/platxa-jwt-auth",
+        "./skills/platxa-k8s-ops",
+        "./skills/platxa-k8s-scaling",
+        "./skills/platxa-logging",
+        "./skills/platxa-monaco-config",
+        "./skills/platxa-monitoring",
+        "./skills/platxa-odoo-blog",
+        "./skills/platxa-odoo-form",
+        "./skills/platxa-odoo-page",
+        "./skills/platxa-preview-service",
+        "./skills/platxa-secrets-management",
+        "./skills/platxa-sidecar-builder",
+        "./skills/platxa-testing",
+        "./skills/platxa-token-sync",
+        "./skills/platxa-yjs-server"
+      ]
+    },
+    {
+      "name": "development-tools",
+      "description": "General development skills for coding, testing, debugging, and git workflows",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/code-documenter",
+        "./skills/commit-message",
+        "./skills/mcp-builder",
+        "./skills/pr-description",
+        "./skills/systematic-debugging",
+        "./skills/test-driven-development",
+        "./skills/test-generator",
+        "./skills/webapp-testing"
+      ]
+    },
+    {
+      "name": "frontend-skills",
+      "description": "Frontend development skills for React, React Native, and web design",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/frontend-design",
+        "./skills/react-best-practices",
+        "./skills/react-native-skills",
+        "./skills/web-artifacts-builder",
+        "./skills/web-design-guidelines"
+      ]
+    },
+    {
+      "name": "workflow-skills",
+      "description": "Agent workflow skills for planning, execution, and quality verification",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/brainstorming",
+        "./skills/dispatching-parallel-agents",
+        "./skills/executing-plans",
+        "./skills/subagent-driven-development",
+        "./skills/using-superpowers",
+        "./skills/verification-before-completion",
+        "./skills/writing-plans"
+      ]
+    }
+  ]
+}
