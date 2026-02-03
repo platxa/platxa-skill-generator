@@ -5,6 +5,23 @@ on:
     # Weekly on Monday at 06:00 UTC
     - cron: '0 6 * * 1'
   workflow_dispatch:
+    inputs:
+      discover-new:
+        description: 'Also discover new skills from upstream sources'
+        required: false
+        default: 'true'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
+      threshold:
+        description: 'Minimum quality score for new skill discovery'
+        required: false
+        default: '7.0'
+      source:
+        description: 'Only sync from a specific source (blank = all)'
+        required: false
+        default: ''
 
 permissions:
   contents: write
@@ -15,17 +32,84 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
 
-      - name: Install PyYAML
-        run: pip install pyyaml
+      - name: Install dependencies
+        run: pip install pyyaml tiktoken
 
-      - name: Run sync-catalog.sh
-        run: ./scripts/sync-catalog.sh sync
+      - name: Sync existing skills from upstream
+        id: sync
+        run: |
+          chmod +x scripts/sync-catalog.sh
+          SYNC_OUT=$(./scripts/sync-catalog.sh sync 2>&1) || true
+          echo "$SYNC_OUT"
+          echo "sync_output<<SYNCEOF" >> "$GITHUB_OUTPUT"
+          echo "$SYNC_OUT" >> "$GITHUB_OUTPUT"
+          echo "SYNCEOF" >> "$GITHUB_OUTPUT"
+
+      - name: Discover new upstream skills
+        id: discover
+        if: inputs.discover-new != 'false'
+        run: |
+          DISCOVER_ARGS="--dry-run --json"
+          if [ -n "${{ inputs.threshold }}" ]; then
+            DISCOVER_ARGS="$DISCOVER_ARGS --threshold ${{ inputs.threshold }}"
+          fi
+          if [ -n "${{ inputs.source }}" ]; then
+            DISCOVER_ARGS="$DISCOVER_ARGS --source ${{ inputs.source }}"
+          fi
+          DISCOVER_OUT=$(python3 scripts/import-upstream.py $DISCOVER_ARGS 2>/dev/null) || true
+          echo "$DISCOVER_OUT"
+
+          NEW_COUNT=$(echo "$DISCOVER_OUT" | python3 -c "
+          import sys, json
+          try:
+              data = json.load(sys.stdin)
+              passing = [s for s in data if s.get('imported')]
+              print(len(passing))
+          except Exception:
+              print('0')
+          " 2>/dev/null || echo "0")
+          echo "new_count=$NEW_COUNT" >> "$GITHUB_OUTPUT"
+
+          echo "discover_output<<DISCEOF" >> "$GITHUB_OUTPUT"
+          echo "$DISCOVER_OUT" >> "$GITHUB_OUTPUT"
+          echo "DISCEOF" >> "$GITHUB_OUTPUT"
+
+      - name: Validate synced skills
+        id: validate
+        run: |
+          chmod +x scripts/validate-all.sh
+          VALID=0
+          INVALID=0
+          ERRORS=""
+          for skill_dir in skills/*/; do
+            skill=$(basename "$skill_dir")
+            [ ! -f "$skill_dir/SKILL.md" ] && continue
+            if ./scripts/validate-all.sh "$skill_dir" --profile=spec > /dev/null 2>&1; then
+              VALID=$((VALID + 1))
+            else
+              INVALID=$((INVALID + 1))
+              ERRORS="${ERRORS}- \`${skill}\` failed validation\n"
+            fi
+          done
+          echo "valid=$VALID" >> "$GITHUB_OUTPUT"
+          echo "invalid=$INVALID" >> "$GITHUB_OUTPUT"
+          echo "errors<<VEOF" >> "$GITHUB_OUTPUT"
+          echo -e "$ERRORS" >> "$GITHUB_OUTPUT"
+          echo "VEOF" >> "$GITHUB_OUTPUT"
+          echo "Validated: $VALID valid, $INVALID invalid"
+
+      - name: Regenerate index after sync
+        run: |
+          python3 scripts/generate-index.py -o skills/index.json --pretty
+          python3 scripts/generate-index.py --search-index skills/search-index.json
 
       - name: Check for changes
         id: diff
@@ -34,10 +118,17 @@ jobs:
             echo "changed=false" >> "$GITHUB_OUTPUT"
           else
             echo "changed=true" >> "$GITHUB_OUTPUT"
+            STAT=$(git diff --stat)
             echo "## Sync Summary" >> "$GITHUB_STEP_SUMMARY"
             echo '```' >> "$GITHUB_STEP_SUMMARY"
-            git diff --stat >> "$GITHUB_STEP_SUMMARY"
+            echo "$STAT" >> "$GITHUB_STEP_SUMMARY"
             echo '```' >> "$GITHUB_STEP_SUMMARY"
+
+            if [ "${{ steps.validate.outputs.invalid }}" != "0" ]; then
+              echo "" >> "$GITHUB_STEP_SUMMARY"
+              echo "### Validation Issues" >> "$GITHUB_STEP_SUMMARY"
+              echo -e "${{ steps.validate.outputs.errors }}" >> "$GITHUB_STEP_SUMMARY"
+            fi
           fi
 
       - name: Create Pull Request
@@ -49,10 +140,15 @@ jobs:
           commit-message: 'chore: sync catalog from upstream'
           title: 'chore: sync catalog from upstream'
           body: |
-            Automated weekly sync of external skills from upstream repos.
+            Automated sync of external skills from upstream repos (Anthropic, Vercel, Obra).
 
-            **Sources:** anthropic, vercel, obra
+            ### Validation
+            - Valid: ${{ steps.validate.outputs.valid }}
+            - Invalid: ${{ steps.validate.outputs.invalid }}
 
-            Review the diff below for changes.
+            ${{ steps.discover.outputs.new_count != '0' && format('### New Skills Discovered\n{0} new skill(s) meet the quality threshold and could be imported via `import-upstream.py`.', steps.discover.outputs.new_count) || '' }}
+
+            ---
+            _Triggered by scheduled sync or manual dispatch._
           labels: catalog, automated
           delete-branch: true
