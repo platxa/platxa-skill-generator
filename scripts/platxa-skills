@@ -26,6 +26,9 @@ SCRIPTS_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = SCRIPTS_DIR.parent
 SKILLS_DIR = PROJECT_ROOT / "skills"
 CATALOG_REPO = "https://github.com/platxa/platxa-skill-generator.git"
+SEARCH_INDEX_URL = "https://raw.githubusercontent.com/platxa/platxa-skill-generator/main/skills/search-index.json"
+SEARCH_INDEX_CACHE = Path(tempfile.gettempdir()) / "platxa-search-index.json"
+SEARCH_INDEX_CACHE_TTL = 3600  # 1 hour
 
 
 def _run_script(script_name: str, args: list[str]) -> int:
@@ -268,6 +271,38 @@ def cmd_install(args: argparse.Namespace) -> int:
     return 0
 
 
+def _fetch_search_index_from_github() -> list[dict] | None:
+    """Fetch search-index.json from GitHub with local caching."""
+    import time
+    import urllib.request
+
+    # Check cache freshness
+    if SEARCH_INDEX_CACHE.exists():
+        age = time.time() - SEARCH_INDEX_CACHE.stat().st_mtime
+        if age < SEARCH_INDEX_CACHE_TTL:
+            try:
+                return json.loads(SEARCH_INDEX_CACHE.read_text())
+            except (json.JSONDecodeError, OSError):
+                pass
+
+    # Fetch from GitHub
+    try:
+        req = urllib.request.Request(SEARCH_INDEX_URL, headers={"User-Agent": "platxa-skills/1.0"})
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            data = resp.read().decode()
+        entries = json.loads(data)
+        SEARCH_INDEX_CACHE.write_text(data)
+        return entries
+    except Exception:
+        # Fall back to stale cache if available
+        if SEARCH_INDEX_CACHE.exists():
+            try:
+                return json.loads(SEARCH_INDEX_CACHE.read_text())
+            except (json.JSONDecodeError, OSError):
+                pass
+    return None
+
+
 def cmd_search(args: argparse.Namespace) -> int:
     """Search skills by keyword with fuzzy matching."""
     search_path = SKILLS_DIR / "search-index.json"
@@ -277,9 +312,12 @@ def cmd_search(args: argparse.Namespace) -> int:
         with open(search_path) as f:
             search_entries = json.load(f)
     else:
-        # Generate on-the-fly from full index
-        index = gen_mod.generate_index(SKILLS_DIR)  # type: ignore[attr-defined]
-        search_entries = gen_mod.generate_search_index(index)  # type: ignore[attr-defined]
+        # Try fetching from GitHub
+        search_entries = _fetch_search_index_from_github()
+        if search_entries is None:
+            # Last resort: generate on-the-fly from local files
+            index = gen_mod.generate_index(SKILLS_DIR)  # type: ignore[attr-defined]
+            search_entries = gen_mod.generate_search_index(index)  # type: ignore[attr-defined]
 
     results = gen_mod.search_skills(search_entries, args.query)  # type: ignore[attr-defined]
 
