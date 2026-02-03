@@ -31,6 +31,7 @@ assert _score_spec is not None and _score_spec.loader is not None
 score_skill_mod = module_from_spec(_score_spec)
 _score_spec.loader.exec_module(score_skill_mod)
 score_skill = score_skill_mod.score_skill
+assign_badge = score_skill_mod.assign_badge
 
 # Import index generation for manifest data
 _idx_spec = spec_from_file_location("gen_index_mod", SCRIPTS_DIR / "generate-index.py")
@@ -67,6 +68,24 @@ def run_duplicate_check(skill_dir: Path) -> bool:
     try:
         result = subprocess.run(
             ["python3", str(dup_script), str(skill_dir)],
+            capture_output=True,
+            text=True,
+            timeout=60,
+        )
+        return result.returncode == 0
+    except (subprocess.TimeoutExpired, OSError):
+        return False
+
+
+def run_security_check(skill_dir: Path) -> bool:
+    """Run security-check.sh on a skill directory. Returns True if clean."""
+    sec_script = SCRIPTS_DIR / "security-check.sh"
+    if not sec_script.exists():
+        return True
+
+    try:
+        result = subprocess.run(
+            [str(sec_script), str(skill_dir)],
             capture_output=True,
             text=True,
             timeout=60,
@@ -124,15 +143,22 @@ def audit_catalog(
         # Run duplicate check
         dup_passed = run_duplicate_check(skill_dir)
 
+        # Run security check
+        sec_passed = run_security_check(skill_dir)
+
+        # Assign badge using score + security result
+        badge = assign_badge(score_report["overall_score"], security_passed=sec_passed)
+
         entry: dict[str, Any] = {
             "name": skill_name,
             "category": category,
             "tier": tier,
             "source": source,
             "overall_score": score_report["overall_score"],
-            "badge": score_report["badge"],
-            "passed": score_report["passed"] and dup_passed,
+            "badge": badge,
+            "passed": score_report["passed"] and dup_passed and sec_passed,
             "duplicate_check": "pass" if dup_passed else "fail",
+            "security_check": "pass" if sec_passed else "fail",
             "dimensions": {
                 k: v["score"] for k, v in score_report["dimensions"].items()
             },
@@ -148,7 +174,6 @@ def audit_catalog(
         score_sum += score_report["overall_score"]
 
         # Aggregate stats
-        badge = score_report["badge"]
         badge_counts[badge] = badge_counts.get(badge, 0) + 1
 
         cat_counts[category] = cat_counts.get(category, 0) + 1
@@ -238,8 +263,12 @@ def print_human_readable(report: dict[str, Any]) -> None:
 
     for skill in sorted(report["skills"], key=lambda s: -s["overall_score"]):
         status = "✓" if skill["passed"] else "✗"
-        dup = "" if skill["duplicate_check"] == "pass" else " [DUP]"
-        print(f"  {skill['name']:<30} {skill['overall_score']:>5}/10 {skill['badge']:<12} {status}{dup}")
+        flags = ""
+        if skill["duplicate_check"] != "pass":
+            flags += " [DUP]"
+        if skill.get("security_check") != "pass":
+            flags += " [SEC]"
+        print(f"  {skill['name']:<30} {skill['overall_score']:>5}/10 {skill['badge']:<12} {status}{flags}")
 
     print()
     print("=" * 60)

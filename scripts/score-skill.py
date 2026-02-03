@@ -14,7 +14,8 @@ Scores a skill across 5 dimensions (each 0-10):
     5. completeness - References, examples, scripts, tags, metadata richness
 
 Outputs a JSON report with per-dimension scores, overall weighted average,
-and a badge recommendation (Verified >= 8.0, Reviewed >= 7.0, Unverified < 7.0).
+and a badge recommendation (Verified >= 8.0 + security pass, Reviewed >= 7.0,
+Unverified >= 5.0, Flagged < 5.0 or security fail).
 """
 
 from __future__ import annotations
@@ -591,6 +592,26 @@ def score_expertise(skill_dir: Path) -> tuple[float, list[str]]:
     return min(max(score, 0.0), 10.0), notes
 
 
+def assign_badge(score: float, security_passed: bool | None = None) -> str:
+    """Assign a trust badge based on score and security check result.
+
+    Badge levels:
+        Verified  — score >= 8.0 AND security explicitly passed
+        Reviewed  — score >= 7.0 (or >= 8.0 without security confirmation)
+        Unverified — score >= 5.0
+        Flagged   — score < 5.0 OR security explicitly failed
+    """
+    if security_passed is False:
+        return "Flagged"
+    if score < 5.0:
+        return "Flagged"
+    if score < 7.0:
+        return "Unverified"
+    if score >= 8.0 and security_passed is True:
+        return "Verified"
+    return "Reviewed"
+
+
 def score_skill(skill_dir: Path) -> dict[str, Any]:
     """Run all 6 scoring dimensions and produce a report."""
     dimensions = {
@@ -624,17 +645,7 @@ def score_skill(skill_dir: Path) -> dict[str, Any]:
         weighted_sum += dim_score * weights[dim_name]
 
     overall = round(weighted_sum, 2)
-
-    # Badge recommendation
-    if overall >= 8.0:
-        badge = "Verified"
-    elif overall >= 7.0:
-        badge = "Reviewed"
-    elif overall >= 5.0:
-        badge = "Unverified"
-    else:
-        badge = "Flagged"
-
+    badge = assign_badge(overall)
     passed = overall >= 7.0
 
     return {
