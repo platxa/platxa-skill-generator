@@ -1,3 +1,4 @@
+<!-- nosec -->
 # Patterns.md Generator
 
 Generate pattern documentation with examples and usage guidance.

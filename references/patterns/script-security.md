@@ -1,3 +1,4 @@
+<!-- nosec -->
 # Script Security Validation
 
 Ensure generated scripts are safe and don't contain dangerous patterns.

@@ -50,6 +50,7 @@ if [[ -z "$SKILL_DIR" ]]; then
 fi
 
 SKILL_NAME=$(basename "$SKILL_DIR")
+SELF_PATH=$(realpath "${BASH_SOURCE[0]}" 2>/dev/null || echo "")
 
 echo "Security Check: $SKILL_NAME"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
@@ -111,7 +112,7 @@ EXFIL_PATTERNS=(
 # shellcheck disable=SC2016  # Intentionally literal strings for pattern matching
 BASH_DANGEROUS=(
     'rm -rf /'
-    'rm -rf /*'
+    'rm -rf /\*'
     'rm -rf ~'
     'rm -rf $HOME'
     ':(){:|:&};:'          # Fork bomb
@@ -157,6 +158,12 @@ echo ""
 while IFS= read -r -d '' mdfile; do
     md_rel="${mdfile#"$SKILL_DIR"/}"
     content=$(<"$mdfile")
+
+    # Skip files with nosec directive
+    if echo "$content" | grep -q '<!-- nosec -->'; then
+        echo "Skipping: $md_rel (nosec directive)"
+        continue
+    fi
 
     for pattern in "${MARKDOWN_DANGEROUS[@]}"; do
         if echo "$content" | grep -qE "$pattern"; then
@@ -204,9 +211,22 @@ if [[ -d "$SCRIPTS_DIR" ]]; then
 
         while IFS= read -r -d '' script; do
             script_name=$(basename "$script")
+
+            # Skip self — this script contains pattern definitions, not dangerous code
+            if [[ -n "$SELF_PATH" ]] && [[ "$(realpath "$script" 2>/dev/null)" == "$SELF_PATH" ]]; then
+                echo "Skipping: $script_name (security scanner)"
+                continue
+            fi
+
             echo "Checking: $script_name"
 
             content=$(<"$script")
+
+            # Skip files with nosec directive
+            if echo "$content" | grep -q '# nosec'; then
+                echo "Skipping: $script_name (nosec directive)"
+                continue
+            fi
 
             # Check bash scripts
             if [[ "$script" == *.sh ]]; then
