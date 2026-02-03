@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "generated_at": "2026-02-03T17:24:25Z",
+  "generated_at": "2026-02-03T17:29:49Z",
   "skills_count": 37,
   "skills": {
     "brainstorming": {
@@ -14,6 +14,8 @@
         "references": 0,
         "total": 522
       },
+      "sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
+      "git_sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
       "ref": "main"
     },
     "code-documenter": {
@@ -43,7 +45,9 @@
           "documentation",
           "developer-tools"
         ]
-      }
+      },
+      "sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
+      "git_sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07"
     },
     "commit-message": {
       "name": "commit-message",
@@ -69,7 +73,9 @@
           "git",
           "workflow"
         ]
-      }
+      },
+      "sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
+      "git_sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07"
     },
     "dispatching-parallel-agents": {
       "name": "dispatching-parallel-agents",
@@ -82,6 +88,8 @@
         "references": 0,
         "total": 1405
       },
+      "sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
+      "git_sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
       "ref": "main"
     },
     "executing-plans": {
@@ -95,6 +103,8 @@
         "references": 0,
         "total": 562
       },
+      "sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
+      "git_sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
       "ref": "main"
     },
     "frontend-design": {
@@ -109,6 +119,7 @@
         "total": 1084
       },
       "sha": "69c0b1a0674149f27b61b2635f935524b6add202",
+      "git_sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
       "ref": "main"
     },
     "mcp-builder": {
@@ -122,6 +133,8 @@
         "references": 0,
         "total": 1922
       },
+      "sha": "3b1e8c7c8e2774db5c8b8a15a332738a3d6f2725",
+      "git_sha": "3b1e8c7c8e2774db5c8b8a15a332738a3d6f2725",
       "ref": "main"
     },
     "platxa-error-handling": {
@@ -149,7 +162,9 @@
           "retry",
           "logging"
         ]
-      }
+      },
+      "sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
+      "git_sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07"
     },
     "platxa-frontend-builder": {
       "name": "platxa-frontend-builder",
@@ -180,7 +195,9 @@
           "frontend",
           "typescript"
         ]
-      }
+      },
+      "sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
+      "git_sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07"
     },
     "platxa-jwt-auth": {
       "name": "platxa-jwt-auth",
@@ -210,7 +227,9 @@
           "security",
           "rs256"
         ]
-      }
+      },
+      "sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
+      "git_sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07"
     },
     "platxa-k8s-ops": {
       "name": "platxa-k8s-ops",
@@ -238,6 +257,8 @@
           "infrastructure"
         ]
       },
+      "sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
+      "git_sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
       "compatibility": "Requires kubectl, helm"
     },
     "platxa-k8s-scaling": {
@@ -265,7 +286,9 @@
           "hpa",
           "scale-to-zero"
         ]
-      }
+      },
+      "sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
+      "git_sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07"
     },
     "platxa-logging": {
       "name": "platxa-logging",
@@ -292,7 +315,9 @@
           "correlation-ids",
           "observability"
         ]
-      }
+      },
+      "sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
+      "git_sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07"
     },
     "platxa-monaco-config": {
       "name": "platxa-monaco-config",
@@ -318,7 +343,9 @@
           "editor",
           "configuration"
         ]
-      }
+      },
+      "sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
+      "git_sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07"
     },
     "platxa-monitoring": {
       "name": "platxa-monitoring",
@@ -346,7 +373,9 @@
           "loki",
           "observability"
         ]
-      }
+      },
+      "sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
+      "git_sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07"
     },
     "platxa-odoo-blog": {
       "name": "platxa-odoo-blog",
@@ -367,7 +396,9 @@
       ],
       "metadata": {
         "version": "1.0.0"
-      }
+      },
+      "sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
+      "git_sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07"
     },
     "platxa-odoo-form": {
       "name": "platxa-odoo-form",
@@ -388,7 +419,9 @@
       ],
       "metadata": {
         "version": "1.0.0"
-      }
+      },
+      "sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
+      "git_sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07"
     },
     "platxa-odoo-page": {
       "name": "platxa-odoo-page",
@@ -409,7 +442,9 @@
       ],
       "metadata": {
         "version": "1.0.0"
-      }
+      },
+      "sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
+      "git_sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07"
     },
     "platxa-preview-service": {
       "name": "platxa-preview-service",
@@ -431,7 +466,9 @@
       ],
       "metadata": {
         "version": "1.0.0"
-      }
+      },
+      "sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
+      "git_sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07"
     },
     "platxa-secrets-management": {
       "name": "platxa-secrets-management",
@@ -459,7 +496,9 @@
           "kubernetes",
           "secrets"
         ]
-      }
+      },
+      "sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
+      "git_sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07"
     },
     "platxa-sidecar-builder": {
       "name": "platxa-sidecar-builder",
@@ -491,7 +530,9 @@
           "websocket",
           "kubernetes"
         ]
-      }
+      },
+      "sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
+      "git_sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07"
     },
     "platxa-testing": {
       "name": "platxa-testing",
@@ -521,7 +562,9 @@
           "vitest",
           "e2e"
         ]
-      }
+      },
+      "sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
+      "git_sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07"
     },
     "platxa-token-sync": {
       "name": "platxa-token-sync",
@@ -542,7 +585,9 @@
       ],
       "metadata": {
         "version": "1.0.0"
-      }
+      },
+      "sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
+      "git_sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07"
     },
     "platxa-yjs-server": {
       "name": "platxa-yjs-server",
@@ -569,7 +614,9 @@
           "collaboration",
           "crdt"
         ]
-      }
+      },
+      "sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
+      "git_sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07"
     },
     "pr-description": {
       "name": "pr-description",
@@ -596,7 +643,9 @@
           "git",
           "workflow"
         ]
-      }
+      },
+      "sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
+      "git_sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07"
     },
     "react-best-practices": {
       "name": "vercel-react-best-practices",
@@ -613,6 +662,8 @@
         "author": "vercel",
         "version": "1.0.0"
       },
+      "sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
+      "git_sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
       "ref": "main"
     },
     "react-native-skills": {
@@ -630,6 +681,8 @@
         "author": "vercel",
         "version": "1.0.0"
       },
+      "sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
+      "git_sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
       "ref": "main"
     },
     "subagent-driven-development": {
@@ -643,6 +696,8 @@
         "references": 0,
         "total": 2269
       },
+      "sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
+      "git_sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
       "ref": "main"
     },
     "systematic-debugging": {
@@ -656,6 +711,8 @@
         "references": 0,
         "total": 2330
       },
+      "sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
+      "git_sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
       "ref": "main"
     },
     "test-driven-development": {
@@ -669,6 +726,8 @@
         "references": 0,
         "total": 2420
       },
+      "sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
+      "git_sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
       "ref": "main"
     },
     "test-generator": {
@@ -698,7 +757,9 @@
           "testing",
           "developer-tools"
         ]
-      }
+      },
+      "sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
+      "git_sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07"
     },
     "using-superpowers": {
       "name": "using-superpowers",
@@ -711,6 +772,8 @@
         "references": 0,
         "total": 925
       },
+      "sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
+      "git_sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
       "ref": "main"
     },
     "verification-before-completion": {
@@ -724,6 +787,8 @@
         "references": 0,
         "total": 987
       },
+      "sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
+      "git_sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
       "ref": "main"
     },
     "web-artifacts-builder": {
@@ -737,6 +802,8 @@
         "references": 0,
         "total": 702
       },
+      "sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
+      "git_sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
       "ref": "main"
     },
     "web-design-guidelines": {
@@ -755,6 +822,8 @@
         "version": "1.0.0",
         "argument-hint": "<file-or-pattern>"
       },
+      "sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
+      "git_sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
       "ref": "main"
     },
     "webapp-testing": {
@@ -768,6 +837,8 @@
         "references": 0,
         "total": 881
       },
+      "sha": "3b1e8c7c8e2774db5c8b8a15a332738a3d6f2725",
+      "git_sha": "3b1e8c7c8e2774db5c8b8a15a332738a3d6f2725",
       "ref": "main"
     },
     "writing-plans": {
@@ -781,6 +852,8 @@
         "references": 0,
         "total": 795
       },
+      "sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
+      "git_sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
       "ref": "main"
     }
   },

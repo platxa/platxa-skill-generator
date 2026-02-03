@@ -41,6 +41,7 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import subprocess
 import sys
 from datetime import datetime, timezone
 from importlib.util import module_from_spec, spec_from_file_location
@@ -141,6 +142,54 @@ def load_manifest(manifest_path: Path) -> dict[str, Any]:
         return {}
 
 
+def _git_skill_version(skill_dir: Path) -> dict[str, str]:
+    """Get git version info for a skill directory.
+
+    Returns dict with 'git_sha' (last commit touching the dir) and
+    'version' (from git tag like '<skill>/v1.0' or repo-level 'v1.0',
+    falling back to '0.0.0' if no tags).
+    """
+    result: dict[str, str] = {}
+    try:
+        # Get last commit SHA touching this skill directory
+        out = subprocess.run(
+            ["git", "log", "-1", "--format=%H", "--", str(skill_dir)],
+            capture_output=True,
+            text=True,
+            timeout=5,
+        )
+        if out.returncode == 0 and out.stdout.strip():
+            result["git_sha"] = out.stdout.strip()
+
+        # Look for skill-specific tag (e.g. code-documenter/v1.0.0)
+        skill_name = skill_dir.name
+        tag_out = subprocess.run(
+            ["git", "tag", "-l", f"{skill_name}/v*", "--sort=-v:refname"],
+            capture_output=True,
+            text=True,
+            timeout=5,
+        )
+        if tag_out.returncode == 0 and tag_out.stdout.strip():
+            tag = tag_out.stdout.strip().splitlines()[0]
+            # Extract version part after "name/v"
+            result["version"] = tag.split("/v", 1)[1] if "/v" in tag else tag
+        else:
+            # Fall back to latest repo-level tag
+            repo_tag_out = subprocess.run(
+                ["git", "describe", "--tags", "--abbrev=0"],
+                capture_output=True,
+                text=True,
+                timeout=5,
+            )
+            if repo_tag_out.returncode == 0 and repo_tag_out.stdout.strip():
+                tag = repo_tag_out.stdout.strip()
+                result["version"] = tag.lstrip("v")
+    except (subprocess.TimeoutExpired, FileNotFoundError):
+        pass
+
+    return result
+
+
 def build_skill_entry(
     skill_dir: Path,
     manifest_skills: dict[str, Any],
@@ -202,8 +251,14 @@ def build_skill_entry(
     if "metadata" in fm:
         entry["metadata"] = fm["metadata"]
 
-    if manifest_info.get("sha"):
-        entry["sha"] = manifest_info["sha"]
+    # Version tracking: git SHA + tag-derived version
+    git_info = _git_skill_version(skill_dir)
+    # Prefer manifest SHA for external skills, git SHA for local
+    entry["sha"] = manifest_info.get("sha") or git_info.get("git_sha", "")
+    if git_info.get("git_sha"):
+        entry["git_sha"] = git_info["git_sha"]
+    if git_info.get("version"):
+        entry["version"] = git_info["version"]
 
     if manifest_info.get("ref"):
         entry["ref"] = manifest_info["ref"]
