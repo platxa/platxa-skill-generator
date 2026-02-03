@@ -59,7 +59,7 @@ def catalog_env(tmp_path: Path) -> dict:
 
     Layout:
         tmp_path/
-            catalog/
+            skills/
                 manifest.yaml
                 alpha-skill/SKILL.md
                 beta-skill/SKILL.md
@@ -69,8 +69,8 @@ def catalog_env(tmp_path: Path) -> dict:
                 install-from-catalog.sh -> (symlink to real script)
             home/          (fake HOME for --user installs)
     """
-    # Create catalog with manifest and skill dirs
-    catalog_dir = tmp_path / "catalog"
+    # Create skills dir with manifest and skill dirs
+    catalog_dir = tmp_path / "skills"
     catalog_dir.mkdir()
     (catalog_dir / "manifest.yaml").write_text(MANIFEST_YAML)
 

@@ -25,12 +25,12 @@
 - [ ] SKILL.md has valid YAML frontmatter
 - [ ] Name is hyphen-case and <= 64 characters
 - [ ] Description is <= 1024 characters
-- [ ] `./scripts/validate-all.sh catalog/<skill-name>` passes
-- [ ] Token budget within limits (`python3 scripts/count-tokens.py catalog/<skill-name>`)
+- [ ] `./scripts/validate-all.sh skills/<skill-name>` passes
+- [ ] Token budget within limits (`python3 scripts/count-tokens.py skills/<skill-name>`)
 - [ ] No placeholder content (TODO, TBD, etc.)
 - [ ] Examples show realistic usage
 - [ ] Tested on real projects
-- [ ] Updated `catalog/README.md` with new skill entry
+- [ ] Updated `skills/README.md` with new skill entry
 
 ### Testing
 

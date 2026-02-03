@@ -34,10 +34,10 @@
 
 | Skill | Description | Install |
 |-------|-------------|---------|
-| **[code-documenter](catalog/code-documenter/)** | Generate docs for Python, JS/TS, Java, Go, Rust | `./scripts/install-from-catalog.sh code-documenter` |
-| **[commit-message](catalog/commit-message/)** | Generate conventional commit messages | `./scripts/install-from-catalog.sh commit-message` |
-| **[test-generator](catalog/test-generator/)** | Generate comprehensive unit tests | `./scripts/install-from-catalog.sh test-generator` |
-| **[pr-description](catalog/pr-description/)** | Generate PR descriptions from git history | `./scripts/install-from-catalog.sh pr-description` |
+| **[code-documenter](skills/code-documenter/)** | Generate docs for Python, JS/TS, Java, Go, Rust | `./scripts/install-from-catalog.sh code-documenter` |
+| **[commit-message](skills/commit-message/)** | Generate conventional commit messages | `./scripts/install-from-catalog.sh commit-message` |
+| **[test-generator](skills/test-generator/)** | Generate comprehensive unit tests | `./scripts/install-from-catalog.sh test-generator` |
+| **[pr-description](skills/pr-description/)** | Generate PR descriptions from git history | `./scripts/install-from-catalog.sh pr-description` |
 
 ```bash
 # Quick install
@@ -46,7 +46,7 @@
 ./scripts/install-from-catalog.sh --all         # Install all
 ```
 
-See the full **[Skills Catalog](catalog/README.md)** for details and contribution guidelines.
+See the full **[Skills Registry](skills/README.md)** for details and contribution guidelines.
 
 ---
 

@@ -25,7 +25,7 @@ NC='\033[0m'
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
-CATALOG_DIR="${CATALOG_DIR:-$PROJECT_DIR/catalog}"
+CATALOG_DIR="${CATALOG_DIR:-$PROJECT_DIR/skills}"
 MANIFEST="${MANIFEST:-$CATALOG_DIR/manifest.yaml}"
 OVERRIDES_DIR="${OVERRIDES_DIR:-$CATALOG_DIR/overrides}"
 CACHE_DIR="/tmp/skill-sync-cache"

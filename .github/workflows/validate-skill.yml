@@ -79,7 +79,14 @@ jobs:
         run: |
           SKILLS="${{ steps.changed-skills.outputs.skills }}"
           FAILED=0
-          REPORT=""
+
+          # Initialize report file with table header
+          {
+            echo "## Skills Validation Report"
+            echo ""
+            echo "| Skill | Profile | Validation | Tokens | Budget | Duplicates | Security | Score | Badge |"
+            echo "|-------|---------|------------|--------|--------|------------|----------|-------|-------|"
+          } > /tmp/validation-report.md
 
           if [ -z "$SKILLS" ]; then
             echo "No skills to validate"
@@ -101,6 +108,8 @@ jobs:
               print('spec')
           "
           }
+
+          : > /tmp/score-details.md
 
           for skill in $SKILLS; do
             SKILL_DIR="skills/$skill"
@@ -127,6 +136,49 @@ jobs:
             SEC_OUTPUT=$(./scripts/security-check.sh "$SKILL_DIR" 2>&1) || true
             SEC_EXIT=$?
 
+            # Run quality scoring and badge assignment
+            SCORE_OUTPUT=$(python3 -c "
+          import sys
+          sys.path.insert(0, 'scripts')
+          from importlib.util import spec_from_file_location, module_from_spec
+          spec = spec_from_file_location('sm', 'scripts/score-skill.py')
+          mod = module_from_spec(spec)
+          spec.loader.exec_module(mod)
+          from pathlib import Path
+          report = mod.score_skill(Path('$SKILL_DIR'))
+          sec = True if $SEC_EXIT == 0 else False
+          badge = mod.assign_badge(report['overall_score'], security_passed=sec)
+          dims = report['dimensions']
+          print(f'{report[\"overall_score\"]:.1f}')
+          print(badge)
+          for d, v in dims.items():
+              print(f'{d}:{v[\"score\"]:.1f}:{v[\"weight\"]}')
+          " 2>/dev/null) || true
+
+            QUALITY_SCORE=$(echo "$SCORE_OUTPUT" | head -1)
+            BADGE=$(echo "$SCORE_OUTPUT" | sed -n '2p')
+
+            if [ -z "$QUALITY_SCORE" ]; then
+              QUALITY_SCORE="?"
+              BADGE="?"
+            fi
+
+            # Build per-skill score breakdown (write to file to avoid YAML escaping issues)
+            DIM_LINES=$(echo "$SCORE_OUTPUT" | tail -n +3)
+            if [ -n "$DIM_LINES" ]; then
+              {
+                echo "<details><summary><b>${skill}</b> — ${QUALITY_SCORE}/10.0 (${BADGE})</summary>"
+                echo ""
+                echo "| Dimension | Score | Weight |"
+                echo "|-----------|-------|--------|"
+                while IFS=: read -r dim_name dim_score dim_weight; do
+                  echo "| ${dim_name} | ${dim_score}/10 | ${dim_weight} |"
+                done <<< "$DIM_LINES"
+                echo ""
+                echo "</details>"
+              } >> /tmp/score-details.md
+            fi
+
             # Build per-skill report
             if [ $VALIDATION_EXIT -eq 0 ]; then
               STATUS="✅ passed"
@@ -151,19 +203,14 @@ jobs:
               SEC_STATUS="✅ clean"
             fi
 
-            REPORT="${REPORT}| \`${skill}\` | ${PROFILE} | ${STATUS} | ${TOTAL_TOKENS} | ${TOKEN_PASSED} | ${DUP_STATUS} | ${SEC_STATUS} |
-"
+            echo "| \`${skill}\` | ${PROFILE} | ${STATUS} | ${TOTAL_TOKENS} | ${TOKEN_PASSED} | ${DUP_STATUS} | ${SEC_STATUS} | ${QUALITY_SCORE} | ${BADGE} |" >> /tmp/validation-report.md
           done
 
-          # Write report to file (multiline output)
-          cat > /tmp/validation-report.md << 'HEADER'
-          ## Skills Validation Report
-
-          | Skill | Profile | Validation | Tokens | Budget | Duplicates | Security |
-          |-------|---------|------------|--------|--------|------------|----------|
-          HEADER
-
-          echo "$REPORT" >> /tmp/validation-report.md
+          if [ -s /tmp/score-details.md ]; then
+            echo "" >> /tmp/validation-report.md
+            echo "### Quality Score Breakdown" >> /tmp/validation-report.md
+            cat /tmp/score-details.md >> /tmp/validation-report.md
+          fi
 
           if [ $FAILED -eq 1 ]; then
             echo "" >> /tmp/validation-report.md
@@ -223,6 +270,46 @@ jobs:
                 body: body,
               });
             }
+
+      - name: Submit PR review
+        if: github.event_name == 'pull_request' && always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const failed = '${{ steps.validate.outputs.failed }}' === '1';
+
+            // Dismiss any previous bot review before submitting a new one
+            const reviews = await github.rest.pulls.listReviews({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number,
+            });
+            for (const r of reviews.data) {
+              if (r.user.type === 'Bot' && (r.state === 'APPROVED' || r.state === 'CHANGES_REQUESTED')) {
+                try {
+                  await github.rest.pulls.dismissReview({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    pull_number: context.issue.number,
+                    review_id: r.id,
+                    message: 'Superseded by new validation run.',
+                  });
+                } catch { /* ignore if dismiss fails */ }
+              }
+            }
+
+            const event = failed ? 'REQUEST_CHANGES' : 'APPROVE';
+            const reviewBody = failed
+              ? 'Skill validation failed. Please fix the issues listed in the validation report above.'
+              : 'All skill validations passed. Quality scores and badges look good.';
+
+            await github.rest.pulls.createReview({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number,
+              event: event,
+              body: reviewBody,
+            });
 
   validate-structure:
     name: Validate Registry Structure

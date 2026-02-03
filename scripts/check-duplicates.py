@@ -133,7 +133,7 @@ def check_skill(skill_dir: Path, catalog_dir: Path | None = None) -> int:
 
     # Determine catalog directory
     if catalog_dir is None:
-        # Try parent directory (skill is likely inside catalog/)
+        # Try parent directory (skill is likely inside skills/)
         catalog_dir = skill_dir.parent
 
     skills = collect_skills(catalog_dir, skip_dir=skill_dir)

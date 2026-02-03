@@ -1,8 +1,10 @@
-# Claude Code Skills Catalog
+# Claude Code Skills Registry
 
-> A curated collection of production-ready skills for Claude Code CLI.
+> A curated, quality-verified collection of production-ready skills for Claude Code CLI.
 >
-> **Maintained by**: [Platxa](https://platxa.com) | **License**: MIT
+> **Maintained by**: [Platxa](https://platxa.com) | **License**: MIT | **Compatible with**: `npx skills`
+
+**37 skills** across **13 categories** — 21 local, 16 external
 
 ---
 
@@ -14,172 +16,94 @@ git clone https://github.com/platxa/platxa-skill-generator.git
 cd platxa-skill-generator
 
 # Install a single skill
-./scripts/install-from-catalog.sh code-documenter
+./scripts/install-from-catalog.sh <skill-name>
 
 # Install to project instead of user directory
-./scripts/install-from-catalog.sh code-documenter --project
+./scripts/install-from-catalog.sh <skill-name> --project
+
+# Install all essential skills (tier 1)
+./scripts/install-from-catalog.sh --all --tier 1
 
 # List all available skills
 ./scripts/install-from-catalog.sh --list
-
-# Install all skills
-./scripts/install-from-catalog.sh --all
 ```
 
 ---
 
 ## Skills Index
 
-| Skill | Description | Type | Status |
-|-------|-------------|------|--------|
-| [code-documenter](#code-documenter) | Generate documentation across Python, JS/TS, Java, Go, Rust | Automation | Ready |
-| [commit-message](#commit-message) | Generate conventional commit messages from staged changes | Automation | Ready |
-| [test-generator](#test-generator) | Generate unit tests with comprehensive coverage | Builder | Ready |
-| [pr-description](#pr-description) | Generate PR descriptions from git history | Builder | Ready |
-| [platxa-frontend-builder](#platxa-frontend-builder) | Generate React/Next.js components with TypeScript and Tailwind | Builder | Ready |
-| [platxa-sidecar-builder](#platxa-sidecar-builder) | Build Node.js sidecar services for real-time code editing | Builder | Ready |
+| Skill | Description | Category | Tier | Tokens | Source | Install |
+|-------|-------------|----------|------|--------|--------|---------|
+| [platxa-error-handling](skills/platxa-error-handling/SKILL.md) | Guide for structured error handling across Platxa stack. Covers error types, ... | backend | Internal | 7,013 | Platxa | `./scripts/install-from-catalog.sh platxa-error-handling` |
+| [platxa-sidecar-builder](skills/platxa-sidecar-builder/SKILL.md) | Build Node.js sidecar services for real-time code editing platforms. Covers f... | backend | Internal | 7,475 | Platxa | `./scripts/install-from-catalog.sh platxa-sidecar-builder` |
+| [platxa-yjs-server](skills/platxa-yjs-server/SKILL.md) | Yjs WebSocket server implementation guide for real-time collaboration. Config... | backend | Internal | 5,407 | Platxa | `./scripts/install-from-catalog.sh platxa-yjs-server` |
+| [code-documenter](skills/code-documenter/SKILL.md) | Automatically generates and improves code documentation across Python, JavaSc... | devtools | Internal | 3,605 | Platxa | `./scripts/install-from-catalog.sh code-documenter` |
+| [platxa-frontend-builder](skills/platxa-frontend-builder/SKILL.md) | Generate production-ready React/Next.js components for Platxa platform. Creat... | frontend | Internal | 7,468 | Platxa | `./scripts/install-from-catalog.sh platxa-frontend-builder` |
+| [platxa-monaco-config](skills/platxa-monaco-config/SKILL.md) | Monaco editor configuration guide for Platxa platform. Configure themes, keyb... | frontend | Internal | 5,873 | Platxa | `./scripts/install-from-catalog.sh platxa-monaco-config` |
+| [platxa-preview-service](skills/platxa-preview-service/SKILL.md) | Live preview service for Odoo themes with real-time token updates, SCSS compi... | frontend | Internal | 1,764 | Platxa | `./scripts/install-from-catalog.sh platxa-preview-service` |
+| [platxa-token-sync](skills/platxa-token-sync/SKILL.md) | Transform Brand Kit design tokens (OKLCH colors, spacing, typography) into Od... | frontend | Internal | 6,793 | Platxa | `./scripts/install-from-catalog.sh platxa-token-sync` |
+| [commit-message](skills/commit-message/SKILL.md) | Generate conventional commit messages by analyzing staged git changes. Detect... | git | Internal | 2,475 | Platxa | `./scripts/install-from-catalog.sh commit-message` |
+| [pr-description](skills/pr-description/SKILL.md) | Generate comprehensive pull request descriptions by analyzing git commits and... | git | Internal | 2,467 | Platxa | `./scripts/install-from-catalog.sh pr-description` |
+| [platxa-k8s-ops](skills/platxa-k8s-ops/SKILL.md) | Kubernetes operations automation for Platxa platform. Debug instances, manage... | infrastructure | Internal | 6,064 | Platxa | `./scripts/install-from-catalog.sh platxa-k8s-ops` |
+| [platxa-k8s-scaling](skills/platxa-k8s-scaling/SKILL.md) | Kubernetes scaling patterns for Platxa platform. Configure scale-to-zero with... | infrastructure | Internal | 5,551 | Platxa | `./scripts/install-from-catalog.sh platxa-k8s-scaling` |
+| [platxa-logging](skills/platxa-logging/SKILL.md) | Structured logging and correlation ID patterns for Platxa services. Covers Py... | observability | Internal | 6,683 | Platxa | `./scripts/install-from-catalog.sh platxa-logging` |
+| [platxa-monitoring](skills/platxa-monitoring/SKILL.md) | Observability guide for Platxa platform using Prometheus metrics and Loki log... | observability | Internal | 6,739 | Platxa | `./scripts/install-from-catalog.sh platxa-monitoring` |
+| [platxa-odoo-blog](skills/platxa-odoo-blog/SKILL.md) | Generate Odoo blog templates with post layouts, category pages, author profil... | odoo | Internal | 2,953 | Platxa | `./scripts/install-from-catalog.sh platxa-odoo-blog` |
+| [platxa-odoo-form](skills/platxa-odoo-form/SKILL.md) | Generate Odoo website forms with CRM lead integration, field validation, cond... | odoo | Internal | 4,342 | Platxa | `./scripts/install-from-catalog.sh platxa-odoo-form` |
+| [platxa-odoo-page](skills/platxa-odoo-page/SKILL.md) | Generate complete Odoo website pages (About, Contact, Services, Team, FAQ, Pr... | odoo | Internal | 6,834 | Platxa | `./scripts/install-from-catalog.sh platxa-odoo-page` |
+| [platxa-jwt-auth](skills/platxa-jwt-auth/SKILL.md) | Generate RS256 JWT authentication with JWKS endpoint for Platxa services. Cre... | security | Internal | 6,318 | Platxa | `./scripts/install-from-catalog.sh platxa-jwt-auth` |
+| [platxa-secrets-management](skills/platxa-secrets-management/SKILL.md) | Fernet encryption, Kubernetes secrets, and secure token patterns for Platxa s... | security | Internal | 6,971 | Platxa | `./scripts/install-from-catalog.sh platxa-secrets-management` |
+| [platxa-testing](skills/platxa-testing/SKILL.md) | Automated testing patterns for Platxa platform using pytest, Vitest, and E2E ... | testing | Internal | 6,090 | Platxa | `./scripts/install-from-catalog.sh platxa-testing` |
+| [test-generator](skills/test-generator/SKILL.md) | Generate unit tests for existing code across Python, JavaScript/TypeScript, J... | testing | Internal | 3,392 | Platxa | `./scripts/install-from-catalog.sh test-generator` |
+| [systematic-debugging](skills/systematic-debugging/SKILL.md) | Use when encountering any bug, test failure, or unexpected behavior, before p... | debugging | Essential | 2,330 | Obra | `./scripts/install-from-catalog.sh systematic-debugging` |
+| [frontend-design](skills/frontend-design/SKILL.md) | Create distinctive, production-grade frontend interfaces with high design qua... | design | Essential | 1,084 | Anthropic | `./scripts/install-from-catalog.sh frontend-design` |
+| [mcp-builder](skills/mcp-builder/SKILL.md) | Guide for creating high-quality MCP (Model Context Protocol) servers that ena... | devtools | Essential | 1,922 | Anthropic | `./scripts/install-from-catalog.sh mcp-builder` |
+| [react-best-practices](skills/react-best-practices/SKILL.md) | React and Next.js performance optimization guidelines from Vercel Engineering... | frontend | Essential | 1,488 | Vercel | `./scripts/install-from-catalog.sh react-best-practices` |
+| [web-artifacts-builder](skills/web-artifacts-builder/SKILL.md) | Suite of tools for creating elaborate, multi-component claude.ai HTML artifac... | frontend | Essential | 702 | Anthropic | `./scripts/install-from-catalog.sh web-artifacts-builder` |
+| [test-driven-development](skills/test-driven-development/SKILL.md) | Use when implementing any feature or bugfix, before writing implementation code | testing | Essential | 2,420 | Obra | `./scripts/install-from-catalog.sh test-driven-development` |
+| [webapp-testing](skills/webapp-testing/SKILL.md) | Toolkit for interacting with and testing local web applications using Playwri... | testing | Essential | 881 | Anthropic | `./scripts/install-from-catalog.sh webapp-testing` |
+| [executing-plans](skills/executing-plans/SKILL.md) | Use when you have a written implementation plan to execute in a separate sess... | workflow | Essential | 562 | Obra | `./scripts/install-from-catalog.sh executing-plans` |
+| [verification-before-completion](skills/verification-before-completion/SKILL.md) | Use when about to claim work is complete, fixed, or passing, before committin... | workflow | Essential | 987 | Obra | `./scripts/install-from-catalog.sh verification-before-completion` |
+| [writing-plans](skills/writing-plans/SKILL.md) | Use when you have a spec or requirements for a multi-step task, before touchi... | workflow | Essential | 795 | Obra | `./scripts/install-from-catalog.sh writing-plans` |
+| [web-design-guidelines](skills/web-design-guidelines/SKILL.md) | Review UI code for Web Interface Guidelines compliance. Use when asked to "re... | design | Useful | 268 | Vercel | `./scripts/install-from-catalog.sh web-design-guidelines` |
+| [react-native-skills](skills/react-native-skills/SKILL.md) | React Native and Expo best practices for building performant mobile apps. Use... | mobile | Useful | 1,041 | Vercel | `./scripts/install-from-catalog.sh react-native-skills` |
+| [brainstorming](skills/brainstorming/SKILL.md) | You MUST use this before any creative work - creating features, building comp... | workflow | Useful | 522 | Obra | `./scripts/install-from-catalog.sh brainstorming` |
+| [dispatching-parallel-agents](skills/dispatching-parallel-agents/SKILL.md) | Use when facing 2+ independent tasks that can be worked on without shared sta... | workflow | Useful | 1,405 | Obra | `./scripts/install-from-catalog.sh dispatching-parallel-agents` |
+| [subagent-driven-development](skills/subagent-driven-development/SKILL.md) | Use when executing implementation plans with independent tasks in the current... | workflow | Useful | 2,269 | Obra | `./scripts/install-from-catalog.sh subagent-driven-development` |
+| [using-superpowers](skills/using-superpowers/SKILL.md) | Use when starting any conversation - establishes how to find and use skills, ... | workflow | Experimental | 925 | Obra | `./scripts/install-from-catalog.sh using-superpowers` |
 
 ---
 
-## Available Skills
+## Categories
 
-### code-documenter
-
-**Type**: Automation | **Category**: Code Quality
-
-Automatically generates and improves code documentation across multiple languages:
-- Python (Google, NumPy, Sphinx styles)
-- JavaScript/TypeScript (JSDoc, TSDoc)
-- Java (Javadoc)
-- Go (godoc)
-- Rust (rustdoc)
-
-```bash
-./scripts/install-from-catalog.sh code-documenter
-```
-
-**Usage**:
-```
-User: Document the functions in src/utils/
-Assistant: [Analyzes files, generates docstrings following detected style]
-```
+| Category | Skills | Description |
+|----------|--------|-------------|
+| backend | 3 | Server-side services and APIs |
+| debugging | 1 | Bug diagnosis and resolution |
+| design | 2 | UI/UX design and frontend aesthetics |
+| devtools | 2 | Developer productivity tools |
+| frontend | 6 | Client-side components and UI |
+| git | 2 | Git workflow automation |
+| infrastructure | 2 | Kubernetes and cloud operations |
+| mobile | 1 | Mobile app development |
+| observability | 2 | Logging, monitoring, and tracing |
+| odoo | 3 | Odoo ERP platform development |
+| security | 2 | Authentication, encryption, secrets |
+| testing | 4 | Test generation and automation |
+| workflow | 7 | Agent workflow and orchestration |
 
 ---
 
-### commit-message
+## Skill Tiers
 
-**Type**: Automation | **Category**: Git Workflow
+| Tier | Label | Description | Count |
+|------|-------|-------------|-------|
+| 0 | Internal | Platxa internal skills (local only) | 21 |
+| 1 | Essential | Essential, high-quality skills | 10 |
+| 2 | Useful | Useful, recommended skills | 5 |
+| 3 | Experimental | Experimental or niche skills | 1 |
 
-Generates conventional commit messages by analyzing staged changes:
-- Detects change type (feat, fix, refactor, docs, etc.)
-- Suggests scope from file paths
-- Follows Conventional Commits specification
-- Supports breaking change notation
-
-```bash
-./scripts/install-from-catalog.sh commit-message
-```
-
-**Usage**:
-```
-User: Generate a commit message for my staged changes
-Assistant: [Analyzes diff, generates: feat(components): add Button component]
-```
-
----
-
-### test-generator
-
-**Type**: Builder | **Category**: Testing
-
-Generates comprehensive unit tests for existing code:
-- Detects testing framework (pytest, Jest, JUnit, etc.)
-- Creates tests following AAA pattern
-- Covers happy paths, boundaries, edge cases, errors
-- Supports parameterized tests
-
-```bash
-./scripts/install-from-catalog.sh test-generator
-```
-
-**Usage**:
-```
-User: Generate tests for src/utils/calculator.py
-Assistant: [Creates tests/test_calculator.py with comprehensive test cases]
-```
-
----
-
-### pr-description
-
-**Type**: Builder | **Category**: Git Workflow
-
-Generates pull request descriptions from commits and diff:
-- Categorizes changes by file type
-- Extracts related issue references
-- Detects breaking changes
-- Follows PR template if present
-
-```bash
-./scripts/install-from-catalog.sh pr-description
-```
-
-**Usage**:
-```
-User: Generate a PR description for this branch
-Assistant: [Analyzes commits, generates structured PR description]
-```
-
----
-
-### platxa-frontend-builder
-
-**Type**: Builder | **Category**: Frontend Development
-
-Generates production-ready React/Next.js components for the Platxa platform:
-- Server Components (data fetching, layouts)
-- Client Components (interactive UI, forms)
-- Form components with React Hook Form + Zod validation
-- Data tables with TypeScript generics
-- Accessible UI primitives with ARIA attributes
-
-```bash
-./scripts/install-from-catalog.sh platxa-frontend-builder
-```
-
-**Usage**:
-```
-User: Create a user profile card with avatar, name, and email
-Assistant: [Generates TypeScript component with proper types, Tailwind styling, accessibility]
-```
-
-**Related Skills**: Uses `platxa-monaco-config` for editor integration.
-
----
-
-### platxa-sidecar-builder
-
-**Type**: Builder | **Category**: Backend Services
-
-Builds Node.js sidecar services for real-time collaborative code editing platforms:
-- File watching with chokidar
-- Git operations with simple-git
-- WebSocket servers with ws library
-- Yjs CRDT integration for real-time sync
-- REST APIs with Fastify
-- Kubernetes native sidecar deployment
-
-```bash
-./scripts/install-from-catalog.sh platxa-sidecar-builder
-```
-
-**Usage**:
-```
-User: Create a sidecar that watches files and syncs with clients
-Assistant: [Generates Node.js service with file watcher, WebSocket, and REST API]
-```
-
-**Related Skills**: Uses `platxa-yjs-server` for Yjs patterns.
+Install by tier: `./scripts/install-from-catalog.sh --all --tier 1`
 
 ---
 
@@ -204,146 +128,67 @@ Assistant: [Generates Node.js service with file watcher, WebSocket, and REST API
 ### Method 2: Manual Copy
 
 ```bash
-# Copy skill to user directory
-cp -r catalog/<skill-name> ~/.claude/skills/
-
-# Or copy to project directory
-cp -r catalog/<skill-name> .claude/skills/
+cp -r skills/<skill-name> ~/.claude/skills/
 ```
 
 ### Method 3: Symbolic Link (Development)
 
 ```bash
-# Link for development (changes reflect immediately)
-ln -s $(pwd)/catalog/<skill-name> ~/.claude/skills/<skill-name>
+ln -s $(pwd)/skills/<skill-name> ~/.claude/skills/<skill-name>
 ```
 
 ---
 
-## Skill Quality Standards
+## Quality Standards
 
-All skills in this catalog meet these requirements:
+All skills meet these requirements:
 
 | Requirement | Threshold |
 |-------------|-----------|
 | SKILL.md exists | Required |
 | Valid YAML frontmatter | Required |
 | Name (hyphen-case) | <= 64 chars |
-| Description | <= 1024 chars |
-| Token budget | < 5000 tokens |
+| Description | <= 1,024 chars |
+| Token budget (SKILL.md) | <= 5,000 recommended |
+| Token budget (total) | <= 15,000 recommended |
 | All validations pass | Required |
 
-### Validation
-
 ```bash
-# Validate a skill before use
-./scripts/validate-all.sh catalog/<skill-name>
+# Validate a skill
+./scripts/validate-all.sh skills/<skill-name>
 
 # Check token count
-python3 scripts/count-tokens.py catalog/<skill-name>
+python3 scripts/count-tokens.py skills/<skill-name>
 ```
-
----
-
-## Contributing Skills
-
-We welcome community contributions!
-
-### Quick Contribution Steps
-
-1. **Create your skill** using the skill generator:
-   ```
-   User: /platxa-skill-generator
-   ```
-
-2. **Test thoroughly** in your own projects
-
-3. **Validate quality**:
-   ```bash
-   ./scripts/validate-all.sh /path/to/your-skill
-   ```
-
-4. **Submit PR** with:
-   - Skill directory in `catalog/`
-   - Updated catalog README (add to index table)
-   - Brief description of use case
-
-### Skill Submission Checklist
-
-- [ ] SKILL.md has valid frontmatter
-- [ ] All validations pass
-- [ ] No placeholder content
-- [ ] Scripts are executable and tested
-- [ ] References contain real domain expertise
-- [ ] Examples show realistic usage
-- [ ] Tested on real projects
-
----
-
-## Skill Tiers
-
-Skills are classified by quality tier in `manifest.yaml`:
-
-| Tier | Description | Examples |
-|------|-------------|---------|
-| 0 | Platxa internal (local only) | platxa-frontend-builder, platxa-k8s-ops |
-| 1 | Essential / high-quality upstream | frontend-design, mcp-builder, systematic-debugging |
-| 2 | Useful / recommended | canvas-design, composition-patterns |
-| 3 | Experimental / niche | algorithmic-art, using-git-worktrees |
-
-Install by tier: `./scripts/install-from-catalog.sh --all --tier 1`
 
 ---
 
 ## External vs Local Skills
 
-Skills come from two sources:
-
-- **Local** (`local: true` in manifest): Created and maintained in this repo. Never overwritten by sync.
-- **External**: Synced from upstream GitHub repos (anthropics/skills, vercel-labs/agent-skills, obra/superpowers).
-
-### Syncing External Skills
+- **Local** (21 skills): Created and maintained in this repo. Never overwritten by sync.
+- **External** (16 skills): Synced from upstream repos (Anthropic, Vercel, Obra).
 
 ```bash
-# Fetch all external skills from upstream
+# Sync external skills from upstream
 ./scripts/sync-catalog.sh sync
 
-# Update a single skill
-./scripts/sync-catalog.sh update frontend-design
-
-# See what's available
+# List sources
 ./scripts/sync-catalog.sh list-external
 ./scripts/sync-catalog.sh list-local
-
-# Check for differences
-./scripts/sync-catalog.sh diff
 ```
-
-### Customizing Upstream Skills
-
-Place override files in `catalog/overrides/<skill-name>/` to patch upstream skills without modifying them directly. Overrides are applied automatically during sync.
 
 ---
 
-## Roadmap
+## Contributing
 
-### Planned Skills
+See [CONTRIBUTING.md](../CONTRIBUTING.md) for the full PR-based submission guide.
 
-| Skill | Type | Category | Priority |
-|-------|------|----------|----------|
-| code-reviewer | Analyzer | Code Quality | High |
-| changelog-generator | Builder | Git Workflow | Medium |
-| readme-generator | Builder | Documentation | Medium |
-| dependency-auditor | Analyzer | Security | High |
-| dockerfile-generator | Builder | DevOps | Medium |
-| api-documenter | Builder | Documentation | Medium |
-
-### Suggest a Skill
-
-Open an issue with:
-- Skill name and description
-- Use case and target users
-- Example workflow
+```bash
+# Quick validation before submitting
+./scripts/validate-all.sh skills/my-skill-name
+python3 scripts/count-tokens.py skills/my-skill-name
+python3 scripts/check-duplicates.py skills/my-skill-name
+```
 
 ---
 
@@ -353,4 +198,4 @@ MIT License - See [LICENSE](../LICENSE) for details.
 
 ---
 
-**Catalog Version**: 1.1.0 | **Local Skills**: 16 | **External Skills**: 30+
+*Auto-generated from registry data. 37 skills across 13 categories.*

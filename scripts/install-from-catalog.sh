@@ -32,7 +32,7 @@ NC='\033[0m' # No Color
 # Determine script and catalog directories
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
-CATALOG_DIR="$PROJECT_DIR/catalog"
+CATALOG_DIR="$PROJECT_DIR/skills"
 
 # Default options
 INSTALL_TARGET="user"
