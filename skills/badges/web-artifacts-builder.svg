@@ -1,21 +1,21 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="101" height="20" role="img" aria-label="trust: Flagged">
-  <title>trust: Flagged</title>
+<svg xmlns="http://www.w3.org/2000/svg" width="119" height="20" role="img" aria-label="trust: Unverified">
+  <title>trust: Unverified</title>
   <linearGradient id="s" x2="0" y2="100%">
     <stop offset="0" stop-color="#bbb" stop-opacity=".1"/>
     <stop offset="1" stop-opacity=".1"/>
   </linearGradient>
   <clipPath id="r">
-    <rect width="101" height="20" rx="3" fill="#fff"/>
+    <rect width="119" height="20" rx="3" fill="#fff"/>
   </clipPath>
   <g clip-path="url(#r)">
     <rect width="45" height="20" fill="#555"/>
-    <rect x="45" width="56" height="20" fill="#e05d44"/>
-    <rect width="101" height="20" fill="url(#s)"/>
+    <rect x="45" width="74" height="20" fill="#dfb317"/>
+    <rect width="119" height="20" fill="url(#s)"/>
   </g>
   <g fill="#fff" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" text-rendering="geometricPrecision" font-size="110">
     <text aria-hidden="true" x="225" y="150" fill="#010101" fill-opacity=".3" transform="scale(.1)">trust</text>
     <text x="225" y="140" transform="scale(.1)" fill="#fff">trust</text>
-    <text aria-hidden="true" x="730" y="150" fill="#010101" fill-opacity=".3" transform="scale(.1)">Flagged</text>
-    <text x="730" y="140" transform="scale(.1)" fill="#fff">Flagged</text>
+    <text aria-hidden="true" x="820" y="150" fill="#010101" fill-opacity=".3" transform="scale(.1)">Unverified</text>
+    <text x="820" y="140" transform="scale(.1)" fill="#fff">Unverified</text>
   </g>
 </svg>
