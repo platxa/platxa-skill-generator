@@ -358,12 +358,27 @@ def cmd_list(args: argparse.Namespace) -> int:
         print("No skills found.")
         return 0
 
-    print(f"{'Skill':<35} {'Category':<18} {'Tokens':>6}")
-    print("-" * 62)
+    print(f"{'Skill':<35} {'Category':<15} {'Tokens':>6} {'Score':>6} {'Version':<10}")
+    print("-" * 78)
     for name, info in sorted(skills.items()):
         cat = info.get("category", "")
         tokens = info.get("token_counts", {}).get("total", "?")
-        print(f"  {name:<33} {cat:<18} {tokens:>6}")
+        sha = info.get("git_sha", info.get("sha", ""))
+        version = info.get("version", sha[:7] if sha else "-")
+        # Inline quality score from index if present, else compute
+        score_val = info.get("quality_score", "")
+        if not score_val:
+            score_mod = _load_module("score-skill.py")
+            skill_dir = SKILLS_DIR / name
+            if skill_dir.is_dir():
+                try:
+                    report = score_mod.score_skill(skill_dir)  # type: ignore[attr-defined]
+                    score_val = f"{report['overall_score']:.1f}"
+                except Exception:
+                    score_val = "?"
+            else:
+                score_val = "-"
+        print(f"  {name:<33} {cat:<15} {tokens:>6} {score_val:>6} {version:<10}")
 
     print(f"\nTotal: {len(skills)} skills")
     return 0
