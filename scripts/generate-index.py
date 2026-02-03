@@ -235,6 +235,98 @@ def generate_index(skills_dir: Path) -> dict[str, Any]:
     }
 
 
+def generate_search_index(full_index: dict[str, Any]) -> list[dict[str, Any]]:
+    """Build lightweight search index for client-side full-text search.
+
+    Each entry contains searchable text fields (name, description, category,
+    tags) plus metadata for display. Designed for fuzzy matching in CLI tools
+    without needing a server.
+
+    Args:
+        full_index: The full index dict from generate_index().
+
+    Returns:
+        List of search entries, one per skill.
+    """
+    entries: list[dict[str, Any]] = []
+    for skill in full_index["skills"].values():
+        tags = skill.get("metadata", {}).get("tags", [])
+        entries.append(
+            {
+                "name": skill["name"],
+                "description": skill.get("description", ""),
+                "category": skill.get("category", ""),
+                "tier": skill.get("tier", 0),
+                "tokens": skill.get("token_counts", {}).get("total", 0),
+                "source": skill.get("source", ""),
+                "tags": tags,
+            }
+        )
+    return entries
+
+
+def search_skills(
+    search_entries: list[dict[str, Any]],
+    query: str,
+) -> list[tuple[dict[str, Any], float]]:
+    """Fuzzy text search across search index entries.
+
+    Scores each entry by matching query tokens against name, description,
+    category, and tags. Supports prefix matching and partial word matching.
+
+    Args:
+        search_entries: List from generate_search_index().
+        query: User search query string.
+
+    Returns:
+        List of (entry, score) tuples sorted by score descending,
+        filtered to entries with score > 0.
+    """
+    query_lower = query.lower()
+    tokens = query_lower.split()
+    if not tokens:
+        return []
+
+    results: list[tuple[dict[str, Any], float]] = []
+    for entry in search_entries:
+        score = 0.0
+        name = entry["name"].lower()
+        desc = entry.get("description", "").lower()
+        cat = entry.get("category", "").lower()
+        tag_str = " ".join(t.lower() for t in entry.get("tags", []))
+
+        for token in tokens:
+            # Exact name match (highest weight)
+            if token == name:
+                score += 10.0
+            elif token in name:
+                score += 5.0
+            elif name.startswith(token) or any(
+                part.startswith(token) for part in name.split("-")
+            ):
+                score += 3.0
+
+            # Category match
+            if token == cat:
+                score += 4.0
+            elif token in cat:
+                score += 2.0
+
+            # Tag match
+            if token in tag_str:
+                score += 3.0
+
+            # Description match
+            if token in desc:
+                score += 1.0
+
+        if score > 0:
+            results.append((entry, score))
+
+    results.sort(key=lambda x: (-x[1], x[0]["name"]))
+    return results
+
+
 def main() -> int:
     """Main entry point."""
     parser = argparse.ArgumentParser(
@@ -253,6 +345,13 @@ def main() -> int:
         type=Path,
         default=None,
         help="Write output to file instead of stdout",
+    )
+    parser.add_argument(
+        "--search-index",
+        type=Path,
+        default=None,
+        metavar="PATH",
+        help="Also write search-index.json to PATH",
     )
     parser.add_argument(
         "--pretty",
@@ -286,6 +385,17 @@ def main() -> int:
         )
     else:
         print(json_str)
+
+    if args.search_index:
+        search = generate_search_index(index)
+        args.search_index.parent.mkdir(parents=True, exist_ok=True)
+        args.search_index.write_text(
+            json.dumps(search, indent=indent, ensure_ascii=False) + "\n"
+        )
+        print(
+            f"Generated search-index.json: {len(search)} entries",
+            file=sys.stderr,
+        )
 
     return 0
 

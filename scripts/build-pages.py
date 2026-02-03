@@ -38,6 +38,7 @@ assert _spec is not None and _spec.loader is not None
 generate_index_mod = module_from_spec(_spec)
 _spec.loader.exec_module(generate_index_mod)
 generate_index = generate_index_mod.generate_index
+generate_search_index = generate_index_mod.generate_search_index
 
 
 def build_well_known_index(full_index: dict) -> dict:
@@ -69,22 +70,6 @@ def build_well_known_index(full_index: dict) -> dict:
     }
 
 
-def build_search_index(full_index: dict) -> list[dict]:
-    """Build lightweight search index for client-side search."""
-    entries = []
-    for skill in full_index["skills"].values():
-        entries.append({
-            "name": skill["name"],
-            "description": skill.get("description", ""),
-            "category": skill.get("category", ""),
-            "tier": skill.get("tier", 0),
-            "tokens": skill.get("token_counts", {}).get("total", 0),
-            "source": skill.get("source", ""),
-            "tags": skill.get("metadata", {}).get("tags", []),
-        })
-    return entries
-
-
 def build_site(output_dir: Path, skills_dir: Path) -> None:
     """Build the complete Pages site."""
     # Clean output
@@ -101,7 +86,7 @@ def build_site(output_dir: Path, skills_dir: Path) -> None:
     print(f"  index.json: {full_index['skills_count']} skills")
 
     # Write search-index.json
-    search = build_search_index(full_index)
+    search = generate_search_index(full_index)
     search_path = output_dir / "search-index.json"
     search_path.write_text(json.dumps(search, indent=2, ensure_ascii=False) + "\n")
     print(f"  search-index.json: {len(search)} entries")

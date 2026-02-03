@@ -269,34 +269,29 @@ def cmd_install(args: argparse.Namespace) -> int:
 
 
 def cmd_search(args: argparse.Namespace) -> int:
-    """Search skills by keyword."""
-    query = args.query.lower()
-    index_path = SKILLS_DIR / "index.json"
+    """Search skills by keyword with fuzzy matching."""
+    search_path = SKILLS_DIR / "search-index.json"
+    gen_mod = _load_module("generate-index.py")
 
-    if not index_path.exists():
-        # Generate on-the-fly
-        gen_mod = _load_module("generate-index.py")
-        index = gen_mod.generate_index(SKILLS_DIR)  # type: ignore[attr-defined]
+    if search_path.exists():
+        with open(search_path) as f:
+            search_entries = json.load(f)
     else:
-        with open(index_path) as f:
-            index = json.load(f)
+        # Generate on-the-fly from full index
+        index = gen_mod.generate_index(SKILLS_DIR)  # type: ignore[attr-defined]
+        search_entries = gen_mod.generate_search_index(index)  # type: ignore[attr-defined]
 
-    skills = index.get("skills", {})
-    matches = []
-    for name, info in skills.items():
-        text = f"{name} {info.get('description', '')} {info.get('category', '')}".lower()
-        if query in text:
-            matches.append((name, info))
+    results = gen_mod.search_skills(search_entries, args.query)  # type: ignore[attr-defined]
 
-    if not matches:
+    if not results:
         print(f"No skills matching '{args.query}'")
         return 0
 
-    print(f"Found {len(matches)} skill(s) matching '{args.query}':\n")
-    for name, info in sorted(matches):
-        desc = info.get("description", "")[:80]
-        cat = info.get("category", "")
-        print(f"  {name:<35} [{cat}]")
+    print(f"Found {len(results)} skill(s) matching '{args.query}':\n")
+    for entry, score in results:
+        desc = entry.get("description", "")[:80]
+        cat = entry.get("category", "")
+        print(f"  {entry['name']:<35} [{cat}]")
         print(f"    {desc}")
     return 0
 
