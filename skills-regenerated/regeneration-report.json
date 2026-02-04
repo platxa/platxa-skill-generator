@@ -5,6 +5,17 @@
   "failed": 0,
   "high_confidence": 13,
   "medium_confidence": 21,
+  "low_confidence": 1,
+  "low_confidence_review": [
+    {
+      "skill_name": "verification-before-completion",
+      "confidence": 0.46,
+      "decision": "accepted",
+      "reason": "Low intent confidence caused by upstream being a behavioral policy document (no scripts, no reference topics, key concepts were section headers). The intent extractor is optimized for technical tool skills, not behavioral rules. Regenerated output is well-structured with clear rules, pass/fail criteria, examples, and a language-specific verification command reference. Passes all validations and scores 7.9/10.",
+      "validation_score": 7.9,
+      "validation_passed": true
+    }
+  ],
   "skills": [
     {
       "skill_name": "atlas",
@@ -202,7 +213,9 @@
       "skill_name": "verification-before-completion",
       "skill_type": "validator",
       "confidence": 0.46,
-      "status": "success"
+      "status": "success",
+      "low_confidence_review": "accepted",
+      "review_reason": "Behavioral policy skill — low intent confidence does not reflect output quality (7.9/10 score, all validations pass)"
     },
     {
       "skill_name": "web-artifacts-builder",
