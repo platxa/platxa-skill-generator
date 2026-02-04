@@ -622,15 +622,116 @@ print(json.dumps(result))
 PYEOF
 }
 
-cmd_regenerate() {
-    local dry_run=false
-    if [[ "${1:-}" == "--dry-run" ]]; then
-        dry_run=true
+# Detailed single-skill regeneration with progress output
+cmd_regenerate_single() {
+    local skill_name="$1"
+    local dry_run="$2"
+    local skill_dir="$CATALOG_DIR/$skill_name"
+
+    # Validate skill exists in manifest
+    parse_manifest skill "$skill_name" > /dev/null 2>&1 || die "Skill '$skill_name' not found in manifest"
+
+    local is_local
+    is_local=$(parse_manifest skill "$skill_name" | python3 -c "import sys,json; print(json.load(sys.stdin).get('local', False))")
+    [[ "$is_local" == "True" ]] && die "'$skill_name' is a local skill — regeneration is for external skills only"
+
+    if [[ ! -d "$skill_dir" || ! -f "$skill_dir/SKILL.md" ]]; then
+        die "'$skill_name' not synced locally — run 'sync' or 'update $skill_name' first"
     fi
 
-    echo -e "${BOLD}Regeneration Pipeline$(${dry_run} && echo " (DRY-RUN)")${NC}"
+    echo -e "${BOLD}Regeneration Pipeline: $skill_name$($dry_run && echo " (DRY-RUN)")${NC}"
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     echo ""
+
+    # Phase 1: Intent Extraction
+    echo -e "${BOLD}Phase 1: Intent Extraction${NC}"
+    local intent
+    intent=$(extract_intent_summary "$skill_dir")
+    local desc stype tools skill_name_fm
+    skill_name_fm=$(echo "$intent" | python3 -c "import sys,json; print(json.load(sys.stdin).get('name',''))")
+    desc=$(echo "$intent" | python3 -c "import sys,json; print(json.load(sys.stdin).get('description',''))")
+    stype=$(echo "$intent" | python3 -c "import sys,json; print(json.load(sys.stdin).get('type','unknown'))")
+    tools=$(echo "$intent" | python3 -c "import sys,json; t=json.load(sys.stdin).get('tools',[]); print(', '.join(t) if t else 'none')")
+
+    echo -e "  Name:        ${GREEN}${skill_name_fm:-$skill_name}${NC}"
+    echo -e "  Description: $desc"
+    echo -e "  Skill Type:  ${BLUE}$stype${NC}"
+    echo -e "  Tools:       $tools"
+    echo ""
+
+    # Phase 2: Architecture Plan
+    echo -e "${BOLD}Phase 2: Architecture Plan${NC}"
+    echo -e "  Template:    references/templates/${stype}.md"
+    echo -e "  Output:      $skill_dir/"
+    echo -e "  Pipeline:    Intent → Discovery → Architecture → Generation → Validation"
+
+    # Show directory structure
+    local ref_count=0 script_count=0
+    if [[ -d "$skill_dir/references" ]]; then
+        ref_count=$(find "$skill_dir/references" -type f 2>/dev/null | wc -l)
+    fi
+    if [[ -d "$skill_dir/scripts" ]]; then
+        script_count=$(find "$skill_dir/scripts" -type f 2>/dev/null | wc -l)
+    fi
+    echo -e "  Current:     SKILL.md + ${ref_count} reference(s) + ${script_count} script(s)"
+    echo ""
+
+    # Phase 3: Execution or dry-run summary
+    if $dry_run; then
+        echo -e "${BOLD}Phase 3: Execution Plan${NC}"
+        echo -e "  1. Read upstream SKILL.md and extract semantic intent"
+        echo -e "  2. Enrich with domain research (Discovery Agent)"
+        echo -e "  3. Design skill structure (Architecture Agent)"
+        echo -e "  4. Generate SKILL.md + references + scripts (Generation Agent)"
+        echo -e "  5. Validate quality score >= 7.0 (Validation Agent)"
+        echo -e "  6. Install to $skill_dir/"
+        echo ""
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo -e "${YELLOW}No files were modified (dry-run).${NC}"
+    else
+        echo -e "${BOLD}Phase 3: Executing Pipeline${NC}"
+        local regenerate_script="$SCRIPT_DIR/regenerate-skill.sh"
+        local validate_script="$SCRIPT_DIR/validate-all.sh"
+
+        if "$regenerate_script" "$skill_dir" --output-dir "$skill_dir"; then
+            echo ""
+            echo -e "${BOLD}Phase 4: Validation${NC}"
+            if [[ -x "$validate_script" ]]; then
+                if "$validate_script" "$skill_dir" 2>&1; then
+                    echo ""
+                    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+                    echo -e "${GREEN}✓ $skill_name regenerated and validated successfully${NC}"
+                else
+                    echo ""
+                    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+                    echo -e "${YELLOW}⚠ $skill_name regenerated but has validation warnings${NC}"
+                fi
+            else
+                echo ""
+                echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+                echo -e "${GREEN}✓ $skill_name regenerated${NC}"
+            fi
+        else
+            echo ""
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo -e "${RED}✗ $skill_name regeneration failed${NC}"
+            return 1
+        fi
+    fi
+}
+
+cmd_regenerate() {
+    local dry_run=false
+    local single_skill=""
+
+    # Parse arguments: [<name>] [--dry-run] in any order
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            --dry-run) dry_run=true; shift ;;
+            -*)        die "Unknown option: $1" ;;
+            *)         single_skill="$1"; shift ;;
+        esac
+    done
 
     local regenerate_script="$SCRIPT_DIR/regenerate-skill.sh"
     local validate_script="$SCRIPT_DIR/validate-all.sh"
@@ -638,6 +739,16 @@ cmd_regenerate() {
     if ! $dry_run && [[ ! -x "$regenerate_script" ]]; then
         die "regenerate-skill.sh not found at $regenerate_script"
     fi
+
+    # Single-skill mode
+    if [[ -n "$single_skill" ]]; then
+        cmd_regenerate_single "$single_skill" "$dry_run"
+        return $?
+    fi
+
+    echo -e "${BOLD}Regeneration Pipeline$(${dry_run} && echo " (DRY-RUN)")${NC}"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo ""
 
     # Enumerate all external skills
     local skill_names total=0 success=0 failed=0 skipped=0
@@ -713,8 +824,10 @@ Usage:
   $(basename "$0") sync                 Fetch/update all external skills
   $(basename "$0") sync --dry-run       Preview sync without modifying catalog
   $(basename "$0") update <name>        Update a single external skill
-  $(basename "$0") regenerate           Regenerate all external skills through pipeline
-  $(basename "$0") regenerate --dry-run List skills with intent summaries and plans
+  $(basename "$0") regenerate              Regenerate all external skills through pipeline
+  $(basename "$0") regenerate <name>       Regenerate a single skill with detailed progress
+  $(basename "$0") regenerate --dry-run    List skills with intent summaries and plans
+  $(basename "$0") regenerate <name> --dry-run  Show detailed plan for a single skill
   $(basename "$0") list-external        List external skills and their status
   $(basename "$0") list-local           List local-only skills
   $(basename "$0") diff                 Compare catalog vs upstream cache
@@ -741,7 +854,7 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
         diff)           cmd_diff ;;
         status)         cmd_status ;;
         list-categories) cmd_list_categories ;;
-        regenerate)     cmd_regenerate "${2:-}" ;;
+        regenerate)     shift; cmd_regenerate "$@" ;;
         --help|-h)      usage ;;
         *)              usage; exit 1 ;;
     esac
