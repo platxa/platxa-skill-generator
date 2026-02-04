@@ -40,7 +40,6 @@ usage() {
 VERBOSE=false
 JSON_OUTPUT=false
 SKILL_DIR=""
-PROFILE=""
 
 while [[ $# -gt 0 ]]; do
     case $1 in
@@ -53,10 +52,6 @@ while [[ $# -gt 0 ]]; do
             ;;
         --json)
             JSON_OUTPUT=true
-            shift
-            ;;
-        --profile=*)
-            PROFILE="$1"
             shift
             ;;
         *)
@@ -162,11 +157,7 @@ fi
 
 # 4. Main skill validation (if exists)
 if [[ -x "$SCRIPT_DIR/validate-skill.sh" ]]; then
-    if [[ -n "$PROFILE" ]]; then
-        run_validator "Skill" "$SCRIPT_DIR/validate-skill.sh" "$SKILL_DIR" "$PROFILE" || OVERALL_PASS=false
-    else
-        run_validator "Skill" "$SCRIPT_DIR/validate-skill.sh" "$SKILL_DIR" || OVERALL_PASS=false
-    fi
+    run_validator "Skill" "$SCRIPT_DIR/validate-skill.sh" "$SKILL_DIR" || OVERALL_PASS=false
 else
     RESULTS["Skill"]="SKIP"
 fi
@@ -209,6 +200,12 @@ if [[ -d "$SCRIPTS_DIR" ]]; then
     PY_COUNT=$(find "$SCRIPTS_DIR" -name "*.py" -type f 2>/dev/null | wc -l)
     if [[ "$PY_COUNT" -gt 0 ]]; then
         run_validator "Python Syntax" py_syntax_check "$SCRIPTS_DIR" || OVERALL_PASS=false
+
+        # Ruff linting — applied uniformly to all skills with Python scripts
+        if command -v ruff &>/dev/null; then
+            run_validator "Ruff Check" ruff check "$SCRIPTS_DIR" || OVERALL_PASS=false
+            run_validator "Ruff Format" ruff format --check "$SCRIPTS_DIR" || OVERALL_PASS=false
+        fi
     fi
 fi
 

@@ -1,0 +1,63 @@
+{
+  "skill_name": "spreadsheet",
+  "skill_type": "guide",
+  "skill_type_scores": {
+    "builder": 3,
+    "guide": 12,
+    "automation": 1,
+    "analyzer": 6,
+    "validator": 3
+  },
+  "description": "Use when tasks involve creating, editing, analyzing, or formatting spreadsheets (`.xlsx`, `.csv`, `.tsv`) using Python (`openpyxl`, `pandas`), especially when formulas, references, and formatting need to be preserved and verified.",
+  "domain": {
+    "primary_domain": "Document Processing",
+    "subdomains": [
+      "Version Control",
+      "Data Management"
+    ],
+    "expertise_level": "intermediate"
+  },
+  "key_concepts": [
+    "Spreadsheet Skill (Create, Edit, Analyze, Visualize)",
+    "When to use",
+    "Workflow",
+    "Temp and output conventions",
+    "Primary tooling",
+    "Rendering and visual checks",
+    "Dependencies (install if missing)",
+    "macOS (Homebrew)",
+    "Ubuntu/Debian",
+    "Environment",
+    "Formula requirements",
+    "Citation requirements",
+    "Formatting requirements (existing formatted spreadsheets)",
+    "Formatting requirements (new or unstyled spreadsheets)",
+    "Color conventions (if no style guidance)"
+  ],
+  "key_workflows": [
+    "Confirm the file type and goals (create, edit, analyze, visualize)",
+    "Use openpyxl for .xlsx edits and pandas for analysis and CSV/TSV workflows",
+    "If layout matters, render for visual review (see Rendering and visual checks)",
+    "Validate formulas and references; note that openpyxl does not evaluate formulas",
+    "Save outputs and clean up intermediate files",
+    "Workflow",
+    "Dependencies (install if missing)"
+  ],
+  "tool_dependencies": [
+    "AskUserQuestion",
+    "Bash",
+    "Read",
+    "WebFetch",
+    "WebSearch",
+    "Write"
+  ],
+  "reference_topics": [],
+  "script_descriptions": [],
+  "confidence_score": 0.46,
+  "upstream_structure": [
+    "references/ (6 files)",
+    "agents/ (1 files)",
+    "assets/ (2 files)"
+  ],
+  "extracted_at": "2026-02-04T11:36:09Z"
+}

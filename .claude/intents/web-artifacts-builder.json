@@ -1,0 +1,71 @@
+{
+  "skill_name": "web-artifacts-builder",
+  "skill_type": "builder",
+  "skill_type_scores": {
+    "builder": 3,
+    "guide": 2,
+    "automation": 0,
+    "analyzer": 0,
+    "validator": 1
+  },
+  "description": "Suite of tools for creating elaborate, multi-component claude.ai HTML artifacts using modern frontend web technologies (React, Tailwind CSS, shadcn/ui). Use for complex artifacts requiring state management, routing, or shadcn/ui components - not for simple single-file HTML/JSX artifacts.",
+  "domain": {
+    "primary_domain": "Frontend",
+    "subdomains": [],
+    "expertise_level": "intermediate"
+  },
+  "key_concepts": [
+    "Stack",
+    "Common Development Tasks",
+    "Requirements",
+    "What the script does",
+    "shadcn/ui components",
+    "Web Artifacts Builder",
+    "Design & Style Guidelines",
+    "Quick Start",
+    "Step 1: Initialize Project",
+    "Step 2: Develop Your Artifact",
+    "Step 3: Bundle to Single HTML File",
+    "Step 4: Share Artifact with User",
+    "Step 5: Testing/Visualizing the Artifact (Optional)",
+    "Reference"
+  ],
+  "key_workflows": [
+    "Initialize the frontend repo using scripts/init-artifact.sh",
+    "Develop your artifact by editing the generated code",
+    "Bundle all code into a single HTML file using scripts/bundle-artifact.sh",
+    "Display artifact to user",
+    "(Optional) Test the artifact",
+    "Step 1: Initialize Project",
+    "Step 2: Develop Your Artifact",
+    "Step 3: Bundle to Single HTML File",
+    "Step 4: Share Artifact with User",
+    "Step 5: Testing/Visualizing the Artifact (Optional)"
+  ],
+  "tool_dependencies": [
+    "Bash",
+    "Read",
+    "Task",
+    "WebFetch",
+    "WebSearch",
+    "Write"
+  ],
+  "reference_topics": [],
+  "script_descriptions": [
+    {
+      "file": "bundle-artifact.sh",
+      "language": "bash",
+      "purpose": "Check if we're in a project directory"
+    },
+    {
+      "file": "init-artifact.sh",
+      "language": "bash",
+      "purpose": "Exit on error"
+    }
+  ],
+  "confidence_score": 0.58,
+  "upstream_structure": [
+    "scripts/ (3 files)"
+  ],
+  "extracted_at": "2026-02-04T11:37:11Z"
+}

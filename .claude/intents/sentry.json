@@ -1,0 +1,66 @@
+{
+  "skill_name": "sentry",
+  "skill_type": "analyzer",
+  "skill_type_scores": {
+    "builder": 2,
+    "guide": 1,
+    "automation": 0,
+    "analyzer": 10,
+    "validator": 2
+  },
+  "description": "Use when the user asks to inspect Sentry issues or events, summarize recent production errors, or pull basic Sentry health data via the Sentry API; perform read-only queries with the bundled script and require `SENTRY_AUTH_TOKEN`.",
+  "domain": {
+    "primary_domain": "Observability",
+    "subdomains": [
+      "Backend",
+      "Version Control",
+      "Security"
+    ],
+    "expertise_level": "intermediate"
+  },
+  "key_concepts": [
+    "Sentry (Read-only Observability)",
+    "Quick start",
+    "Core tasks (use bundled script)",
+    "Skill path (set once)",
+    "1) List issues (ordered by most recent)",
+    "2) Resolve an issue short ID to issue ID",
+    "3) Issue detail",
+    "4) Issue events",
+    "5) Event detail (no stack traces by default)",
+    "API requirements",
+    "Inputs and defaults",
+    "Output formatting rules",
+    "Golden test inputs"
+  ],
+  "key_workflows": [
+    "Create a Sentry auth token: https://sentry.io/settings/account/api/auth-tokens/",
+    "Create a token with read-only scopes such as project:read, event:read, and org:read",
+    "Set SENTRY_AUTH_TOKEN as an environment variable in their system",
+    "Offer to guide them through setting the environment variable for their OS/shell if needed",
+    "Core tasks (use bundled script)"
+  ],
+  "tool_dependencies": [
+    "AskUserQuestion",
+    "Bash",
+    "Glob",
+    "Grep",
+    "Read",
+    "Task"
+  ],
+  "reference_topics": [],
+  "script_descriptions": [
+    {
+      "file": "sentry_api.py",
+      "language": "python",
+      "purpose": "sentry_api.py script"
+    }
+  ],
+  "confidence_score": 0.58,
+  "upstream_structure": [
+    "scripts/ (3 files)",
+    "agents/ (1 files)",
+    "assets/ (2 files)"
+  ],
+  "extracted_at": "2026-02-04T11:36:09Z"
+}

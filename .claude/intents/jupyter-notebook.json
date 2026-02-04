@@ -1,0 +1,79 @@
+{
+  "skill_name": "jupyter-notebook",
+  "skill_type": "builder",
+  "skill_type_scores": {
+    "builder": 45,
+    "guide": 16,
+    "automation": 1,
+    "analyzer": 2,
+    "validator": 2
+  },
+  "description": "Use when the user asks to create, scaffold, or edit Jupyter notebooks (`.ipynb`) for experiments, explorations, or tutorials; prefer the bundled templates and run the helper script `new_notebook.py` to generate a clean starting notebook.",
+  "domain": {
+    "primary_domain": "Version Control",
+    "subdomains": [],
+    "expertise_level": "intermediate"
+  },
+  "key_concepts": [
+    "Jupyter Notebook Skill",
+    "When to use",
+    "Decision tree",
+    "Skill path (set once)",
+    "Workflow",
+    "Templates and helper script",
+    "Temp and output conventions",
+    "Dependencies (install only when needed)",
+    "Environment",
+    "Reference map"
+  ],
+  "key_workflows": [
+    "Lock the intent",
+    "Scaffold from the template",
+    "Fill the notebook with small, runnable steps",
+    "Apply the right pattern",
+    "Edit safely when working with existing notebooks",
+    "Validate the result",
+    "Workflow",
+    "Dependencies (install only when needed)"
+  ],
+  "tool_dependencies": [
+    "AskUserQuestion",
+    "Bash",
+    "NotebookEdit",
+    "Read",
+    "Write"
+  ],
+  "reference_topics": [
+    {
+      "topic": "Experiment Patterns",
+      "summary": "Use this structure for exploratory and experimental work: - Title and objective: state the question and the success criteria. - Setup and reproducibility: import only what you need, set a seed early, and keep configuration in one short cell."
+    },
+    {
+      "topic": "Notebook Structure",
+      "summary": "Jupyter notebooks are JSON documents with this high-level shape: - `nbformat` and `nbformat_minor` - `metadata`"
+    },
+    {
+      "topic": "Quality Checklist",
+      "summary": "Before delivering a notebook: - Run it top-to-bottom at least once (or as much as the environment allows). - Ensure early cells set all required state; avoid hidden state from prior runs."
+    },
+    {
+      "topic": "Tutorial Patterns",
+      "summary": "Use this structure for teaching and walkthroughs: - Audience, prerequisites, and learning goals: say who it is for, list what they should already know, and state what they will be able to do by the end. - Outline: provide a short numbered outline so readers can skim."
+    }
+  ],
+  "script_descriptions": [
+    {
+      "file": "new_notebook.py",
+      "language": "python",
+      "purpose": "new_notebook.py script"
+    }
+  ],
+  "confidence_score": 0.88,
+  "upstream_structure": [
+    "references/ (4 files)",
+    "scripts/ (3 files)",
+    "agents/ (1 files)",
+    "assets/ (4 files)"
+  ],
+  "extracted_at": "2026-02-04T11:36:09Z"
+}

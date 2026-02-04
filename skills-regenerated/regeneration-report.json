@@ -1,0 +1,233 @@
+{
+  "generated_at": "2026-02-04T17:10:37.922028+00:00",
+  "total": 35,
+  "success": 35,
+  "failed": 0,
+  "high_confidence": 13,
+  "medium_confidence": 21,
+  "low_confidence": 1,
+  "low_confidence_review": [
+    {
+      "skill_name": "verification-before-completion",
+      "confidence": 0.46,
+      "decision": "accepted",
+      "reason": "Low intent confidence caused by upstream being a behavioral policy document (no scripts, no reference topics, key concepts were section headers). The intent extractor is optimized for technical tool skills, not behavioral rules. Regenerated output is well-structured with clear rules, pass/fail criteria, examples, and a language-specific verification command reference. Passes all validations and scores 7.9/10.",
+      "validation_score": 7.9,
+      "validation_passed": true
+    }
+  ],
+  "skills": [
+    {
+      "skill_name": "atlas",
+      "skill_type": "analyzer",
+      "confidence": 0.77,
+      "status": "success"
+    },
+    {
+      "skill_name": "best-practices",
+      "skill_type": "guide",
+      "confidence": 0.58,
+      "status": "success"
+    },
+    {
+      "skill_name": "cloudflare-deploy",
+      "skill_type": "automation",
+      "confidence": 0.68,
+      "status": "success"
+    },
+    {
+      "skill_name": "develop-web-game",
+      "skill_type": "analyzer",
+      "confidence": 0.58,
+      "status": "success"
+    },
+    {
+      "skill_name": "doc",
+      "skill_type": "guide",
+      "confidence": 0.58,
+      "status": "success"
+    },
+    {
+      "skill_name": "docx",
+      "skill_type": "guide",
+      "confidence": 0.61,
+      "status": "success"
+    },
+    {
+      "skill_name": "figma",
+      "skill_type": "guide",
+      "confidence": 0.62,
+      "status": "success"
+    },
+    {
+      "skill_name": "gh-fix-ci",
+      "skill_type": "analyzer",
+      "confidence": 0.52,
+      "status": "success"
+    },
+    {
+      "skill_name": "hugging-face-cli",
+      "skill_type": "builder",
+      "confidence": 0.68,
+      "status": "success"
+    },
+    {
+      "skill_name": "hugging-face-datasets",
+      "skill_type": "automation",
+      "confidence": 0.58,
+      "status": "success"
+    },
+    {
+      "skill_name": "hugging-face-evaluation",
+      "skill_type": "analyzer",
+      "confidence": 0.61,
+      "status": "success"
+    },
+    {
+      "skill_name": "hugging-face-jobs",
+      "skill_type": "automation",
+      "confidence": 0.91,
+      "status": "success"
+    },
+    {
+      "skill_name": "hugging-face-model-trainer",
+      "skill_type": "guide",
+      "confidence": 0.91,
+      "status": "success"
+    },
+    {
+      "skill_name": "hugging-face-paper-publisher",
+      "skill_type": "guide",
+      "confidence": 0.8,
+      "status": "success"
+    },
+    {
+      "skill_name": "hugging-face-trackio",
+      "skill_type": "analyzer",
+      "confidence": 0.61,
+      "status": "success"
+    },
+    {
+      "skill_name": "imagegen",
+      "skill_type": "builder",
+      "confidence": 0.88,
+      "status": "success"
+    },
+    {
+      "skill_name": "jupyter-notebook",
+      "skill_type": "builder",
+      "confidence": 0.88,
+      "status": "success"
+    },
+    {
+      "skill_name": "mcp-builder",
+      "skill_type": "guide",
+      "confidence": 0.58,
+      "status": "success"
+    },
+    {
+      "skill_name": "netlify-deploy",
+      "skill_type": "automation",
+      "confidence": 0.76,
+      "status": "success"
+    },
+    {
+      "skill_name": "pdf",
+      "skill_type": "builder",
+      "confidence": 0.61,
+      "status": "success"
+    },
+    {
+      "skill_name": "playwright",
+      "skill_type": "guide",
+      "confidence": 0.8,
+      "status": "success"
+    },
+    {
+      "skill_name": "pptx",
+      "skill_type": "builder",
+      "confidence": 0.61,
+      "status": "success"
+    },
+    {
+      "skill_name": "render-deploy",
+      "skill_type": "automation",
+      "confidence": 0.76,
+      "status": "success"
+    },
+    {
+      "skill_name": "screenshot",
+      "skill_type": "builder",
+      "confidence": 0.61,
+      "status": "success"
+    },
+    {
+      "skill_name": "security-best-practices",
+      "skill_type": "analyzer",
+      "confidence": 0.62,
+      "status": "success"
+    },
+    {
+      "skill_name": "security-ownership-map",
+      "skill_type": "analyzer",
+      "confidence": 0.83,
+      "status": "success"
+    },
+    {
+      "skill_name": "security-threat-model",
+      "skill_type": "analyzer",
+      "confidence": 0.62,
+      "status": "success"
+    },
+    {
+      "skill_name": "sentry",
+      "skill_type": "analyzer",
+      "confidence": 0.58,
+      "status": "success"
+    },
+    {
+      "skill_name": "skill-creator",
+      "skill_type": "builder",
+      "confidence": 0.83,
+      "status": "success"
+    },
+    {
+      "skill_name": "sora",
+      "skill_type": "builder",
+      "confidence": 0.88,
+      "status": "success"
+    },
+    {
+      "skill_name": "speech",
+      "skill_type": "automation",
+      "confidence": 0.88,
+      "status": "success"
+    },
+    {
+      "skill_name": "vercel-deploy",
+      "skill_type": "automation",
+      "confidence": 0.58,
+      "status": "success"
+    },
+    {
+      "skill_name": "verification-before-completion",
+      "skill_type": "validator",
+      "confidence": 0.46,
+      "status": "success",
+      "low_confidence_review": "accepted",
+      "review_reason": "Behavioral policy skill — low intent confidence does not reflect output quality (7.9/10 score, all validations pass)"
+    },
+    {
+      "skill_name": "web-artifacts-builder",
+      "skill_type": "builder",
+      "confidence": 0.58,
+      "status": "success"
+    },
+    {
+      "skill_name": "webapp-testing",
+      "skill_type": "validator",
+      "confidence": 0.58,
+      "status": "success"
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "skill_name": "brainstorming",
+  "skill_type": "builder",
+  "skill_type_scores": {
+    "builder": 13,
+    "guide": 2,
+    "automation": 1,
+    "analyzer": 1,
+    "validator": 2
+  },
+  "description": "You MUST use this before any creative work - creating features, building components, adding functionality, or modifying behavior. Explores user intent, requirements and design before implementation.",
+  "domain": {
+    "primary_domain": "Design Tooling",
+    "subdomains": [
+      "Frontend"
+    ],
+    "expertise_level": "intermediate"
+  },
+  "key_concepts": [
+    "Understanding the idea:",
+    "Exploring approaches:",
+    "Presenting the design:",
+    "Documentation:",
+    "Implementation (if continuing):",
+    "One question at a time",
+    "Multiple choice preferred",
+    "YAGNI ruthlessly",
+    "Explore alternatives",
+    "Incremental validation",
+    "Be flexible",
+    "Brainstorming Ideas Into Designs",
+    "The Process",
+    "After the Design",
+    "Key Principles"
+  ],
+  "key_workflows": [
+    "The Process"
+  ],
+  "tool_dependencies": [
+    "Read",
+    "Write"
+  ],
+  "reference_topics": [],
+  "script_descriptions": [],
+  "confidence_score": 0.37,
+  "upstream_structure": [],
+  "extracted_at": "2026-02-04T11:36:08Z"
+}

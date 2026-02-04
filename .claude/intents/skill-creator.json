@@ -1,0 +1,116 @@
+{
+  "skill_name": "skill-creator",
+  "skill_type": "builder",
+  "skill_type_scores": {
+    "builder": 17,
+    "guide": 17,
+    "automation": 14,
+    "analyzer": 4,
+    "validator": 4
+  },
+  "description": "Guide for creating effective skills. This skill should be used when users want to create a new skill (or update an existing skill) that extends Claude's capabilities with specialized knowledge, workflows, or tool integrations.",
+  "domain": {
+    "primary_domain": "Documentation",
+    "subdomains": [],
+    "expertise_level": "intermediate"
+  },
+  "key_concepts": [
+    "Default assumption: Claude is already very smart.",
+    "High freedom (text-based instructions)",
+    "Medium freedom (pseudocode or scripts with parameters)",
+    "Low freedom (specific scripts, few parameters)",
+    "Frontmatter",
+    "Body",
+    "When to include",
+    "Example",
+    "Benefits",
+    "Note",
+    "Examples",
+    "Use cases",
+    "Best practice",
+    "Avoid duplication",
+    "Metadata (name + description)"
+  ],
+  "key_workflows": [
+    "Specialized workflows - Multi-step procedures for specific domains",
+    "Tool integrations - Instructions for working with specific file formats or APIs",
+    "Domain expertise - Company-specific knowledge, schemas, business logic",
+    "Bundled resources - Scripts, references, and assets for complex and repetitive tasks",
+    "Metadata (name + description) - Always in context (~100 words)",
+    "SKILL.md body - When skill triggers (<5k words)",
+    "Bundled resources - As needed by Claude (Unlimited because scripts can be executed without reading into context window)",
+    "Understand the skill with concrete examples",
+    "Plan reusable skill contents (scripts, references, assets)",
+    "Initialize the skill (run init_skill.py)",
+    "Edit the skill (implement resources and write SKILL.md)",
+    "Package the skill (run package_skill.py)",
+    "Iterate based on real usage",
+    "Considering how to execute on the example from scratch",
+    "Identifying what scripts, references, and assets would be helpful when executing these workflows repeatedly",
+    "Rotating a PDF requires re-writing the same code each time",
+    "A scripts/rotate_pdf.py script would be helpful to store in the skill",
+    "Writing a frontend webapp requires the same boilerplate HTML/React each time",
+    "An assets/hello-world/ template containing the boilerplate HTML/React project files would be helpful to store in the skill",
+    "Querying BigQuery requires re-discovering the table schemas and relationships each time",
+    "A references/schema.md file documenting the table schemas would be helpful to store in the skill",
+    "Validate the skill automatically, checking:",
+    "Package the skill if validation passes, creating a .skill file named after the skill (e.g., my-skill.skill) that includes all files and maintains the proper directory structure for distribution. The .skill file is a zip file with a .skill extension",
+    "Use the skill on real tasks",
+    "Notice struggles or inefficiencies",
+    "Identify how SKILL.md or bundled resources should be updated",
+    "Implement changes and test again",
+    "PDF Processing",
+    "DOCX Processing",
+    "Skill Creation Process",
+    "Step 1: Understanding the Skill with Concrete Examples",
+    "Step 2: Planning the Reusable Skill Contents",
+    "Step 3: Initializing the Skill",
+    "Step 4: Edit the Skill",
+    "Step 5: Packaging a Skill",
+    "Step 6: Iterate"
+  ],
+  "tool_dependencies": [
+    "AskUserQuestion",
+    "Bash",
+    "Glob",
+    "Grep",
+    "Read",
+    "Task",
+    "WebFetch",
+    "WebSearch",
+    "Write"
+  ],
+  "reference_topics": [
+    {
+      "topic": "Output Patterns",
+      "summary": "Use these patterns when skills need to produce consistent, high-quality output. Provide templates for output format. Match the level of strictness to your needs. **For strict requirements (like API responses or data formats):**"
+    },
+    {
+      "topic": "Workflow Patterns",
+      "summary": "For complex tasks, break operations into clear, sequential steps. It is often helpful to give Claude an overview of the process towards the beginning of SKILL.md: ```markdown Filling a PDF form involves these steps:"
+    }
+  ],
+  "script_descriptions": [
+    {
+      "file": "init_skill.py",
+      "language": "python",
+      "purpose": "Skill Initializer - Creates a new skill from template"
+    },
+    {
+      "file": "package_skill.py",
+      "language": "python",
+      "purpose": "Skill Packager - Creates a distributable .skill file of a skill folder"
+    },
+    {
+      "file": "quick_validate.py",
+      "language": "python",
+      "purpose": "Quick validation script for skills - minimal version"
+    }
+  ],
+  "confidence_score": 0.83,
+  "upstream_structure": [
+    "references/ (2 files)",
+    "scripts/ (7 files)"
+  ],
+  "extracted_at": "2026-02-04T11:36:09Z"
+}

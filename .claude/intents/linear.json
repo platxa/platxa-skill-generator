@@ -1,0 +1,62 @@
+{
+  "skill_name": "linear",
+  "skill_type": "builder",
+  "skill_type_scores": {
+    "builder": 14,
+    "guide": 4,
+    "automation": 13,
+    "analyzer": 5,
+    "validator": 3
+  },
+  "description": "Manage issues, projects & team workflows in Linear. Use when the user wants to read, create or updates tickets in Linear.",
+  "domain": {
+    "primary_domain": "Project Management",
+    "subdomains": [
+      "Version Control"
+    ],
+    "expertise_level": "intermediate"
+  },
+  "key_concepts": [
+    "Follow these steps in order. Do not skip steps.",
+    "Windows/WSL note:",
+    "Linear",
+    "Prerequisites",
+    "Required Workflow",
+    "Step 0: Set up Linear MCP (if not already configured)",
+    "Step 1",
+    "Step 2",
+    "Step 3",
+    "Step 4",
+    "Available Tools",
+    "Practical Workflows",
+    "Tips for Maximum Productivity",
+    "Troubleshooting"
+  ],
+  "key_workflows": [
+    "Add the Linear MCP:",
+    "Enable remote MCP client:",
+    "Log in with OAuth:",
+    "Required Workflow",
+    "Step 0: Set up Linear MCP (if not already configured)",
+    "Step 1",
+    "Step 2",
+    "Step 3",
+    "Step 4",
+    "Practical Workflows"
+  ],
+  "tool_dependencies": [
+    "Bash",
+    "Glob",
+    "Grep",
+    "Read",
+    "WebFetch"
+  ],
+  "reference_topics": [],
+  "script_descriptions": [],
+  "confidence_score": 0.43,
+  "upstream_structure": [
+    "agents/ (1 files)",
+    "assets/ (2 files)"
+  ],
+  "extracted_at": "2026-02-04T11:36:09Z"
+}

@@ -1,0 +1,45 @@
+{
+  "skill_name": "test-driven-development",
+  "skill_type": "validator",
+  "skill_type_scores": {
+    "builder": 2,
+    "guide": 4,
+    "automation": 1,
+    "analyzer": 1,
+    "validator": 6
+  },
+  "description": "Use when implementing any feature or bugfix, before writing implementation code",
+  "domain": {
+    "primary_domain": "Testing",
+    "subdomains": [],
+    "expertise_level": "intermediate"
+  },
+  "key_concepts": [
+    "Core principle:",
+    "Violating the letter of the rules is violating the spirit of the rules.",
+    "Always:",
+    "Exceptions (ask your human partner):",
+    "No exceptions:",
+    "Requirements:",
+    "MANDATORY. Never skip.",
+    "Test passes?",
+    "Test errors?",
+    "MANDATORY.",
+    "Test fails?",
+    "Other tests fail?",
+    "Minimal",
+    "Clear",
+    "Shows intent"
+  ],
+  "key_workflows": [],
+  "tool_dependencies": [
+    "Bash",
+    "Read",
+    "Write"
+  ],
+  "reference_topics": [],
+  "script_descriptions": [],
+  "confidence_score": 0.43,
+  "upstream_structure": [],
+  "extracted_at": "2026-02-04T11:36:09Z"
+}

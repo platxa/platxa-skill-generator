@@ -1,0 +1,79 @@
+{
+  "skill_name": "systematic-debugging",
+  "skill_type": "validator",
+  "skill_type_scores": {
+    "builder": 3,
+    "guide": 3,
+    "automation": 3,
+    "analyzer": 2,
+    "validator": 14
+  },
+  "description": "Use when encountering any bug, test failure, or unexpected behavior, before proposing fixes",
+  "domain": {
+    "primary_domain": "Version Control",
+    "subdomains": [
+      "Testing"
+    ],
+    "expertise_level": "intermediate"
+  },
+  "key_concepts": [
+    "Core principle:",
+    "Violating the letter of this process is violating the spirit of debugging.",
+    "Use this ESPECIALLY when:",
+    "Don't skip when:",
+    "BEFORE attempting ANY fix:",
+    "Read Error Messages Carefully",
+    "Reproduce Consistently",
+    "Check Recent Changes",
+    "Gather Evidence in Multi-Component Systems",
+    "BEFORE proposing fixes, add diagnostic instrumentation:",
+    "Example (multi-layer system):",
+    "This reveals:",
+    "Trace Data Flow",
+    "WHEN error is deep in call stack:",
+    "Quick version:"
+  ],
+  "key_workflows": [
+    "Read Error Messages Carefully",
+    "Reproduce Consistently",
+    "Check Recent Changes",
+    "Gather Evidence in Multi-Component Systems",
+    "Trace Data Flow",
+    "Find Working Examples",
+    "Compare Against References",
+    "Identify Differences",
+    "Understand Dependencies",
+    "Form Single Hypothesis",
+    "Test Minimally",
+    "Verify Before Continuing",
+    "When You Don't Know",
+    "Create Failing Test Case",
+    "Implement Single Fix",
+    "Verify Fix",
+    "If Fix Doesn't Work",
+    "If 3+ Fixes Failed: Question Architecture",
+    "You've completed the process",
+    "Document what you investigated",
+    "Implement appropriate handling (retry, timeout, error message)",
+    "Add monitoring/logging for future investigation",
+    "The Four Phases",
+    "Phase 1: Root Cause Investigation",
+    "Phase 2: Pattern Analysis",
+    "Phase 3: Hypothesis and Testing",
+    "Phase 4: Implementation",
+    "Red Flags - STOP and Follow Process",
+    "When Process Reveals \"No Root Cause\""
+  ],
+  "tool_dependencies": [
+    "Bash",
+    "Glob",
+    "Grep",
+    "Read",
+    "Write"
+  ],
+  "reference_topics": [],
+  "script_descriptions": [],
+  "confidence_score": 0.43,
+  "upstream_structure": [],
+  "extracted_at": "2026-02-04T11:36:09Z"
+}

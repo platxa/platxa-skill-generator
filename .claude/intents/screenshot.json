@@ -1,0 +1,81 @@
+{
+  "skill_name": "screenshot",
+  "skill_type": "builder",
+  "skill_type_scores": {
+    "builder": 3,
+    "guide": 2,
+    "automation": 1,
+    "analyzer": 3,
+    "validator": 1
+  },
+  "description": "Use when the user explicitly asks for a desktop or system screenshot (full screen, specific app or window, or a pixel region), or when tool-specific capture capabilities are unavailable and an OS-level capture is needed.",
+  "domain": {
+    "primary_domain": "Design Tooling",
+    "subdomains": [],
+    "expertise_level": "intermediate"
+  },
+  "key_concepts": [
+    "Screenshot Capture",
+    "Tool priority",
+    "macOS permission preflight (reduce repeated prompts)",
+    "macOS and Linux (Python helper)",
+    "Workflow examples",
+    "Multi-display behavior",
+    "Linux prerequisites and selection logic",
+    "Windows (PowerShell helper)",
+    "Direct OS commands (fallbacks)",
+    "macOS",
+    "Linux",
+    "Error handling"
+  ],
+  "key_workflows": [
+    "Workflow examples"
+  ],
+  "tool_dependencies": [
+    "AskUserQuestion",
+    "Bash",
+    "Read",
+    "WebFetch",
+    "Write"
+  ],
+  "reference_topics": [],
+  "script_descriptions": [
+    {
+      "file": "ensure_macos_permissions.sh",
+      "language": "bash",
+      "purpose": "Request permission once after explaining why it is needed."
+    },
+    {
+      "file": "macos_display_info.swift",
+      "language": "bash",
+      "purpose": "macos_display_info.swift script"
+    },
+    {
+      "file": "macos_permissions.swift",
+      "language": "bash",
+      "purpose": "macos_permissions.swift script"
+    },
+    {
+      "file": "macos_window_info.swift",
+      "language": "bash",
+      "purpose": "macos_window_info.swift script"
+    },
+    {
+      "file": "take_screenshot.ps1",
+      "language": "bash",
+      "purpose": "take_screenshot.ps1 script"
+    },
+    {
+      "file": "take_screenshot.py",
+      "language": "python",
+      "purpose": "Cross-platform screenshot helper for Codex skills."
+    }
+  ],
+  "confidence_score": 0.61,
+  "upstream_structure": [
+    "scripts/ (8 files)",
+    "agents/ (1 files)",
+    "assets/ (2 files)"
+  ],
+  "extracted_at": "2026-02-04T11:36:09Z"
+}

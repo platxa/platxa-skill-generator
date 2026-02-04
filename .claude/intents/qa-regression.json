@@ -1,0 +1,60 @@
+{
+  "skill_name": "qa-regression",
+  "skill_type": "builder",
+  "skill_type_scores": {
+    "builder": 14,
+    "guide": 1,
+    "automation": 14,
+    "analyzer": 12,
+    "validator": 13
+  },
+  "description": "Automate QA regression testing with reusable test skills. Create login flows, dashboard checks, user creation, and other common test scenarios that run consistently.",
+  "domain": {
+    "primary_domain": "Testing",
+    "subdomains": [
+      "Version Control"
+    ],
+    "expertise_level": "intermediate"
+  },
+  "key_concepts": [
+    "Use data-testid attributes",
+    "Clean up test data",
+    "Avoid hardcoded waits",
+    "Run in parallel",
+    "Screenshot on failure",
+    "Environment variables",
+    "QA Regression Testing",
+    "Setup",
+    "Test Structure",
+    "Common Test Skills",
+    "Login Test",
+    "Dashboard Load Test",
+    "Create User Test",
+    "Shared Helpers",
+    "Full Regression Suite"
+  ],
+  "key_workflows": [
+    "Use data-testid attributes - More stable than CSS selectors",
+    "Clean up test data - Always delete what you create",
+    "Avoid hardcoded waits - Use waitForSelector instead of waitForTimeout",
+    "Run in parallel - Faster feedback on CI",
+    "Screenshot on failure - Easier debugging",
+    "Environment variables - Never commit credentials",
+    "Setup",
+    "Playwright Config",
+    ".github/workflows/regression.yml"
+  ],
+  "tool_dependencies": [
+    "Bash",
+    "Read",
+    "Task",
+    "WebFetch",
+    "WebSearch",
+    "Write"
+  ],
+  "reference_topics": [],
+  "script_descriptions": [],
+  "confidence_score": 0.46,
+  "upstream_structure": [],
+  "extracted_at": "2026-02-04T11:36:09Z"
+}

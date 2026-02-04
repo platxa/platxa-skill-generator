@@ -1,0 +1,4 @@
+# Exclude unexpected upstream files that fail structure validation
+assets
+agents
+LICENSE.txt

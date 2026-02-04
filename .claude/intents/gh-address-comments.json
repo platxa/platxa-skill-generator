@@ -1,0 +1,47 @@
+{
+  "skill_name": "gh-address-comments",
+  "skill_type": "analyzer",
+  "skill_type_scores": {
+    "builder": 0,
+    "guide": 1,
+    "automation": 1,
+    "analyzer": 12,
+    "validator": 11
+  },
+  "description": "Help address review/issue comments on the open GitHub PR for the current branch using gh CLI; verify gh auth first and prompt the user to authenticate if not logged in.",
+  "domain": {
+    "primary_domain": "Version Control",
+    "subdomains": [
+      "Security"
+    ],
+    "expertise_level": "beginner"
+  },
+  "key_concepts": [
+    "PR Comment Handler",
+    "1) Inspect comments needing attention",
+    "2) Ask the user for clarification",
+    "3) If user chooses comments"
+  ],
+  "key_workflows": [],
+  "tool_dependencies": [
+    "AskUserQuestion",
+    "Bash",
+    "Read",
+    "WebFetch"
+  ],
+  "reference_topics": [],
+  "script_descriptions": [
+    {
+      "file": "fetch_comments.py",
+      "language": "python",
+      "purpose": "Fetch all PR conversation comments + reviews + review threads (inline threads)"
+    }
+  ],
+  "confidence_score": 0.42,
+  "upstream_structure": [
+    "scripts/ (3 files)",
+    "agents/ (1 files)",
+    "assets/ (2 files)"
+  ],
+  "extracted_at": "2026-02-04T11:36:09Z"
+}

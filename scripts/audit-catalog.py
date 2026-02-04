@@ -129,7 +129,9 @@ def audit_catalog(
         manifest_info = manifest_skills.get(skill_name, {})
         category = manifest_info.get("category", "uncategorized")
         tier = manifest_info.get("tier", 0)
-        source = "local" if manifest_info.get("local", False) else manifest_info.get("source", "unknown")
+        source = (
+            "local" if manifest_info.get("local", False) else manifest_info.get("source", "unknown")
+        )
 
         # Apply category filter
         if category_filter and category != category_filter:
@@ -159,9 +161,7 @@ def audit_catalog(
             "passed": score_report["passed"] and dup_passed and sec_passed,
             "duplicate_check": "pass" if dup_passed else "fail",
             "security_check": "pass" if sec_passed else "fail",
-            "dimensions": {
-                k: v["score"] for k, v in score_report["dimensions"].items()
-            },
+            "dimensions": {k: v["score"] for k, v in score_report["dimensions"].items()},
         }
 
         results.append(entry)
@@ -268,7 +268,9 @@ def print_human_readable(report: dict[str, Any]) -> None:
             flags += " [DUP]"
         if skill.get("security_check") != "pass":
             flags += " [SEC]"
-        print(f"  {skill['name']:<30} {skill['overall_score']:>5}/10 {skill['badge']:<12} {status}{flags}")
+        print(
+            f"  {skill['name']:<30} {skill['overall_score']:>5}/10 {skill['badge']:<12} {status}{flags}"
+        )
 
     print()
     print("=" * 60)
@@ -285,9 +287,7 @@ def print_human_readable(report: dict[str, Any]) -> None:
 
 def main() -> int:
     """Main entry point."""
-    parser = argparse.ArgumentParser(
-        description="Run full audit across all catalog skills"
-    )
+    parser = argparse.ArgumentParser(description="Run full audit across all catalog skills")
     parser.add_argument(
         "--skills-dir",
         type=Path,

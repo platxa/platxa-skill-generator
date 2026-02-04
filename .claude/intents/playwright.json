@@ -1,0 +1,78 @@
+{
+  "skill_name": "playwright",
+  "skill_type": "guide",
+  "skill_type_scores": {
+    "builder": 1,
+    "guide": 2,
+    "automation": 1,
+    "analyzer": 1,
+    "validator": 2
+  },
+  "description": "Use when the task requires automating a real browser from the terminal (navigation, form filling, snapshots, screenshots, data extraction, UI-flow debugging) via `playwright-cli` or the bundled wrapper script.",
+  "domain": {
+    "primary_domain": "Browser Automation",
+    "subdomains": [
+      "Data Management"
+    ],
+    "expertise_level": "intermediate"
+  },
+  "key_concepts": [
+    "Playwright CLI Skill",
+    "Prerequisite check (required)",
+    "Verify Node/npm are installed",
+    "If missing, install Node.js/npm, then:",
+    "Skill path (set once)",
+    "Quick start",
+    "Core workflow",
+    "When to snapshot again",
+    "Recommended patterns",
+    "Form fill and submit",
+    "Debug a UI flow with traces",
+    "...interactions...",
+    "Multi-tab work",
+    "Wrapper script",
+    "Guardrails"
+  ],
+  "key_workflows": [
+    "Open the page",
+    "Snapshot to get stable element refs",
+    "Interact using refs from the latest snapshot",
+    "Re-snapshot after navigation or significant DOM changes",
+    "Capture artifacts (screenshot, pdf, traces) when useful",
+    "Verify Node/npm are installed",
+    "If missing, install Node.js/npm, then:",
+    "Core workflow",
+    "Debug a UI flow with traces"
+  ],
+  "tool_dependencies": [
+    "Bash",
+    "Read",
+    "WebFetch",
+    "Write"
+  ],
+  "reference_topics": [
+    {
+      "topic": "Playwright CLI Reference",
+      "summary": "Use the wrapper script unless the CLI is already installed globally: ```bash export CODEX_HOME=\"${CODEX_HOME:-$HOME/.codex}\""
+    },
+    {
+      "topic": "Playwright CLI Workflows",
+      "summary": "Use the wrapper script and snapshot often. Assume `PWCLI` is set and `pwcli` is an alias for `\"$PWCLI\"`. In this repo, run commands from `output/playwright/<label>/` to keep artifacts contained."
+    }
+  ],
+  "script_descriptions": [
+    {
+      "file": "playwright_cli.sh",
+      "language": "bash",
+      "purpose": "playwright_cli.sh script"
+    }
+  ],
+  "confidence_score": 0.8,
+  "upstream_structure": [
+    "references/ (2 files)",
+    "scripts/ (1 files)",
+    "agents/ (1 files)",
+    "assets/ (2 files)"
+  ],
+  "extracted_at": "2026-02-04T11:36:09Z"
+}

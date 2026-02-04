@@ -1,0 +1,64 @@
+{
+  "skill_name": "transcribe",
+  "skill_type": "automation",
+  "skill_type_scores": {
+    "builder": 2,
+    "guide": 2,
+    "automation": 1,
+    "analyzer": 0,
+    "validator": 3
+  },
+  "description": "Transcribe audio files to text with optional diarization and known-speaker hints. Use when a user asks to transcribe speech from audio/video, extract text from recordings, or label speakers in interviews or meetings.",
+  "domain": {
+    "primary_domain": "Media Processing",
+    "subdomains": [],
+    "expertise_level": "intermediate"
+  },
+  "key_concepts": [
+    "Audio Transcribe",
+    "Workflow",
+    "Decision rules",
+    "Output conventions",
+    "Dependencies (install if missing)",
+    "Environment",
+    "Skill path (set once)",
+    "CLI quick start",
+    "Reference map"
+  ],
+  "key_workflows": [
+    "Collect inputs: audio file path(s), desired response format (text/json/diarized_json), optional language hint, and any known speaker references",
+    "Verify OPENAI_API_KEY is set. If missing, ask the user to set it locally (do not ask them to paste the key)",
+    "Run the bundled transcribe_diarize.py CLI with sensible defaults (fast text transcription)",
+    "Validate the output: transcription quality, speaker labels, and segment boundaries; iterate with a single targeted change if needed",
+    "Save outputs under output/transcribe/ when working in this repo",
+    "Workflow",
+    "Dependencies (install if missing)"
+  ],
+  "tool_dependencies": [
+    "AskUserQuestion",
+    "Bash",
+    "Read",
+    "Write"
+  ],
+  "reference_topics": [
+    {
+      "topic": "gpt-4o-transcribe-diarize quick reference",
+      "summary": "- Input formats: mp3, mp4, mpeg, mpga, m4a, wav, webm. - Max file size: 25 MB per request. - response_format options: text, json, diarized_json."
+    }
+  ],
+  "script_descriptions": [
+    {
+      "file": "transcribe_diarize.py",
+      "language": "python",
+      "purpose": "Transcribe audio (optionally with speaker diarization) using OpenAI."
+    }
+  ],
+  "confidence_score": 0.8,
+  "upstream_structure": [
+    "references/ (1 files)",
+    "scripts/ (3 files)",
+    "agents/ (1 files)",
+    "assets/ (2 files)"
+  ],
+  "extracted_at": "2026-02-04T11:36:09Z"
+}

@@ -1,0 +1,52 @@
+{
+  "skill_name": "notion-knowledge-capture",
+  "skill_type": "guide",
+  "skill_type_scores": {
+    "builder": 2,
+    "guide": 16,
+    "automation": 1,
+    "analyzer": 1,
+    "validator": 1
+  },
+  "description": "Capture conversations and decisions into structured Notion pages; use when turning chats/notes into wiki entries, how-tos, decisions, or FAQs with proper linking.",
+  "domain": {
+    "primary_domain": "Version Control",
+    "subdomains": [],
+    "expertise_level": "intermediate"
+  },
+  "key_concepts": [
+    "Knowledge Capture",
+    "Quick start",
+    "Workflow",
+    "1) Define the capture",
+    "2) Locate destination",
+    "3) Extract and structure",
+    "4) Create/update in Notion",
+    "5) Link and surface",
+    "References and examples"
+  ],
+  "key_workflows": [
+    "Add the Notion MCP:",
+    "Enable remote MCP client:",
+    "Log in with OAuth:",
+    "Workflow"
+  ],
+  "tool_dependencies": [
+    "Glob",
+    "Grep",
+    "Read",
+    "Task",
+    "WebFetch"
+  ],
+  "reference_topics": [],
+  "script_descriptions": [],
+  "confidence_score": 0.4,
+  "upstream_structure": [
+    "agents/ (1 files)",
+    "assets/ (2 files)",
+    "evaluations/ (3 files)",
+    "examples/ (3 files)",
+    "reference/ (7 files)"
+  ],
+  "extracted_at": "2026-02-04T11:36:09Z"
+}

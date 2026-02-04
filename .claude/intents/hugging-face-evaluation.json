@@ -1,0 +1,111 @@
+{
+  "skill_name": "hugging-face-evaluation",
+  "skill_type": "analyzer",
+  "skill_type_scores": {
+    "builder": 4,
+    "guide": 3,
+    "automation": 3,
+    "analyzer": 6,
+    "validator": 4
+  },
+  "description": "Add and manage evaluation results in Hugging Face model cards. Supports extracting eval tables from README content, importing scores from Artificial Analysis API, and running custom model evaluations with vLLM/lighteval. Works with the model-index metadata format.",
+  "domain": {
+    "primary_domain": "ML/AI",
+    "subdomains": [
+      "Backend",
+      "Data Management",
+      "Documentation"
+    ],
+    "expertise_level": "intermediate"
+  },
+  "key_concepts": [
+    "Model Cards",
+    "Artificial Analysis",
+    "Papers with Code",
+    "Jobs",
+    "vLLM",
+    "lighteval",
+    "inspect-ai",
+    "If open PRs exist:",
+    "DO NOT create a new PR",
+    "Warn the user",
+    "Show the user",
+    "Use `--help` for the latest workflow guidance.",
+    "Inspect Tables",
+    "Parse Markdown Tables",
+    "Table Selection"
+  ],
+  "key_workflows": [
+    "DO NOT create a new PR - this creates duplicate work for maintainers",
+    "Warn the user that open PRs already exist",
+    "Show the user the existing PR URLs so they can review them",
+    "Only proceed if the user explicitly confirms they want to create another PR",
+    "Check for existing PRs first: Run get-prs before creating any new PR to avoid duplicates",
+    "Always start with inspect-tables: See table structure and get the correct extraction command",
+    "Use --help for guidance: Run inspect-tables --help to see the complete workflow",
+    "Preview first: Default behavior prints YAML; review it before using --apply or --create-pr",
+    "Verify extracted values: Compare YAML output against the README table manually",
+    "Use --table N for multi-table READMEs: Required when multiple evaluation tables exist",
+    "Use --model-name-override for comparison tables: Copy the exact column header from inspect-tables output",
+    "Create PRs for Others: Use --create-pr when updating models you don't own",
+    "One model per repo: Only add the main model's results to model-index",
+    "No markdown in YAML names: The model name field in YAML should be plain text",
+    "Method 1: Extract from README (CLI workflow)",
+    "Run multiple tasks",
+    "Step 1: ALWAYS check for existing PRs first",
+    "Step 2: If NO open PRs exist, proceed with creating one",
+    "Step 1: Check for existing PRs",
+    "Step 2: If no PRs, import from Artificial Analysis"
+  ],
+  "tool_dependencies": [
+    "Bash",
+    "Read",
+    "Task",
+    "WebFetch",
+    "Write"
+  ],
+  "reference_topics": [],
+  "script_descriptions": [
+    {
+      "file": "evaluation_manager.py",
+      "language": "python",
+      "purpose": "Manage evaluation results in Hugging Face model cards."
+    },
+    {
+      "file": "inspect_eval_uv.py",
+      "language": "python",
+      "purpose": "Entry point script for running inspect-ai evaluations via `hf jobs uv run`."
+    },
+    {
+      "file": "inspect_vllm_uv.py",
+      "language": "python",
+      "purpose": "Entry point script for running inspect-ai evaluations with vLLM or HuggingFace Transformers backend."
+    },
+    {
+      "file": "lighteval_vllm_uv.py",
+      "language": "python",
+      "purpose": "Entry point script for running lighteval evaluations with vLLM backend via `hf jobs uv run`."
+    },
+    {
+      "file": "run_eval_job.py",
+      "language": "python",
+      "purpose": "Submit evaluation jobs using the `hf jobs uv run` CLI."
+    },
+    {
+      "file": "run_vllm_eval_job.py",
+      "language": "python",
+      "purpose": "Submit vLLM-based evaluation jobs using the `hf jobs uv run` CLI."
+    },
+    {
+      "file": "test_extraction.py",
+      "language": "python",
+      "purpose": "Test script for evaluation extraction functionality."
+    }
+  ],
+  "confidence_score": 0.61,
+  "upstream_structure": [
+    "scripts/ (15 files)",
+    "examples/ (5 files)"
+  ],
+  "extracted_at": "2026-02-04T11:36:09Z"
+}

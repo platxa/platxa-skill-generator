@@ -1,0 +1,54 @@
+{
+  "skill_name": "database-design",
+  "skill_type": "guide",
+  "skill_type_scores": {
+    "builder": 2,
+    "guide": 16,
+    "automation": 2,
+    "analyzer": 4,
+    "validator": 1
+  },
+  "description": "Database schema design, optimization, and migration patterns for PostgreSQL, MySQL, and NoSQL databases. Use for designing schemas, writing migrations, or optimizing queries.",
+  "domain": {
+    "primary_domain": "Data Management",
+    "subdomains": [
+      "Design Tooling",
+      "Backend"
+    ],
+    "expertise_level": "intermediate"
+  },
+  "key_concepts": [
+    "Database Design",
+    "Schema Design Principles",
+    "Normalization Guidelines",
+    "Denormalization for Performance",
+    "Index Design",
+    "Common Index Patterns",
+    "Index Analysis",
+    "Migration Patterns",
+    "Safe Migration Template",
+    "Zero-Downtime Migrations",
+    "Query Optimization",
+    "EXPLAIN Analysis",
+    "Common Optimizations",
+    "Constraints & Data Integrity",
+    "Best Practices"
+  ],
+  "key_workflows": [
+    "Add new column (nullable)",
+    "Deploy code that writes to both columns",
+    "Backfill old data",
+    "Deploy code that reads from new column",
+    "Remove old column"
+  ],
+  "tool_dependencies": [
+    "Read",
+    "WebFetch",
+    "Write"
+  ],
+  "reference_topics": [],
+  "script_descriptions": [],
+  "confidence_score": 0.46,
+  "upstream_structure": [],
+  "extracted_at": "2026-02-04T11:36:09Z"
+}

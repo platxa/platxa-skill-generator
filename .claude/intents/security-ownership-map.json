@@ -1,0 +1,87 @@
+{
+  "skill_name": "security-ownership-map",
+  "skill_type": "analyzer",
+  "skill_type_scores": {
+    "builder": 12,
+    "guide": 2,
+    "automation": 1,
+    "analyzer": 20,
+    "validator": 11
+  },
+  "description": "Analyze git repositories to build a security ownership topology (people-to-file), compute bus factor and sensitive-code ownership, and export CSV/JSON for graph databases and visualization. Trigger only when the user explicitly wants a security-oriented ownership or bus-factor analysis grounded in git history (for example: orphaned sensitive code, security maintainers, CODEOWNERS reality checks for risk, sensitive hotspots, or ownership clusters). Do not trigger for general maintainer lists or non-security ownership questions.",
+  "domain": {
+    "primary_domain": "Data Management",
+    "subdomains": [
+      "Version Control",
+      "Security",
+      "Backend"
+    ],
+    "expertise_level": "intermediate"
+  },
+  "key_concepts": [
+    "/.github/",
+    "/auth/",
+    "/crypto/",
+    "Security Ownership Map",
+    "Requirements",
+    "Workflow",
+    "Quick start",
+    "Sensitivity rules",
+    "pattern,tag,weight",
+    "Output artifacts",
+    "LLM query helper",
+    "Basic security queries",
+    "Orphaned sensitive code (stale + low bus factor)",
+    "Hidden owners for sensitive tags",
+    "Sensitive hotspots with low bus factor"
+  ],
+  "key_workflows": [
+    "Scope the repo and time window (optional --since/--until)",
+    "Decide sensitivity rules (use defaults or provide a CSV config)",
+    "Build the ownership map with scripts/run_ownership_map.py (co-change graph is on by default; use --cochange-max-files to ignore supernode commits)",
+    "Communities are computed by default; graphml output is optional (--graphml)",
+    "Query the outputs with scripts/query_ownership.py for bounded JSON slices",
+    "Persist and visualize (see references/neo4j-import.md)",
+    "Workflow"
+  ],
+  "tool_dependencies": [
+    "Bash",
+    "Read",
+    "Write"
+  ],
+  "reference_topics": [
+    {
+      "topic": "Neo4j Import Notes",
+      "summary": "Use these steps when persisting the ownership graph to Neo4j. 1. Copy `people.csv`, `files.csv`, and `edges.csv` into the Neo4j import directory. 2. Run the following Cypher from Neo4j Browser or `cypher-shell`:"
+    }
+  ],
+  "script_descriptions": [
+    {
+      "file": "build_ownership_map.py",
+      "language": "python",
+      "purpose": "Build a security ownership map from git history."
+    },
+    {
+      "file": "community_maintainers.py",
+      "language": "python",
+      "purpose": "Report monthly maintainers for a file's community."
+    },
+    {
+      "file": "query_ownership.py",
+      "language": "python",
+      "purpose": "Query ownership-map outputs without loading everything into an LLM context."
+    },
+    {
+      "file": "run_ownership_map.py",
+      "language": "python",
+      "purpose": "One-shot runner for building the security ownership map."
+    }
+  ],
+  "confidence_score": 0.83,
+  "upstream_structure": [
+    "references/ (1 files)",
+    "scripts/ (9 files)",
+    "agents/ (1 files)"
+  ],
+  "extracted_at": "2026-02-04T11:36:09Z"
+}

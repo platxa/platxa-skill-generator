@@ -1,85 +1,400 @@
 {
-  "last_synced": "2026-02-03T18:29:54Z",
+  "last_synced": "2026-02-03T21:23:27Z",
   "skills": {
+    "algorithmic-art": {
+      "sha": "69c0b1a0674149f27b61b2635f935524b6add202",
+      "source": "anthropic",
+      "synced_at": "2026-02-03T21:22:59Z"
+    },
+    "atlas": {
+      "sha": "f46b2535abfc2ec4b383ba0da47a0357abfa198c",
+      "source": "openai",
+      "synced_at": "2026-02-03T21:22:59Z"
+    },
+    "backend-development": {
+      "sha": "6195a031c29c5bc11d1d4b3e4c64e660e441f087",
+      "source": "skillcreatorai",
+      "synced_at": "2026-02-03T21:22:59Z"
+    },
+    "best-practices": {
+      "sha": "6195a031c29c5bc11d1d4b3e4c64e660e441f087",
+      "source": "skillcreatorai",
+      "synced_at": "2026-02-03T21:23:00Z"
+    },
     "brainstorming": {
       "sha": "06b92f36820f38175b2ed6ff3f8df45157d54731",
       "source": "obra",
-      "synced_at": "2026-02-03T18:29:51Z"
+      "synced_at": "2026-02-03T21:23:00Z"
+    },
+    "changelog-generator": {
+      "sha": "6195a031c29c5bc11d1d4b3e4c64e660e441f087",
+      "source": "skillcreatorai",
+      "synced_at": "2026-02-03T21:23:00Z"
+    },
+    "cloudflare-deploy": {
+      "sha": "f46b2535abfc2ec4b383ba0da47a0357abfa198c",
+      "source": "openai",
+      "synced_at": "2026-02-03T21:23:01Z"
+    },
+    "code-documentation": {
+      "sha": "6195a031c29c5bc11d1d4b3e4c64e660e441f087",
+      "source": "skillcreatorai",
+      "synced_at": "2026-02-03T21:23:01Z"
+    },
+    "code-refactoring": {
+      "sha": "6195a031c29c5bc11d1d4b3e4c64e660e441f087",
+      "source": "skillcreatorai",
+      "synced_at": "2026-02-03T21:23:02Z"
+    },
+    "code-review": {
+      "sha": "6195a031c29c5bc11d1d4b3e4c64e660e441f087",
+      "source": "skillcreatorai",
+      "synced_at": "2026-02-03T21:23:02Z"
+    },
+    "composition-patterns": {
+      "sha": "e23951b8cad2f4b1e7e176c5731127c1263fe86f",
+      "source": "vercel",
+      "synced_at": "2026-02-03T21:23:02Z"
+    },
+    "content-research-writer": {
+      "sha": "6195a031c29c5bc11d1d4b3e4c64e660e441f087",
+      "source": "skillcreatorai",
+      "synced_at": "2026-02-03T21:23:03Z"
+    },
+    "database-design": {
+      "sha": "6195a031c29c5bc11d1d4b3e4c64e660e441f087",
+      "source": "skillcreatorai",
+      "synced_at": "2026-02-03T21:23:03Z"
+    },
+    "develop-web-game": {
+      "sha": "f46b2535abfc2ec4b383ba0da47a0357abfa198c",
+      "source": "openai",
+      "synced_at": "2026-02-03T21:23:03Z"
     },
     "dispatching-parallel-agents": {
       "sha": "06b92f36820f38175b2ed6ff3f8df45157d54731",
       "source": "obra",
-      "synced_at": "2026-02-03T18:29:51Z"
+      "synced_at": "2026-02-03T21:23:04Z"
+    },
+    "doc": {
+      "sha": "f46b2535abfc2ec4b383ba0da47a0357abfa198c",
+      "source": "openai",
+      "synced_at": "2026-02-03T21:23:04Z"
+    },
+    "docx": {
+      "sha": "69c0b1a0674149f27b61b2635f935524b6add202",
+      "source": "anthropic",
+      "synced_at": "2026-02-03T21:23:05Z"
     },
     "executing-plans": {
       "sha": "06b92f36820f38175b2ed6ff3f8df45157d54731",
       "source": "obra",
-      "synced_at": "2026-02-03T18:29:51Z"
+      "synced_at": "2026-02-03T21:23:05Z"
+    },
+    "figma": {
+      "sha": "f46b2535abfc2ec4b383ba0da47a0357abfa198c",
+      "source": "openai",
+      "synced_at": "2026-02-03T21:23:05Z"
+    },
+    "figma-implement-design": {
+      "sha": "f46b2535abfc2ec4b383ba0da47a0357abfa198c",
+      "source": "openai",
+      "synced_at": "2026-02-03T21:23:06Z"
+    },
+    "finishing-a-development-branch": {
+      "sha": "06b92f36820f38175b2ed6ff3f8df45157d54731",
+      "source": "obra",
+      "synced_at": "2026-02-03T21:23:06Z"
     },
     "frontend-design": {
       "sha": "69c0b1a0674149f27b61b2635f935524b6add202",
       "source": "anthropic",
-      "synced_at": "2026-02-03T18:29:52Z"
+      "synced_at": "2026-02-03T21:23:07Z"
+    },
+    "gh-address-comments": {
+      "sha": "f46b2535abfc2ec4b383ba0da47a0357abfa198c",
+      "source": "openai",
+      "synced_at": "2026-02-03T21:23:08Z"
+    },
+    "gh-fix-ci": {
+      "sha": "f46b2535abfc2ec4b383ba0da47a0357abfa198c",
+      "source": "openai",
+      "synced_at": "2026-02-03T21:23:08Z"
+    },
+    "hugging-face-cli": {
+      "sha": "2afeee6dc7270dd91bef2b59a5b60b2222fbd8a0",
+      "source": "huggingface",
+      "synced_at": "2026-02-03T21:23:08Z"
+    },
+    "hugging-face-datasets": {
+      "sha": "2afeee6dc7270dd91bef2b59a5b60b2222fbd8a0",
+      "source": "huggingface",
+      "synced_at": "2026-02-03T21:23:09Z"
+    },
+    "hugging-face-evaluation": {
+      "sha": "2afeee6dc7270dd91bef2b59a5b60b2222fbd8a0",
+      "source": "huggingface",
+      "synced_at": "2026-02-03T21:23:09Z"
+    },
+    "hugging-face-jobs": {
+      "sha": "2afeee6dc7270dd91bef2b59a5b60b2222fbd8a0",
+      "source": "huggingface",
+      "synced_at": "2026-02-03T21:23:09Z"
+    },
+    "hugging-face-model-trainer": {
+      "sha": "2afeee6dc7270dd91bef2b59a5b60b2222fbd8a0",
+      "source": "huggingface",
+      "synced_at": "2026-02-03T21:23:10Z"
+    },
+    "hugging-face-paper-publisher": {
+      "sha": "2afeee6dc7270dd91bef2b59a5b60b2222fbd8a0",
+      "source": "huggingface",
+      "synced_at": "2026-02-03T21:23:10Z"
+    },
+    "hugging-face-tool-builder": {
+      "sha": "2afeee6dc7270dd91bef2b59a5b60b2222fbd8a0",
+      "source": "huggingface",
+      "synced_at": "2026-02-03T21:23:11Z"
+    },
+    "hugging-face-trackio": {
+      "sha": "2afeee6dc7270dd91bef2b59a5b60b2222fbd8a0",
+      "source": "huggingface",
+      "synced_at": "2026-02-03T21:23:11Z"
+    },
+    "imagegen": {
+      "sha": "f46b2535abfc2ec4b383ba0da47a0357abfa198c",
+      "source": "openai",
+      "synced_at": "2026-02-03T21:23:11Z"
+    },
+    "javascript-typescript": {
+      "sha": "6195a031c29c5bc11d1d4b3e4c64e660e441f087",
+      "source": "skillcreatorai",
+      "synced_at": "2026-02-03T21:23:12Z"
+    },
+    "jupyter-notebook": {
+      "sha": "f46b2535abfc2ec4b383ba0da47a0357abfa198c",
+      "source": "openai",
+      "synced_at": "2026-02-03T21:23:12Z"
+    },
+    "linear": {
+      "sha": "f46b2535abfc2ec4b383ba0da47a0357abfa198c",
+      "source": "openai",
+      "synced_at": "2026-02-03T21:23:12Z"
+    },
+    "llm-application-dev": {
+      "sha": "6195a031c29c5bc11d1d4b3e4c64e660e441f087",
+      "source": "skillcreatorai",
+      "synced_at": "2026-02-03T21:23:13Z"
     },
     "mcp-builder": {
       "sha": "69c0b1a0674149f27b61b2635f935524b6add202",
       "source": "anthropic",
-      "synced_at": "2026-02-03T18:29:52Z"
+      "synced_at": "2026-02-03T21:23:13Z"
+    },
+    "netlify-deploy": {
+      "sha": "f46b2535abfc2ec4b383ba0da47a0357abfa198c",
+      "source": "openai",
+      "synced_at": "2026-02-03T21:23:13Z"
+    },
+    "notion-knowledge-capture": {
+      "sha": "f46b2535abfc2ec4b383ba0da47a0357abfa198c",
+      "source": "openai",
+      "synced_at": "2026-02-03T21:23:14Z"
+    },
+    "notion-meeting-intelligence": {
+      "sha": "f46b2535abfc2ec4b383ba0da47a0357abfa198c",
+      "source": "openai",
+      "synced_at": "2026-02-03T21:23:14Z"
+    },
+    "notion-research-documentation": {
+      "sha": "f46b2535abfc2ec4b383ba0da47a0357abfa198c",
+      "source": "openai",
+      "synced_at": "2026-02-03T21:23:14Z"
+    },
+    "notion-spec-to-implementation": {
+      "sha": "f46b2535abfc2ec4b383ba0da47a0357abfa198c",
+      "source": "openai",
+      "synced_at": "2026-02-03T21:23:15Z"
+    },
+    "openai-docs": {
+      "sha": "f46b2535abfc2ec4b383ba0da47a0357abfa198c",
+      "source": "openai",
+      "synced_at": "2026-02-03T21:23:15Z"
+    },
+    "pdf": {
+      "sha": "69c0b1a0674149f27b61b2635f935524b6add202",
+      "source": "anthropic",
+      "synced_at": "2026-02-03T21:23:15Z"
+    },
+    "playwright": {
+      "sha": "f46b2535abfc2ec4b383ba0da47a0357abfa198c",
+      "source": "openai",
+      "synced_at": "2026-02-03T21:23:16Z"
+    },
+    "pptx": {
+      "sha": "69c0b1a0674149f27b61b2635f935524b6add202",
+      "source": "anthropic",
+      "synced_at": "2026-02-03T21:23:16Z"
+    },
+    "python-development": {
+      "sha": "6195a031c29c5bc11d1d4b3e4c64e660e441f087",
+      "source": "skillcreatorai",
+      "synced_at": "2026-02-03T21:23:16Z"
+    },
+    "qa-regression": {
+      "sha": "6195a031c29c5bc11d1d4b3e4c64e660e441f087",
+      "source": "skillcreatorai",
+      "synced_at": "2026-02-03T21:23:17Z"
     },
     "react-best-practices": {
       "sha": "e23951b8cad2f4b1e7e176c5731127c1263fe86f",
       "source": "vercel",
-      "synced_at": "2026-02-03T18:29:52Z"
+      "synced_at": "2026-02-03T21:23:17Z"
     },
     "react-native-skills": {
       "sha": "e23951b8cad2f4b1e7e176c5731127c1263fe86f",
       "source": "vercel",
-      "synced_at": "2026-02-03T18:29:52Z"
+      "synced_at": "2026-02-03T21:23:17Z"
+    },
+    "receiving-code-review": {
+      "sha": "06b92f36820f38175b2ed6ff3f8df45157d54731",
+      "source": "obra",
+      "synced_at": "2026-02-03T21:23:18Z"
+    },
+    "render-deploy": {
+      "sha": "f46b2535abfc2ec4b383ba0da47a0357abfa198c",
+      "source": "openai",
+      "synced_at": "2026-02-03T21:23:18Z"
+    },
+    "requesting-code-review": {
+      "sha": "06b92f36820f38175b2ed6ff3f8df45157d54731",
+      "source": "obra",
+      "synced_at": "2026-02-03T21:23:18Z"
+    },
+    "screenshot": {
+      "sha": "f46b2535abfc2ec4b383ba0da47a0357abfa198c",
+      "source": "openai",
+      "synced_at": "2026-02-03T21:23:19Z"
+    },
+    "security-best-practices": {
+      "sha": "f46b2535abfc2ec4b383ba0da47a0357abfa198c",
+      "source": "openai",
+      "synced_at": "2026-02-03T21:23:19Z"
+    },
+    "security-ownership-map": {
+      "sha": "f46b2535abfc2ec4b383ba0da47a0357abfa198c",
+      "source": "openai",
+      "synced_at": "2026-02-03T21:23:19Z"
+    },
+    "security-threat-model": {
+      "sha": "f46b2535abfc2ec4b383ba0da47a0357abfa198c",
+      "source": "openai",
+      "synced_at": "2026-02-03T21:23:20Z"
+    },
+    "sentry": {
+      "sha": "f46b2535abfc2ec4b383ba0da47a0357abfa198c",
+      "source": "openai",
+      "synced_at": "2026-02-03T21:23:20Z"
+    },
+    "skill-creator": {
+      "sha": "69c0b1a0674149f27b61b2635f935524b6add202",
+      "source": "anthropic",
+      "synced_at": "2026-02-03T21:23:20Z"
+    },
+    "slack-gif-creator": {
+      "sha": "69c0b1a0674149f27b61b2635f935524b6add202",
+      "source": "anthropic",
+      "synced_at": "2026-02-03T21:23:21Z"
+    },
+    "sora": {
+      "sha": "f46b2535abfc2ec4b383ba0da47a0357abfa198c",
+      "source": "openai",
+      "synced_at": "2026-02-03T21:23:21Z"
+    },
+    "speech": {
+      "sha": "f46b2535abfc2ec4b383ba0da47a0357abfa198c",
+      "source": "openai",
+      "synced_at": "2026-02-03T21:23:21Z"
+    },
+    "spreadsheet": {
+      "sha": "f46b2535abfc2ec4b383ba0da47a0357abfa198c",
+      "source": "openai",
+      "synced_at": "2026-02-03T21:23:22Z"
     },
     "subagent-driven-development": {
       "sha": "06b92f36820f38175b2ed6ff3f8df45157d54731",
       "source": "obra",
-      "synced_at": "2026-02-03T18:29:52Z"
+      "synced_at": "2026-02-03T21:23:22Z"
     },
     "systematic-debugging": {
       "sha": "06b92f36820f38175b2ed6ff3f8df45157d54731",
       "source": "obra",
-      "synced_at": "2026-02-03T18:29:53Z"
+      "synced_at": "2026-02-03T21:23:22Z"
     },
     "test-driven-development": {
       "sha": "06b92f36820f38175b2ed6ff3f8df45157d54731",
       "source": "obra",
-      "synced_at": "2026-02-03T18:29:53Z"
+      "synced_at": "2026-02-03T21:23:23Z"
+    },
+    "transcribe": {
+      "sha": "f46b2535abfc2ec4b383ba0da47a0357abfa198c",
+      "source": "openai",
+      "synced_at": "2026-02-03T21:23:23Z"
+    },
+    "using-git-worktrees": {
+      "sha": "06b92f36820f38175b2ed6ff3f8df45157d54731",
+      "source": "obra",
+      "synced_at": "2026-02-03T21:23:23Z"
     },
     "using-superpowers": {
       "sha": "06b92f36820f38175b2ed6ff3f8df45157d54731",
       "source": "obra",
-      "synced_at": "2026-02-03T18:29:53Z"
+      "synced_at": "2026-02-03T21:23:24Z"
+    },
+    "vercel-deploy": {
+      "sha": "f46b2535abfc2ec4b383ba0da47a0357abfa198c",
+      "source": "openai",
+      "synced_at": "2026-02-03T21:23:24Z"
     },
     "verification-before-completion": {
       "sha": "06b92f36820f38175b2ed6ff3f8df45157d54731",
       "source": "obra",
-      "synced_at": "2026-02-03T18:29:53Z"
+      "synced_at": "2026-02-03T21:23:24Z"
     },
     "web-artifacts-builder": {
       "sha": "69c0b1a0674149f27b61b2635f935524b6add202",
       "source": "anthropic",
-      "synced_at": "2026-02-03T18:29:53Z"
+      "synced_at": "2026-02-03T21:23:25Z"
     },
     "web-design-guidelines": {
       "sha": "e23951b8cad2f4b1e7e176c5731127c1263fe86f",
       "source": "vercel",
-      "synced_at": "2026-02-03T18:29:53Z"
+      "synced_at": "2026-02-03T21:23:25Z"
     },
     "webapp-testing": {
       "sha": "69c0b1a0674149f27b61b2635f935524b6add202",
       "source": "anthropic",
-      "synced_at": "2026-02-03T18:29:53Z"
+      "synced_at": "2026-02-03T21:23:25Z"
     },
     "writing-plans": {
       "sha": "06b92f36820f38175b2ed6ff3f8df45157d54731",
       "source": "obra",
-      "synced_at": "2026-02-03T18:29:54Z"
+      "synced_at": "2026-02-03T21:23:26Z"
+    },
+    "writing-skills": {
+      "sha": "06b92f36820f38175b2ed6ff3f8df45157d54731",
+      "source": "obra",
+      "synced_at": "2026-02-03T21:23:26Z"
+    },
+    "xlsx": {
+      "sha": "69c0b1a0674149f27b61b2635f935524b6add202",
+      "source": "anthropic",
+      "synced_at": "2026-02-03T21:23:26Z"
+    },
+    "yeet": {
+      "sha": "f46b2535abfc2ec4b383ba0da47a0357abfa198c",
+      "source": "openai",
+      "synced_at": "2026-02-03T21:23:27Z"
     }
   }
 }

@@ -1,0 +1,53 @@
+{
+  "skill_name": "verification-before-completion",
+  "skill_type": "validator",
+  "skill_type_scores": {
+    "builder": 14,
+    "guide": 1,
+    "automation": 0,
+    "analyzer": 2,
+    "validator": 24
+  },
+  "description": "Use when about to claim work is complete, fixed, or passing, before committing or creating PRs - requires running verification commands and confirming output before making any success claims; evidence before assertions always",
+  "domain": {
+    "primary_domain": "Version Control",
+    "subdomains": [
+      "Testing"
+    ],
+    "expertise_level": "intermediate"
+  },
+  "key_concepts": [
+    "Core principle:",
+    "Violating the letter of this rule is violating the spirit of this rule.",
+    "ANY wording implying success without having run verification",
+    "Tests:",
+    "Regression tests (TDD Red-Green):",
+    "Build:",
+    "Requirements:",
+    "Agent delegation:",
+    "ALWAYS before:",
+    "Rule applies to:",
+    "No shortcuts for verification.",
+    "Verification Before Completion",
+    "The Iron Law",
+    "The Gate Function",
+    "Common Failures"
+  ],
+  "key_workflows": [
+    "IDENTIFY: What command proves this claim?",
+    "RUN: Execute the FULL command (fresh, complete)",
+    "READ: Full output, check exit code, count failures",
+    "VERIFY: Does output confirm the claim?",
+    "ONLY THEN: Make the claim"
+  ],
+  "tool_dependencies": [
+    "Bash",
+    "Read",
+    "Task"
+  ],
+  "reference_topics": [],
+  "script_descriptions": [],
+  "confidence_score": 0.46,
+  "upstream_structure": [],
+  "extracted_at": "2026-02-04T11:36:09Z"
+}

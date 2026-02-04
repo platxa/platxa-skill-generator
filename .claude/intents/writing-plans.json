@@ -1,0 +1,50 @@
+{
+  "skill_name": "writing-plans",
+  "skill_type": "builder",
+  "skill_type_scores": {
+    "builder": 4,
+    "guide": 3,
+    "automation": 1,
+    "analyzer": 2,
+    "validator": 3
+  },
+  "description": "Use when you have a spec or requirements for a multi-step task, before touching code",
+  "domain": {
+    "primary_domain": "Version Control",
+    "subdomains": [],
+    "expertise_level": "intermediate"
+  },
+  "key_concepts": [
+    "Announce at start:",
+    "Context:",
+    "Save plans to:",
+    "Each step is one action (2-5 minutes):",
+    "Every plan MUST start with this header:",
+    "For Claude:",
+    "Goal:",
+    "Architecture:",
+    "Tech Stack:",
+    "Files:",
+    "Step 1: Write the failing test",
+    "Step 2: Run test to verify it fails",
+    "Step 3: Write minimal implementation",
+    "Step 4: Run test to verify it passes",
+    "Step 5: Commit"
+  ],
+  "key_workflows": [
+    "Bite-Sized Task Granularity",
+    "Task Structure",
+    "Task N: [Component Name]"
+  ],
+  "tool_dependencies": [
+    "Bash",
+    "Read",
+    "Task",
+    "Write"
+  ],
+  "reference_topics": [],
+  "script_descriptions": [],
+  "confidence_score": 0.43,
+  "upstream_structure": [],
+  "extracted_at": "2026-02-04T11:36:09Z"
+}

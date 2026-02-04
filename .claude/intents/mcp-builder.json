@@ -1,0 +1,93 @@
+{
+  "skill_name": "mcp-builder",
+  "skill_type": "guide",
+  "skill_type_scores": {
+    "builder": 13,
+    "guide": 16,
+    "automation": 2,
+    "analyzer": 3,
+    "validator": 16
+  },
+  "description": "Guide for creating high-quality MCP (Model Context Protocol) servers that enable LLMs to interact with external services through well-designed tools. Use when building MCP servers to integrate external APIs or services, whether in Python (FastMCP) or Node/TypeScript (MCP SDK).",
+  "domain": {
+    "primary_domain": "Backend",
+    "subdomains": [
+      "ML/AI",
+      "Version Control",
+      "Design Tooling"
+    ],
+    "expertise_level": "intermediate"
+  },
+  "key_concepts": [
+    "API Coverage vs. Workflow Tools:",
+    "Tool Naming and Discoverability:",
+    "Context Management:",
+    "Actionable Error Messages:",
+    "Navigate the MCP specification:",
+    "Recommended stack:",
+    "Language",
+    "Transport",
+    "Load framework documentation:",
+    "MCP Best Practices",
+    "For TypeScript (recommended):",
+    "TypeScript SDK",
+    "For Python:",
+    "Python SDK",
+    "Understand the API:"
+  ],
+  "key_workflows": [
+    "Tool Inspection: List available tools and understand their capabilities",
+    "Content Exploration: Use READ-ONLY operations to explore available data",
+    "Question Generation: Create 10 complex, realistic questions",
+    "Answer Verification: Solve each question yourself to verify answers",
+    "Process",
+    "🚀 High-Level Workflow",
+    "Phase 1: Deep Research and Planning",
+    "Phase 2: Implementation",
+    "Phase 3: Review and Test",
+    "Phase 4: Create Evaluations",
+    "SDK Documentation (Load During Phase 1/2)",
+    "Language-Specific Implementation Guides (Load During Phase 2)",
+    "Evaluation Guide (Load During Phase 4)"
+  ],
+  "tool_dependencies": [
+    "AskUserQuestion",
+    "Bash",
+    "Glob",
+    "Grep",
+    "Read",
+    "Task",
+    "WebFetch",
+    "WebSearch",
+    "Write"
+  ],
+  "reference_topics": [],
+  "script_descriptions": [
+    {
+      "file": "connections.py",
+      "language": "python",
+      "purpose": "Lightweight connection handling for MCP servers."
+    },
+    {
+      "file": "evaluation.py",
+      "language": "python",
+      "purpose": "MCP Server Evaluation Harness"
+    },
+    {
+      "file": "example_evaluation.xml",
+      "language": "bash",
+      "purpose": "example_evaluation.xml script"
+    },
+    {
+      "file": "requirements.txt",
+      "language": "bash",
+      "purpose": "requirements.txt script"
+    }
+  ],
+  "confidence_score": 0.58,
+  "upstream_structure": [
+    "scripts/ (7 files)",
+    "reference/ (4 files)"
+  ],
+  "extracted_at": "2026-02-04T11:36:09Z"
+}

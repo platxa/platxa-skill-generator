@@ -1,0 +1,54 @@
+{
+  "skill_name": "notion-research-documentation",
+  "skill_type": "builder",
+  "skill_type_scores": {
+    "builder": 13,
+    "guide": 13,
+    "automation": 1,
+    "analyzer": 13,
+    "validator": 1
+  },
+  "description": "Research across Notion and synthesize into structured documentation; use when gathering info from multiple Notion sources to produce briefs, comparisons, or reports with citations.",
+  "domain": {
+    "primary_domain": "Documentation",
+    "subdomains": [
+      "Version Control"
+    ],
+    "expertise_level": "intermediate"
+  },
+  "key_concepts": [
+    "Research & Documentation",
+    "Quick start",
+    "Workflow",
+    "1) Gather sources",
+    "2) Select the format",
+    "3) Synthesize",
+    "4) Create the doc",
+    "5) Finalize & handoff",
+    "References and examples"
+  ],
+  "key_workflows": [
+    "Add the Notion MCP:",
+    "Enable remote MCP client:",
+    "Log in with OAuth:",
+    "Workflow"
+  ],
+  "tool_dependencies": [
+    "Glob",
+    "Grep",
+    "Read",
+    "Task",
+    "WebFetch"
+  ],
+  "reference_topics": [],
+  "script_descriptions": [],
+  "confidence_score": 0.4,
+  "upstream_structure": [
+    "agents/ (1 files)",
+    "assets/ (2 files)",
+    "evaluations/ (3 files)",
+    "examples/ (4 files)",
+    "reference/ (11 files)"
+  ],
+  "extracted_at": "2026-02-04T11:36:09Z"
+}

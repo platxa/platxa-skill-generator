@@ -1,0 +1,70 @@
+{
+  "skill_name": "writing-skills",
+  "skill_type": "automation",
+  "skill_type_scores": {
+    "builder": 4,
+    "guide": 9,
+    "automation": 16,
+    "analyzer": 3,
+    "validator": 14
+  },
+  "description": "Use when creating new skills, editing existing skills, or verifying skills work before deployment",
+  "domain": {
+    "primary_domain": "DevOps",
+    "subdomains": [
+      "Version Control"
+    ],
+    "expertise_level": "intermediate"
+  },
+  "key_concepts": [
+    "Writing skills IS Test-Driven Development applied to process documentation.",
+    "Core principle:",
+    "REQUIRED BACKGROUND:",
+    "Official guidance:",
+    "skill",
+    "Skills are:",
+    "Skills are NOT:",
+    "Test case",
+    "Production code",
+    "Test fails (RED)",
+    "Test passes (GREEN)",
+    "Refactor",
+    "Write test first",
+    "Watch it fail",
+    "Minimal code"
+  ],
+  "key_workflows": [
+    "Heavy reference (100+ lines) - API docs, comprehensive syntax",
+    "Reusable tools - Scripts, utilities, templates",
+    "Encounters problem (\"tests are flaky\")",
+    "Finds SKILL (description matches)",
+    "Scans overview (is this relevant?)",
+    "Reads patterns (quick reference table)",
+    "Loads example (only when implementing)",
+    "❌ BAD: Summarizes workflow - Claude may follow this instead of reading skill",
+    "❌ BAD: Too much process detail",
+    "✅ GOOD: Just triggering conditions, no workflow summary",
+    "✅ GOOD: Starts with \"Use when\", describes problem, no workflow",
+    "❌ BAD: Repeat workflow details",
+    "getting-started workflows: aim for <150 each",
+    "Flowchart Usage",
+    "❌ Code in Flowcharts",
+    "Discovery Workflow"
+  ],
+  "tool_dependencies": [
+    "AskUserQuestion",
+    "Bash",
+    "Glob",
+    "Grep",
+    "Read",
+    "Task",
+    "Write"
+  ],
+  "reference_topics": [],
+  "script_descriptions": [],
+  "confidence_score": 0.43,
+  "upstream_structure": [
+    "examples/ (1 files)"
+  ],
+  "extracted_at": "2026-02-04T11:36:09Z"
+}

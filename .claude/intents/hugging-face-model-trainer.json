@@ -1,0 +1,163 @@
+{
+  "skill_name": "hugging-face-model-trainer",
+  "skill_type": "guide",
+  "skill_type_scores": {
+    "builder": 4,
+    "guide": 16,
+    "automation": 13,
+    "analyzer": 4,
+    "validator": 4
+  },
+  "description": "This skill should be used when users want to train or fine-tune language models using TRL (Transformer Reinforcement Learning) on Hugging Face Jobs infrastructure. Covers SFT, DPO, GRPO and reward modeling training methods, plus GGUF conversion for local deployment. Includes guidance on the TRL Jobs package, UV scripts with PEP 723 format, dataset preparation and validation, hardware selection, cost estimation, Trackio monitoring, Hub authentication, and model persistence. Should be invoked for tasks involving cloud GPU training, GGUF conversion, or when users mention training on Hugging Face Jobs without local GPU setup.",
+  "domain": {
+    "primary_domain": "ML/AI",
+    "subdomains": [
+      "DevOps",
+      "Data Management",
+      "Observability"
+    ],
+    "expertise_level": "intermediate"
+  },
+  "key_concepts": [
+    "TRL provides multiple training methods:",
+    "GRPO",
+    "Reward Modeling",
+    "For detailed TRL method documentation:",
+    "See also:",
+    "ALWAYS use `hf_jobs()` MCP tool",
+    "Always include Trackio",
+    "Provide job details after submission",
+    "Use example scripts as templates",
+    "Account & Authentication",
+    "HF_TOKEN for Hub Push",
+    "MUST pass `secrets={\"HF_TOKEN\": \"$HF_TOKEN\"}` in job config",
+    "Dataset Requirements",
+    "ALWAYS validate unknown datasets",
+    "Critical Settings"
+  ],
+  "key_workflows": [
+    "ALWAYS use hf_jobs() MCP tool - Submit jobs using hf_jobs(\"uv\", {...}), NOT bash trl-jobs commands. The script parameter accepts Python code directly. Do NOT save to local files unless the user explicitly requests it. Pass the script content as a string to hf_jobs(). If user asks to \"train a model\", \"fine-tune\", or similar requests, you MUST create the training script AND submit the job immediately using hf_jobs()",
+    "Always include Trackio - Every training script should include Trackio for real-time monitoring. Use example scripts in scripts/ as templates",
+    "Provide job details after submission - After submitting, provide job ID, monitoring URL, estimated time, and note that the user can request status checks later",
+    "Use example scripts as templates - Reference scripts/train_sft_example.py, scripts/train_dpo_example.py, etc. as starting points",
+    "Create the training script with Trackio included (use scripts/train_sft_example.py as template)",
+    "Submit immediately using hf_jobs() MCP tool with script content inline - don't save to file unless user requests",
+    "Report submission with job ID, monitoring URL, and estimated time",
+    "Wait for user to request status checks - don't poll automatically",
+    "Command order is hf jobs uv run (NOT hf jobs run uv)",
+    "All flags (--flavor, --timeout, --secrets) must come BEFORE the script URL",
+    "Use --secrets (plural), not --secret",
+    "Script URL must be the last positional argument",
+    "Reduce batch size: per_device_train_batch_size=1, increase gradient_accumulation_steps=8. Effective batch size is per_device_train_batch_size x gradient_accumulation_steps. For best performance keep effective batch size close to 128. ",
+    "Enable: gradient_checkpointing=True",
+    "Upgrade hardware: t4-small → l4x1, a10g-small → a10g-large etc. ",
+    "Validate first with dataset inspector:",
+    "Check output for compatibility markers (✓ READY, ✗ NEEDS MAPPING, ✗ INCOMPATIBLE)",
+    "Apply mapping code from inspector output if needed",
+    "Check logs for actual runtime: hf_jobs(\"logs\", {\"job_id\": \"...\"})",
+    "Increase timeout with buffer: \"timeout\": \"3h\" (add 30% to estimated time)",
+    "Or reduce training: lower num_train_epochs, use smaller dataset, enable max_steps",
+    "Save checkpoints: save_strategy=\"steps\", save_steps=500, hub_strategy=\"every_save\"",
+    "Add to job: secrets={\"HF_TOKEN\": \"$HF_TOKEN\"}",
+    "Add to config: push_to_hub=True, hub_model_id=\"username/model-name\"",
+    "Verify auth: mcp__huggingface__hf_whoami()",
+    "Check token has write permissions and repo exists (or set hub_private_repo=True)",
+    "Submit scripts inline - The script parameter accepts Python code directly; no file saving required unless user requests",
+    "Jobs are asynchronous - Don't wait/poll; let user check when ready",
+    "Always set timeout - Default 30 min is insufficient; minimum 1-2 hours recommended",
+    "Always enable Hub push - Environment is ephemeral; without push, all results lost",
+    "Include Trackio - Use example scripts as templates for real-time monitoring",
+    "Offer cost estimation - When parameters are known, use scripts/estimate_cost.py",
+    "Use UV scripts (Approach 1) - Default to hf_jobs(\"uv\", {...}) with inline scripts; TRL maintained scripts for standard training; avoid bash trl-jobs commands in Claude Code",
+    "Use hf_doc_fetch/hf_doc_search for latest TRL documentation",
+    "Validate dataset format before training with dataset inspector (see Dataset Validation section)",
+    "Choose appropriate hardware for model size; use LoRA for models >7B",
+    "Sequence Length Configuration",
+    "Install",
+    "Required Configuration",
+    "Trackio Configuration Defaults",
+    "Example Workflow"
+  ],
+  "tool_dependencies": [
+    "AskUserQuestion",
+    "Bash",
+    "Glob",
+    "Grep",
+    "Read",
+    "Task",
+    "WebFetch",
+    "Write"
+  ],
+  "reference_topics": [
+    {
+      "topic": "GGUF Conversion Guide",
+      "summary": "After training models with TRL on Hugging Face Jobs, convert them to **GGUF format** for use with llama.cpp, Ollama, LM Studio, and other local inference tools. **This guide provides production-ready, tested code based on successful conversions.** All critical dependencies and build steps are included. **GGUF** (GPT-Generated Unified Format):"
+    },
+    {
+      "topic": "Hardware Selection Guide",
+      "summary": "Choosing the right hardware (flavor) is critical for cost-effective training. - `cpu-basic` - Basic CPU, testing only - `cpu-upgrade` - Enhanced CPU"
+    },
+    {
+      "topic": "Saving Training Results to Hugging Face Hub",
+      "summary": "**⚠️ CRITICAL:** Training environments are ephemeral. ALL results are lost when a job completes unless pushed to the Hub. When running on Hugging Face Jobs: - Environment is temporary"
+    },
+    {
+      "topic": "Reliability Principles for Training Jobs",
+      "summary": "These principles are derived from real production failures and successful fixes. Following them prevents common failure modes and ensures reliable job execution. **Rule:** Never assume repos, datasets, or resources exist. Verify with tools first. - **Non-existent datasets** - Jobs fail immediately when dataset doesn't exist"
+    },
+    {
+      "topic": "Trackio Integration for TRL Training",
+      "summary": "**Trackio** is an experiment tracking library that provides real-time metrics visualization for remote training on Hugging Face Jobs infrastructure. ⚠️ **IMPORTANT**: For Jobs training (remote cloud GPUs): - Training happens on ephemeral cloud runners (not your local machine)"
+    },
+    {
+      "topic": "TRL Training Methods Overview",
+      "summary": "TRL (Transformer Reinforcement Learning) provides multiple training methods for fine-tuning and aligning language models. This reference provides a brief overview of each method. **What it is:** Standard instruction tuning with supervised learning on demonstration data. **When to use:**"
+    },
+    {
+      "topic": "Common Training Patterns",
+      "summary": "This guide provides common training patterns and use cases for TRL on Hugging Face Jobs. Automatic distributed training across multiple GPUs. TRL/Accelerate handles distribution automatically: ```python"
+    },
+    {
+      "topic": "Troubleshooting TRL Training Jobs",
+      "summary": "Common issues and solutions when training with TRL on Hugging Face Jobs. **Problem:** Job starts but hangs at the training step - never progresses, never times out, just sits there. **Root Cause:** Using `eval_strategy=\"steps\"` or `eval_strategy=\"epoch\"` without providing an `eval_dataset` to the trainer."
+    }
+  ],
+  "script_descriptions": [
+    {
+      "file": "convert_to_gguf.py",
+      "language": "python",
+      "purpose": "GGUF Conversion Script - Production Ready"
+    },
+    {
+      "file": "dataset_inspector.py",
+      "language": "python",
+      "purpose": "Dataset Format Inspector for TRL Training (LLM-Optimized Output)"
+    },
+    {
+      "file": "estimate_cost.py",
+      "language": "python",
+      "purpose": "Estimate training time and cost for TRL jobs."
+    },
+    {
+      "file": "train_dpo_example.py",
+      "language": "python",
+      "purpose": "Production-ready DPO training example for preference learning."
+    },
+    {
+      "file": "train_grpo_example.py",
+      "language": "python",
+      "purpose": "Production-ready GRPO training example for online RL."
+    },
+    {
+      "file": "train_sft_example.py",
+      "language": "python",
+      "purpose": "Production-ready SFT training example with all best practices."
+    }
+  ],
+  "confidence_score": 0.91,
+  "upstream_structure": [
+    "references/ (8 files)",
+    "scripts/ (13 files)"
+  ],
+  "extracted_at": "2026-02-04T11:36:09Z"
+}

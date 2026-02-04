@@ -1,0 +1,47 @@
+{
+  "skill_name": "using-superpowers",
+  "skill_type": "guide",
+  "skill_type_scores": {
+    "builder": 2,
+    "guide": 3,
+    "automation": 2,
+    "analyzer": 1,
+    "validator": 0
+  },
+  "description": "Use when starting any conversation - establishes how to find and use skills, requiring Skill tool invocation before ANY response including clarifying questions",
+  "domain": {
+    "primary_domain": "Version Control",
+    "subdomains": [],
+    "expertise_level": "intermediate"
+  },
+  "key_concepts": [
+    "In Claude Code:",
+    "In other environments:",
+    "Invoke relevant or requested skills BEFORE any response or action.",
+    "Process skills first",
+    "Implementation skills second",
+    "Rigid",
+    "Flexible",
+    "How to Access Skills",
+    "Using Skills",
+    "The Rule",
+    "Red Flags",
+    "Skill Priority",
+    "Skill Types",
+    "User Instructions"
+  ],
+  "key_workflows": [
+    "Process skills first (brainstorming, debugging) - these determine HOW to approach the task",
+    "Implementation skills second (frontend-design, mcp-builder) - these guide execution"
+  ],
+  "tool_dependencies": [
+    "Read",
+    "Task",
+    "Write"
+  ],
+  "reference_topics": [],
+  "script_descriptions": [],
+  "confidence_score": 0.43,
+  "upstream_structure": [],
+  "extracted_at": "2026-02-04T11:36:09Z"
+}

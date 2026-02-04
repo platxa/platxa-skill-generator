@@ -1,0 +1,66 @@
+{
+  "skill_name": "dispatching-parallel-agents",
+  "skill_type": "builder",
+  "skill_type_scores": {
+    "builder": 3,
+    "guide": 1,
+    "automation": 1,
+    "analyzer": 2,
+    "validator": 2
+  },
+  "description": "Use when facing 2+ independent tasks that can be worked on without shared state or sequential dependencies",
+  "domain": {
+    "primary_domain": "Version Control",
+    "subdomains": [],
+    "expertise_level": "intermediate"
+  },
+  "key_concepts": [
+    "Core principle:",
+    "Use when:",
+    "Don't use when:",
+    "Specific scope:",
+    "Clear goal:",
+    "Constraints:",
+    "Expected output:",
+    "Focused",
+    "Self-contained",
+    "Specific about output",
+    "❌ Too broad:",
+    "✅ Specific:",
+    "❌ No context:",
+    "✅ Context:",
+    "❌ No constraints:"
+  ],
+  "key_workflows": [
+    "Focused - One clear problem domain",
+    "Self-contained - All context needed to understand the problem",
+    "Specific about output - What should the agent return?",
+    "\"should abort tool with partial output capture\" - expects 'interrupted at' in message",
+    "\"should handle mixed completed and aborted tools\" - fast tool aborted instead of completed",
+    "\"should properly track pendingToolCount\" - expects 3 results but gets 0",
+    "Read the test file and understand what each test verifies",
+    "Identify root cause - timing issues or actual bugs?",
+    "Fix by:",
+    "Parallelization - Multiple investigations happen simultaneously",
+    "Focus - Each agent has narrow scope, less context to track",
+    "Independence - Agents don't interfere with each other",
+    "Speed - 3 problems solved in time of 1",
+    "Review each summary - Understand what changed",
+    "Check for conflicts - Did agents edit same code?",
+    "Run full suite - Verify all fixes work together",
+    "Spot check - Agents can make systematic errors",
+    "2. Create Focused Agent Tasks"
+  ],
+  "tool_dependencies": [
+    "AskUserQuestion",
+    "Bash",
+    "Read",
+    "Task",
+    "Write"
+  ],
+  "reference_topics": [],
+  "script_descriptions": [],
+  "confidence_score": 0.46,
+  "upstream_structure": [],
+  "extracted_at": "2026-02-04T11:36:09Z"
+}

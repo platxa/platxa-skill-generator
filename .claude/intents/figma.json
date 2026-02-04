@@ -1,0 +1,60 @@
+{
+  "skill_name": "figma",
+  "skill_type": "guide",
+  "skill_type_scores": {
+    "builder": 2,
+    "guide": 3,
+    "automation": 0,
+    "analyzer": 0,
+    "validator": 2
+  },
+  "description": "Use the Figma MCP server to fetch design context, screenshots, variables, and assets from Figma, and to translate Figma nodes into production code. Trigger when a task involves Figma URLs, node IDs, design-to-code implementation, or Figma MCP setup and troubleshooting.",
+  "domain": {
+    "primary_domain": "Design Tooling",
+    "subdomains": [
+      "Backend",
+      "Version Control"
+    ],
+    "expertise_level": "intermediate"
+  },
+  "key_concepts": [
+    "Figma MCP",
+    "Figma MCP Integration Rules",
+    "Required flow (do not skip)",
+    "Implementation rules",
+    "Asset handling",
+    "Link-based prompting"
+  ],
+  "key_workflows": [
+    "Run get_design_context first to fetch the structured representation for the exact node(s)",
+    "If the response is too large or truncated, run get_metadata to get the high-level node map and then re-fetch only the required node(s) with get_design_context",
+    "Run get_screenshot for a visual reference of the node variant being implemented",
+    "Only after you have both get_design_context and get_screenshot, download any assets needed and start implementation",
+    "Translate the output (usually React + Tailwind) into this project's conventions, styles and framework. Reuse the project's color tokens, components, and typography wherever possible",
+    "Validate against Figma for 1:1 look and behavior before marking complete",
+    "Required flow (do not skip)"
+  ],
+  "tool_dependencies": [
+    "AskUserQuestion",
+    "Read",
+    "WebFetch"
+  ],
+  "reference_topics": [
+    {
+      "topic": "Figma MCP config reference",
+      "summary": "Use this snippet to register the Figma MCP server in `~/.codex/config.toml` as a streamable HTTP server with bearer auth pulled from your env. ```toml [mcp_servers.figma]"
+    },
+    {
+      "topic": "Figma MCP tools and prompt patterns",
+      "summary": "Quick reference for the Figma MCP toolset, when to use each tool, and prompt examples to steer output toward your stack. - `get_design_context` (Figma Design, Figma Make): Primary tool. Returns structured design data and default React + Tailwind code. Selection-based prompting works on desktop; the remote server uses a frame/layer link to extract the node ID. - `get_variable_defs` (Figma Design): Lists variables/styles (colors, spacing, typography) used in the selection. Useful to align with tokens."
+    }
+  ],
+  "script_descriptions": [],
+  "confidence_score": 0.62,
+  "upstream_structure": [
+    "references/ (2 files)",
+    "agents/ (1 files)",
+    "assets/ (3 files)"
+  ],
+  "extracted_at": "2026-02-04T11:36:09Z"
+}

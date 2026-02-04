@@ -1,0 +1,47 @@
+{
+  "skill_name": "requesting-code-review",
+  "skill_type": "validator",
+  "skill_type_scores": {
+    "builder": 1,
+    "guide": 0,
+    "automation": 3,
+    "analyzer": 3,
+    "validator": 12
+  },
+  "description": "Use when completing tasks, implementing major features, or before merging to verify work meets requirements",
+  "domain": {
+    "primary_domain": "Version Control",
+    "subdomains": [],
+    "expertise_level": "intermediate"
+  },
+  "key_concepts": [
+    "Core principle:",
+    "Mandatory:",
+    "Optional but valuable:",
+    "1. Get git SHAs:",
+    "2. Dispatch code-reviewer subagent:",
+    "Placeholders:",
+    "3. Act on feedback:",
+    "Subagent-Driven Development:",
+    "Executing Plans:",
+    "Ad-Hoc Development:",
+    "Never:",
+    "If reviewer wrong:",
+    "Requesting Code Review",
+    "When to Request Review",
+    "How to Request"
+  ],
+  "key_workflows": [
+    "Integration with Workflows"
+  ],
+  "tool_dependencies": [
+    "Bash",
+    "Read",
+    "Task"
+  ],
+  "reference_topics": [],
+  "script_descriptions": [],
+  "confidence_score": 0.46,
+  "upstream_structure": [],
+  "extracted_at": "2026-02-04T11:36:09Z"
+}

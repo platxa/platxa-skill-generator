@@ -58,17 +58,16 @@ fi
 echo "Validating frontmatter: $(basename "$SKILL_DIR")"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
-# Extract frontmatter
-CONTENT=$(cat "$SKILL_MD")
-
 # Check starts with ---
-if ! echo "$CONTENT" | head -1 | grep -q '^---$'; then
+# Read first line directly from file to avoid SIGPIPE with pipefail on large files
+read -r FIRST_LINE < "$SKILL_MD"
+if [[ "$FIRST_LINE" != "---" ]]; then
     error "File must start with --- (frontmatter delimiter)"
     exit 1
 fi
 
 # Extract frontmatter content (between first and second ---)
-FRONTMATTER=$(echo "$CONTENT" | sed -n '2,/^---$/p' | sed '$d')
+FRONTMATTER=$(sed -n '2,/^---$/p' "$SKILL_MD" | sed '$d')
 
 if [[ -z "$FRONTMATTER" ]]; then
     error "Empty frontmatter"

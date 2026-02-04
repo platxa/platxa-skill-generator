@@ -1,0 +1,48 @@
+{
+  "skill_name": "vercel-react-native-skills",
+  "skill_type": "guide",
+  "skill_type_scores": {
+    "builder": 2,
+    "guide": 5,
+    "automation": 0,
+    "analyzer": 0,
+    "validator": 0
+  },
+  "description": "",
+  "domain": {
+    "primary_domain": "Frontend",
+    "subdomains": [],
+    "expertise_level": "intermediate"
+  },
+  "key_concepts": [
+    "React Native Skills",
+    "When to Apply",
+    "Rule Categories by Priority",
+    "Quick Reference",
+    "1. List Performance (CRITICAL)",
+    "2. Animation (HIGH)",
+    "3. Navigation (HIGH)",
+    "4. UI Patterns (HIGH)",
+    "5. State Management (MEDIUM)",
+    "6. Rendering (MEDIUM)",
+    "7. Monorepo (MEDIUM)",
+    "8. Configuration (LOW)",
+    "How to Use",
+    "Full Compiled Document"
+  ],
+  "key_workflows": [
+    "8. Configuration (LOW)"
+  ],
+  "tool_dependencies": [
+    "Bash",
+    "Read",
+    "Write"
+  ],
+  "reference_topics": [],
+  "script_descriptions": [],
+  "confidence_score": 0.33,
+  "upstream_structure": [
+    "rules/ (38 files)"
+  ],
+  "extracted_at": "2026-02-04T11:36:09Z"
+}

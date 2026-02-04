@@ -1,0 +1,60 @@
+{
+  "skill_name": "xlsx",
+  "skill_type": "builder",
+  "skill_type_scores": {
+    "builder": 6,
+    "guide": 6,
+    "automation": 1,
+    "analyzer": 4,
+    "validator": 4
+  },
+  "description": "Comprehensive spreadsheet creation, editing, and analysis with support for formulas, formatting, data analysis, and visualization. When Claude needs to work with spreadsheets (.xlsx, .xlsm, .csv, .tsv, etc) for: (1) Creating new spreadsheets with formulas and formatting, (2) Reading or analyzing data, (3) Modify existing spreadsheets while preserving formulas, (4) Data analysis and visualization in spreadsheets, or (5) Recalculating formulas",
+  "domain": {
+    "primary_domain": "Data Management",
+    "subdomains": [
+      "Document Processing",
+      "Version Control"
+    ],
+    "expertise_level": "intermediate"
+  },
+  "key_concepts": [
+    "Blue text (RGB: 0,0,255)",
+    "Black text (RGB: 0,0,0)",
+    "Green text (RGB: 0,128,0)",
+    "Red text (RGB: 255,0,0)",
+    "Yellow background (RGB: 255,255,0)",
+    "Years",
+    "Currency",
+    "Zeros",
+    "Percentages",
+    "Multiples",
+    "Negative numbers",
+    "LibreOffice Required for Formula Recalculation",
+    "pandas",
+    "Choose tool",
+    "Create/Load"
+  ],
+  "key_workflows": [
+    "Choose tool: pandas for data, openpyxl for formulas/formatting",
+    "Create/Load: Create new workbook or load existing file",
+    "Modify: Add/edit data, formulas, and formatting",
+    "Save: Write to file",
+    "Recalculate formulas (MANDATORY IF USING FORMULAS): Use the recalc.py script",
+    "Verify and fix any errors: ",
+    "Excel File Workflows",
+    "Common Workflow"
+  ],
+  "tool_dependencies": [
+    "Bash",
+    "Glob",
+    "Grep",
+    "Read",
+    "Task",
+    "Write"
+  ],
+  "reference_topics": [],
+  "script_descriptions": [],
+  "confidence_score": 0.46,
+  "upstream_structure": [],
+  "extracted_at": "2026-02-04T11:36:10Z"
+}

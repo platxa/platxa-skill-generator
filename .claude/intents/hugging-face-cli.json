@@ -1,0 +1,63 @@
+{
+  "skill_name": "hugging-face-cli",
+  "skill_type": "builder",
+  "skill_type_scores": {
+    "builder": 12,
+    "guide": 2,
+    "automation": 2,
+    "analyzer": 1,
+    "validator": 1
+  },
+  "description": "Execute Hugging Face Hub operations using the `hf` CLI. Use when the user needs to download models/datasets/spaces, upload files to Hub repositories, create repos, manage local cache, or run compute jobs on HF infrastructure. Covers authentication, file transfers, repository creation, cache operations, and cloud compute.",
+  "domain": {
+    "primary_domain": "ML/AI",
+    "subdomains": [
+      "DevOps",
+      "Security",
+      "Data Management"
+    ],
+    "expertise_level": "intermediate"
+  },
+  "key_concepts": [
+    "GPU Flavors:",
+    "Complete command reference",
+    "Workflow examples",
+    "Hugging Face CLI",
+    "Quick Command Reference",
+    "Core Commands",
+    "Authentication",
+    "Download",
+    "Upload",
+    "Repository Management",
+    "Delete Files from Repo",
+    "Cache Management",
+    "Browse Hub",
+    "Models",
+    "Datasets"
+  ],
+  "key_workflows": [],
+  "tool_dependencies": [
+    "Bash",
+    "Glob",
+    "Grep",
+    "Read",
+    "Task",
+    "Write"
+  ],
+  "reference_topics": [
+    {
+      "topic": "HF CLI Command Reference",
+      "summary": "```bash hf auth login                    # Interactive login hf auth login --token $HF_TOKEN  # Non-interactive"
+    },
+    {
+      "topic": "HF CLI Workflows & Examples",
+      "summary": "```bash hf download meta-llama/Llama-3.2-1B-Instruct                          # To cache hf download meta-llama/Llama-3.2-1B-Instruct --local-dir ./models     # To directory"
+    }
+  ],
+  "script_descriptions": [],
+  "confidence_score": 0.68,
+  "upstream_structure": [
+    "references/ (2 files)"
+  ],
+  "extracted_at": "2026-02-04T11:36:09Z"
+}

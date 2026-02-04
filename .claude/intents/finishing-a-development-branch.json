@@ -1,0 +1,58 @@
+{
+  "skill_name": "finishing-a-development-branch",
+  "skill_type": "validator",
+  "skill_type_scores": {
+    "builder": 1,
+    "guide": 12,
+    "automation": 3,
+    "analyzer": 2,
+    "validator": 13
+  },
+  "description": "Use when implementation is complete, all tests pass, and you need to decide how to integrate the work - guides completion of development work by presenting structured options for merge, PR, or cleanup",
+  "domain": {
+    "primary_domain": "Version Control",
+    "subdomains": [
+      "Testing"
+    ],
+    "expertise_level": "intermediate"
+  },
+  "key_concepts": [
+    "Core principle:",
+    "Announce at start:",
+    "Before presenting options, verify tests pass:",
+    "If tests fail:",
+    "If tests pass:",
+    "Don't add explanation",
+    "Don't cleanup worktree.",
+    "Confirm first:",
+    "For Options 1, 2, 4:",
+    "For Option 3:",
+    "Skipping test verification",
+    "Problem:",
+    "Fix:",
+    "Open-ended questions",
+    "Automatic worktree cleanup"
+  ],
+  "key_workflows": [
+    "Merge back to <base-branch> locally",
+    "Push and create a Pull Request",
+    "Keep the branch as-is (I'll handle it later)",
+    "Discard this work",
+    "The Process",
+    "Step 1: Verify Tests",
+    "Step 2: Determine Base Branch",
+    "Step 3: Present Options",
+    "Step 4: Execute Choice",
+    "Step 5: Cleanup Worktree"
+  ],
+  "tool_dependencies": [
+    "Bash",
+    "Read",
+    "Task"
+  ],
+  "reference_topics": [],
+  "script_descriptions": [],
+  "confidence_score": 0.46,
+  "upstream_structure": [],
+  "extracted_at": "2026-02-04T11:36:09Z"
+}
