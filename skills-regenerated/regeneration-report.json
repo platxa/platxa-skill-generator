@@ -1,0 +1,92 @@
+{
+  "generated_at": "2026-02-04T15:51:30.131204+00:00",
+  "total": 14,
+  "success": 14,
+  "failed": 0,
+  "skills": [
+    {
+      "skill_name": "atlas",
+      "skill_type": "analyzer",
+      "confidence": 0.77,
+      "status": "success"
+    },
+    {
+      "skill_name": "hugging-face-jobs",
+      "skill_type": "automation",
+      "confidence": 0.91,
+      "status": "success"
+    },
+    {
+      "skill_name": "hugging-face-model-trainer",
+      "skill_type": "guide",
+      "confidence": 0.91,
+      "status": "success"
+    },
+    {
+      "skill_name": "hugging-face-paper-publisher",
+      "skill_type": "guide",
+      "confidence": 0.8,
+      "status": "success"
+    },
+    {
+      "skill_name": "imagegen",
+      "skill_type": "builder",
+      "confidence": 0.88,
+      "status": "success"
+    },
+    {
+      "skill_name": "jupyter-notebook",
+      "skill_type": "builder",
+      "confidence": 0.88,
+      "status": "success"
+    },
+    {
+      "skill_name": "netlify-deploy",
+      "skill_type": "automation",
+      "confidence": 0.76,
+      "status": "success"
+    },
+    {
+      "skill_name": "playwright",
+      "skill_type": "guide",
+      "confidence": 0.8,
+      "status": "success"
+    },
+    {
+      "skill_name": "render-deploy",
+      "skill_type": "automation",
+      "confidence": 0.76,
+      "status": "success"
+    },
+    {
+      "skill_name": "security-ownership-map",
+      "skill_type": "analyzer",
+      "confidence": 0.83,
+      "status": "success"
+    },
+    {
+      "skill_name": "skill-creator",
+      "skill_type": "builder",
+      "confidence": 0.83,
+      "status": "success"
+    },
+    {
+      "skill_name": "sora",
+      "skill_type": "builder",
+      "confidence": 0.88,
+      "status": "success"
+    },
+    {
+      "skill_name": "speech",
+      "skill_type": "automation",
+      "confidence": 0.88,
+      "status": "success"
+    },
+    {
+      "skill_name": "verification-before-completion",
+      "skill_type": "validator",
+      "confidence": 0.46,
+      "status": "success"
+    }
+  ]
+}
