@@ -40,7 +40,6 @@ usage() {
 VERBOSE=false
 JSON_OUTPUT=false
 SKILL_DIR=""
-PROFILE=""
 
 while [[ $# -gt 0 ]]; do
     case $1 in
@@ -53,10 +52,6 @@ while [[ $# -gt 0 ]]; do
             ;;
         --json)
             JSON_OUTPUT=true
-            shift
-            ;;
-        --profile=*)
-            PROFILE="$1"
             shift
             ;;
         *)
@@ -78,25 +73,6 @@ SKILL_DIR=$(cd "$SKILL_DIR" 2>/dev/null && pwd) || {
 }
 
 SKILL_NAME=$(basename "$SKILL_DIR")
-
-# Auto-detect profile from manifest.yaml if not explicitly provided.
-# External (imported) skills use 'spec' profile since we don't control their
-# section structure. Local skills use 'strict' profile.
-if [[ -z "$PROFILE" ]]; then
-    MANIFEST="$(cd "$SCRIPT_DIR/.." && pwd)/skills/manifest.yaml"
-    if [[ -f "$MANIFEST" ]] && command -v python3 &>/dev/null; then
-        IS_EXTERNAL=$(python3 -c "
-import yaml, sys
-with open('$MANIFEST') as f:
-    m = yaml.safe_load(f)
-skill = m.get('skills', {}).get('$SKILL_NAME', {})
-print('yes' if skill.get('source') and not skill.get('local') else 'no')
-" 2>/dev/null || echo "no")
-        if [[ "$IS_EXTERNAL" == "yes" ]]; then
-            PROFILE="--profile=spec"
-        fi
-    fi
-fi
 
 run_validator() {
     local name="$1"
@@ -181,11 +157,7 @@ fi
 
 # 4. Main skill validation (if exists)
 if [[ -x "$SCRIPT_DIR/validate-skill.sh" ]]; then
-    if [[ -n "$PROFILE" ]]; then
-        run_validator "Skill" "$SCRIPT_DIR/validate-skill.sh" "$SKILL_DIR" "$PROFILE" || OVERALL_PASS=false
-    else
-        run_validator "Skill" "$SCRIPT_DIR/validate-skill.sh" "$SKILL_DIR" || OVERALL_PASS=false
-    fi
+    run_validator "Skill" "$SCRIPT_DIR/validate-skill.sh" "$SKILL_DIR" || OVERALL_PASS=false
 else
     RESULTS["Skill"]="SKIP"
 fi
