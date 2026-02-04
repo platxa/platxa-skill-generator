@@ -1,0 +1,60 @@
+{
+  "skill_name": "receiving-code-review",
+  "skill_type": "analyzer",
+  "skill_type_scores": {
+    "builder": 1,
+    "guide": 3,
+    "automation": 1,
+    "analyzer": 15,
+    "validator": 3
+  },
+  "description": "Use when receiving code review feedback, before implementing suggestions, especially if feedback seems unclear or technically questionable - requires technical rigor and verification, not performative agreement or blind implementation",
+  "domain": {
+    "primary_domain": "Backend",
+    "subdomains": [],
+    "expertise_level": "intermediate"
+  },
+  "key_concepts": [
+    "Core principle:",
+    "NEVER:",
+    "INSTEAD:",
+    "Example:",
+    "Trusted",
+    "Still ask",
+    "No performative agreement",
+    "Skip to action",
+    "your human partner's rule:",
+    "How to push back:",
+    "Signal if uncomfortable pushing back out loud:",
+    "Why no thanks:",
+    "If you catch yourself about to write \"Thanks\":",
+    "Performative Agreement (Bad):",
+    "Technical Verification (Good):"
+  ],
+  "key_workflows": [
+    "READ: Complete feedback without reacting",
+    "UNDERSTAND: Restate requirement in own words (or ask)",
+    "VERIFY: Check against codebase reality",
+    "EVALUATE: Technically sound for THIS codebase?",
+    "RESPOND: Technical acknowledgment or reasoned pushback",
+    "IMPLEMENT: One item at a time, test each",
+    "Check: Technically correct for THIS codebase?",
+    "Check: Breaks existing functionality?",
+    "Check: Reason for current implementation?",
+    "Check: Works on all platforms/versions?",
+    "Check: Does reviewer understand full context?",
+    "Clarify anything unclear FIRST",
+    "Then implement in this order:",
+    "Test each fix individually",
+    "Verify no regressions"
+  ],
+  "tool_dependencies": [
+    "Bash",
+    "Read"
+  ],
+  "reference_topics": [],
+  "script_descriptions": [],
+  "confidence_score": 0.46,
+  "upstream_structure": [],
+  "extracted_at": "2026-02-04T11:36:09Z"
+}

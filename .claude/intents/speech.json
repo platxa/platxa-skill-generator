@@ -1,0 +1,115 @@
+{
+  "skill_name": "speech",
+  "skill_type": "automation",
+  "skill_type_scores": {
+    "builder": 5,
+    "guide": 6,
+    "automation": 12,
+    "analyzer": 1,
+    "validator": 2
+  },
+  "description": "Use when the user asks for text-to-speech narration or voiceover, accessibility reads, audio prompts, or batch speech generation via the OpenAI Audio API; run the bundled CLI (`scripts/text_to_speech.py`) with built-in voices and require `OPENAI_API_KEY` for live calls. Custom voice creation is out of scope.",
+  "domain": {
+    "primary_domain": "Media Processing",
+    "subdomains": [
+      "Version Control",
+      "Backend"
+    ],
+    "expertise_level": "intermediate"
+  },
+  "key_concepts": [
+    "batch",
+    "single",
+    "`references/cli.md`",
+    "`references/audio-api.md`",
+    "`references/voice-directions.md`",
+    "`references/prompting.md`",
+    "`references/sample-prompts.md`",
+    "`references/narration.md`",
+    "`references/voiceover.md`",
+    "`references/ivr.md`",
+    "`references/accessibility.md`",
+    "`references/codex-network.md`",
+    "Speech Generation Skill",
+    "When to use",
+    "Decision tree (single vs batch)"
+  ],
+  "key_workflows": [
+    "Decide intent: single vs batch (see decision tree above)",
+    "Collect inputs up front: exact text (verbatim), desired voice, delivery style, format, and any constraints",
+    "If batch: write a temporary JSONL under tmp/ (one job per line), run once, then delete the JSONL",
+    "Augment instructions into a short labeled spec without rewriting the input text",
+    "Run the bundled CLI (scripts/text_to_speech.py) with sensible defaults (see references/cli.md)",
+    "For important clips, validate: intelligibility, pacing, pronunciation, and adherence to constraints",
+    "Iterate with a single targeted change (voice, speed, or instructions), then re-check",
+    "Save/return final outputs and note the final text + instructions + flags used",
+    "Create an API key in the OpenAI platform UI: https://platform.openai.com/api-keys",
+    "Set OPENAI_API_KEY as an environment variable in their system",
+    "Offer to guide them through setting the environment variable for their OS/shell if needed",
+    "Workflow",
+    "Dependencies (install if missing)"
+  ],
+  "tool_dependencies": [
+    "AskUserQuestion",
+    "Bash",
+    "Read",
+    "Write"
+  ],
+  "reference_topics": [
+    {
+      "topic": "Accessibility read defaults",
+      "summary": "- Voice: `cedar` - Format: `mp3` or `wav` - Speed: `0.95` to `1.0`"
+    },
+    {
+      "topic": "Audio Speech API quick reference",
+      "summary": "- Create speech: `POST /v1/audio/speech` - `gpt-4o-mini-tts-2025-12-15` - `gpt-4o-mini-tts`"
+    },
+    {
+      "topic": "CLI reference (`scripts/text_to_speech.py`)",
+      "summary": "This file contains the \"command catalog\" for the bundled speech generation CLI. Keep `SKILL.md` as overview-first; put verbose CLI details here. - `speak`: generate a single audio file - `speak-batch`: run many jobs from a JSONL file (one job per line)"
+    },
+    {
+      "topic": "Codex network approvals / sandbox notes",
+      "summary": "This guidance is intentionally isolated from `SKILL.md` because it can vary by environment and may become stale. Prefer the defaults in your environment when in doubt. Speech generation uses the OpenAI Audio API, so the CLI needs outbound network access. In many Codex setups, network access is disabled by default (especially under stricter sandbox modes), and/or the approval policy may require confirmation before networked commands run. If you trust the repo and want fewer prompts, enable network access for the relevant sandbox mode and relax the approval policy."
+    },
+    {
+      "topic": "IVR / phone prompt defaults",
+      "summary": "- Voice: `cedar` (clear) or `marin` (brighter) - Format: `wav` - Speed: `0.9` to `1.0`"
+    },
+    {
+      "topic": "Narration / explainer defaults",
+      "summary": "- Voice: `cedar` - Format: `mp3` - Speed: `1.0`"
+    },
+    {
+      "topic": "Instructioning best practices (TTS)",
+      "summary": "- Structure - Specificity - Avoiding conflicts"
+    },
+    {
+      "topic": "Sample instruction templates (copy/paste)",
+      "summary": "These are short instruction blocks. Use only the lines you need and keep them consistent with the input text. ``` Voice Affect: Warm and composed."
+    },
+    {
+      "topic": "Voice directions",
+      "summary": "Use only the lines you need. Keep directions concise and aligned to the input text. ``` Voice Affect: <overall character and texture>"
+    },
+    {
+      "topic": "Product demo / voiceover defaults",
+      "summary": "- Voice: `cedar` (neutral) or `marin` (brighter) - Format: `wav` for video sync, `mp3` for quick review - Speed: `1.0`"
+    }
+  ],
+  "script_descriptions": [
+    {
+      "file": "text_to_speech.py",
+      "language": "python",
+      "purpose": "Generate speech audio with the OpenAI Audio API (TTS)."
+    }
+  ],
+  "confidence_score": 0.88,
+  "upstream_structure": [
+    "references/ (10 files)",
+    "scripts/ (3 files)",
+    "agents/ (1 files)",
+    "assets/ (2 files)"
+  ],
+  "extracted_at": "2026-02-04T11:36:09Z"
+}

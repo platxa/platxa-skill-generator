@@ -1,0 +1,68 @@
+{
+  "skill_name": "webapp-testing",
+  "skill_type": "validator",
+  "skill_type_scores": {
+    "builder": 1,
+    "guide": 3,
+    "automation": 1,
+    "analyzer": 1,
+    "validator": 21
+  },
+  "description": "Toolkit for interacting with and testing local web applications using Playwright. Supports verifying frontend functionality, debugging UI behavior, capturing browser screenshots, and viewing browser logs.",
+  "domain": {
+    "primary_domain": "Browser Automation",
+    "subdomains": [
+      "Frontend",
+      "Testing"
+    ],
+    "expertise_level": "intermediate"
+  },
+  "key_concepts": [
+    "Helper Scripts Available",
+    "Always run scripts with `--help` first",
+    "Single server:",
+    "Multiple servers (e.g., backend + frontend):",
+    "Inspect rendered DOM",
+    "Identify selectors",
+    "Execute actions",
+    "Don't",
+    "Use bundled scripts as black boxes",
+    "examples/",
+    "Web Application Testing",
+    "Decision Tree: Choosing Your Approach",
+    "Example: Using with_server.py",
+    "Reconnaissance-Then-Action Pattern",
+    "Common Pitfall"
+  ],
+  "key_workflows": [
+    "Navigate and wait for networkidle",
+    "Take screenshot or inspect DOM",
+    "Identify selectors from rendered state",
+    "Execute actions with discovered selectors",
+    "Inspect rendered DOM:",
+    "Identify selectors from inspection results",
+    "Execute actions using discovered selectors"
+  ],
+  "tool_dependencies": [
+    "Bash",
+    "Read",
+    "Task",
+    "WebFetch",
+    "WebSearch",
+    "Write"
+  ],
+  "reference_topics": [],
+  "script_descriptions": [
+    {
+      "file": "with_server.py",
+      "language": "python",
+      "purpose": "Start one or more servers, wait for them to be ready, run a command, then clean up."
+    }
+  ],
+  "confidence_score": 0.58,
+  "upstream_structure": [
+    "scripts/ (3 files)",
+    "examples/ (3 files)"
+  ],
+  "extracted_at": "2026-02-04T11:36:09Z"
+}

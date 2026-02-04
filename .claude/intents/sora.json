@@ -1,0 +1,109 @@
+{
+  "skill_name": "sora",
+  "skill_type": "builder",
+  "skill_type_scores": {
+    "builder": 16,
+    "guide": 3,
+    "automation": 12,
+    "analyzer": 0,
+    "validator": 1
+  },
+  "description": "Use when the user asks to generate, remix, poll, list, download, or delete Sora videos via OpenAI\\u2019s video API using the bundled CLI (`scripts/sora.py`), including requests like \\u201cgenerate AI video,\\u201d \\u201cSora,\\u201d \\u201cvideo remix,\\u201d \\u201cdownload video/thumbnail/spritesheet,\\u201d and batch video generation; requires `OPENAI_API_KEY` and Sora API access.",
+  "domain": {
+    "primary_domain": "Media Processing",
+    "subdomains": [
+      "Backend",
+      "Version Control"
+    ],
+    "expertise_level": "intermediate"
+  },
+  "key_concepts": [
+    "video id",
+    "remix",
+    "status/poll/download",
+    "create-batch",
+    "create",
+    "create-and-poll",
+    "never modify",
+    "`references/cli.md`",
+    "`references/video-api.md`",
+    "`references/prompting.md`",
+    "`references/sample-prompts.md`",
+    "`references/cinematic-shots.md`",
+    "`references/social-ads.md`",
+    "`references/troubleshooting.md`",
+    "`references/codex-network.md`"
+  ],
+  "key_workflows": [
+    "Decide intent: create vs remix vs status/download vs batch",
+    "Collect inputs: prompt, model, size, seconds, and any input reference image",
+    "If batch: write a temporary JSONL under tmp/ (one job per line), run once, then delete the JSONL",
+    "Prefer CLI augmentation flags (--use-case, --scene, --camera, etc.) instead of pre-writing a structured prompt. If you already produced a structured prompt file, pass --no-augment to avoid double-wrapping",
+    "Run the bundled CLI (scripts/sora.py) with sensible defaults (see references/cli.md). For long prompts, prefer --prompt-file to avoid shell-escaping issues; pair with --no-augment if the prompt is already structured",
+    "For async jobs, poll until complete (or use create-and-poll)",
+    "Download assets (video/thumbnail/spritesheet) and save locally",
+    "Remove intermediate files created during invocation (for example prompt.txt, remix_job.json, temp JSONL). If the sandbox blocks rm, skip cleanup or truncate the files without surfacing an error",
+    "Iterate with a single targeted change per prompt",
+    "Create an API key in the OpenAI platform UI: https://platform.openai.com/api-keys",
+    "Set OPENAI_API_KEY as an environment variable in their system",
+    "Offer to guide them through setting the environment variable for their OS/shell if needed",
+    "Workflow"
+  ],
+  "tool_dependencies": [
+    "AskUserQuestion",
+    "Bash",
+    "Read",
+    "WebFetch",
+    "WebSearch",
+    "Write"
+  ],
+  "reference_topics": [
+    {
+      "topic": "Cinematic shot templates",
+      "summary": "Use these for filmic, mood-forward clips. Keep one subject, one action, one camera move. - Static wide: locked-off, slow atmosphere changes - Dolly-in: slow push toward subject"
+    },
+    {
+      "topic": "CLI reference (`scripts/sora.py`)",
+      "summary": "This file contains the command catalog for the bundled video generation CLI. Keep `SKILL.md` overview-first; put verbose CLI details here. - `create`: create a new video job (async) - `create-and-poll`: create a job, poll until complete, optionally download"
+    },
+    {
+      "topic": "Codex network approvals / sandbox notes",
+      "summary": "This guidance is intentionally isolated from `SKILL.md` because it can vary by environment and may become stale. Prefer the defaults in your environment when in doubt. Video generation uses the OpenAI Video API, so the CLI needs outbound network access. In many Codex setups, network access is disabled by default (especially under stricter sandbox modes), and/or the approval policy may require confirmation before networked commands run. If you trust the repo and want fewer prompts, enable network access for the relevant sandbox mode and relax the approval policy."
+    },
+    {
+      "topic": "Prompting best practices (Sora)",
+      "summary": "- [Mindset & tradeoffs](#mindset--tradeoffs) - [API-controlled params](#api-controlled-params) - [Structure](#structure)"
+    },
+    {
+      "topic": "Sample prompts (copy/paste)",
+      "summary": "Use these as starting points. Keep user-provided requirements and constraints; do not invent new creative elements. For prompting principles (structure, invariants, iteration), see `references/prompting.md`. - [Product teaser (single shot)](#product-teaser-single-shot)"
+    },
+    {
+      "topic": "Social ad templates (4-8s)",
+      "summary": "Short clips work best with clear beats. Use 2-3 beats and keep text minimal. ``` Use case: social ad"
+    },
+    {
+      "topic": "Troubleshooting",
+      "summary": "- Cause: size not supported by model, or seconds not in 4/8/12. - Fix: match size to model; use only \"4\", \"8\", or \"12\" seconds (see `references/video-api.md`). - If you see `invalid_type` for seconds, update `scripts/sora.py` or pass a string value for `--seconds`."
+    },
+    {
+      "topic": "Sora Video API quick reference",
+      "summary": "Keep this file short; the full docs live in the OpenAI platform docs. - sora-2: faster, flexible iteration - sora-2-pro: higher fidelity, slower, more expensive"
+    }
+  ],
+  "script_descriptions": [
+    {
+      "file": "sora.py",
+      "language": "python",
+      "purpose": "Create and manage Sora videos with the OpenAI Video API."
+    }
+  ],
+  "confidence_score": 0.88,
+  "upstream_structure": [
+    "references/ (8 files)",
+    "scripts/ (3 files)",
+    "agents/ (1 files)",
+    "assets/ (2 files)"
+  ],
+  "extracted_at": "2026-02-04T11:36:09Z"
+}

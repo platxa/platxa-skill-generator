@@ -1,0 +1,58 @@
+{
+  "skill_name": "hugging-face-trackio",
+  "skill_type": "analyzer",
+  "skill_type_scores": {
+    "builder": 11,
+    "guide": 1,
+    "automation": 1,
+    "analyzer": 12,
+    "validator": 0
+  },
+  "description": "Track and visualize ML training experiments with Trackio. Use when logging metrics during training (Python API) or retrieving/analyzing logged metrics (CLI). Supports real-time dashboard visualization, HF Space syncing, and JSON output for automation.",
+  "domain": {
+    "primary_domain": "Observability",
+    "subdomains": [
+      "ML/AI",
+      "Backend",
+      "Data Management"
+    ],
+    "expertise_level": "intermediate"
+  },
+  "key_concepts": [
+    "Logging metrics",
+    "Retrieving metrics",
+    "Key concept",
+    "Trackio - Experiment Tracking for ML Training",
+    "Two Interfaces",
+    "When to Use Each",
+    "Python API → Logging",
+    "CLI → Retrieving",
+    "Minimal Logging Setup",
+    "Minimal Retrieval"
+  ],
+  "key_workflows": [
+    "Minimal Logging Setup"
+  ],
+  "tool_dependencies": [
+    "Bash",
+    "Read",
+    "Task"
+  ],
+  "reference_topics": [
+    {
+      "topic": "Logging Metrics with Trackio",
+      "summary": "**Trackio** is a lightweight, free experiment tracking library from Hugging Face. It provides a wandb-compatible API for logging metrics with local-first design. - **GitHub**: [gradio-app/trackio](https://github.com/gradio-app/trackio) - **Docs**: [huggingface.co/docs/trackio](https://huggingface.co/docs/trackio/index)"
+    },
+    {
+      "topic": "Retrieving Metrics with Trackio CLI",
+      "summary": "The `trackio` CLI provides direct terminal access to query Trackio experiment tracking data locally without needing to start the MCP server. | Task | Command | |------|---------|"
+    }
+  ],
+  "script_descriptions": [],
+  "confidence_score": 0.61,
+  "upstream_structure": [
+    "references/ (2 files)",
+    ".claude-plugin/ (1 files)"
+  ],
+  "extracted_at": "2026-02-04T11:36:09Z"
+}

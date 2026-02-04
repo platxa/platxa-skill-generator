@@ -1,0 +1,42 @@
+{
+  "skill_name": "vercel-composition-patterns",
+  "skill_type": "guide",
+  "skill_type_scores": {
+    "builder": 3,
+    "guide": 4,
+    "automation": 0,
+    "analyzer": 1,
+    "validator": 0
+  },
+  "description": "",
+  "domain": {
+    "primary_domain": "Frontend",
+    "subdomains": [],
+    "expertise_level": "intermediate"
+  },
+  "key_concepts": [
+    "⚠️ React 19+ only.",
+    "React Composition Patterns",
+    "When to Apply",
+    "Rule Categories by Priority",
+    "Quick Reference",
+    "1. Component Architecture (HIGH)",
+    "2. State Management (MEDIUM)",
+    "3. Implementation Patterns (MEDIUM)",
+    "4. React 19 APIs (MEDIUM)",
+    "How to Use",
+    "Full Compiled Document"
+  ],
+  "key_workflows": [],
+  "tool_dependencies": [
+    "Read",
+    "Write"
+  ],
+  "reference_topics": [],
+  "script_descriptions": [],
+  "confidence_score": 0.33,
+  "upstream_structure": [
+    "rules/ (10 files)"
+  ],
+  "extracted_at": "2026-02-04T11:36:08Z"
+}

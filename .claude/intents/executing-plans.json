@@ -1,0 +1,62 @@
+{
+  "skill_name": "executing-plans",
+  "skill_type": "analyzer",
+  "skill_type_scores": {
+    "builder": 2,
+    "guide": 1,
+    "automation": 3,
+    "analyzer": 23,
+    "validator": 2
+  },
+  "description": "Use when you have a written implementation plan to execute in a separate session with review checkpoints",
+  "domain": {
+    "primary_domain": "Version Control",
+    "subdomains": [],
+    "expertise_level": "intermediate"
+  },
+  "key_concepts": [
+    "Core principle:",
+    "Announce at start:",
+    "Default: First 3 tasks",
+    "REQUIRED SUB-SKILL:",
+    "STOP executing immediately when:",
+    "Ask for clarification rather than guessing.",
+    "Return to Review (Step 1) when:",
+    "Don't force through blockers",
+    "Required workflow skills:",
+    "superpowers:using-git-worktrees",
+    "superpowers:writing-plans",
+    "superpowers:finishing-a-development-branch",
+    "Executing Plans",
+    "The Process",
+    "Step 1: Load and Review Plan"
+  ],
+  "key_workflows": [
+    "Read plan file",
+    "Review critically - identify any questions or concerns about the plan",
+    "If concerns: Raise them with your human partner before starting",
+    "If no concerns: Create TodoWrite and proceed",
+    "Mark as in_progress",
+    "Follow each step exactly (plan has bite-sized steps)",
+    "Run verifications as specified",
+    "Mark as completed",
+    "The Process",
+    "Step 1: Load and Review Plan",
+    "Step 2: Execute Batch",
+    "Step 3: Report",
+    "Step 4: Continue",
+    "Step 5: Complete Development",
+    "When to Revisit Earlier Steps"
+  ],
+  "tool_dependencies": [
+    "Bash",
+    "Read",
+    "Task",
+    "Write"
+  ],
+  "reference_topics": [],
+  "script_descriptions": [],
+  "confidence_score": 0.4,
+  "upstream_structure": [],
+  "extracted_at": "2026-02-04T11:36:09Z"
+}

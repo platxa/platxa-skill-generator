@@ -1,0 +1,97 @@
+{
+  "skill_name": "imagegen",
+  "skill_type": "builder",
+  "skill_type_scores": {
+    "builder": 15,
+    "guide": 5,
+    "automation": 12,
+    "analyzer": 2,
+    "validator": 3
+  },
+  "description": "Use when the user asks to generate or edit images via the OpenAI Image API (for example: generate image, edit/inpaint/mask, background removal or replacement, transparent background, product shots, concept art, covers, or batch variants); run the bundled CLI (`scripts/image_gen.py`) and require `OPENAI_API_KEY` for live calls.",
+  "domain": {
+    "primary_domain": "Version Control",
+    "subdomains": [
+      "Backend",
+      "Media Processing"
+    ],
+    "expertise_level": "intermediate"
+  },
+  "key_concepts": [
+    "edit",
+    "generate-batch",
+    "generate",
+    "`references/cli.md`",
+    "`references/image-api.md`",
+    "`references/prompting.md`",
+    "`references/sample-prompts.md`",
+    "`references/codex-network.md`",
+    "Image Generation Skill",
+    "When to use",
+    "Decision tree (generate vs edit vs batch)",
+    "Workflow",
+    "Temp and output conventions",
+    "Dependencies (install if missing)",
+    "Environment"
+  ],
+  "key_workflows": [
+    "Decide intent: generate vs edit vs batch (see decision tree above)",
+    "Collect inputs up front: prompt(s), exact text (verbatim), constraints/avoid list, and any input image(s)/mask(s). For multi-image edits, label each input by index and role; for edits, list invariants explicitly",
+    "If batch: write a temporary JSONL under tmp/ (one job per line), run once, then delete the JSONL",
+    "Augment prompt into a short labeled spec (structure + constraints) without inventing new creative requirements",
+    "Run the bundled CLI (scripts/image_gen.py) with sensible defaults (see references/cli.md)",
+    "For complex edits/generations, inspect outputs (open/view images) and validate: subject, style, composition, text accuracy, and invariants/avoid items",
+    "Iterate: make a single targeted change (prompt or mask), re-run, re-check",
+    "Save/return final outputs and note the final prompt + flags used",
+    "Create an API key in the OpenAI platform UI: https://platform.openai.com/api-keys",
+    "Set OPENAI_API_KEY as an environment variable in their system",
+    "Offer to guide them through setting the environment variable for their OS/shell if needed",
+    "Workflow",
+    "Dependencies (install if missing)"
+  ],
+  "tool_dependencies": [
+    "AskUserQuestion",
+    "Bash",
+    "Read",
+    "WebFetch",
+    "WebSearch",
+    "Write"
+  ],
+  "reference_topics": [
+    {
+      "topic": "CLI reference (`scripts/image_gen.py`)",
+      "summary": "This file contains the “command catalog” for the bundled image generation CLI. Keep `SKILL.md` as overview-first; put verbose CLI details here. - `generate`: generate new images from a prompt - `edit`: edit an existing image (optionally with a mask) — inpainting / background replacement / “change only X”"
+    },
+    {
+      "topic": "Codex network approvals / sandbox notes",
+      "summary": "This guidance is intentionally isolated from `SKILL.md` because it can vary by environment and may become stale. Prefer the defaults in your environment when in doubt. Image generation uses the OpenAI Image API, so the CLI needs outbound network access. In many Codex setups, network access is disabled by default (especially under stricter sandbox modes), and/or the approval policy may require confirmation before networked commands run. If you trust the repo and want fewer prompts, enable network access for the relevant sandbox mode and relax the approval policy."
+    },
+    {
+      "topic": "Image API quick reference",
+      "summary": "- Generate: `POST /v1/images/generations` (`client.images.generate(...)`) - Edit: `POST /v1/images/edits` (`client.images.edit(...)`) - Default: `gpt-image-1.5`"
+    },
+    {
+      "topic": "Prompting best practices (gpt-image-1.5)",
+      "summary": "- [Structure](#structure) - [Specificity](#specificity) - [Avoiding “tacky” outputs](#avoiding-tacky-outputs)"
+    },
+    {
+      "topic": "Sample prompts (copy/paste)",
+      "summary": "Use these as starting points (recipes only). Keep user-provided requirements; do not invent new creative elements. For prompting principles (structure, invariants, iteration), see `references/prompting.md`. ```"
+    }
+  ],
+  "script_descriptions": [
+    {
+      "file": "image_gen.py",
+      "language": "python",
+      "purpose": "Generate or edit images with the OpenAI Image API."
+    }
+  ],
+  "confidence_score": 0.88,
+  "upstream_structure": [
+    "references/ (5 files)",
+    "scripts/ (3 files)",
+    "agents/ (1 files)",
+    "assets/ (2 files)"
+  ],
+  "extracted_at": "2026-02-04T11:36:09Z"
+}

@@ -1,0 +1,78 @@
+{
+  "skill_name": "develop-web-game",
+  "skill_type": "analyzer",
+  "skill_type_scores": {
+    "builder": 15,
+    "guide": 3,
+    "automation": 3,
+    "analyzer": 23,
+    "validator": 15
+  },
+  "description": "Use when Codex is building or iterating on a web game (HTML/JS) and needs a reliable development + testing loop: implement small changes, run a Playwright-based test script with short input bursts and intentional pauses, inspect screenshots/text, and review console errors with render_game_to_text.",
+  "domain": {
+    "primary_domain": "Browser Automation",
+    "subdomains": [
+      "Testing"
+    ],
+    "expertise_level": "intermediate"
+  },
+  "key_concepts": [
+    "Pick a goal.",
+    "Implement small.",
+    "Ensure integration points.",
+    "Add `window.advanceTime(ms)`.",
+    "Initialize progress.md.",
+    "Verify Playwright availability.",
+    "Run the Playwright test script.",
+    "Use the payload reference.",
+    "Inspect state.",
+    "Inspect screenshots.",
+    "Verify controls and state (multi-step focus).",
+    "Check errors.",
+    "Reset between scenarios.",
+    "Iterate with small deltas.",
+    "Develop Web Game"
+  ],
+  "key_workflows": [
+    "Pick a goal. Define a single feature or behavior to implement",
+    "Implement small. Make the smallest change that moves the game forward",
+    "Ensure integration points. Provide a single canvas and window.render_game_to_text so the test loop can read state",
+    "Add window.advanceTime(ms). Strongly prefer a deterministic step hook so the Playwright script can advance frames reliably; without it, automated tests can be flaky",
+    "Initialize progress.md. If progress.md exists, read it first and confirm the original user prompt is recorded at the top (prefix with Original prompt:). Also note any TODOs and suggestions left by the previous agent. If missing, create it and write Original prompt: <prompt> at the top before appending updates",
+    "Verify Playwright availability. Ensure playwright is available (local dependency or global install). If unsure, check npx first",
+    "Run the Playwright test script. You must run $WEB_GAME_CLIENT after each meaningful change; do not invent a new client unless required",
+    "Use the payload reference. Base actions on $WEB_GAME_ACTIONS to avoid guessing keys",
+    "Inspect state. Capture screenshots and text state after each burst",
+    "Inspect screenshots. Open the latest screenshot, verify expected visuals, fix any issues, and rerun the script. Repeat until correct",
+    "Verify controls and state (multi-step focus). Exhaustively exercise all important interactions. For each, think through the full multi-step sequence it implies (cause → intermediate states → outcome) and verify the entire chain works end-to-end. Confirm render_game_to_text reflects the same state shown on screen. If anything is off, fix and rerun",
+    "Check errors. Review console errors and fix the first new issue before continuing",
+    "Reset between scenarios. Avoid cross-test state when validating distinct features",
+    "Iterate with small deltas. Change one variable at a time (frames, inputs, timing, positions), then repeat steps 7–13 until stable",
+    "Workflow",
+    "Time Stepping Hook"
+  ],
+  "tool_dependencies": [
+    "AskUserQuestion",
+    "Bash",
+    "Read",
+    "WebFetch",
+    "WebSearch",
+    "Write"
+  ],
+  "reference_topics": [],
+  "script_descriptions": [
+    {
+      "file": "web_game_playwright_client.js",
+      "language": "bash",
+      "purpose": "web_game_playwright_client.js script"
+    }
+  ],
+  "confidence_score": 0.58,
+  "upstream_structure": [
+    "references/ (1 files)",
+    "scripts/ (1 files)",
+    "agents/ (1 files)",
+    "assets/ (2 files)"
+  ],
+  "extracted_at": "2026-02-04T11:36:09Z"
+}

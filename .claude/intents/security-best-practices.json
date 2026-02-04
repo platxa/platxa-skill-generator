@@ -1,0 +1,60 @@
+{
+  "skill_name": "security-best-practices",
+  "skill_type": "analyzer",
+  "skill_type_scores": {
+    "builder": 3,
+    "guide": 15,
+    "automation": 2,
+    "analyzer": 24,
+    "validator": 13
+  },
+  "description": "Perform language and framework specific security best-practice reviews and suggest improvements. Trigger only when the user explicitly requests security best practices guidance, a security review/report, or secure-by-default coding help. Trigger only for supported languages (python, javascript/typescript, go). Do not trigger for general code review, debugging, or non-security tasks.",
+  "domain": {
+    "primary_domain": "Version Control",
+    "subdomains": [
+      "Security"
+    ],
+    "expertise_level": "intermediate"
+  },
+  "key_concepts": [
+    "Security Best Practices",
+    "Workflow",
+    "Workflow Decision Tree",
+    "Overrides",
+    "Report Format",
+    "Fixes",
+    "General Security Advice",
+    "Avoid Using Incrementing IDs for Public IDs of Resources",
+    "A note on TLS"
+  ],
+  "key_workflows": [
+    "The primary mode is to just use the information to write secure by default code from this point forward. This is useful for starting a new project or when writing new code",
+    "The secondary mode is to passively detect vulnerabilities while working in the project and writing code for the user. Critical or very important vulnerabilities or major issues going against security guidance can be flagged and the user can be told about them. This passive mode should focus on the largest impact vulnerabilities and secure defaults",
+    "The user can ask for a security report or to improve the security of the codebase. In this case a full report should be produced describe anyways the project fails to follow security best practices guidance. The report should be prioritized and have clear sections of severity and urgency. Then offer to start working on fixes for these issues. See #fixes below",
+    "Workflow",
+    "Workflow Decision Tree"
+  ],
+  "tool_dependencies": [
+    "AskUserQuestion",
+    "Bash",
+    "Glob",
+    "Grep",
+    "Read",
+    "WebFetch",
+    "WebSearch",
+    "Write"
+  ],
+  "reference_topics": [
+    {
+      "topic": "Cross-Language Security Best Practices",
+      "summary": "Condensed security checklist covering Python (FastAPI/Django/Flask), JavaScript/TypeScript (Express/Next.js/React/Vue), and Go backends. For full framework-specific rules, see the upstream skill at https://github.com/openai/skills. - MUST NOT output, log, or commit secrets (API keys, passwords, tokens, signing keys) - MUST NOT \"fix\" security by disabling protections (weakening auth, permissive CORS, skipping validation)"
+    }
+  ],
+  "script_descriptions": [],
+  "confidence_score": 0.62,
+  "upstream_structure": [
+    "references/ (1 files)",
+    "agents/ (1 files)"
+  ],
+  "extracted_at": "2026-02-04T11:36:09Z"
+}

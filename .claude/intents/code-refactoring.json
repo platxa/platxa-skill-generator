@@ -1,0 +1,53 @@
+{
+  "skill_name": "code-refactoring",
+  "skill_type": "validator",
+  "skill_type_scores": {
+    "builder": 3,
+    "guide": 11,
+    "automation": 1,
+    "analyzer": 3,
+    "validator": 13
+  },
+  "description": "Code refactoring patterns and techniques for improving code quality without changing behavior. Use for cleaning up legacy code, reducing complexity, or improving maintainability.",
+  "domain": {
+    "primary_domain": "Version Control",
+    "subdomains": [],
+    "expertise_level": "intermediate"
+  },
+  "key_concepts": [
+    "Ensure tests exist",
+    "Make small changes",
+    "Run tests after each change",
+    "Commit frequently",
+    "Review the diff",
+    "Code Refactoring",
+    "Refactoring Principles",
+    "When to Refactor",
+    "When NOT to Refactor",
+    "Common Code Smells",
+    "Long Methods",
+    "Deeply Nested Conditionals",
+    "Primitive Obsession",
+    "Feature Envy",
+    "Refactoring Techniques"
+  ],
+  "key_workflows": [
+    "Ensure tests exist - Write tests if they don't",
+    "Make small changes - One refactoring at a time",
+    "Run tests after each change - Catch regressions immediately",
+    "Commit frequently - Easy to revert if something breaks",
+    "Review the diff - Make sure behavior hasn't changed",
+    "Safe Refactoring Process"
+  ],
+  "tool_dependencies": [
+    "Bash",
+    "Glob",
+    "Grep",
+    "Read"
+  ],
+  "reference_topics": [],
+  "script_descriptions": [],
+  "confidence_score": 0.46,
+  "upstream_structure": [],
+  "extracted_at": "2026-02-04T11:36:08Z"
+}

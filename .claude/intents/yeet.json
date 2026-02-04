@@ -1,0 +1,39 @@
+{
+  "skill_name": "yeet",
+  "skill_type": "validator",
+  "skill_type_scores": {
+    "builder": 1,
+    "guide": 1,
+    "automation": 1,
+    "analyzer": 1,
+    "validator": 3
+  },
+  "description": "Use only when the user explicitly asks to stage, commit, push, and open a GitHub pull request in one flow using the GitHub CLI (`gh`).",
+  "domain": {
+    "primary_domain": "Version Control",
+    "subdomains": [],
+    "expertise_level": "intermediate"
+  },
+  "key_concepts": [
+    "Prerequisites",
+    "Naming conventions",
+    "Workflow"
+  ],
+  "key_workflows": [
+    "Workflow"
+  ],
+  "tool_dependencies": [
+    "AskUserQuestion",
+    "Bash",
+    "Read",
+    "Write"
+  ],
+  "reference_topics": [],
+  "script_descriptions": [],
+  "confidence_score": 0.27,
+  "upstream_structure": [
+    "agents/ (1 files)",
+    "assets/ (2 files)"
+  ],
+  "extracted_at": "2026-02-04T11:36:10Z"
+}

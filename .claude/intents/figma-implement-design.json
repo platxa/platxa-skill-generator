@@ -1,0 +1,87 @@
+{
+  "skill_name": "figma-implement-design",
+  "skill_type": "guide",
+  "skill_type_scores": {
+    "builder": 3,
+    "guide": 16,
+    "automation": 12,
+    "analyzer": 1,
+    "validator": 4
+  },
+  "description": "Translate Figma nodes into production-ready code with 1:1 visual fidelity using the Figma MCP workflow (design context, screenshots, assets, and project-convention translation). Trigger when the user provides Figma URLs or node IDs, or asks to implement designs or components that must match Figma specs. Requires a working Figma MCP server connection.",
+  "domain": {
+    "primary_domain": "Design Tooling",
+    "subdomains": [
+      "Frontend",
+      "Backend",
+      "Version Control"
+    ],
+    "expertise_level": "intermediate"
+  },
+  "key_concepts": [
+    "Follow these steps in order. Do not skip steps.",
+    "URL format:",
+    "Extract:",
+    "File key:",
+    "Node ID:",
+    "Note:",
+    "Example:",
+    "If the response is too large or truncated:",
+    "Key principles:",
+    "Guidelines:",
+    "Validation checklist:",
+    "Actions:",
+    "Result:",
+    "Cause:",
+    "Solution:"
+  ],
+  "key_workflows": [
+    "Add the Figma MCP:",
+    "Enable remote MCP client:",
+    "Log in with OAuth:",
+    "Run get_metadata(fileKey=\":fileKey\", nodeId=\"1-2\") to get the high-level node map",
+    "Identify the specific child nodes needed from the metadata",
+    "Fetch individual child nodes with get_design_context(fileKey=\":fileKey\", nodeId=\":childNodeId\")",
+    "Parse URL to extract fileKey=kL9xQn2VwM8pYrTb4ZcHjF and nodeId=42-15",
+    "Run get_design_context(fileKey=\"kL9xQn2VwM8pYrTb4ZcHjF\", nodeId=\"42-15\")",
+    "Run get_screenshot(fileKey=\"kL9xQn2VwM8pYrTb4ZcHjF\", nodeId=\"42-15\") for visual reference",
+    "Download any button icons from the assets endpoint",
+    "Check if project has existing button component",
+    "If yes, extend it with new variant; if no, create new component using project conventions",
+    "Map Figma colors to project design tokens (e.g., primary-500, primary-hover)",
+    "Validate against screenshot for padding, border radius, typography",
+    "Parse URL to extract fileKey=pR8mNv5KqXzGwY2JtCfL4D and nodeId=10-5",
+    "Run get_metadata(fileKey=\"pR8mNv5KqXzGwY2JtCfL4D\", nodeId=\"10-5\") to understand the page structure",
+    "Identify main sections from metadata (header, sidebar, content area, cards) and their child node IDs",
+    "Run get_design_context(fileKey=\"pR8mNv5KqXzGwY2JtCfL4D\", nodeId=\":childNodeId\") for each major section",
+    "Run get_screenshot(fileKey=\"pR8mNv5KqXzGwY2JtCfL4D\", nodeId=\"10-5\") for the full page",
+    "Download all assets (logos, icons, charts)",
+    "Build layout using project's layout primitives",
+    "Implement each section using existing components where possible",
+    "Validate responsive behavior against Figma constraints",
+    "Required Workflow",
+    "Step 0: Set up Figma MCP (if not already configured)",
+    "Step 1: Get Node ID",
+    "Step 2: Fetch Design Context",
+    "Step 3: Capture Visual Reference",
+    "Step 4: Download Required Assets",
+    "Step 5: Translate to Project Conventions",
+    "Step 6: Achieve 1:1 Visual Parity",
+    "Step 7: Validate Against Figma"
+  ],
+  "tool_dependencies": [
+    "AskUserQuestion",
+    "Bash",
+    "Read",
+    "WebFetch",
+    "Write"
+  ],
+  "reference_topics": [],
+  "script_descriptions": [],
+  "confidence_score": 0.46,
+  "upstream_structure": [
+    "agents/ (1 files)",
+    "assets/ (3 files)"
+  ],
+  "extracted_at": "2026-02-04T11:36:09Z"
+}

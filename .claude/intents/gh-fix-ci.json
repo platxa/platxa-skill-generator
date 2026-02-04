@@ -1,0 +1,56 @@
+{
+  "skill_name": "gh-fix-ci",
+  "skill_type": "analyzer",
+  "skill_type_scores": {
+    "builder": 13,
+    "guide": 0,
+    "automation": 1,
+    "analyzer": 33,
+    "validator": 3
+  },
+  "description": "Use when a user asks to debug or fix failing GitHub PR checks that run in GitHub Actions; use `gh` to inspect checks and logs, summarize failure context, draft a fix plan, and implement only after explicit approval. Treat external providers (for example Buildkite) as out of scope and report only the details URL.",
+  "domain": {
+    "primary_domain": "Version Control",
+    "subdomains": [],
+    "expertise_level": "intermediate"
+  },
+  "key_concepts": [
+    "Gh Pr Checks Plan Fix",
+    "Inputs",
+    "Quick start",
+    "Workflow",
+    "Bundled Resources",
+    "scripts/inspect_pr_checks.py"
+  ],
+  "key_workflows": [
+    "Verify gh authentication",
+    "Resolve the PR",
+    "Inspect failing checks (GitHub Actions only)",
+    "Scope non-GitHub Actions checks",
+    "Summarize failures for the user",
+    "Create a plan",
+    "Implement after approval",
+    "Recheck status",
+    "Workflow"
+  ],
+  "tool_dependencies": [
+    "Bash",
+    "Read",
+    "WebFetch"
+  ],
+  "reference_topics": [],
+  "script_descriptions": [
+    {
+      "file": "inspect_pr_checks.py",
+      "language": "python",
+      "purpose": "inspect_pr_checks.py script"
+    }
+  ],
+  "confidence_score": 0.52,
+  "upstream_structure": [
+    "scripts/ (3 files)",
+    "agents/ (1 files)",
+    "assets/ (2 files)"
+  ],
+  "extracted_at": "2026-02-04T11:36:09Z"
+}

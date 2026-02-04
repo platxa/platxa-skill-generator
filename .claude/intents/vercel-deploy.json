@@ -1,0 +1,63 @@
+{
+  "skill_name": "vercel-deploy",
+  "skill_type": "automation",
+  "skill_type_scores": {
+    "builder": 3,
+    "guide": 0,
+    "automation": 11,
+    "analyzer": 0,
+    "validator": 1
+  },
+  "description": "Deploy applications and websites to Vercel using the bundled `scripts/deploy.sh` claimable-preview flow. Use when the user asks to deploy to Vercel, wants a preview URL, or says to push a project live on Vercel.",
+  "domain": {
+    "primary_domain": "Version Control",
+    "subdomains": [
+      "DevOps",
+      "Frontend"
+    ],
+    "expertise_level": "intermediate"
+  },
+  "key_concepts": [
+    "Preview URL",
+    "Claim URL",
+    "Arguments:",
+    "Examples:",
+    "React",
+    "Svelte",
+    "Other Frontend",
+    "Backend",
+    "Build Tools",
+    "And more",
+    "Vercel Deploy",
+    "Prerequisites",
+    "How It Works",
+    "Deploy current directory",
+    "Deploy specific project"
+  ],
+  "key_workflows": [
+    "Packages your project into a .tar.gz (excludes node_modules and .git)",
+    "Auto-detects framework from package.json",
+    "Uploads to deployment service",
+    "Returns Preview URL (live site) and Claim URL (transfer to your Vercel account)"
+  ],
+  "tool_dependencies": [
+    "Bash",
+    "Read",
+    "Write"
+  ],
+  "reference_topics": [],
+  "script_descriptions": [
+    {
+      "file": "deploy.sh",
+      "language": "bash",
+      "purpose": "Vercel Deployment Script (via claimable deploy endpoint)"
+    }
+  ],
+  "confidence_score": 0.58,
+  "upstream_structure": [
+    "scripts/ (1 files)",
+    "agents/ (1 files)",
+    "assets/ (2 files)"
+  ],
+  "extracted_at": "2026-02-04T11:36:09Z"
+}

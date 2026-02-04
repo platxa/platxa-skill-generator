@@ -1,0 +1,50 @@
+{
+  "skill_name": "vercel-react-best-practices",
+  "skill_type": "guide",
+  "skill_type_scores": {
+    "builder": 1,
+    "guide": 25,
+    "automation": 2,
+    "analyzer": 12,
+    "validator": 10
+  },
+  "description": "React and Next.js performance optimization guidelines from Vercel Engineering. This skill should be used when writing, reviewing, or refactoring React/Next.js code to ensure optimal performance patterns. Triggers on tasks involving React components, Next.js pages, data fetching, bundle optimization, or performance improvements.",
+  "domain": {
+    "primary_domain": "Frontend",
+    "subdomains": [
+      "Version Control",
+      "Data Management"
+    ],
+    "expertise_level": "intermediate"
+  },
+  "key_concepts": [
+    "Vercel React Best Practices",
+    "When to Apply",
+    "Rule Categories by Priority",
+    "Quick Reference",
+    "1. Eliminating Waterfalls (CRITICAL)",
+    "2. Bundle Size Optimization (CRITICAL)",
+    "3. Server-Side Performance (HIGH)",
+    "4. Client-Side Data Fetching (MEDIUM-HIGH)",
+    "5. Re-render Optimization (MEDIUM)",
+    "6. Rendering Performance (MEDIUM)",
+    "7. JavaScript Performance (LOW-MEDIUM)",
+    "8. Advanced Patterns (LOW)",
+    "How to Use",
+    "Full Compiled Document"
+  ],
+  "key_workflows": [],
+  "tool_dependencies": [
+    "Bash",
+    "Read",
+    "WebFetch",
+    "Write"
+  ],
+  "reference_topics": [],
+  "script_descriptions": [],
+  "confidence_score": 0.43,
+  "upstream_structure": [
+    "rules/ (59 files)"
+  ],
+  "extracted_at": "2026-02-04T11:36:09Z"
+}

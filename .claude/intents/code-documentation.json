@@ -1,0 +1,64 @@
+{
+  "skill_name": "code-documentation",
+  "skill_type": "guide",
+  "skill_type_scores": {
+    "builder": 2,
+    "guide": 24,
+    "automation": 0,
+    "analyzer": 1,
+    "validator": 1
+  },
+  "description": "Writing effective code documentation - API docs, README files, inline comments, and technical guides. Use for documenting codebases, APIs, or writing developer guides.",
+  "domain": {
+    "primary_domain": "Documentation",
+    "subdomains": [
+      "Backend"
+    ],
+    "expertise_level": "intermediate"
+  },
+  "key_concepts": [
+    "Parameters:",
+    "Returns:",
+    "Example:",
+    "Write for your audience",
+    "Keep it close to code",
+    "Update with code",
+    "Examples over explanations",
+    "Progressive disclosure",
+    "Code Documentation",
+    "README Structure",
+    "Standard README Template",
+    "Project Name",
+    "Quick Start",
+    "Installation",
+    "API Reference"
+  ],
+  "key_workflows": [
+    "User submits credentials to /auth/login",
+    "Server validates and returns access + refresh tokens",
+    "Access token used for API requests (15min expiry)",
+    "Refresh token used to get new access token (7d expiry)",
+    "Write for your audience - New devs vs API consumers",
+    "Keep it close to code - Docs in same repo, near relevant code",
+    "Update with code - Stale docs are worse than none",
+    "Examples over explanations - Show, don't just tell",
+    "Progressive disclosure - Quick start first, details later",
+    "Installation",
+    "Configuration",
+    "Flow",
+    "Configuration"
+  ],
+  "tool_dependencies": [
+    "Bash",
+    "Glob",
+    "Grep",
+    "Read",
+    "WebFetch",
+    "WebSearch"
+  ],
+  "reference_topics": [],
+  "script_descriptions": [],
+  "confidence_score": 0.46,
+  "upstream_structure": [],
+  "extracted_at": "2026-02-04T11:36:08Z"
+}

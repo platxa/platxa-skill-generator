@@ -1,0 +1,50 @@
+{
+  "skill_name": "subagent-driven-development",
+  "skill_type": "validator",
+  "skill_type_scores": {
+    "builder": 4,
+    "guide": 0,
+    "automation": 3,
+    "analyzer": 3,
+    "validator": 5
+  },
+  "description": "Use when executing implementation plans with independent tasks in the current session",
+  "domain": {
+    "primary_domain": "Version Control",
+    "subdomains": [],
+    "expertise_level": "intermediate"
+  },
+  "key_concepts": [
+    "Core principle:",
+    "vs. Executing Plans (parallel session):",
+    "vs. Manual execution:",
+    "vs. Executing Plans:",
+    "Efficiency gains:",
+    "Quality gates:",
+    "Cost:",
+    "Never:",
+    "Start code quality review before spec compliance is ✅",
+    "If subagent asks questions:",
+    "If reviewer finds issues:",
+    "If subagent fails task:",
+    "Required workflow skills:",
+    "superpowers:using-git-worktrees",
+    "superpowers:writing-plans"
+  ],
+  "key_workflows": [
+    "The Process",
+    "Example Workflow"
+  ],
+  "tool_dependencies": [
+    "AskUserQuestion",
+    "Bash",
+    "Read",
+    "Task",
+    "Write"
+  ],
+  "reference_topics": [],
+  "script_descriptions": [],
+  "confidence_score": 0.43,
+  "upstream_structure": [],
+  "extracted_at": "2026-02-04T11:36:09Z"
+}

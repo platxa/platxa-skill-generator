@@ -1,0 +1,47 @@
+{
+  "skill_name": "javascript-typescript",
+  "skill_type": "builder",
+  "skill_type_scores": {
+    "builder": 2,
+    "guide": 1,
+    "automation": 2,
+    "analyzer": 0,
+    "validator": 0
+  },
+  "description": "JavaScript and TypeScript development with ES6+, Node.js, React, and modern web frameworks. Use for frontend, backend, or full-stack JavaScript/TypeScript projects.",
+  "domain": {
+    "primary_domain": "Frontend",
+    "subdomains": [
+      "Version Control",
+      "Backend"
+    ],
+    "expertise_level": "intermediate"
+  },
+  "key_concepts": [
+    "JavaScript/TypeScript Development",
+    "TypeScript Configuration",
+    "Type Patterns",
+    "Utility Types",
+    "Discriminated Unions",
+    "Generic Constraints",
+    "Modern JavaScript",
+    "Destructuring & Spread",
+    "Optional Chaining & Nullish Coalescing",
+    "Array Methods",
+    "React Patterns",
+    "Node.js Patterns"
+  ],
+  "key_workflows": [
+    "TypeScript Configuration"
+  ],
+  "tool_dependencies": [
+    "Bash",
+    "Read",
+    "Write"
+  ],
+  "reference_topics": [],
+  "script_descriptions": [],
+  "confidence_score": 0.46,
+  "upstream_structure": [],
+  "extracted_at": "2026-02-04T11:36:09Z"
+}

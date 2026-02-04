@@ -1,0 +1,70 @@
+{
+  "skill_name": "algorithmic-art",
+  "skill_type": "builder",
+  "skill_type_scores": {
+    "builder": 18,
+    "guide": 6,
+    "automation": 1,
+    "analyzer": 0,
+    "validator": 2
+  },
+  "description": "Creating algorithmic art using p5.js with seeded randomness and interactive parameter exploration. Use this when users request creating art using code, generative art, algorithmic art, flow fields, or particle systems. Create original algorithmic art rather than copying existing artists' work to avoid copyright violations.",
+  "domain": {
+    "primary_domain": "Generative Art",
+    "subdomains": [],
+    "expertise_level": "intermediate"
+  },
+  "key_concepts": [
+    "Name the movement",
+    "Articulate the philosophy",
+    "CRITICAL GUIDELINES:",
+    "Avoid redundancy",
+    "Emphasize craftsmanship REPEATEDLY",
+    "Leave creative space",
+    "\"Organic Turbulence\"",
+    "\"Quantum Harmonics\"",
+    "\"Recursive Whispers\"",
+    "\"Field Dynamics\"",
+    "\"Stochastic Crystallization\"",
+    "ALGORITHMIC PHILOSOPHY",
+    "PROCESS OVER PRODUCT",
+    "PARAMETRIC EXPRESSION",
+    "ARTISTIC FREEDOM"
+  ],
+  "key_workflows": [
+    "Algorithmic Philosophy Creation (.md file)",
+    "Express by creating p5.js generative art (.html + .js files)",
+    "Read templates/viewer.html using the Read tool",
+    "Study the exact structure, styling, and Anthropic branding",
+    "Use that file as the LITERAL STARTING POINT - not just inspiration",
+    "Keep all FIXED sections exactly as shown (header, sidebar structure, Anthropic colors/fonts, seed controls, action buttons)",
+    "Replace only the VARIABLE sections marked in the file's comments (algorithm, parameters, UI controls for parameters)",
+    "Algorithmic Philosophy - As markdown or text explaining the generative aesthetic",
+    "Single HTML Artifact - Self-contained interactive generative art built from templates/viewer.html (see STEP 0 and next section)",
+    "In claude.ai: Displayed as an interactive artifact - runs instantly",
+    "As a file: Save and open in any browser - no server needed",
+    "Sharing: Send the HTML file - it's completely self-contained",
+    "Interpret the user's intent - What aesthetic is being sought?",
+    "Create an algorithmic philosophy (4-6 paragraphs) describing the computational approach",
+    "Implement it in code - Build the algorithm that expresses this philosophy",
+    "Design appropriate parameters - What should be tunable?",
+    "Build matching UI controls - Sliders/inputs for those parameters",
+    "⚠️ STEP 0: READ THE TEMPLATE FIRST ⚠️",
+    "THE CREATIVE PROCESS"
+  ],
+  "tool_dependencies": [
+    "AskUserQuestion",
+    "Bash",
+    "Read",
+    "Task",
+    "WebFetch",
+    "Write"
+  ],
+  "reference_topics": [],
+  "script_descriptions": [],
+  "confidence_score": 0.46,
+  "upstream_structure": [
+    "templates/ (2 files)"
+  ],
+  "extracted_at": "2026-02-04T11:36:08Z"
+}

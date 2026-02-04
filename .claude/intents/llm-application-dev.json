@@ -1,0 +1,54 @@
+{
+  "skill_name": "llm-application-dev",
+  "skill_type": "builder",
+  "skill_type_scores": {
+    "builder": 15,
+    "guide": 13,
+    "automation": 2,
+    "analyzer": 0,
+    "validator": 2
+  },
+  "description": "Building applications with Large Language Models - prompt engineering, RAG patterns, and LLM integration. Use for AI-powered features, chatbots, or LLM-based automation.",
+  "domain": {
+    "primary_domain": "ML/AI",
+    "subdomains": [
+      "Version Control"
+    ],
+    "expertise_level": "intermediate"
+  },
+  "key_concepts": [
+    "Token Management",
+    "Caching",
+    "Evaluation",
+    "Guardrails",
+    "Logging",
+    "Cost Control",
+    "Latency",
+    "Privacy",
+    "LLM Application Development",
+    "Prompt Engineering",
+    "Structured Prompts",
+    "Few-Shot Examples",
+    "Chain of Thought",
+    "API Integration",
+    "OpenAI Pattern"
+  ],
+  "key_workflows": [
+    "First, identify the key information",
+    "Then, determine the approach",
+    "Finally, calculate the answer"
+  ],
+  "tool_dependencies": [
+    "AskUserQuestion",
+    "Bash",
+    "Glob",
+    "Grep",
+    "Read",
+    "Task"
+  ],
+  "reference_topics": [],
+  "script_descriptions": [],
+  "confidence_score": 0.46,
+  "upstream_structure": [],
+  "extracted_at": "2026-02-04T11:36:09Z"
+}

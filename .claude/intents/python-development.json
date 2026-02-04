@@ -1,0 +1,45 @@
+{
+  "skill_name": "python-development",
+  "skill_type": "guide",
+  "skill_type_scores": {
+    "builder": 1,
+    "guide": 22,
+    "automation": 11,
+    "analyzer": 0,
+    "validator": 3
+  },
+  "description": "Modern Python development with Python 3.12+, Django, FastAPI, async patterns, and production best practices. Use for Python projects, APIs, data processing, or automation scripts.",
+  "domain": {
+    "primary_domain": "Version Control",
+    "subdomains": [
+      "Backend",
+      "Data Management"
+    ],
+    "expertise_level": "intermediate"
+  },
+  "key_concepts": [
+    "Python Development",
+    "Project Setup",
+    "Modern Python Project Structure",
+    "pyproject.toml",
+    "Type Hints",
+    "Async Patterns",
+    "FastAPI Patterns",
+    "Testing",
+    "Best Practices"
+  ],
+  "key_workflows": [
+    "Project Setup"
+  ],
+  "tool_dependencies": [
+    "Read",
+    "Task",
+    "WebFetch",
+    "Write"
+  ],
+  "reference_topics": [],
+  "script_descriptions": [],
+  "confidence_score": 0.46,
+  "upstream_structure": [],
+  "extracted_at": "2026-02-04T11:36:09Z"
+}

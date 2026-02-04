@@ -1,0 +1,61 @@
+{
+  "skill_name": "doc",
+  "skill_type": "guide",
+  "skill_type_scores": {
+    "builder": 3,
+    "guide": 13,
+    "automation": 1,
+    "analyzer": 13,
+    "validator": 3
+  },
+  "description": "Use when the task involves reading, creating, or editing `.docx` documents, especially when formatting or layout fidelity matters; prefer `python-docx` plus the bundled `scripts/render_docx.py` for visual checks.",
+  "domain": {
+    "primary_domain": "Document Processing",
+    "subdomains": [
+      "Version Control"
+    ],
+    "expertise_level": "intermediate"
+  },
+  "key_concepts": [
+    "DOCX Skill",
+    "When to use",
+    "Workflow",
+    "Temp and output conventions",
+    "Dependencies (install if missing)",
+    "macOS (Homebrew)",
+    "Ubuntu/Debian",
+    "Environment",
+    "Rendering commands",
+    "Quality expectations",
+    "Final checks"
+  ],
+  "key_workflows": [
+    "Prefer visual review (layout, tables, diagrams)",
+    "Use python-docx for edits and structured creation (headings, styles, tables, lists)",
+    "After each meaningful change, re-render and inspect the pages",
+    "If visual review is not possible, extract text with python-docx as a fallback and call out layout risk",
+    "Keep intermediate outputs organized and clean up after final approval",
+    "Workflow",
+    "Dependencies (install if missing)"
+  ],
+  "tool_dependencies": [
+    "Bash",
+    "Read",
+    "Write"
+  ],
+  "reference_topics": [],
+  "script_descriptions": [
+    {
+      "file": "render_docx.py",
+      "language": "python",
+      "purpose": "Calculate DPI from OOXML `word/document.xml` page size (w:pgSz in twips)."
+    }
+  ],
+  "confidence_score": 0.58,
+  "upstream_structure": [
+    "scripts/ (3 files)",
+    "agents/ (1 files)",
+    "assets/ (2 files)"
+  ],
+  "extracted_at": "2026-02-04T11:36:09Z"
+}

@@ -1,0 +1,53 @@
+{
+  "skill_name": "notion-spec-to-implementation",
+  "skill_type": "builder",
+  "skill_type_scores": {
+    "builder": 2,
+    "guide": 2,
+    "automation": 1,
+    "analyzer": 2,
+    "validator": 1
+  },
+  "description": "Turn Notion specs into implementation plans, tasks, and progress tracking; use when implementing PRDs/feature specs and creating Notion plans + tasks from them.",
+  "domain": {
+    "primary_domain": "Version Control",
+    "subdomains": [],
+    "expertise_level": "intermediate"
+  },
+  "key_concepts": [
+    "Spec to Implementation",
+    "Quick start",
+    "Workflow",
+    "1) Locate and read the spec",
+    "2) Choose plan depth",
+    "3) Create tasks",
+    "4) Link artifacts",
+    "5) Track progress",
+    "References and examples"
+  ],
+  "key_workflows": [
+    "Add the Notion MCP:",
+    "Enable remote MCP client:",
+    "Log in with OAuth:",
+    "Workflow",
+    "3) Create tasks"
+  ],
+  "tool_dependencies": [
+    "Glob",
+    "Grep",
+    "Read",
+    "Task",
+    "WebFetch"
+  ],
+  "reference_topics": [],
+  "script_descriptions": [],
+  "confidence_score": 0.4,
+  "upstream_structure": [
+    "agents/ (1 files)",
+    "assets/ (2 files)",
+    "evaluations/ (3 files)",
+    "examples/ (3 files)",
+    "reference/ (8 files)"
+  ],
+  "extracted_at": "2026-02-04T11:36:09Z"
+}

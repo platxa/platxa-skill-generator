@@ -1,0 +1,96 @@
+{
+  "skill_name": "pdf",
+  "skill_type": "builder",
+  "skill_type_scores": {
+    "builder": 13,
+    "guide": 13,
+    "automation": 11,
+    "analyzer": 13,
+    "validator": 0
+  },
+  "description": "Comprehensive PDF manipulation toolkit for extracting text and tables, creating new PDFs, merging/splitting documents, and handling forms. When Claude needs to fill in a PDF form or programmatically process, generate, or analyze PDF documents at scale.",
+  "domain": {
+    "primary_domain": "Version Control",
+    "subdomains": [
+      "Document Processing"
+    ],
+    "expertise_level": "intermediate"
+  },
+  "key_concepts": [
+    "PDF Processing Guide",
+    "Quick Start",
+    "Read a PDF",
+    "Extract text",
+    "Python Libraries",
+    "pypdf - Basic Operations",
+    "Merge PDFs",
+    "Split PDF",
+    "Extract Metadata",
+    "Rotate Pages",
+    "pdfplumber - Text and Table Extraction",
+    "Extract Text with Layout",
+    "Extract Tables",
+    "Advanced Table Extraction",
+    "Combine all tables"
+  ],
+  "key_workflows": [
+    "PDF Processing Guide",
+    "Common Tasks",
+    "Requires: pip install pytesseract pdf2image",
+    "Next Steps"
+  ],
+  "tool_dependencies": [
+    "Bash",
+    "Read",
+    "Task",
+    "Write"
+  ],
+  "reference_topics": [],
+  "script_descriptions": [
+    {
+      "file": "check_bounding_boxes.py",
+      "language": "python",
+      "purpose": "check_bounding_boxes.py script"
+    },
+    {
+      "file": "check_bounding_boxes_test.py",
+      "language": "python",
+      "purpose": "Helper to create a JSON stream from data"
+    },
+    {
+      "file": "check_fillable_fields.py",
+      "language": "python",
+      "purpose": "check_fillable_fields.py script"
+    },
+    {
+      "file": "convert_pdf_to_images.py",
+      "language": "python",
+      "purpose": "convert_pdf_to_images.py script"
+    },
+    {
+      "file": "create_validation_image.py",
+      "language": "python",
+      "purpose": "create_validation_image.py script"
+    },
+    {
+      "file": "extract_form_field_info.py",
+      "language": "python",
+      "purpose": "extract_form_field_info.py script"
+    },
+    {
+      "file": "fill_fillable_fields.py",
+      "language": "python",
+      "purpose": "fill_fillable_fields.py script"
+    },
+    {
+      "file": "fill_pdf_form_with_annotations.py",
+      "language": "python",
+      "purpose": "Transform bounding box from image coordinates to PDF coordinates"
+    }
+  ],
+  "confidence_score": 0.61,
+  "upstream_structure": [
+    "scripts/ (17 files)"
+  ],
+  "extracted_at": "2026-02-04T11:36:09Z"
+}

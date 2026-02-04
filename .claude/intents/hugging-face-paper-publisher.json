@@ -1,0 +1,86 @@
+{
+  "skill_name": "hugging-face-paper-publisher",
+  "skill_type": "guide",
+  "skill_type_scores": {
+    "builder": 4,
+    "guide": 5,
+    "automation": 4,
+    "analyzer": 4,
+    "validator": 3
+  },
+  "description": "Publish and manage research papers on Hugging Face Hub. Supports creating paper pages, linking papers to models/datasets, claiming authorship, and generating professional markdown-based research articles.",
+  "domain": {
+    "primary_domain": "ML/AI",
+    "subdomains": [
+      "Data Management",
+      "Version Control",
+      "Security"
+    ],
+    "expertise_level": "intermediate"
+  },
+  "key_concepts": [
+    "Paper Pages",
+    "arXiv Integration",
+    "Model/Dataset Linking",
+    "Authorship Verification",
+    "Research Article Template",
+    "Index Papers",
+    "Claim Authorship",
+    "Manage Visibility",
+    "Paper Discovery",
+    "Model Cards",
+    "Dataset Cards",
+    "Automatic Tagging",
+    "Citation Management",
+    "Markdown Templates",
+    "Modern Design"
+  ],
+  "key_workflows": [
+    "The Hub extracts the arXiv ID from the link",
+    "A tag arxiv:<PAPER_ID> is automatically added to the repository",
+    "Users can click the tag to view the Paper Page",
+    "The Paper Page shows all models/datasets citing this paper",
+    "Papers are discoverable through filters and search",
+    "Navigate to your paper's page: https://huggingface.co/papers/{arxiv-id}",
+    "Find your name in the author list",
+    "Click your name and select \"Claim authorship\"",
+    "Wait for admin team verification",
+    "Paper Indexing",
+    "Metadata Management",
+    "Authorship",
+    "Repository Linking",
+    "Research Articles",
+    "3. Submit to arXiv (external process)"
+  ],
+  "tool_dependencies": [
+    "Bash",
+    "Glob",
+    "Grep",
+    "Read",
+    "Task",
+    "WebFetch",
+    "WebSearch",
+    "Write"
+  ],
+  "reference_topics": [
+    {
+      "topic": "Quick Reference Guide",
+      "summary": "```bash python scripts/paper_manager.py index --arxiv-id \"2301.12345\" python scripts/paper_manager.py check --arxiv-id \"2301.12345\""
+    }
+  ],
+  "script_descriptions": [
+    {
+      "file": "paper_manager.py",
+      "language": "python",
+      "purpose": "Paper Manager for Hugging Face Hub"
+    }
+  ],
+  "confidence_score": 0.8,
+  "upstream_structure": [
+    "references/ (1 files)",
+    "scripts/ (3 files)",
+    "examples/ (1 files)",
+    "templates/ (4 files)"
+  ],
+  "extracted_at": "2026-02-04T11:36:09Z"
+}

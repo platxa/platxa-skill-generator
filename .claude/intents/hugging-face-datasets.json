@@ -1,0 +1,79 @@
+{
+  "skill_name": "hugging-face-datasets",
+  "skill_type": "automation",
+  "skill_type_scores": {
+    "builder": 13,
+    "guide": 5,
+    "automation": 14,
+    "analyzer": 1,
+    "validator": 3
+  },
+  "description": "Create and manage datasets on Hugging Face Hub. Supports initializing repos, defining configs/system prompts, streaming row updates, and SQL-based dataset querying/transformation. Designed to work alongside HF MCP server for comprehensive dataset workflows.",
+  "domain": {
+    "primary_domain": "Data Management",
+    "subdomains": [
+      "ML/AI",
+      "Version Control",
+      "Backend"
+    ],
+    "expertise_level": "intermediate"
+  },
+  "key_concepts": [
+    "Use HF MCP Server for",
+    "Use This Skill for",
+    "Initialize",
+    "Configure",
+    "Stream Updates",
+    "Direct Queries",
+    "Schema Discovery",
+    "Data Sampling",
+    "Aggregations",
+    "Transformations",
+    "Export & Push",
+    "Chat/Conversational",
+    "Text Classification",
+    "Question-Answering",
+    "Text Completion"
+  ],
+  "key_workflows": [
+    "Scripts auto-install requirements when run with: uv run scripts/script_name.py",
+    "5. Working with Dataset Configs/Splits",
+    "Specify config (subset)",
+    "Recommended Workflow",
+    "Configure with detailed system prompt",
+    "Quick setup with any template",
+    "Configure with system prompt",
+    "Combined Workflow Examples",
+    "2. Process with your pipeline (add answers, format, etc.)",
+    "3. Push processed data"
+  ],
+  "tool_dependencies": [
+    "AskUserQuestion",
+    "Bash",
+    "Glob",
+    "Grep",
+    "Read",
+    "Task",
+    "Write"
+  ],
+  "reference_topics": [],
+  "script_descriptions": [
+    {
+      "file": "dataset_manager.py",
+      "language": "python",
+      "purpose": "Hugging Face Dataset Manager"
+    },
+    {
+      "file": "sql_manager.py",
+      "language": "python",
+      "purpose": "Hugging Face Dataset SQL Manager"
+    }
+  ],
+  "confidence_score": 0.58,
+  "upstream_structure": [
+    "scripts/ (5 files)",
+    "examples/ (3 files)",
+    "templates/ (6 files)"
+  ],
+  "extracted_at": "2026-02-04T11:36:09Z"
+}

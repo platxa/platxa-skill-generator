@@ -1,0 +1,47 @@
+{
+  "skill_name": "code-review",
+  "skill_type": "analyzer",
+  "skill_type_scores": {
+    "builder": 1,
+    "guide": 23,
+    "automation": 11,
+    "analyzer": 32,
+    "validator": 23
+  },
+  "description": "Automated code review for pull requests using specialized review patterns. Analyzes code for quality, security, performance, and best practices. Use when reviewing code changes, PRs, or doing code audits.",
+  "domain": {
+    "primary_domain": "Version Control",
+    "subdomains": [
+      "Security"
+    ],
+    "expertise_level": "intermediate"
+  },
+  "key_concepts": [
+    "[File:Line]",
+    "Why:",
+    "Fix:",
+    "Code Review",
+    "Review Categories",
+    "1. Security Review",
+    "2. Performance Review",
+    "3. Code Quality Review",
+    "4. Testing Review",
+    "Review Output Format",
+    "Code Review Summary",
+    "🔴 Critical (Must Fix)",
+    "🟡 Suggestions (Should Consider)",
+    "🟢 Nits (Optional)",
+    "✅ What's Good"
+  ],
+  "key_workflows": [],
+  "tool_dependencies": [
+    "Bash",
+    "Read",
+    "Write"
+  ],
+  "reference_topics": [],
+  "script_descriptions": [],
+  "confidence_score": 0.46,
+  "upstream_structure": [],
+  "extracted_at": "2026-02-04T11:36:08Z"
+}

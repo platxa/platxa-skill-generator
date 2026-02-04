@@ -1,0 +1,56 @@
+{
+  "skill_name": "changelog-generator",
+  "skill_type": "builder",
+  "skill_type_scores": {
+    "builder": 13,
+    "guide": 3,
+    "automation": 11,
+    "analyzer": 3,
+    "validator": 2
+  },
+  "description": "Automatically creates user-facing changelogs from git commits by analyzing commit history, categorizing changes, and transforming technical commits into clear, customer-friendly release notes. Turns hours of manual changelog writing into minutes of automated generation.",
+  "domain": {
+    "primary_domain": "Version Control",
+    "subdomains": [
+      "Data Management"
+    ],
+    "expertise_level": "intermediate"
+  },
+  "key_concepts": [
+    "Scans Git History",
+    "Categorizes Changes",
+    "Translates Technical → User-Friendly",
+    "Formats Professionally",
+    "Filters Noise",
+    "Follows Best Practices",
+    "User",
+    "Output",
+    "Team Workspaces",
+    "Keyboard Shortcuts",
+    "Faster Sync",
+    "Better Search",
+    "Inspired by:",
+    "Changelog Generator",
+    "When to Use This Skill"
+  ],
+  "key_workflows": [
+    "Scans Git History: Analyzes commits from a specific time period or between versions",
+    "Categorizes Changes: Groups commits into logical categories (features, improvements, bug fixes, breaking changes, security)",
+    "Translates Technical → User-Friendly: Converts developer commits into customer language",
+    "Formats Professionally: Creates clean, structured changelog entries",
+    "Filters Noise: Excludes internal commits (refactoring, tests, etc.)",
+    "Follows Best Practices: Applies changelog guidelines and your brand voice"
+  ],
+  "tool_dependencies": [
+    "Bash",
+    "Glob",
+    "Grep",
+    "Read",
+    "Write"
+  ],
+  "reference_topics": [],
+  "script_descriptions": [],
+  "confidence_score": 0.46,
+  "upstream_structure": [],
+  "extracted_at": "2026-02-04T11:36:08Z"
+}

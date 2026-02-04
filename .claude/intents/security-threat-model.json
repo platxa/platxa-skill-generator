@@ -1,0 +1,59 @@
+{
+  "skill_name": "security-threat-model",
+  "skill_type": "analyzer",
+  "skill_type_scores": {
+    "builder": 4,
+    "guide": 1,
+    "automation": 2,
+    "analyzer": 15,
+    "validator": 15
+  },
+  "description": "Repository-grounded threat modeling that enumerates trust boundaries, assets, attacker capabilities, abuse paths, and mitigations, and writes a concise Markdown threat model. Trigger only when the user explicitly asks to threat model a codebase or path, enumerate threats/abuse paths, or perform AppSec threat modeling. Do not trigger for general architecture summaries, code review, or non-security design work.",
+  "domain": {
+    "primary_domain": "Security",
+    "subdomains": [
+      "Design Tooling",
+      "ML/AI"
+    ],
+    "expertise_level": "intermediate"
+  },
+  "key_concepts": [
+    "Threat Model Source Code Repo",
+    "Quick start",
+    "Workflow",
+    "1) Scope and extract the system model",
+    "2) Derive boundaries, assets, and entry points",
+    "3) Calibrate assets and attacker capabilities",
+    "4) Enumerate threats as abuse paths",
+    "5) Prioritize with explicit likelihood and impact reasoning",
+    "6) Validate service context and assumptions with the user",
+    "7) Recommend mitigations and focus paths",
+    "8) Run a quality check before finalizing",
+    "Risk prioritization guidance (illustrative, not exhaustive)"
+  ],
+  "key_workflows": [
+    "Workflow"
+  ],
+  "tool_dependencies": [
+    "AskUserQuestion",
+    "Read",
+    "Write"
+  ],
+  "reference_topics": [
+    {
+      "topic": "Threat Modeling Prompt Template for LLMs",
+      "summary": "This reference provides a disciplined, repo-grounded prompt that produces AppSec-usable threat models. Use it when you need a reliable output contract and a consistent process to assemble the threat model output Use this as a stable system prompt: ````text"
+    },
+    {
+      "topic": "Security Controls and Asset Categories",
+      "summary": "Use this as a lightweight checklist to keep outputs consistent across teams. Prefer concrete, system-specific items over generic text. - User data (PII, content, uploads) - Authentication artifacts (passwords, tokens, sessions, cookies)"
+    }
+  ],
+  "script_descriptions": [],
+  "confidence_score": 0.62,
+  "upstream_structure": [
+    "references/ (2 files)",
+    "agents/ (1 files)"
+  ],
+  "extracted_at": "2026-02-04T11:36:09Z"
+}

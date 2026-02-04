@@ -1,0 +1,74 @@
+{
+  "skill_name": "best-practices",
+  "skill_type": "guide",
+  "skill_type_scores": {
+    "builder": 5,
+    "guide": 8,
+    "automation": 2,
+    "analyzer": 4,
+    "validator": 5
+  },
+  "description": ">-",
+  "domain": {
+    "primary_domain": "Version Control",
+    "subdomains": [],
+    "expertise_level": "intermediate"
+  },
+  "key_concepts": [
+    "User provides a prompt to transform:",
+    "Question:",
+    "Header:",
+    "Options:",
+    "Transform directly",
+    "Build context first",
+    "User asks to learn/understand:",
+    "User asks for examples:",
+    "User asks to evaluate a prompt:",
+    "task-intent-analyzer",
+    "best-practices-referencer",
+    "codebase-context-builder",
+    "Synthesize findings",
+    "Apply matching patterns",
+    "Ground in codebase"
+  ],
+  "key_workflows": [
+    "Transform directly — \"I'll apply best practices and output an improved version\"",
+    "Build context first — \"I'll gather codebase context and intent analysis first\"",
+    "Synthesize findings — Combine intent + best practices + codebase context",
+    "Apply matching patterns — Use examples from best-practices-referencer as templates",
+    "Ground in codebase — Add specific file paths from codebase-context-builder",
+    "Transform the prompt — Apply the 5 principles with all gathered context",
+    "Output — Show improved prompt with before/after comparison",
+    "Identify what's missing — Check against the 5 principles below",
+    "Add missing elements — Verification, context, constraints, phases, rich content",
+    "Output the improved prompt — In a code block, ready to copy-paste",
+    "Show what changed — Brief comparison of before/after",
+    "Transformation Workflow",
+    "4. Structure Complex Tasks in Phases"
+  ],
+  "tool_dependencies": [
+    "AskUserQuestion",
+    "Bash",
+    "Glob",
+    "Grep",
+    "Read",
+    "Task",
+    "Write"
+  ],
+  "reference_topics": [
+    {
+      "topic": "Claude Code Best Practices",
+      "summary": "Core principles for effective Claude Code usage. For full documentation, see https://docs.anthropic.com/en/docs/claude-code. **Context is your most valuable resource.** Everything follows from managing the context window effectively. The single highest-leverage practice. Provide tests, screenshots, or expected outputs so Claude can self-check."
+    },
+    {
+      "topic": "Prompt Patterns & Anti-Patterns",
+      "summary": "Quick reference for writing effective Claude Code prompts. Condensed from 50+ examples. ``` [WHAT] - Clear action description"
+    }
+  ],
+  "script_descriptions": [],
+  "confidence_score": 0.58,
+  "upstream_structure": [
+    "references/ (2 files)"
+  ],
+  "extracted_at": "2026-02-04T11:36:08Z"
+}

@@ -1,0 +1,63 @@
+{
+  "skill_name": "cloudflare-deploy",
+  "skill_type": "automation",
+  "skill_type_scores": {
+    "builder": 1,
+    "guide": 2,
+    "automation": 16,
+    "analyzer": 0,
+    "validator": 2
+  },
+  "description": "Deploy applications and infrastructure to Cloudflare using Workers, Pages, and related platform services. Use when the user asks to deploy, host, publish, or set up a project on Cloudflare.",
+  "domain": {
+    "primary_domain": "DevOps",
+    "subdomains": [
+      "Version Control",
+      "Backend",
+      "Data Management"
+    ],
+    "expertise_level": "intermediate"
+  },
+  "key_concepts": [
+    "Cloudflare Deploy",
+    "Prerequisites",
+    "Authentication (Required Before Deploy)",
+    "Quick Decision Trees",
+    "\"I need to run code\"",
+    "\"I need to store data\"",
+    "\"I need AI/ML\"",
+    "\"I need networking/connectivity\"",
+    "\"I need security\"",
+    "\"I need media/content\"",
+    "\"I need infrastructure-as-code\"",
+    "Product Index",
+    "Compute & Runtime",
+    "Storage & Data",
+    "AI & Machine Learning"
+  ],
+  "key_workflows": [],
+  "tool_dependencies": [
+    "Bash",
+    "Glob",
+    "Grep",
+    "Read",
+    "Task",
+    "WebFetch",
+    "WebSearch",
+    "Write"
+  ],
+  "reference_topics": [
+    {
+      "topic": "Cloudflare Platform Overview",
+      "summary": "Condensed reference covering core deployment products. For full docs: https://developers.cloudflare.com V8 isolates on 300+ locations. Sub-millisecond cold starts. ```typescript"
+    }
+  ],
+  "script_descriptions": [],
+  "confidence_score": 0.68,
+  "upstream_structure": [
+    "references/ (1 files)",
+    "agents/ (1 files)",
+    "assets/ (2 files)"
+  ],
+  "extracted_at": "2026-02-04T11:36:08Z"
+}

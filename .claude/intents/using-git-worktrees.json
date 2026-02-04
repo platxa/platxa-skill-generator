@@ -1,0 +1,58 @@
+{
+  "skill_name": "using-git-worktrees",
+  "skill_type": "builder",
+  "skill_type_scores": {
+    "builder": 12,
+    "guide": 2,
+    "automation": 2,
+    "analyzer": 2,
+    "validator": 4
+  },
+  "description": "Use when starting feature work that needs isolation from current workspace or before executing implementation plans - creates isolated git worktrees with smart directory selection and safety verification",
+  "domain": {
+    "primary_domain": "Version Control",
+    "subdomains": [],
+    "expertise_level": "intermediate"
+  },
+  "key_concepts": [
+    "Core principle:",
+    "Announce at start:",
+    "If found:",
+    "If preference specified:",
+    "MUST verify directory is ignored before creating worktree:",
+    "If NOT ignored:",
+    "Why critical:",
+    "If tests fail:",
+    "If tests pass:",
+    "Problem:",
+    "Fix:",
+    "Never:",
+    "Always:",
+    "Called by:",
+    "brainstorming"
+  ],
+  "key_workflows": [
+    "worktrees/ (project-local, hidden)",
+    "~/.config/superpowers/worktrees/<project-name>/ (global location)",
+    "Add appropriate line to .gitignore",
+    "Commit the change",
+    "Proceed with worktree creation",
+    "Directory Selection Process",
+    "For Global Directory (~/.config/superpowers/worktrees)",
+    "Creation Steps",
+    "3. Run Project Setup",
+    "Hardcoding setup commands",
+    "Example Workflow"
+  ],
+  "tool_dependencies": [
+    "Bash",
+    "Read",
+    "Task",
+    "Write"
+  ],
+  "reference_topics": [],
+  "script_descriptions": [],
+  "confidence_score": 0.46,
+  "upstream_structure": [],
+  "extracted_at": "2026-02-04T11:36:09Z"
+}

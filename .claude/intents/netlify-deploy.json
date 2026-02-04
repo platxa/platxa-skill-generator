@@ -1,0 +1,87 @@
+{
+  "skill_name": "netlify-deploy",
+  "skill_type": "automation",
+  "skill_type_scores": {
+    "builder": 4,
+    "guide": 3,
+    "automation": 14,
+    "analyzer": 3,
+    "validator": 3
+  },
+  "description": "Deploy web projects to Netlify using the Netlify CLI (`npx netlify`). Use when the user asks to deploy, host, publish, or link a site/repo on Netlify, including preview and production deploys.",
+  "domain": {
+    "primary_domain": "Version Control",
+    "subdomains": [
+      "Data Management",
+      "DevOps"
+    ],
+    "expertise_level": "intermediate"
+  },
+  "key_concepts": [
+    "Netlify CLI",
+    "Authentication",
+    "Project",
+    "pre-authenticated Netlify CLI",
+    "Browser-based OAuth",
+    "API Key",
+    "Expected output patterns",
+    "If not authenticated",
+    "Alternative: API Key authentication",
+    "Linked",
+    "Not linked",
+    "If already linked",
+    "If not linked",
+    "If link fails",
+    "Preview/Draft Deploy"
+  ],
+  "key_workflows": [
+    "Check authentication status with npx netlify status",
+    "If not authenticated, guide user through npx netlify login",
+    "Fail gracefully if authentication cannot be established",
+    "Choosing team/account",
+    "Setting site name",
+    "Configuring build settings",
+    "Creating netlify.toml if needed",
+    "CLI detects build settings (from netlify.toml or prompts user)",
+    "Builds the project locally",
+    "Uploads built assets to Netlify",
+    "Returns deployment URL",
+    "Never commit secrets to Git",
+    "Set in Netlify dashboard: Site Settings → Environment Variables",
+    "Access in builds via process.env.VARIABLE_NAME",
+    "Workflow",
+    "yarn install, pnpm install, etc.",
+    "Example Full Workflow",
+    "3. Install dependencies"
+  ],
+  "tool_dependencies": [
+    "AskUserQuestion",
+    "Bash",
+    "Read",
+    "WebFetch",
+    "WebSearch",
+    "Write"
+  ],
+  "reference_topics": [
+    {
+      "topic": "Netlify CLI Commands Reference",
+      "summary": "Quick reference for common Netlify CLI commands used in deployments. ```bash npx netlify login"
+    },
+    {
+      "topic": "Netlify Deployment Patterns",
+      "summary": "Common deployment scenarios and best practices for the Netlify skill. ``` Is user authenticated?"
+    },
+    {
+      "topic": "netlify.toml Configuration Reference",
+      "summary": "Configuration file for Netlify builds and deployments. ```toml [build]"
+    }
+  ],
+  "script_descriptions": [],
+  "confidence_score": 0.76,
+  "upstream_structure": [
+    "references/ (3 files)",
+    "agents/ (1 files)",
+    "assets/ (2 files)"
+  ],
+  "extracted_at": "2026-02-04T11:36:09Z"
+}

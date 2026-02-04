@@ -1,0 +1,63 @@
+{
+  "skill_name": "atlas",
+  "skill_type": "analyzer",
+  "skill_type_scores": {
+    "builder": 0,
+    "guide": 1,
+    "automation": 1,
+    "analyzer": 2,
+    "validator": 1
+  },
+  "description": "macOS-only AppleScript control for the ChatGPT Atlas desktop app. Use only when the user explicitly asks to control Atlas tabs/bookmarks/history on macOS and the \\\"ChatGPT Atlas\\\" app is installed; do not trigger for general browser tasks or non-macOS environments.",
+  "domain": {
+    "primary_domain": "Browser Automation",
+    "subdomains": [],
+    "expertise_level": "intermediate"
+  },
+  "key_concepts": [
+    "Atlas Control (macOS)",
+    "Quick Start",
+    "Tabs Workflow",
+    "Bookmarks and History"
+  ],
+  "key_workflows": [
+    "List tabs to get window_id and tab_index:",
+    "Focus a tab using the window_id and tab_index from the listing:",
+    "Open a new tab:",
+    "Tabs Workflow"
+  ],
+  "tool_dependencies": [
+    "Bash",
+    "Glob",
+    "Grep",
+    "Read",
+    "WebFetch",
+    "Write"
+  ],
+  "reference_topics": [
+    {
+      "topic": "Atlas Data Paths (macOS)",
+      "summary": "Atlas stores Chromium-style profile data under: - `~/Library/Application Support/com.openai.atlas/browser-data/host/Local State` - Profiles under: `~/Library/Application Support/com.openai.atlas/browser-data/host/<profile>`"
+    }
+  ],
+  "script_descriptions": [
+    {
+      "file": "atlas_cli.py",
+      "language": "python",
+      "purpose": "set tabList to {{}}"
+    },
+    {
+      "file": "atlas_common.py",
+      "language": "python",
+      "purpose": "Raised when Atlas-specific operations fail."
+    }
+  ],
+  "confidence_score": 0.77,
+  "upstream_structure": [
+    "references/ (1 files)",
+    "scripts/ (5 files)",
+    "agents/ (1 files)",
+    "assets/ (2 files)"
+  ],
+  "extracted_at": "2026-02-04T11:36:08Z"
+}

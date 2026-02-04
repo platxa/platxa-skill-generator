@@ -1,0 +1,47 @@
+{
+  "skill_name": "web-design-guidelines",
+  "skill_type": "analyzer",
+  "skill_type_scores": {
+    "builder": 1,
+    "guide": 22,
+    "automation": 0,
+    "analyzer": 32,
+    "validator": 0
+  },
+  "description": "Review UI code for Web Interface Guidelines compliance. Use when asked to \"review my UI\", \"check accessibility\", \"audit design\", \"review UX\", or \"check my site against best practices\".",
+  "domain": {
+    "primary_domain": "Version Control",
+    "subdomains": [
+      "Design Tooling"
+    ],
+    "expertise_level": "beginner"
+  },
+  "key_concepts": [
+    "Web Interface Guidelines",
+    "How It Works",
+    "Guidelines Source"
+  ],
+  "key_workflows": [
+    "Fetch the latest guidelines from the source URL below",
+    "Read the specified files (or prompt user for files/pattern)",
+    "Check against all rules in the fetched guidelines",
+    "Output findings in the terse file:line format",
+    "Fetch guidelines from the source URL above",
+    "Read the specified files",
+    "Apply all rules from the fetched guidelines",
+    "Output findings using the format specified in the guidelines"
+  ],
+  "tool_dependencies": [
+    "AskUserQuestion",
+    "Bash",
+    "Read",
+    "WebFetch",
+    "WebSearch",
+    "Write"
+  ],
+  "reference_topics": [],
+  "script_descriptions": [],
+  "confidence_score": 0.2,
+  "upstream_structure": [],
+  "extracted_at": "2026-02-04T11:36:09Z"
+}

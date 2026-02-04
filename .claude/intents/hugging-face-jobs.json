@@ -1,0 +1,93 @@
+{
+  "skill_name": "hugging-face-jobs",
+  "skill_type": "automation",
+  "skill_type_scores": {
+    "builder": 2,
+    "guide": 3,
+    "automation": 15,
+    "analyzer": 2,
+    "validator": 3
+  },
+  "description": "Run workloads on Hugging Face Jobs infrastructure. Covers UV scripts, Docker jobs, hardware selection, authentication, secrets, timeouts, result persistence, scheduled jobs, and webhooks. For model training, see model-trainer skill.",
+  "domain": {
+    "primary_domain": "ML/AI",
+    "subdomains": [
+      "DevOps",
+      "Security",
+      "Data Management"
+    ],
+    "expertise_level": "intermediate"
+  },
+  "key_concepts": [
+    "Use cases:",
+    "For model training:",
+    "Use `hf_jobs()` MCP tool",
+    "Always handle auth",
+    "Provide job details",
+    "Set appropriate timeouts",
+    "Always persist results",
+    "Script parameter:",
+    "Custom image:",
+    "Extra deps:",
+    "Python version:",
+    "Environment is ephemeral. Without persistence, ALL work is lost.",
+    "Running Workloads on Hugging Face Jobs",
+    "Key Directives",
+    "Prerequisites"
+  ],
+  "key_workflows": [
+    "Use hf_jobs() MCP tool - Pass script content inline as string. Do NOT save to local files",
+    "Always handle auth - Hub operations require secrets: {\"HF_TOKEN\": \"$HF_TOKEN\"}",
+    "Provide job details after submission - Job ID, monitoring URL, estimated time",
+    "Set appropriate timeouts - Default 30min may be insufficient",
+    "Always persist results - Environment is ephemeral; all files deleted when job ends"
+  ],
+  "tool_dependencies": [
+    "Bash",
+    "Read",
+    "WebFetch",
+    "WebSearch",
+    "Write"
+  ],
+  "reference_topics": [
+    {
+      "topic": "Hardware Selection Guide",
+      "summary": "**CPU:** `cpu-basic` (testing), `cpu-upgrade` (data processing) **GPU (Single):** | Flavor | GPU | VRAM | Best For |"
+    },
+    {
+      "topic": "Saving Results to Hugging Face Hub",
+      "summary": "**Job environments are ephemeral. ALL results lost when job ends unless persisted.** Job config must include: `\"secrets\": {\"HF_TOKEN\": \"$HF_TOKEN\"}` Script must verify: `assert \"HF_TOKEN\" in os.environ, \"HF_TOKEN required!\"`"
+    },
+    {
+      "topic": "Token Usage Guide",
+      "summary": "**Required:** Pushing models/datasets, accessing private repos, creating repos, Hub API operations. **Not required:** Downloading public models/datasets, jobs without Hub interaction. **Recommended: Automatic token via secrets (encrypted server-side)**"
+    },
+    {
+      "topic": "Troubleshooting Guide",
+      "summary": "| Symptom | Likely Cause | Fix | |---------|-------------|-----| | 401 Unauthorized | Token missing | `secrets: {\"HF_TOKEN\": \"$HF_TOKEN\"}` |"
+    }
+  ],
+  "script_descriptions": [
+    {
+      "file": "cot-self-instruct.py",
+      "language": "python",
+      "purpose": "Generate high-quality synthetic data using Chain-of-Thought Self-Instruct methodology."
+    },
+    {
+      "file": "finepdfs-stats.py",
+      "language": "python",
+      "purpose": "Analyze educational quality trends across CommonCrawl dumps using Polars streaming."
+    },
+    {
+      "file": "generate-responses.py",
+      "language": "python",
+      "purpose": "Generate responses for prompts in a dataset using vLLM for efficient GPU inference."
+    }
+  ],
+  "confidence_score": 0.91,
+  "upstream_structure": [
+    "references/ (4 files)",
+    "scripts/ (7 files)"
+  ],
+  "extracted_at": "2026-02-04T11:36:09Z"
+}

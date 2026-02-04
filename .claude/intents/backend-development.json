@@ -1,0 +1,48 @@
+{
+  "skill_name": "backend-development",
+  "skill_type": "guide",
+  "skill_type_scores": {
+    "builder": 1,
+    "guide": 12,
+    "automation": 0,
+    "analyzer": 2,
+    "validator": 11
+  },
+  "description": "Backend API design, database architecture, microservices patterns, and test-driven development. Use for designing APIs, database schemas, or backend system architecture.",
+  "domain": {
+    "primary_domain": "Backend",
+    "subdomains": [
+      "Data Management",
+      "Design Tooling",
+      "Testing"
+    ],
+    "expertise_level": "intermediate"
+  },
+  "key_concepts": [
+    "Logging",
+    "Metrics",
+    "Tracing",
+    "Health checks",
+    "Backend Development",
+    "API Design",
+    "RESTful Conventions",
+    "Response Format",
+    "Error Format",
+    "Database Patterns",
+    "Schema Design",
+    "Query Patterns",
+    "Authentication",
+    "JWT Pattern",
+    "Middleware"
+  ],
+  "key_workflows": [],
+  "tool_dependencies": [
+    "Bash",
+    "Read"
+  ],
+  "reference_topics": [],
+  "script_descriptions": [],
+  "confidence_score": 0.46,
+  "upstream_structure": [],
+  "extracted_at": "2026-02-04T11:36:08Z"
+}

@@ -1,0 +1,52 @@
+{
+  "skill_name": "notion-meeting-intelligence",
+  "skill_type": "builder",
+  "skill_type_scores": {
+    "builder": 4,
+    "guide": 3,
+    "automation": 1,
+    "analyzer": 1,
+    "validator": 1
+  },
+  "description": "Prepare meeting materials with Notion context and Codex research; use when gathering context, drafting agendas/pre-reads, and tailoring materials to attendees.",
+  "domain": {
+    "primary_domain": "Version Control",
+    "subdomains": [],
+    "expertise_level": "intermediate"
+  },
+  "key_concepts": [
+    "Meeting Intelligence",
+    "Quick start",
+    "Workflow",
+    "1) Gather inputs",
+    "2) Choose format",
+    "3) Build the agenda/pre-read",
+    "4) Enrich with research",
+    "5) Finalize and share",
+    "References and examples"
+  ],
+  "key_workflows": [
+    "Add the Notion MCP:",
+    "Enable remote MCP client:",
+    "Log in with OAuth:",
+    "Workflow"
+  ],
+  "tool_dependencies": [
+    "Glob",
+    "Grep",
+    "Read",
+    "Task",
+    "WebFetch"
+  ],
+  "reference_topics": [],
+  "script_descriptions": [],
+  "confidence_score": 0.4,
+  "upstream_structure": [
+    "agents/ (1 files)",
+    "assets/ (2 files)",
+    "evaluations/ (3 files)",
+    "examples/ (4 files)",
+    "reference/ (7 files)"
+  ],
+  "extracted_at": "2026-02-04T11:36:09Z"
+}

@@ -1,0 +1,55 @@
+{
+  "skill_name": "frontend-design",
+  "skill_type": "builder",
+  "skill_type_scores": {
+    "builder": 36,
+    "guide": 2,
+    "automation": 2,
+    "analyzer": 2,
+    "validator": 12
+  },
+  "description": "Create distinctive, production-grade frontend interfaces with high design quality. Use this skill when the user asks to build web components, pages, artifacts, posters, or applications (examples include websites, landing pages, dashboards, React components, HTML/CSS layouts, or when styling/beautifying any web UI). Generates creative, polished code and UI design that avoids generic AI aesthetics.",
+  "domain": {
+    "primary_domain": "Frontend",
+    "subdomains": [
+      "Version Control",
+      "Design Tooling"
+    ],
+    "expertise_level": "intermediate"
+  },
+  "key_concepts": [
+    "Purpose",
+    "Tone",
+    "Constraints",
+    "Differentiation",
+    "CRITICAL",
+    "Typography",
+    "Color & Theme",
+    "Motion",
+    "Spatial Composition",
+    "Backgrounds & Visual Details",
+    "Design Thinking",
+    "Frontend Aesthetics Guidelines",
+    "Workflow",
+    "Output Checklist"
+  ],
+  "key_workflows": [
+    "Analyze the user's requirements and identify the interface type",
+    "Choose a bold aesthetic direction and commit to it",
+    "Build the component with semantic HTML, Tailwind, and React",
+    "Apply finishing touches: micro-interactions, shadows, transitions",
+    "Verify the output against the checklist below",
+    "Workflow"
+  ],
+  "tool_dependencies": [
+    "Bash",
+    "Read",
+    "WebFetch",
+    "WebSearch"
+  ],
+  "reference_topics": [],
+  "script_descriptions": [],
+  "confidence_score": 0.46,
+  "upstream_structure": [],
+  "extracted_at": "2026-02-04T11:36:09Z"
+}

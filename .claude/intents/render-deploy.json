@@ -1,0 +1,131 @@
+{
+  "skill_name": "render-deploy",
+  "skill_type": "automation",
+  "skill_type_scores": {
+    "builder": 3,
+    "guide": 3,
+    "automation": 14,
+    "analyzer": 5,
+    "validator": 4
+  },
+  "description": "Deploy applications to Render by analyzing codebases, generating render.yaml Blueprints, and providing Dashboard deeplinks. Use when the user wants to deploy, host, publish, or set up their application on Render's cloud platform.",
+  "domain": {
+    "primary_domain": "DevOps",
+    "subdomains": [
+      "Version Control",
+      "Backend"
+    ],
+    "expertise_level": "intermediate"
+  },
+  "key_concepts": [
+    "Git-backed",
+    "prebuilt Docker image",
+    "Blueprint Method",
+    "Direct Creation",
+    "Git Repo Path:",
+    "Prebuilt Docker Image Path:",
+    "Blueprint",
+    "Use Direct Creation (MCP) when ALL are true:",
+    "Use Blueprint when ANY are true:",
+    "1. Confirm Source Path (Git vs Docker)",
+    "2. Check MCP Tools Availability (Preferred for Single-Service)",
+    "3. Check Render CLI Installation (for Blueprint validation)",
+    "4. MCP Setup (if MCP isn't configured)",
+    "5. Check Authentication (CLI fallback only)",
+    "API Key (CLI)"
+  ],
+  "key_workflows": [
+    "Blueprint Method - Generate render.yaml for Infrastructure-as-Code deployments",
+    "Direct Creation - Create services instantly via MCP tools",
+    "Ask whether they want to deploy from a Git repo or a prebuilt Docker image",
+    "Ask whether Render should provision everything the app needs (based on what seems likely from the user's description) or only the app while they bring their own infra. If dependencies are unclear, ask a short follow-up to confirm whether they need a database, workers, cron, or other services",
+    "Authenticate (CLI): run render whoami -o json (if not logged in, run render login or set RENDER_API_KEY)",
+    "Validate (recommended): run render blueprints validate",
+    "Commit + push: git add render.yaml && git commit -m \"Add Render deployment configuration\" && git push origin main",
+    "Open Dashboard: Use the Blueprint deeplink and complete Git OAuth if prompted",
+    "Fill secrets: Set env vars marked sync: false",
+    "Deploy: Click \"Apply\" and monitor the deploy",
+    "Verify render.yaml is merged - Confirm the file exists in your repository on GitHub/GitLab/Bitbucket",
+    "Click the deeplink to open Render Dashboard",
+    "Complete Git provider OAuth if prompted",
+    "Name the Blueprint (or use default from render.yaml)",
+    "Fill in secret environment variables (marked with sync: false)",
+    "Review services and databases configuration",
+    "Click \"Apply\" to deploy",
+    "Confirm the latest deploy is live and serving traffic",
+    "Hit the health endpoint (or root) and verify a 200 response",
+    "Scan recent error logs for a clear failure signature",
+    "Verify required env vars and port binding (0.0.0.0:$PORT)",
+    "Blueprint Workflow",
+    "Step 1: Analyze Codebase",
+    "Step 2: Generate render.yaml",
+    "Step 2.5: Immediate Next Steps (Always Provide)",
+    "Step 3: Validate Configuration",
+    "Step 4: Commit and Push",
+    "Step 5: Generate Deeplink",
+    "Step 6: Guide User",
+    "Step 7: Verify Deployment",
+    "Direct Creation Workflow",
+    "Step 1: Analyze Codebase",
+    "Step 2: Create Resources via MCP",
+    "Step 3: Configure Environment Variables",
+    "Step 4: Verify Deployment"
+  ],
+  "tool_dependencies": [
+    "AskUserQuestion",
+    "Bash",
+    "Read",
+    "Task",
+    "WebFetch",
+    "WebSearch",
+    "Write"
+  ],
+  "reference_topics": [
+    {
+      "topic": "Render Blueprint Specification",
+      "summary": "`render.yaml` in repo root defines infrastructure as code. ```yaml services: []         # Web, worker, cron, static, private"
+    },
+    {
+      "topic": "Codebase Analysis (Deploy)",
+      "summary": "Use this reference for framework-specific detection and build/start command selection when preparing a Render deployment. - Read `package.json` to detect framework (Express, Next.js, Nest.js, Fastify, etc.) - Check `scripts` section for build/start commands"
+    },
+    {
+      "topic": "Render Configuration Guide",
+      "summary": "Essential configuration patterns for Render deployments. Web services MUST bind to `0.0.0.0:$PORT`. Render sets `PORT` (default 10000). | Language | Code |"
+    },
+    {
+      "topic": "Deployment Details",
+      "summary": "Use this reference for service discovery, configuration patterns, quick commands, and common issues. **List all services:** ```"
+    },
+    {
+      "topic": "Direct Creation (MCP) Details",
+      "summary": "Use this reference for MCP direct-creation examples and follow-on configuration. Use [codebase-analysis.md](codebase-analysis.md) to determine runtime, build/start commands, env vars, and datastores. **Create a Web Service:**"
+    },
+    {
+      "topic": "Error patterns (compact)",
+      "summary": "Use this to quickly map log signatures to likely causes and fixes. | Log pattern | Likely cause | Quick fix | | --- | --- | --- |"
+    },
+    {
+      "topic": "Post-deploy checks",
+      "summary": "Use this after any deploy or service creation. Keep it short; stop when a check fails. ``` list_deploys(serviceId: \"<service-id>\", limit: 1)"
+    },
+    {
+      "topic": "Render Runtimes",
+      "summary": "| Runtime | Versions | Default | Version Source | |---------|----------|---------|----------------| | `node` | 14-21 | 20 | `package.json` engines |"
+    },
+    {
+      "topic": "Render Service Types",
+      "summary": "| Feature | Web | Worker | Cron | Static | Private (`pserv`) | |---------|-----|--------|------|--------|-------------------| | Public URL | Yes | No | No | Yes (CDN) | No |"
+    },
+    {
+      "topic": "Basic troubleshooting (deploy-time and startup)",
+      "summary": "Use this when a deploy fails, the service crashes on start, or health checks time out. Keep fixes minimal and redeploy after each change. - **Build failure**: errors in build logs, missing dependencies, build command issues."
+    }
+  ],
+  "script_descriptions": [],
+  "confidence_score": 0.76,
+  "upstream_structure": [
+    "references/ (10 files)"
+  ],
+  "extracted_at": "2026-02-04T11:36:09Z"
+}
