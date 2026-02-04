@@ -622,6 +622,50 @@ print(json.dumps(result))
 PYEOF
 }
 
+# Write or update a skill entry in the regeneration report
+write_report_entry() {
+    local report_path="$1" skill_name="$2" skill_type="$3"
+    local regenerated="$4" failure_reason="$5" dry_run="$6"
+
+    python3 - "$report_path" "$skill_name" "$skill_type" "$regenerated" "$failure_reason" "$dry_run" << 'PYEOF'
+import sys, json, os
+from datetime import datetime, timezone
+
+report_path, skill, stype, regen, reason, is_dry = sys.argv[1:7]
+
+report = {"generated_at": "", "mode": "", "skills": {}}
+if os.path.exists(report_path):
+    with open(report_path) as f:
+        report = json.load(f)
+
+now = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+report["generated_at"] = now
+report["mode"] = "dry-run" if is_dry == "true" else "execute"
+
+# Compute a simple confidence score based on content richness
+confidence = 0.5  # base
+if stype != "unknown":
+    confidence += 0.2
+# Intent was successfully extracted if we have a type
+if stype and stype != "unknown":
+    confidence = min(confidence + 0.2, 1.0)
+
+report.setdefault("skills", {})[skill] = {
+    "intent_confidence": round(confidence, 2),
+    "skill_type": stype,
+    "regenerated": regen == "true",
+    "failure_reason": reason if reason else None,
+    "timestamp": now,
+}
+
+with open(report_path, "w") as f:
+    json.dump(report, f, indent=2, sort_keys=True)
+    f.write("\n")
+PYEOF
+}
+
+REPORT_PATH="$CATALOG_DIR/regeneration-report.json"
+
 # Detailed single-skill regeneration with progress output
 cmd_regenerate_single() {
     local skill_name="$1"
@@ -688,6 +732,7 @@ cmd_regenerate_single() {
         echo ""
         echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
         echo -e "${YELLOW}No files were modified (dry-run).${NC}"
+        write_report_entry "$REPORT_PATH" "$skill_name" "$stype" "false" "" "true"
     else
         echo -e "${BOLD}Phase 3: Executing Pipeline${NC}"
         local regenerate_script="$SCRIPT_DIR/regenerate-skill.sh"
@@ -711,10 +756,12 @@ cmd_regenerate_single() {
                 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
                 echo -e "${GREEN}✓ $skill_name regenerated${NC}"
             fi
+            write_report_entry "$REPORT_PATH" "$skill_name" "$stype" "true" "" "false"
         else
             echo ""
             echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
             echo -e "${RED}✗ $skill_name regeneration failed${NC}"
+            write_report_entry "$REPORT_PATH" "$skill_name" "$stype" "false" "pipeline execution failed" "false"
             return 1
         fi
     fi
@@ -784,9 +831,14 @@ for k in sorted(json.load(sys.stdin).keys()):
             printf "  %-35s  %-10s  tools: %s\n" "" "" "$tools"
             printf "  %-35s  %-10s  plan: Intent → Discovery → Architecture → Generation → Validation\n" "" ""
             echo ""
+            write_report_entry "$REPORT_PATH" "$name" "$stype" "false" "" "true"
             success=$((success + 1))
         else
             echo -e "  ${BLUE}[Regenerating]${NC} $name"
+
+            local intent stype
+            intent=$(extract_intent_summary "$skill_dir")
+            stype=$(echo "$intent" | python3 -c "import sys,json; print(json.load(sys.stdin).get('type','unknown'))")
 
             if "$regenerate_script" "$skill_dir" --output-dir "$skill_dir"; then
                 # Validate after regeneration
@@ -799,9 +851,11 @@ for k in sorted(json.load(sys.stdin).keys()):
                 else
                     echo -e "  ${GREEN}✓${NC} $name (regenerated)"
                 fi
+                write_report_entry "$REPORT_PATH" "$name" "$stype" "true" "" "false"
                 success=$((success + 1))
             else
                 echo -e "  ${RED}✗${NC} $name (regeneration failed)"
+                write_report_entry "$REPORT_PATH" "$name" "$stype" "false" "pipeline execution failed" "false"
                 failed=$((failed + 1))
             fi
         fi
