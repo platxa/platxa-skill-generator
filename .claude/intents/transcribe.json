@@ -1,6 +1,6 @@
 {
   "skill_name": "transcribe",
-  "skill_type": "validator",
+  "skill_type": "automation",
   "skill_type_scores": {
     "builder": 2,
     "guide": 2,
