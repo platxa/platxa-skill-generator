@@ -392,12 +392,12 @@ for k in sorted(json.load(sys.stdin).keys()):
         # Optionally validate
         if [[ -x "$SCRIPT_DIR/validate-all.sh" ]] && [[ $added -gt 0 ]]; then
             echo ""
-            echo -e "${BOLD}Running validation on synced skills (profile: spec)...${NC}"
+            echo -e "${BOLD}Running validation on synced skills...${NC}"
             local valid=0 invalid=0
             while IFS= read -r name; do
                 [[ -z "$name" ]] && continue
                 [[ ! -d "$CATALOG_DIR/$name" ]] && continue
-                if "$SCRIPT_DIR/validate-all.sh" "$CATALOG_DIR/$name" --profile=spec > /dev/null 2>&1; then
+                if "$SCRIPT_DIR/validate-all.sh" "$CATALOG_DIR/$name" > /dev/null 2>&1; then
                     valid=$((valid + 1))
                 else
                     echo -e "  ${YELLOW}⚠${NC} $name failed validation"
@@ -570,19 +570,156 @@ print(sk.get('sha', ''), sk.get('synced_at', ''))
     done <<< "$skill_names"
 }
 
+# Extract intent summary from a SKILL.md file (name, description, type, tools)
+extract_intent_summary() {
+    local skill_dir="$1"
+    python3 - "$skill_dir" << 'PYEOF'
+import sys, json, re
+
+skill_dir = sys.argv[1]
+skill_md = f"{skill_dir}/SKILL.md"
+
+try:
+    with open(skill_md) as f:
+        content = f.read()
+except FileNotFoundError:
+    print(json.dumps({"error": "no SKILL.md"}))
+    sys.exit(0)
+
+# Parse YAML frontmatter
+result = {"name": "", "description": "", "type": "unknown", "tools": []}
+fm_match = re.match(r'^---\s*\n(.+?)\n---', content, re.DOTALL)
+if fm_match:
+    import yaml
+    try:
+        fm = yaml.safe_load(fm_match.group(1))
+        if isinstance(fm, dict):
+            result["name"] = fm.get("name", "")
+            result["description"] = fm.get("description", "")
+            tools = fm.get("tools", fm.get("allowed-tools", []))
+            if isinstance(tools, list):
+                result["tools"] = tools
+    except Exception:
+        pass
+
+# Detect skill type from body content
+body = content[fm_match.end():] if fm_match else content
+type_markers = {
+    "builder": ["## Workflow", "## Output Checklist", "## Templates"],
+    "guide": ["## Steps", "## Best Practices", "## Getting Started"],
+    "automation": ["## Triggers", "## Scripts", "## Verification"],
+    "analyzer": ["## Checklist", "## Metrics", "## Reports"],
+    "validator": ["## Rules", "## Thresholds", "## Pass"],
+}
+best_type, best_count = "guide", 0
+for stype, markers in type_markers.items():
+    count = sum(1 for m in markers if m in body)
+    if count > best_count:
+        best_type, best_count = stype, count
+result["type"] = best_type
+
+print(json.dumps(result))
+PYEOF
+}
+
+cmd_regenerate() {
+    local dry_run=false
+    if [[ "${1:-}" == "--dry-run" ]]; then
+        dry_run=true
+    fi
+
+    echo -e "${BOLD}Regeneration Pipeline$(${dry_run} && echo " (DRY-RUN)")${NC}"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo ""
+
+    local regenerate_script="$SCRIPT_DIR/regenerate-skill.sh"
+    local validate_script="$SCRIPT_DIR/validate-all.sh"
+
+    if ! $dry_run && [[ ! -x "$regenerate_script" ]]; then
+        die "regenerate-skill.sh not found at $regenerate_script"
+    fi
+
+    # Enumerate all external skills
+    local skill_names total=0 success=0 failed=0 skipped=0
+    skill_names=$(parse_manifest external | python3 -c "
+import sys, json
+for k in sorted(json.load(sys.stdin).keys()):
+    print(k)")
+
+    while IFS= read -r name; do
+        [[ -z "$name" ]] && continue
+        total=$((total + 1))
+
+        local skill_dir="$CATALOG_DIR/$name"
+
+        if [[ ! -d "$skill_dir" || ! -f "$skill_dir/SKILL.md" ]]; then
+            if $dry_run; then
+                echo -e "  ${YELLOW}SKIP${NC}  $name (not synced — run sync first)"
+            fi
+            skipped=$((skipped + 1))
+            continue
+        fi
+
+        if $dry_run; then
+            # Extract and display intent summary
+            local intent
+            intent=$(extract_intent_summary "$skill_dir")
+            local desc stype tools
+            desc=$(echo "$intent" | python3 -c "import sys,json; print(json.load(sys.stdin).get('description','')[:80])")
+            stype=$(echo "$intent" | python3 -c "import sys,json; print(json.load(sys.stdin).get('type','unknown'))")
+            tools=$(echo "$intent" | python3 -c "import sys,json; t=json.load(sys.stdin).get('tools',[]); print(', '.join(t[:5]) if t else 'none')")
+
+            printf "  %-35s  %-10s  %s\n" "$name" "[$stype]" "$desc"
+            printf "  %-35s  %-10s  tools: %s\n" "" "" "$tools"
+            printf "  %-35s  %-10s  plan: Intent → Discovery → Architecture → Generation → Validation\n" "" ""
+            echo ""
+            success=$((success + 1))
+        else
+            echo -e "  ${BLUE}[Regenerating]${NC} $name"
+
+            if "$regenerate_script" "$skill_dir" --output-dir "$skill_dir"; then
+                # Validate after regeneration
+                if [[ -x "$validate_script" ]]; then
+                    if "$validate_script" "$skill_dir" > /dev/null 2>&1; then
+                        echo -e "  ${GREEN}✓${NC} $name (regenerated + validated)"
+                    else
+                        echo -e "  ${YELLOW}⚠${NC} $name (regenerated but validation warnings)"
+                    fi
+                else
+                    echo -e "  ${GREEN}✓${NC} $name (regenerated)"
+                fi
+                success=$((success + 1))
+            else
+                echo -e "  ${RED}✗${NC} $name (regeneration failed)"
+                failed=$((failed + 1))
+            fi
+        fi
+    done <<< "$skill_names"
+
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    if $dry_run; then
+        echo -e "Listed: ${GREEN}$success${NC} | Skipped: ${YELLOW}$skipped${NC} | Total: $total"
+        echo -e "${YELLOW}No files were modified (dry-run).${NC}"
+    else
+        echo -e "Regenerated: ${GREEN}$success${NC} | Failed: ${RED}$failed${NC} | Skipped: ${YELLOW}$skipped${NC} | Total: $total"
+    fi
+}
+
 usage() {
     cat << EOF
 ${BOLD}Skill Catalog Sync${NC}
 
 Usage:
-  $(basename "$0") sync              Fetch/update all external skills
-  $(basename "$0") sync --dry-run    Preview sync without modifying catalog
-  $(basename "$0") update <name>     Update a single external skill
-  $(basename "$0") list-external     List external skills and their status
-  $(basename "$0") list-local        List local-only skills
-  $(basename "$0") diff              Compare catalog vs upstream cache
-  $(basename "$0") status            Show last sync state per skill
-  $(basename "$0") list-categories   List all skill categories
+  $(basename "$0") sync                 Fetch/update all external skills
+  $(basename "$0") sync --dry-run       Preview sync without modifying catalog
+  $(basename "$0") update <name>        Update a single external skill
+  $(basename "$0") regenerate           Regenerate all external skills through pipeline
+  $(basename "$0") regenerate --dry-run List skills with intent summaries and plans
+  $(basename "$0") list-external        List external skills and their status
+  $(basename "$0") list-local           List local-only skills
+  $(basename "$0") diff                 Compare catalog vs upstream cache
+  $(basename "$0") status               Show last sync state per skill
+  $(basename "$0") list-categories      List all skill categories
 
 Options:
   --help, -h    Show this help
@@ -604,6 +741,7 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
         diff)           cmd_diff ;;
         status)         cmd_status ;;
         list-categories) cmd_list_categories ;;
+        regenerate)     cmd_regenerate "${2:-}" ;;
         --help|-h)      usage ;;
         *)              usage; exit 1 ;;
     esac
