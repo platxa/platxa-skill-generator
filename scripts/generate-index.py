@@ -269,15 +269,25 @@ def build_skill_entry(
     if manifest_info.get("compatibility"):
         entry["compatibility"] = manifest_info["compatibility"]
 
-    # Regeneration tracking fields
-    if manifest_info.get("regenerated"):
-        entry["regenerated"] = True
+    # Regeneration status — always present so consumers can filter
+    entry["regenerated"] = bool(manifest_info.get("regenerated", False))
     if manifest_info.get("regenerated_at"):
         entry["regenerated_at"] = str(manifest_info["regenerated_at"])
     if manifest_info.get("intent_confidence") is not None:
         entry["intent_confidence"] = float(manifest_info["intent_confidence"])
     if manifest_info.get("generator_version"):
         entry["generator_version"] = str(manifest_info["generator_version"])
+
+    # Provenance — tracks where the skill originated from
+    provenance: dict[str, Any] = {}
+    if source not in ("local", "unknown"):
+        provenance["upstream_source"] = source
+    if manifest_info.get("ref"):
+        provenance["upstream_ref"] = manifest_info["ref"]
+    if manifest_info.get("sha"):
+        provenance["upstream_sha"] = manifest_info["sha"]
+    if provenance:
+        entry["provenance"] = provenance
 
     return entry
 
@@ -353,6 +363,7 @@ def generate_search_index(full_index: dict[str, Any]) -> list[dict[str, Any]]:
                 "tier": skill.get("tier", 0),
                 "tokens": skill.get("token_counts", {}).get("total", 0),
                 "source": skill.get("source", ""),
+                "regenerated": skill.get("regenerated", False),
                 "tags": tags,
             }
         )
