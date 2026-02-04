@@ -33,8 +33,8 @@ python ../scripts/evaluation_manager.py import-aa \
 import argparse
 import os
 
-import requests
 import dotenv
+import requests
 from huggingface_hub import ModelCard
 
 dotenv.load_dotenv()
@@ -54,10 +54,7 @@ def get_model_evaluations_data(creator_slug, model_name):
     response = requests.get(URL, headers=HEADERS)
     response_data = response.json()["data"]
     for model in response_data:
-        if (
-            model["model_creator"]["slug"] == creator_slug
-            and model["slug"] == model_name
-        ):
+        if model["model_creator"]["slug"] == creator_slug and model["slug"] == model_name:
             return model
     raise ValueError(f"Model {model_name} not found")
 
@@ -120,9 +117,7 @@ def main():
     card = ModelCard.load(args.repo_id)
     card.data["model-index"] = model_index
 
-    commit_message = (
-        f"Add Artificial Analysis evaluations for {args.model_name}"
-    )
+    commit_message = f"Add Artificial Analysis evaluations for {args.model_name}"
     commit_description = (
         f"This commit adds the Artificial Analysis evaluations for the {args.model_name} model to this repository. "
         "To see the scores, visit the [Artificial Analysis](https://artificialanalysis.ai) website."

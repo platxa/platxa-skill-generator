@@ -47,9 +47,7 @@ from ascii_graph import Pyasciigraph
 from datasets import Dataset
 from huggingface_hub import HfApi, create_repo, list_repo_tree, login
 
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
 # Common language+script codes for finepdfs-edu
@@ -79,8 +77,7 @@ def list_available_languages(dataset_id: str) -> list[str]:
         languages = [
             item.path.replace("data/", "")
             for item in tree
-            if item.path.startswith("data/")
-            and "/" not in item.path.replace("data/", "")
+            if item.path.startswith("data/") and "/" not in item.path.replace("data/", "")
         ]
         return sorted(languages)
     except Exception as e:
@@ -107,9 +104,7 @@ def compute_global_stats(temporal: pl.DataFrame) -> pl.DataFrame:
         {
             "total_docs": [total],
             "total_tokens": [temporal["total_tokens"].sum()],
-            "avg_edu_score": [
-                (temporal["avg_edu_score"] * temporal["doc_count"]).sum() / total
-            ],
+            "avg_edu_score": [(temporal["avg_edu_score"] * temporal["doc_count"]).sum() / total],
             "high_edu_rate": [temporal["high_edu_count"].sum() / total],
             "num_dumps": [len(temporal)],
         }
@@ -123,9 +118,7 @@ def format_temporal_stats(temporal: pl.DataFrame) -> pl.DataFrame:
             (pl.col("high_edu_count") / pl.col("doc_count")).alias("high_edu_rate")
         )
         .select(["dump", "doc_count", "avg_edu_score", "high_edu_rate"])
-        .sort(
-            "dump"
-        )  # Chronological order (CC-MAIN-2017-xx comes before CC-MAIN-2024-xx)
+        .sort("dump")  # Chronological order (CC-MAIN-2017-xx comes before CC-MAIN-2024-xx)
     )
 
 
@@ -134,9 +127,7 @@ def create_ascii_charts(temporal_stats: pl.DataFrame) -> str:
     # Extract year from dump name (CC-MAIN-2024-42 -> 2024)
     # Group by year and average the values for cleaner display
     yearly = (
-        temporal_stats.with_columns(
-            pl.col("dump").str.extract(r"CC-MAIN-(\d{4})", 1).alias("year")
-        )
+        temporal_stats.with_columns(pl.col("dump").str.extract(r"CC-MAIN-(\d{4})", 1).alias("year"))
         .group_by("year")
         .agg(
             pl.col("doc_count").sum(),
@@ -149,19 +140,14 @@ def create_ascii_charts(temporal_stats: pl.DataFrame) -> str:
     lines = []
 
     # High edu rate chart (more dramatic differences)
-    data_rate = [
-        (row["year"], row["high_edu_rate"] * 100)
-        for row in yearly.iter_rows(named=True)
-    ]
+    data_rate = [(row["year"], row["high_edu_rate"] * 100) for row in yearly.iter_rows(named=True)]
     graph = Pyasciigraph(line_length=60, float_format="{0:.1f}%")
     lines.extend(graph.graph("High Educational Content (edu >= 3)", data_rate))
 
     lines.append("")
 
     # Avg edu score chart
-    data_score = [
-        (row["year"], row["avg_edu_score"]) for row in yearly.iter_rows(named=True)
-    ]
+    data_score = [(row["year"], row["avg_edu_score"]) for row in yearly.iter_rows(named=True)]
     graph2 = Pyasciigraph(line_length=60, float_format="{0:.2f}")
     lines.extend(graph2.graph("Average Educational Score", data_score))
 
@@ -182,9 +168,7 @@ def create_readme(
 
     # Get first and last year averages for trend (more representative than single dumps)
     yearly = (
-        temporal_stats.with_columns(
-            pl.col("dump").str.extract(r"CC-MAIN-(\d{4})", 1).alias("year")
-        )
+        temporal_stats.with_columns(pl.col("dump").str.extract(r"CC-MAIN-(\d{4})", 1).alias("year"))
         .group_by("year")
         .agg(
             pl.col("doc_count").sum(),
@@ -196,11 +180,7 @@ def create_readme(
     first_year = yearly.head(1).to_dicts()[0]
     last_year = yearly.tail(1).to_dicts()[0]
 
-    scope = (
-        "all languages"
-        if args.all_languages
-        else COMMON_LANGUAGES.get(args.lang, args.lang)
-    )
+    scope = "all languages" if args.all_languages else COMMON_LANGUAGES.get(args.lang, args.lang)
 
     return f"""---
 tags:
@@ -368,9 +348,7 @@ def main():
         source_path = f"hf://datasets/{args.source_dataset}/data/*/train/*.parquet"
         scope_desc = "all languages"
     else:
-        source_path = (
-            f"hf://datasets/{args.source_dataset}/data/{args.lang}/train/*.parquet"
-        )
+        source_path = f"hf://datasets/{args.source_dataset}/data/{args.lang}/train/*.parquet"
         scope_desc = f"{args.lang} ({COMMON_LANGUAGES.get(args.lang, 'unknown')})"
 
     logger.info(f"Scanning: {source_path}")
@@ -500,9 +478,7 @@ def main():
             time.sleep(1)  # Avoid 409 conflicts
 
         # Upload README
-        readme_content = create_readme(
-            args, global_stats, temporal_stats, scan_time, ascii_charts
-        )
+        readme_content = create_readme(args, global_stats, temporal_stats, scan_time, ascii_charts)
         api.upload_file(
             path_or_fileobj=readme_content.encode(),
             path_in_repo="README.md",

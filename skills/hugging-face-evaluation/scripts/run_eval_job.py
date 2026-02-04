@@ -18,10 +18,9 @@ import os
 import subprocess
 import sys
 from pathlib import Path
-from typing import Optional
 
-from huggingface_hub import get_token
 from dotenv import load_dotenv
+from huggingface_hub import get_token
 
 load_dotenv()
 
@@ -33,8 +32,8 @@ def create_eval_job(
     model_id: str,
     task: str,
     hardware: str = "cpu-basic",
-    hf_token: Optional[str] = None,
-    limit: Optional[int] = None,
+    hf_token: str | None = None,
+    limit: int | None = None,
 ) -> None:
     """
     Submit an evaluation job using the Hugging Face Jobs CLI.
@@ -72,7 +71,7 @@ def create_eval_job(
 
     try:
         subprocess.run(cmd, check=True)
-    except subprocess.CalledProcessError as exc:
+    except subprocess.CalledProcessError:
         print("hf jobs command failed", file=sys.stderr)
         raise
 
@@ -81,8 +80,12 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Run inspect-ai evaluations on Hugging Face Jobs")
     parser.add_argument("--model", required=True, help="Model ID (e.g. Qwen/Qwen3-0.6B)")
     parser.add_argument("--task", required=True, help="Inspect task (e.g. mmlu, gsm8k)")
-    parser.add_argument("--hardware", default="cpu-basic", help="Hardware flavor (e.g. t4-small, a10g-small)")
-    parser.add_argument("--limit", type=int, default=None, help="Limit number of samples to evaluate")
+    parser.add_argument(
+        "--hardware", default="cpu-basic", help="Hardware flavor (e.g. t4-small, a10g-small)"
+    )
+    parser.add_argument(
+        "--limit", type=int, default=None, help="Limit number of samples to evaluate"
+    )
 
     args = parser.parse_args()
 

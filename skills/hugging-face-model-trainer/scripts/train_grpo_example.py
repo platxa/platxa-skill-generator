@@ -30,10 +30,8 @@ Note: For most GRPO use cases, the TRL maintained script is recommended:
     https://raw.githubusercontent.com/huggingface/trl/main/examples/scripts/grpo.py
 """
 
-import trackio
 from datasets import load_dataset
-from trl import GRPOTrainer, GRPOConfig
-
+from trl import GRPOConfig, GRPOTrainer
 
 # Load dataset (GRPO uses prompt-only format)
 dataset = load_dataset("trl-lib/math_shepherd", split="train")
@@ -46,28 +44,23 @@ config = GRPOConfig(
     push_to_hub=True,
     hub_model_id="username/qwen-grpo-math",
     hub_strategy="every_save",
-
     # Training parameters
     num_train_epochs=1,
     per_device_train_batch_size=4,
     gradient_accumulation_steps=4,
     learning_rate=1e-6,
-
     # Logging & checkpointing
     logging_steps=10,
     save_strategy="steps",
     save_steps=100,
     save_total_limit=2,
-
     # Optimization
     warmup_ratio=0.1,
     lr_scheduler_type="cosine",
-
     # Monitoring
     report_to="trackio",  # Integrate with Trackio
-    project="meaningful_project_name", # project name for the training name (trackio)
-    run_name="baseline-run", #Descriptive name for this training run
-
+    project="meaningful_project_name",  # project name for the training name (trackio)
+    run_name="baseline-run",  # Descriptive name for this training run
 )
 
 # Initialize and train

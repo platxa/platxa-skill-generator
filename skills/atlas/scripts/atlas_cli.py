@@ -4,10 +4,9 @@ import argparse
 import json
 import sqlite3
 import sys
+from collections.abc import Iterable, Sequence
 from dataclasses import asdict, dataclass
 from datetime import datetime, timedelta
-from pathlib import Path
-from typing import Iterable, Sequence
 
 from atlas_common import (
     AtlasError,
@@ -321,7 +320,9 @@ def get_bookmarks(limit: int, search_text: str | None) -> list[Bookmark]:
         bookmarks = [
             b
             for b in bookmarks
-            if lowered in b.name.lower() or lowered in b.url.lower() or lowered in (b.folder or "").lower()
+            if lowered in b.name.lower()
+            or lowered in b.url.lower()
+            or lowered in (b.folder or "").lower()
         ]
 
     return bookmarks[:limit]
@@ -405,7 +406,9 @@ def _parse_args(argv: Sequence[str]) -> argparse.Namespace:
 
     history_parser = sub.add_parser("history", help="Search Atlas history")
     history_parser.add_argument("--search", default=None, help="Space-separated search terms")
-    history_parser.add_argument("--limit", type=int, default=DEFAULT_HISTORY_LIMIT, help="Max rows to return")
+    history_parser.add_argument(
+        "--limit", type=int, default=DEFAULT_HISTORY_LIMIT, help="Max rows to return"
+    )
     history_parser.add_argument(
         "--today",
         action="store_true",
@@ -415,8 +418,12 @@ def _parse_args(argv: Sequence[str]) -> argparse.Namespace:
 
     bookmarks_parser = sub.add_parser("bookmarks", help="List Atlas bookmarks")
     bookmarks_parser.add_argument("--search", default=None, help="Filter bookmarks by text")
-    bookmarks_parser.add_argument("--limit", type=int, default=DEFAULT_BOOKMARK_LIMIT, help="Max rows to return")
-    bookmarks_parser.add_argument("--json", action="store_true", help="Emit JSON instead of a table")
+    bookmarks_parser.add_argument(
+        "--limit", type=int, default=DEFAULT_BOOKMARK_LIMIT, help="Max rows to return"
+    )
+    bookmarks_parser.add_argument(
+        "--json", action="store_true", help="Emit JSON instead of a table"
+    )
 
     return parser.parse_args(argv)
 

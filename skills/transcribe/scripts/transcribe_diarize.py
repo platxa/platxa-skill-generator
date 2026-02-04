@@ -8,9 +8,9 @@ import base64
 import json
 import mimetypes
 import os
-from pathlib import Path
 import sys
-from typing import Any, Dict, List, Optional, Tuple
+from pathlib import Path
+from typing import Any
 
 DEFAULT_MODEL = "gpt-4o-mini-transcribe"
 DEFAULT_RESPONSE_FORMAT = "text"
@@ -40,19 +40,16 @@ def _ensure_api_key(dry_run: bool) -> None:
     _die("OPENAI_API_KEY is not set. Export it before running.")
 
 
-def _normalize_response_format(value: Optional[str]) -> str:
+def _normalize_response_format(value: str | None) -> str:
     if not value:
         return DEFAULT_RESPONSE_FORMAT
     fmt = value.strip().lower()
     if fmt not in ALLOWED_RESPONSE_FORMATS:
-        _die(
-            "response-format must be one of: "
-            + ", ".join(sorted(ALLOWED_RESPONSE_FORMATS))
-        )
+        _die("response-format must be one of: " + ", ".join(sorted(ALLOWED_RESPONSE_FORMATS)))
     return fmt
 
 
-def _normalize_chunking_strategy(value: Optional[str]) -> Any:
+def _normalize_chunking_strategy(value: str | None) -> Any:
     if not value:
         return DEFAULT_CHUNKING_STRATEGY
     raw = str(value).strip()
@@ -78,9 +75,9 @@ def _encode_data_url(path: Path) -> str:
     return f"data:{mime};base64,{encoded}"
 
 
-def _parse_known_speakers(raw_items: List[str]) -> Tuple[List[str], List[str]]:
-    names: List[str] = []
-    refs: List[str] = []
+def _parse_known_speakers(raw_items: list[str]) -> tuple[list[str], list[str]]:
+    names: list[str] = []
+    refs: list[str] = []
     for raw in raw_items:
         if "=" not in raw:
             _die("known-speaker must be NAME=PATH")
@@ -105,8 +102,8 @@ def _output_extension(response_format: str) -> str:
 def _build_output_path(
     audio_path: Path,
     response_format: str,
-    out: Optional[str],
-    out_dir: Optional[str],
+    out: str | None,
+    out_dir: str | None,
 ) -> Path:
     ext = "." + _output_extension(response_format)
     if out:
@@ -147,17 +144,15 @@ def _validate_audio(path: Path) -> None:
         _die(f"Audio file not found: {path}")
     size = path.stat().st_size
     if size > MAX_AUDIO_BYTES:
-        _warn(
-            f"Audio file exceeds 25MB limit ({size} bytes): {path}"
-        )
+        _warn(f"Audio file exceeds 25MB limit ({size} bytes): {path}")
 
 
 def _build_payload(
     args: argparse.Namespace,
-    known_speaker_names: List[str],
-    known_speaker_refs: List[str],
-) -> Dict[str, Any]:
-    payload: Dict[str, Any] = {
+    known_speaker_names: list[str],
+    known_speaker_refs: list[str],
+) -> dict[str, Any]:
+    payload: dict[str, Any] = {
         "model": args.model,
         "response_format": args.response_format,
         "chunking_strategy": args.chunking_strategy,
@@ -177,7 +172,7 @@ def _build_payload(
 def _run_one(
     client: Any,
     audio_path: Path,
-    payload: Dict[str, Any],
+    payload: dict[str, Any],
 ) -> Any:
     with audio_path.open("rb") as audio_file:
         return client.audio.transcriptions.create(

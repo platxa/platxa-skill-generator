@@ -16,12 +16,11 @@ Run from the scripts/ directory: cd scripts && uv run test_extraction.py
 """
 
 import yaml
-
 from evaluation_manager import (
+    extract_metrics_from_table,
     extract_tables_from_markdown,
-    parse_markdown_table,
     is_evaluation_table,
-    extract_metrics_from_table
+    parse_markdown_table,
 )
 
 # Sample README content with various table formats
@@ -155,17 +154,14 @@ def test_model_index_format(metrics):
                 "results": [
                     {
                         "task": {"type": "text-generation"},
-                        "dataset": {
-                            "name": "Benchmarks",
-                            "type": "benchmark"
-                        },
+                        "dataset": {"name": "Benchmarks", "type": "benchmark"},
                         "metrics": metrics,
                         "source": {
                             "name": "Model README",
-                            "url": "https://huggingface.co/test/model"
-                        }
+                            "url": "https://huggingface.co/test/model",
+                        },
                     }
-                ]
+                ],
             }
         ]
     }

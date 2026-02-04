@@ -38,9 +38,22 @@ analyze_skill = count_tokens_mod.analyze_skill
 
 # Valid tools list from CLAUDE.md
 VALID_TOOLS = {
-    "Read", "Write", "Edit", "MultiEdit", "Glob", "Grep", "LS",
-    "Bash", "Task", "WebFetch", "WebSearch", "AskUserQuestion",
-    "TodoWrite", "KillShell", "BashOutput", "NotebookEdit",
+    "Read",
+    "Write",
+    "Edit",
+    "MultiEdit",
+    "Glob",
+    "Grep",
+    "LS",
+    "Bash",
+    "Task",
+    "WebFetch",
+    "WebSearch",
+    "AskUserQuestion",
+    "TodoWrite",
+    "KillShell",
+    "BashOutput",
+    "NotebookEdit",
 }
 
 # Each pattern is (regex, flags) so case-sensitivity is per-pattern.
@@ -99,6 +112,7 @@ def parse_frontmatter(skill_md: Path) -> dict[str, Any]:
 
     try:
         import yaml
+
         fm = yaml.safe_load(match.group(1))
         return fm if isinstance(fm, dict) else {}
     except (ImportError, Exception):
@@ -295,7 +309,8 @@ def score_structure(skill_dir: Path) -> tuple[float, list[str]]:
             score += 1.5
             # Check executability
             non_exec = [
-                f.name for f in script_files
+                f.name
+                for f in script_files
                 if f.suffix in (".sh", ".py") and not f.stat().st_mode & 0o111
             ]
             if non_exec:
@@ -312,7 +327,8 @@ def score_structure(skill_dir: Path) -> tuple[float, list[str]]:
     # No unexpected files at root
     expected_root = {"SKILL.md", "references", "scripts", "templates", ".skillconfig", ".gitkeep"}
     unexpected = [
-        f.name for f in skill_dir.iterdir()
+        f.name
+        for f in skill_dir.iterdir()
         if f.name not in expected_root and not f.name.startswith(".")
     ]
     if unexpected:
@@ -511,14 +527,16 @@ def score_expertise(skill_dir: Path) -> tuple[float, list[str]]:
     for block in code_blocks:
         # Structural code indicators that generalize across all languages/CLIs:
         # assignments, function calls, shell operators, flags, brackets
-        indicators = sum([
-            bool(re.search(r"[=:]\s*\S", block)),           # assignments: x = 1, key: val
-            bool(re.search(r"\w+\(", block)),                # function calls: func(
-            bool(re.search(r"[|>&]{1,2}", block)),           # shell/logical operators
-            bool(re.search(r"-{1,2}[a-zA-Z]", block)),      # CLI flags: --flag, -v
-            bool(re.search(r"[{}[\]]", block)),              # brackets/braces
-            bool(re.search(r"^\s*\w+\s+\w+", block, re.MULTILINE)),  # command subcommand
-        ])
+        indicators = sum(
+            [
+                bool(re.search(r"[=:]\s*\S", block)),  # assignments: x = 1, key: val
+                bool(re.search(r"\w+\(", block)),  # function calls: func(
+                bool(re.search(r"[|>&]{1,2}", block)),  # shell/logical operators
+                bool(re.search(r"-{1,2}[a-zA-Z]", block)),  # CLI flags: --flag, -v
+                bool(re.search(r"[{}[\]]", block)),  # brackets/braces
+                bool(re.search(r"^\s*\w+\s+\w+", block, re.MULTILINE)),  # command subcommand
+            ]
+        )
         if indicators >= 2:
             substantial_blocks += 1
 
@@ -530,7 +548,9 @@ def score_expertise(skill_dir: Path) -> tuple[float, list[str]]:
         score += 0.75
     else:
         if code_blocks:
-            notes.append(f"Code blocks lack substance ({len(code_blocks)} blocks, {substantial_blocks} substantial)")
+            notes.append(
+                f"Code blocks lack substance ({len(code_blocks)} blocks, {substantial_blocks} substantial)"
+            )
         else:
             notes.append("No code blocks")
 
@@ -578,7 +598,20 @@ def score_expertise(skill_dir: Path) -> tuple[float, list[str]]:
     pascal_case = re.findall(r"\b[A-Z][a-z]+(?:[A-Z][a-z]+)+\b", body)  # WebSocket, FastAPI
     upper_abbrev = re.findall(r"\b[A-Z][A-Z0-9]{2,}\b", body)  # JWT, CORS, HPA, CRDT
     # Filter out common English abbreviations
-    common_abbrev = {"THE", "AND", "FOR", "NOT", "BUT", "ALL", "THIS", "THAT", "WITH", "FROM", "MUST", "SHOULD"}
+    common_abbrev = {
+        "THE",
+        "AND",
+        "FOR",
+        "NOT",
+        "BUT",
+        "ALL",
+        "THIS",
+        "THAT",
+        "WITH",
+        "FROM",
+        "MUST",
+        "SHOULD",
+    }
     tech_terms = set(pascal_case) | {a for a in upper_abbrev if a not in common_abbrev}
     if len(tech_terms) >= 8:
         score += 1.5
@@ -665,9 +698,9 @@ def print_human_readable(report: dict[str, Any]) -> None:
     badge = report["badge"]
     passed = report["passed"]
 
-    print(f"{'='*50}")
+    print(f"{'=' * 50}")
     print(f"Quality Score: {name}")
-    print(f"{'='*50}")
+    print(f"{'=' * 50}")
     print()
 
     for dim_name, dim_data in report["dimensions"].items():
@@ -689,14 +722,12 @@ def print_human_readable(report: dict[str, Any]) -> None:
     else:
         print("✗ FAILED (< 7.0)")
 
-    print(f"{'='*50}")
+    print(f"{'=' * 50}")
 
 
 def main() -> int:
     """Main entry point."""
-    parser = argparse.ArgumentParser(
-        description="Score a skill across 5 quality dimensions"
-    )
+    parser = argparse.ArgumentParser(description="Score a skill across 5 quality dimensions")
     parser.add_argument(
         "skill_dir",
         type=Path,

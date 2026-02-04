@@ -14,19 +14,18 @@ Manages paper indexing, linking, authorship, and article creation.
 """
 
 import argparse
-import os
-import sys
-import re
 import json
-from pathlib import Path
-from typing import Optional, List, Dict, Any
+import os
+import re
+import sys
 from datetime import datetime
+from pathlib import Path
+from typing import Any
 
 try:
-    from huggingface_hub import HfApi, hf_hub_download, HfFolder
-    import yaml
     import requests
     from dotenv import load_dotenv
+    from huggingface_hub import HfApi, HfFolder, hf_hub_download
 except ImportError as e:
     print(f"Error: Missing required dependency: {e}")
     print("Install with: uv add huggingface_hub pyyaml requests python-dotenv")
@@ -39,14 +38,14 @@ load_dotenv()
 class PaperManager:
     """Manages paper publishing operations on Hugging Face Hub."""
 
-    def __init__(self, hf_token: Optional[str] = None):
+    def __init__(self, hf_token: str | None = None):
         """Initialize Paper Manager with HF token."""
         self.token = hf_token or os.getenv("HF_TOKEN") or HfFolder.get_token()
         if not self.token:
             print("Warning: No HF_TOKEN found. Some operations will fail.")
         self.api = HfApi(token=self.token)
 
-    def index_paper(self, arxiv_id: str) -> Dict[str, Any]:
+    def index_paper(self, arxiv_id: str) -> dict[str, Any]:
         """
         Index a paper on Hugging Face from arXiv.
 
@@ -77,7 +76,7 @@ class PaperManager:
             print(f"Error checking paper status: {e}")
             return {"status": "error", "message": str(e)}
 
-    def check_paper(self, arxiv_id: str) -> Dict[str, Any]:
+    def check_paper(self, arxiv_id: str) -> dict[str, Any]:
         """
         Check if a paper exists on Hugging Face.
 
@@ -97,14 +96,14 @@ class PaperManager:
                     "exists": True,
                     "url": paper_url,
                     "arxiv_id": arxiv_id,
-                    "arxiv_url": f"https://arxiv.org/abs/{arxiv_id}"
+                    "arxiv_url": f"https://arxiv.org/abs/{arxiv_id}",
                 }
             else:
                 return {
                     "exists": False,
                     "arxiv_id": arxiv_id,
                     "index_url": paper_url,
-                    "message": f"Visit {paper_url} to index this paper"
+                    "message": f"Visit {paper_url} to index this paper",
                 }
         except requests.RequestException as e:
             return {"exists": False, "error": str(e)}
@@ -114,9 +113,9 @@ class PaperManager:
         repo_id: str,
         arxiv_id: str,
         repo_type: str = "model",
-        citation: Optional[str] = None,
-        create_pr: bool = False
-    ) -> Dict[str, Any]:
+        citation: str | None = None,
+        create_pr: bool = False,
+    ) -> dict[str, Any]:
         """
         Link a paper to a model/dataset/space repository.
 
@@ -137,13 +136,10 @@ class PaperManager:
         try:
             # Download current README
             readme_path = hf_hub_download(
-                repo_id=repo_id,
-                filename="README.md",
-                repo_type=repo_type,
-                token=self.token
+                repo_id=repo_id, filename="README.md", repo_type=repo_type, token=self.token
             )
 
-            with open(readme_path, 'r', encoding='utf-8') as f:
+            with open(readme_path, encoding="utf-8") as f:
                 content = f.read()
 
             # Parse or create YAML frontmatter
@@ -157,18 +153,18 @@ class PaperManager:
                 print("PR creation not yet implemented. Committing directly.")
 
             self.api.upload_file(
-                path_or_fileobj=updated_content.encode('utf-8'),
+                path_or_fileobj=updated_content.encode("utf-8"),
                 path_in_repo="README.md",
                 repo_id=repo_id,
                 repo_type=repo_type,
                 commit_message=commit_message,
-                token=self.token
+                token=self.token,
             )
 
             paper_url = f"https://huggingface.co/papers/{arxiv_id}"
             repo_url = f"https://huggingface.co/{repo_id}"
 
-            print(f"✓ Successfully linked paper to repository")
+            print("✓ Successfully linked paper to repository")
             print(f"  Paper: {paper_url}")
             print(f"  Repo: {repo_url}")
 
@@ -176,19 +172,14 @@ class PaperManager:
                 "status": "success",
                 "paper_url": paper_url,
                 "repo_url": repo_url,
-                "arxiv_id": arxiv_id
+                "arxiv_id": arxiv_id,
             }
 
         except Exception as e:
             print(f"Error linking paper: {e}")
             return {"status": "error", "message": str(e)}
 
-    def _add_paper_to_readme(
-        self,
-        content: str,
-        arxiv_id: str,
-        citation: Optional[str] = None
-    ) -> str:
+    def _add_paper_to_readme(self, content: str, arxiv_id: str, citation: str | None = None) -> str:
         """
         Add paper reference to README content.
 
@@ -204,7 +195,7 @@ class PaperManager:
         hf_paper_url = f"https://huggingface.co/papers/{arxiv_id}"
 
         # Check if YAML frontmatter exists
-        yaml_pattern = r'^---\s*\n(.*?)\n---\s*\n'
+        yaml_pattern = r"^---\s*\n(.*?)\n---\s*\n"
         match = re.match(yaml_pattern, content, re.DOTALL)
 
         if match:
@@ -224,7 +215,7 @@ class PaperManager:
             after = content
 
         # Add paper reference section
-        paper_section = f"\n## Paper\n\n"
+        paper_section = "\n## Paper\n\n"
         paper_section += f"This {'model' if 'model' in content.lower() else 'work'} is based on research presented in:\n\n"
         paper_section += f"**[View on arXiv]({arxiv_url})** | "
         paper_section += f"**[View on Hugging Face]({hf_paper_url})**\n\n"
@@ -242,9 +233,9 @@ class PaperManager:
         template: str,
         title: str,
         output: str,
-        authors: Optional[str] = None,
-        abstract: Optional[str] = None
-    ) -> Dict[str, Any]:
+        authors: str | None = None,
+        abstract: str | None = None,
+    ) -> dict[str, Any]:
         """
         Create a research article from template.
 
@@ -267,10 +258,10 @@ class PaperManager:
         if not template_file.exists():
             return {
                 "status": "error",
-                "message": f"Template '{template}' not found at {template_file}"
+                "message": f"Template '{template}' not found at {template_file}",
             }
 
-        with open(template_file, 'r', encoding='utf-8') as f:
+        with open(template_file, encoding="utf-8") as f:
             template_content = f.read()
 
         # Replace placeholders
@@ -288,18 +279,14 @@ class PaperManager:
             content = content.replace("{{ABSTRACT}}", "Abstract to be written...")
 
         # Write output
-        with open(output, 'w', encoding='utf-8') as f:
+        with open(output, "w", encoding="utf-8") as f:
             f.write(content)
 
         print(f"✓ Research article created at {output}")
 
-        return {
-            "status": "success",
-            "output": output,
-            "template": template
-        }
+        return {"status": "success", "output": output, "template": template}
 
-    def get_arxiv_info(self, arxiv_id: str) -> Dict[str, Any]:
+    def get_arxiv_info(self, arxiv_id: str) -> dict[str, Any]:
         """
         Fetch paper information from arXiv API.
 
@@ -320,26 +307,24 @@ class PaperManager:
             content = response.text
 
             # Extract basic info with regex (proper XML parsing would be better)
-            title_match = re.search(r'<title>(.*?)</title>', content, re.DOTALL)
-            authors_matches = re.findall(r'<name>(.*?)</name>', content)
-            summary_match = re.search(r'<summary>(.*?)</summary>', content, re.DOTALL)
+            title_match = re.search(r"<title>(.*?)</title>", content, re.DOTALL)
+            authors_matches = re.findall(r"<name>(.*?)</name>", content)
+            summary_match = re.search(r"<summary>(.*?)</summary>", content, re.DOTALL)
 
             return {
                 "arxiv_id": arxiv_id,
                 "title": title_match.group(1).strip() if title_match else None,
-                "authors": authors_matches[1:] if len(authors_matches) > 1 else [],  # Skip first (feed title)
+                "authors": authors_matches[1:]
+                if len(authors_matches) > 1
+                else [],  # Skip first (feed title)
                 "abstract": summary_match.group(1).strip() if summary_match else None,
                 "arxiv_url": f"https://arxiv.org/abs/{arxiv_id}",
-                "pdf_url": f"https://arxiv.org/pdf/{arxiv_id}.pdf"
+                "pdf_url": f"https://arxiv.org/pdf/{arxiv_id}.pdf",
             }
         except Exception as e:
             return {"error": str(e)}
 
-    def generate_citation(
-        self,
-        arxiv_id: str,
-        format: str = "bibtex"
-    ) -> str:
+    def generate_citation(self, arxiv_id: str, format: str = "bibtex") -> str:
         """
         Generate citation for a paper.
 
@@ -378,9 +363,9 @@ class PaperManager:
         """Clean and normalize arXiv ID."""
         # Remove common prefixes and whitespace
         arxiv_id = arxiv_id.strip()
-        arxiv_id = re.sub(r'^(arxiv:|arXiv:)', '', arxiv_id, flags=re.IGNORECASE)
-        arxiv_id = re.sub(r'https?://arxiv\.org/(abs|pdf)/', '', arxiv_id)
-        arxiv_id = arxiv_id.replace('.pdf', '')
+        arxiv_id = re.sub(r"^(arxiv:|arXiv:)", "", arxiv_id, flags=re.IGNORECASE)
+        arxiv_id = re.sub(r"https?://arxiv\.org/(abs|pdf)/", "", arxiv_id)
+        arxiv_id = arxiv_id.replace(".pdf", "")
         return arxiv_id
 
 
@@ -388,7 +373,7 @@ def main():
     """Main CLI entry point."""
     parser = argparse.ArgumentParser(
         description="Paper Manager for Hugging Face Hub",
-        formatter_class=argparse.RawDescriptionHelpFormatter
+        formatter_class=argparse.RawDescriptionHelpFormatter,
     )
 
     subparsers = parser.add_subparsers(dest="command", help="Command to execute")
@@ -408,7 +393,9 @@ def main():
     link_parser.add_argument("--arxiv-id", help="Single arXiv ID")
     link_parser.add_argument("--arxiv-ids", help="Comma-separated arXiv IDs")
     link_parser.add_argument("--citation", help="Full citation text")
-    link_parser.add_argument("--create-pr", action="store_true", help="Create PR instead of direct commit")
+    link_parser.add_argument(
+        "--create-pr", action="store_true", help="Create PR instead of direct commit"
+    )
 
     # Create command
     create_parser = subparsers.add_parser("create", help="Create research article")
@@ -467,7 +454,7 @@ def main():
                 arxiv_id=arxiv_id,
                 repo_type=args.repo_type,
                 citation=args.citation,
-                create_pr=args.create_pr
+                create_pr=args.create_pr,
             )
             print(json.dumps(result, indent=2))
 
@@ -477,7 +464,7 @@ def main():
             title=args.title,
             output=args.output,
             authors=args.authors,
-            abstract=args.abstract
+            abstract=args.abstract,
         )
         print(json.dumps(result, indent=2))
 

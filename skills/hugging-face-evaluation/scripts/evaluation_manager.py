@@ -23,7 +23,7 @@ import argparse
 import os
 import re
 from textwrap import dedent
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
 
 def load_env() -> None:
@@ -84,7 +84,7 @@ def require_yaml():
 # ============================================================================
 
 
-def extract_tables_from_markdown(markdown_content: str) -> List[str]:
+def extract_tables_from_markdown(markdown_content: str) -> list[str]:
     """Extract all markdown tables from content."""
     # Pattern to match markdown tables
     table_pattern = r"(\|[^\n]+\|(?:\r?\n\|[^\n]+\|)+)"
@@ -92,7 +92,7 @@ def extract_tables_from_markdown(markdown_content: str) -> List[str]:
     return tables
 
 
-def parse_markdown_table(table_str: str) -> Tuple[List[str], List[List[str]]]:
+def parse_markdown_table(table_str: str) -> tuple[list[str], list[list[str]]]:
     """
     Parse a markdown table string into headers and rows.
 
@@ -120,16 +120,29 @@ def parse_markdown_table(table_str: str) -> Tuple[List[str], List[List[str]]]:
     return header, data_rows
 
 
-def is_evaluation_table(header: List[str], rows: List[List[str]]) -> bool:
+def is_evaluation_table(header: list[str], rows: list[list[str]]) -> bool:
     """Determine if a table contains evaluation results."""
     if not header or not rows:
         return False
 
     # Check if first column looks like benchmark names
     benchmark_keywords = [
-        "benchmark", "task", "dataset", "eval", "test", "metric",
-        "mmlu", "humaneval", "gsm", "hellaswag", "arc", "winogrande",
-        "truthfulqa", "boolq", "piqa", "siqa"
+        "benchmark",
+        "task",
+        "dataset",
+        "eval",
+        "test",
+        "metric",
+        "mmlu",
+        "humaneval",
+        "gsm",
+        "hellaswag",
+        "arc",
+        "winogrande",
+        "truthfulqa",
+        "boolq",
+        "piqa",
+        "siqa",
     ]
 
     first_col = header[0].lower()
@@ -162,8 +175,8 @@ def normalize_model_name(name: str) -> tuple[set[str], str]:
         Tuple of (token_set, normalized_string)
     """
     # Remove markdown formatting
-    cleaned = re.sub(r'\[([^\]]+)\]\([^\)]+\)', r'\1', name)  # Remove markdown links
-    cleaned = re.sub(r'\*\*([^\*]+)\*\*', r'\1', cleaned)  # Remove bold
+    cleaned = re.sub(r"\[([^\]]+)\]\([^\)]+\)", r"\1", name)  # Remove markdown links
+    cleaned = re.sub(r"\*\*([^\*]+)\*\*", r"\1", cleaned)  # Remove bold
     cleaned = cleaned.strip()
 
     # Normalize and tokenize
@@ -173,7 +186,7 @@ def normalize_model_name(name: str) -> tuple[set[str], str]:
     return tokens, normalized
 
 
-def find_main_model_column(header: List[str], model_name: str) -> Optional[int]:
+def find_main_model_column(header: list[str], model_name: str) -> int | None:
     """
     Identify the column index that corresponds to the main model.
 
@@ -212,9 +225,7 @@ def find_main_model_column(header: List[str], model_name: str) -> Optional[int]:
     return None
 
 
-def find_main_model_row(
-    rows: List[List[str]], model_name: str
-) -> tuple[Optional[int], List[str]]:
+def find_main_model_row(rows: list[list[str]], model_name: str) -> tuple[int | None, list[str]]:
     """
     Identify the row index that corresponds to the main model in a transposed table.
 
@@ -243,7 +254,7 @@ def find_main_model_row(
         row_name = row[0].strip()
 
         # Skip separator/header rows
-        if not row_name or row_name.startswith('---'):
+        if not row_name or row_name.startswith("---"):
             continue
 
         row_tokens, _ = normalize_model_name(row_name)
@@ -259,7 +270,7 @@ def find_main_model_row(
     return None, available_models
 
 
-def is_transposed_table(header: List[str], rows: List[List[str]]) -> bool:
+def is_transposed_table(header: list[str], rows: list[list[str]]) -> bool:
     """
     Determine if a table is transposed (models as rows, benchmarks as columns).
 
@@ -285,9 +296,25 @@ def is_transposed_table(header: List[str], rows: List[List[str]]) -> bool:
 
     # Check if remaining headers look like benchmarks
     benchmark_keywords = [
-        "mmlu", "humaneval", "gsm", "hellaswag", "arc", "winogrande",
-        "eval", "score", "benchmark", "test", "math", "code", "mbpp",
-        "truthfulqa", "boolq", "piqa", "siqa", "drop", "squad"
+        "mmlu",
+        "humaneval",
+        "gsm",
+        "hellaswag",
+        "arc",
+        "winogrande",
+        "eval",
+        "score",
+        "benchmark",
+        "test",
+        "math",
+        "code",
+        "mbpp",
+        "truthfulqa",
+        "boolq",
+        "piqa",
+        "siqa",
+        "drop",
+        "squad",
     ]
 
     benchmark_header_count = 0
@@ -317,12 +344,12 @@ def is_transposed_table(header: List[str], rows: List[List[str]]) -> bool:
 
 
 def extract_metrics_from_table(
-    header: List[str],
-    rows: List[List[str]],
+    header: list[str],
+    rows: list[list[str]],
     table_format: str = "auto",
-    model_name: Optional[str] = None,
-    model_column_index: Optional[int] = None
-) -> List[Dict[str, Any]]:
+    model_name: str | None = None,
+    model_column_index: int | None = None,
+) -> list[dict[str, Any]]:
     """
     Extract metrics from parsed table data.
 
@@ -345,7 +372,14 @@ def extract_metrics_from_table(
         else:
             # Check if first column header is empty/generic (indicates benchmarks in rows)
             first_header = header[0].lower().strip() if header else ""
-            is_first_col_benchmarks = not first_header or first_header in ["", "benchmark", "task", "dataset", "metric", "eval"]
+            is_first_col_benchmarks = not first_header or first_header in [
+                "",
+                "benchmark",
+                "task",
+                "dataset",
+                "metric",
+                "eval",
+            ]
 
             if is_first_col_benchmarks:
                 table_format = "rows"
@@ -353,8 +387,9 @@ def extract_metrics_from_table(
                 # Heuristic: if first row has mostly numeric values, benchmarks are columns
                 try:
                     numeric_count = sum(
-                        1 for cell in rows[0] if cell and
-                        re.match(r"^\d+\.?\d*%?$", cell.replace(",", "").strip())
+                        1
+                        for cell in rows[0]
+                        if cell and re.match(r"^\d+\.?\d*%?$", cell.replace(",", "").strip())
                     )
                     table_format = "columns" if numeric_count > len(rows[0]) / 2 else "rows"
                 except (IndexError, ValueError):
@@ -381,11 +416,13 @@ def extract_metrics_from_table(
                     value_str = row[target_column].replace("%", "").replace(",", "").strip()
                     if value_str:
                         value = float(value_str)
-                        metrics.append({
-                            "name": benchmark_name,
-                            "type": benchmark_name.lower().replace(" ", "_"),
-                            "value": value
-                        })
+                        metrics.append(
+                            {
+                                "name": benchmark_name,
+                                "type": benchmark_name.lower().replace(" ", "_"),
+                                "value": value,
+                            }
+                        )
                 except (ValueError, IndexError):
                     pass
             else:
@@ -401,14 +438,20 @@ def extract_metrics_from_table(
 
                         # Determine metric name
                         metric_name = benchmark_name
-                        if len(header) > i and header[i].lower() not in ["score", "value", "result"]:
+                        if len(header) > i and header[i].lower() not in [
+                            "score",
+                            "value",
+                            "result",
+                        ]:
                             metric_name = f"{benchmark_name} ({header[i]})"
 
-                        metrics.append({
-                            "name": metric_name,
-                            "type": benchmark_name.lower().replace(" ", "_"),
-                            "value": value
-                        })
+                        metrics.append(
+                            {
+                                "name": metric_name,
+                                "type": benchmark_name.lower().replace(" ", "_"),
+                                "value": value,
+                            }
+                        )
                         break  # Only take first numeric value per row
                     except (ValueError, IndexError):
                         continue
@@ -448,11 +491,13 @@ def extract_metrics_from_table(
 
                 value = float(value_str)
 
-                metrics.append({
-                    "name": benchmark_name,
-                    "type": benchmark_name.lower().replace(" ", "_").replace("-", "_"),
-                    "value": value
-                })
+                metrics.append(
+                    {
+                        "name": benchmark_name,
+                        "type": benchmark_name.lower().replace(" ", "_").replace("-", "_"),
+                        "value": value,
+                    }
+                )
             except (ValueError, AttributeError):
                 continue
 
@@ -475,11 +520,13 @@ def extract_metrics_from_table(
 
                 value = float(value_str)
 
-                metrics.append({
-                    "name": benchmark_name,
-                    "type": benchmark_name.lower().replace(" ", "_"),
-                    "value": value
-                })
+                metrics.append(
+                    {
+                        "name": benchmark_name,
+                        "type": benchmark_name.lower().replace(" ", "_"),
+                        "value": value,
+                    }
+                )
             except ValueError:
                 continue
 
@@ -491,10 +538,10 @@ def extract_evaluations_from_readme(
     task_type: str = "text-generation",
     dataset_name: str = "Benchmarks",
     dataset_type: str = "benchmark",
-    model_name_override: Optional[str] = None,
-    table_index: Optional[int] = None,
-    model_column_index: Optional[int] = None
-) -> Optional[List[Dict[str, Any]]]:
+    model_name_override: str | None = None,
+    table_index: int | None = None,
+    model_column_index: int | None = None,
+) -> list[dict[str, Any]] | None:
     """
     Extract evaluation results from a model's README.
 
@@ -553,7 +600,9 @@ def extract_evaluations_from_readme(
             if len(eval_tables) > 1:
                 print(f"\n⚠ Found {len(eval_tables)} evaluation tables.")
                 print("Run inspect-tables first, then use --table to select one:")
-                print(f'  uv run scripts/evaluation_manager.py inspect-tables --repo-id "{repo_id}"')
+                print(
+                    f'  uv run scripts/evaluation_manager.py inspect-tables --repo-id "{repo_id}"'
+                )
                 return None
             elif len(eval_tables) == 0:
                 print(f"No evaluation tables found in README for {repo_id}")
@@ -567,32 +616,25 @@ def extract_evaluations_from_readme(
             header = table.get("headers", [])
             rows = table.get("rows", [])
             metrics = extract_metrics_from_table(
-                header,
-                rows,
-                model_name=model_name,
-                model_column_index=model_column_index
+                header, rows, model_name=model_name, model_column_index=model_column_index
             )
             all_metrics.extend(metrics)
 
         if not all_metrics:
-            print(f"No metrics extracted from table")
+            print("No metrics extracted from table")
             return None
 
         # Build model-index structure
-        display_name = repo_id.split("/")[-1] if "/" in repo_id else repo_id
+        repo_id.split("/")[-1] if "/" in repo_id else repo_id
 
-        results = [{
-            "task": {"type": task_type},
-            "dataset": {
-                "name": dataset_name,
-                "type": dataset_type
-            },
-            "metrics": all_metrics,
-            "source": {
-                "name": "Model README",
-                "url": f"https://huggingface.co/{repo_id}"
+        results = [
+            {
+                "task": {"type": task_type},
+                "dataset": {"name": dataset_name, "type": dataset_type},
+                "metrics": all_metrics,
+                "source": {"name": "Model README", "url": f"https://huggingface.co/{repo_id}"},
             }
-        }]
+        ]
 
         return results
 
@@ -606,7 +648,7 @@ def extract_evaluations_from_readme(
 # ============================================================================
 
 
-def extract_tables_with_parser(markdown_content: str) -> List[Dict[str, Any]]:
+def extract_tables_with_parser(markdown_content: str) -> list[dict[str, Any]]:
     """
     Extract tables from markdown using markdown-it-py parser.
     Uses GFM (GitHub Flavored Markdown) which includes table support.
@@ -653,16 +695,29 @@ def extract_tables_with_parser(markdown_content: str) -> List[Dict[str, Any]]:
     return tables
 
 
-def detect_table_format(table: Dict[str, Any], repo_id: str) -> Dict[str, Any]:
+def detect_table_format(table: dict[str, Any], repo_id: str) -> dict[str, Any]:
     """Analyze a table to detect its format and identify model columns."""
     headers = table.get("headers", [])
     rows = table.get("rows", [])
 
     if not headers or not rows:
-        return {"format": "unknown", "columns": headers, "model_columns": [], "row_count": 0, "sample_rows": []}
+        return {
+            "format": "unknown",
+            "columns": headers,
+            "model_columns": [],
+            "row_count": 0,
+            "sample_rows": [],
+        }
 
     first_header = headers[0].lower() if headers else ""
-    is_first_col_benchmarks = not first_header or first_header in ["", "benchmark", "task", "dataset", "metric", "eval"]
+    is_first_col_benchmarks = not first_header or first_header in [
+        "",
+        "benchmark",
+        "task",
+        "dataset",
+        "metric",
+        "eval",
+    ]
 
     # Check for numeric columns
     numeric_columns = []
@@ -671,7 +726,7 @@ def detect_table_format(table: Dict[str, Any], repo_id: str) -> Dict[str, Any]:
         for row in rows[:5]:
             if col_idx < len(row):
                 try:
-                    val = re.sub(r'\s*\([^)]*\)', '', row[col_idx])
+                    val = re.sub(r"\s*\([^)]*\)", "", row[col_idx])
                     float(val.replace("%", "").replace(",", "").strip())
                     numeric_count += 1
                 except (ValueError, AttributeError):
@@ -700,20 +755,24 @@ def detect_table_format(table: Dict[str, Any], repo_id: str) -> Dict[str, Any]:
         if header:
             header_tokens, _ = normalize_model_name(header)
             is_match = model_tokens == header_tokens
-            is_partial = model_tokens.issubset(header_tokens) or header_tokens.issubset(model_tokens)
-            model_columns.append({
-                "index": idx,
-                "header": header,
-                "is_exact_match": is_match,
-                "is_partial_match": is_partial and not is_match
-            })
+            is_partial = model_tokens.issubset(header_tokens) or header_tokens.issubset(
+                model_tokens
+            )
+            model_columns.append(
+                {
+                    "index": idx,
+                    "header": header,
+                    "is_exact_match": is_match,
+                    "is_partial_match": is_partial and not is_match,
+                }
+            )
 
     return {
         "format": format_type,
         "columns": headers,
         "model_columns": model_columns,
         "row_count": len(rows),
-        "sample_rows": [row[0] for row in rows[:5] if row]
+        "sample_rows": [row[0] for row in rows[:5] if row],
     }
 
 
@@ -736,9 +795,9 @@ def inspect_tables(repo_id: str) -> None:
             print(f"No tables found in README for {repo_id}")
             return
 
-        print(f"\n{'='*70}")
+        print(f"\n{'=' * 70}")
         print(f"Tables found in README for: {repo_id}")
-        print(f"{'='*70}")
+        print(f"{'=' * 70}")
 
         eval_table_count = 0
         for table in tables:
@@ -764,7 +823,7 @@ def inspect_tables(repo_id: str) -> None:
                     print(f"      [{idx}] {header}")
 
             if analysis.get("sample_rows"):
-                print(f"\n   Sample rows (first column):")
+                print("\n   Sample rows (first column):")
                 for row_val in analysis["sample_rows"][:5]:
                     print(f"      - {row_val}")
 
@@ -772,9 +831,11 @@ def inspect_tables(repo_id: str) -> None:
             print("\nNo evaluation tables detected.")
         else:
             print("\nSuggested next step:")
-            print(f'  uv run scripts/evaluation_manager.py extract-readme --repo-id "{repo_id}" --table <table-number> [--model-column-index <column-index>]')
+            print(
+                f'  uv run scripts/evaluation_manager.py extract-readme --repo-id "{repo_id}" --table <table-number> [--model-column-index <column-index>]'
+            )
 
-        print(f"\n{'='*70}\n")
+        print(f"\n{'=' * 70}\n")
 
     except Exception as e:
         print(f"Error inspecting tables: {e}")
@@ -785,7 +846,7 @@ def inspect_tables(repo_id: str) -> None:
 # ============================================================================
 
 
-def get_open_prs(repo_id: str) -> List[Dict[str, Any]]:
+def get_open_prs(repo_id: str) -> list[dict[str, Any]]:
     """
     Fetch open pull requests for a Hugging Face model repository.
 
@@ -827,9 +888,9 @@ def list_open_prs(repo_id: str) -> None:
     """Display open pull requests for a model repository."""
     prs = get_open_prs(repo_id)
 
-    print(f"\n{'='*70}")
+    print(f"\n{'=' * 70}")
     print(f"Open Pull Requests for: {repo_id}")
-    print(f"{'='*70}")
+    print(f"{'=' * 70}")
 
     if not prs:
         print("\nNo open pull requests found.")
@@ -842,7 +903,7 @@ def list_open_prs(repo_id: str) -> None:
             print(f"     URL: https://huggingface.co/{repo_id}/discussions/{pr['num']}")
             print()
 
-    print(f"{'='*70}\n")
+    print(f"{'=' * 70}\n")
 
 
 # ============================================================================
@@ -850,7 +911,7 @@ def list_open_prs(repo_id: str) -> None:
 # ============================================================================
 
 
-def get_aa_model_data(creator_slug: str, model_name: str) -> Optional[Dict[str, Any]]:
+def get_aa_model_data(creator_slug: str, model_name: str) -> dict[str, Any] | None:
     """
     Fetch model evaluation data from Artificial Analysis API.
 
@@ -891,11 +952,11 @@ def get_aa_model_data(creator_slug: str, model_name: str) -> Optional[Dict[str, 
 
 
 def aa_data_to_model_index(
-    model_data: Dict[str, Any],
+    model_data: dict[str, Any],
     dataset_name: str = "Artificial Analysis Benchmarks",
     dataset_type: str = "artificial_analysis",
-    task_type: str = "evaluation"
-) -> List[Dict[str, Any]]:
+    task_type: str = "evaluation",
+) -> list[dict[str, Any]]:
     """
     Convert Artificial Analysis model data to model-index format.
 
@@ -918,33 +979,23 @@ def aa_data_to_model_index(
     metrics = []
     for key, value in evaluations.items():
         if value is not None:
-            metrics.append({
-                "name": key.replace("_", " ").title(),
-                "type": key,
-                "value": value
-            })
+            metrics.append({"name": key.replace("_", " ").title(), "type": key, "value": value})
 
-    results = [{
-        "task": {"type": task_type},
-        "dataset": {
-            "name": dataset_name,
-            "type": dataset_type
-        },
-        "metrics": metrics,
-        "source": {
-            "name": "Artificial Analysis API",
-            "url": "https://artificialanalysis.ai"
+    results = [
+        {
+            "task": {"type": task_type},
+            "dataset": {"name": dataset_name, "type": dataset_type},
+            "metrics": metrics,
+            "source": {"name": "Artificial Analysis API", "url": "https://artificialanalysis.ai"},
         }
-    }]
+    ]
 
     return results
 
 
 def import_aa_evaluations(
-    creator_slug: str,
-    model_name: str,
-    repo_id: str
-) -> Optional[List[Dict[str, Any]]]:
+    creator_slug: str, model_name: str, repo_id: str
+) -> list[dict[str, Any]] | None:
     """
     Import evaluation results from Artificial Analysis for a model.
 
@@ -972,9 +1023,9 @@ def import_aa_evaluations(
 
 def update_model_card_with_evaluations(
     repo_id: str,
-    results: List[Dict[str, Any]],
+    results: list[dict[str, Any]],
     create_pr: bool = False,
-    commit_message: Optional[str] = None
+    commit_message: str | None = None,
 ) -> bool:
     """
     Update a model card with evaluation results.
@@ -1002,10 +1053,7 @@ def update_model_card_with_evaluations(
         model_name = repo_id.split("/")[-1] if "/" in repo_id else repo_id
 
         # Create or update model-index
-        model_index = [{
-            "name": model_name,
-            "results": results
-        }]
+        model_index = [{"name": model_name, "results": results}]
 
         # Merge with existing model-index if present
         if "model-index" in card.data:
@@ -1037,7 +1085,7 @@ def update_model_card_with_evaluations(
             token=hf_token,
             commit_message=commit_message,
             commit_description=commit_description,
-            create_pr=create_pr
+            create_pr=create_pr,
         )
 
         action = "Pull request created" if create_pr else "Model card updated"
@@ -1206,15 +1254,40 @@ def main():
         ),
     )
     extract_parser.add_argument("--repo-id", type=str, required=True, help="HF repository ID")
-    extract_parser.add_argument("--table", type=int, help="Table number (1-indexed, from inspect-tables output)")
-    extract_parser.add_argument("--model-column-index", type=int, help="Preferred: column index from inspect-tables output (exact selection)")
-    extract_parser.add_argument("--model-name-override", type=str, help="Exact column header/model name for comparison/transpose tables (when index is not used)")
-    extract_parser.add_argument("--task-type", type=str, default="text-generation", help="Sets model-index task.type (e.g., text-generation, summarization)")
-    extract_parser.add_argument("--dataset-name", type=str, default="Benchmarks", help="Dataset name")
-    extract_parser.add_argument("--dataset-type", type=str, default="benchmark", help="Dataset type")
-    extract_parser.add_argument("--create-pr", action="store_true", help="Create PR instead of direct push")
-    extract_parser.add_argument("--apply", action="store_true", help="Apply changes (default is to print YAML only)")
-    extract_parser.add_argument("--dry-run", action="store_true", help="Preview YAML without updating (default)")
+    extract_parser.add_argument(
+        "--table", type=int, help="Table number (1-indexed, from inspect-tables output)"
+    )
+    extract_parser.add_argument(
+        "--model-column-index",
+        type=int,
+        help="Preferred: column index from inspect-tables output (exact selection)",
+    )
+    extract_parser.add_argument(
+        "--model-name-override",
+        type=str,
+        help="Exact column header/model name for comparison/transpose tables (when index is not used)",
+    )
+    extract_parser.add_argument(
+        "--task-type",
+        type=str,
+        default="text-generation",
+        help="Sets model-index task.type (e.g., text-generation, summarization)",
+    )
+    extract_parser.add_argument(
+        "--dataset-name", type=str, default="Benchmarks", help="Dataset name"
+    )
+    extract_parser.add_argument(
+        "--dataset-type", type=str, default="benchmark", help="Dataset type"
+    )
+    extract_parser.add_argument(
+        "--create-pr", action="store_true", help="Create PR instead of direct push"
+    )
+    extract_parser.add_argument(
+        "--apply", action="store_true", help="Apply changes (default is to print YAML only)"
+    )
+    extract_parser.add_argument(
+        "--dry-run", action="store_true", help="Preview YAML without updating (default)"
+    )
 
     # Import from AA command
     aa_parser = subparsers.add_parser(
@@ -1235,7 +1308,9 @@ def main():
     aa_parser.add_argument("--creator-slug", type=str, required=True, help="AA creator slug")
     aa_parser.add_argument("--model-name", type=str, required=True, help="AA model name")
     aa_parser.add_argument("--repo-id", type=str, required=True, help="HF repository ID")
-    aa_parser.add_argument("--create-pr", action="store_true", help="Create PR instead of direct push")
+    aa_parser.add_argument(
+        "--create-pr", action="store_true", help="Create PR instead of direct push"
+    )
 
     # Show evaluations command
     show_parser = subparsers.add_parser(
@@ -1268,7 +1343,7 @@ Workflow:
 
 Reminder:
   - Preferred: use --model-column-index <index>. If needed, use --model-name-override with the exact column header text.
-"""
+""",
     )
     inspect_parser.add_argument("--repo-id", type=str, required=True, help="HF repository ID")
 
@@ -1305,7 +1380,7 @@ Reminder:
                 dataset_type=args.dataset_type,
                 model_name_override=args.model_name_override,
                 table_index=args.table,
-                model_column_index=args.model_column_index
+                model_column_index=args.model_column_index,
             )
 
             if not results:
@@ -1319,8 +1394,8 @@ Reminder:
             print("\nExtracted evaluations (YAML):")
             print(
                 yaml.dump(
-                    {"model-index": [{"name": args.repo_id.split('/')[-1], "results": results}]},
-                    sort_keys=False
+                    {"model-index": [{"name": args.repo_id.split("/")[-1], "results": results}]},
+                    sort_keys=False,
                 )
             )
 
@@ -1331,14 +1406,12 @@ Reminder:
                     repo_id=args.repo_id,
                     results=results,
                     create_pr=args.create_pr,
-                    commit_message="Extract evaluation results from README"
+                    commit_message="Extract evaluation results from README",
                 )
 
         elif args.command == "import-aa":
             results = import_aa_evaluations(
-                creator_slug=args.creator_slug,
-                model_name=args.model_name,
-                repo_id=args.repo_id
+                creator_slug=args.creator_slug, model_name=args.model_name, repo_id=args.repo_id
             )
 
             if not results:
@@ -1349,7 +1422,7 @@ Reminder:
                 repo_id=args.repo_id,
                 results=results,
                 create_pr=args.create_pr,
-                commit_message=f"Add Artificial Analysis evaluations for {args.model_name}"
+                commit_message=f"Add Artificial Analysis evaluations for {args.model_name}",
             )
 
         elif args.command == "show":

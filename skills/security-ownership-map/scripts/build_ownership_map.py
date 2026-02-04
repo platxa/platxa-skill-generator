@@ -14,8 +14,8 @@ import re
 import subprocess
 import sys
 from collections import defaultdict
+from collections.abc import Iterable
 from pathlib import Path
-from typing import Iterable
 
 DEFAULT_SENSITIVE_RULES: list[tuple[str, str, float]] = [
     ("**/auth/**", "auth", 1.0),
@@ -207,7 +207,7 @@ def load_sensitive_rules(path: str | None) -> list[tuple[str, str, float]]:
     if not path:
         return list(DEFAULT_SENSITIVE_RULES)
     rules: list[tuple[str, str, float]] = []
-    with open(path, "r", encoding="utf-8") as handle:
+    with open(path, encoding="utf-8") as handle:
         for raw in handle:
             line = raw.strip()
             if not line or line.startswith("#"):
@@ -829,10 +829,10 @@ def build_ownership_map(args: argparse.Namespace) -> Path:
         try:
             import networkx as nx
             from networkx.algorithms import bipartite
-        except ImportError:
+        except ImportError as exc:
             raise RuntimeError(
                 "networkx is required for communities/graphml output. Install with: pip install networkx"
-            )
+            ) from exc
         else:
             graph_bipartite = None
             graph_cochange = None

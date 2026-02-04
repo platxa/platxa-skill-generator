@@ -8,13 +8,14 @@ from __future__ import annotations
 
 import argparse
 import asyncio
+import contextlib
 import json
 import os
-from pathlib import Path
 import re
 import sys
 import time
-from typing import Any, Dict, Iterable, List, Optional, Tuple, Union
+from pathlib import Path
+from typing import Any
 
 DEFAULT_MODEL = "sora-2"
 DEFAULT_SIZE = "1280x720"
@@ -57,7 +58,7 @@ def _ensure_api_key(dry_run: bool) -> None:
     _die("OPENAI_API_KEY is not set. Export it before running.")
 
 
-def _read_prompt(prompt: Optional[str], prompt_file: Optional[str]) -> str:
+def _read_prompt(prompt: str | None, prompt_file: str | None) -> str:
     if prompt and prompt_file:
         _die("Use --prompt or --prompt-file, not both.")
     if prompt_file:
@@ -71,14 +72,14 @@ def _read_prompt(prompt: Optional[str], prompt_file: Optional[str]) -> str:
     return ""  # unreachable
 
 
-def _normalize_model(model: Optional[str]) -> str:
+def _normalize_model(model: str | None) -> str:
     value = (model or DEFAULT_MODEL).strip().lower()
     if value not in ALLOWED_MODELS:
         _die("model must be one of: sora-2, sora-2-pro")
     return value
 
 
-def _normalize_size(size: Optional[str], model: str) -> str:
+def _normalize_size(size: str | None, model: str) -> str:
     value = (size or DEFAULT_SIZE).strip().lower()
     allowed = ALLOWED_SIZES_SORA2 if model == "sora-2" else ALLOWED_SIZES_SORA2_PRO
     if value not in allowed:
@@ -87,7 +88,7 @@ def _normalize_size(size: Optional[str], model: str) -> str:
     return value
 
 
-def _normalize_seconds(seconds: Optional[Union[int, str]]) -> str:
+def _normalize_seconds(seconds: int | str | None) -> str:
     if seconds is None:
         value = DEFAULT_SECONDS
     elif isinstance(seconds, int):
@@ -99,14 +100,14 @@ def _normalize_seconds(seconds: Optional[Union[int, str]]) -> str:
     return value
 
 
-def _normalize_variant(variant: Optional[str]) -> str:
+def _normalize_variant(variant: str | None) -> str:
     value = (variant or DEFAULT_VARIANT).strip().lower()
     if value not in ALLOWED_VARIANTS:
         _die("variant must be one of: video, thumbnail, spritesheet")
     return value
 
 
-def _normalize_order(order: Optional[str]) -> Optional[str]:
+def _normalize_order(order: str | None) -> str | None:
     if order is None:
         return None
     value = order.strip().lower()
@@ -115,14 +116,14 @@ def _normalize_order(order: Optional[str]) -> Optional[str]:
     return value
 
 
-def _normalize_poll_interval(interval: Optional[float]) -> float:
+def _normalize_poll_interval(interval: float | None) -> float:
     value = float(interval if interval is not None else DEFAULT_POLL_INTERVAL)
     if value <= 0:
         _die("poll-interval must be > 0")
     return value
 
 
-def _normalize_timeout(timeout: Optional[float]) -> Optional[float]:
+def _normalize_timeout(timeout: float | None) -> float | None:
     if timeout is None:
         return None
     value = float(timeout)
@@ -139,7 +140,7 @@ def _default_out_path(variant: str) -> Path:
     return Path("spritesheet.jpg")
 
 
-def _normalize_out_path(out: Optional[str], variant: str) -> Path:
+def _normalize_out_path(out: str | None, variant: str) -> Path:
     expected_ext = VARIANT_EXTENSIONS[variant]
     if not out:
         return _default_out_path(variant)
@@ -151,7 +152,7 @@ def _normalize_out_path(out: Optional[str], variant: str) -> Path:
     return path
 
 
-def _normalize_json_out(out: Optional[str], default_name: str) -> Optional[Path]:
+def _normalize_json_out(out: str | None, default_name: str) -> Path | None:
     if not out:
         return None
     raw = str(out)
@@ -165,7 +166,7 @@ def _normalize_json_out(out: Optional[str], default_name: str) -> Optional[Path]
     return path
 
 
-def _open_input_reference(path: Optional[str]):
+def _open_input_reference(path: str | None):
     if not path:
         return _NullContext()
     p = Path(path)
@@ -180,7 +181,9 @@ def _create_client():
     try:
         from openai import OpenAI
     except ImportError:
-        _die("openai SDK not installed. Run with `uv run --with openai` or install with `uv pip install openai`.")
+        _die(
+            "openai SDK not installed. Run with `uv run --with openai` or install with `uv pip install openai`."
+        )
     return OpenAI()
 
 
@@ -191,7 +194,9 @@ def _create_async_client():
         try:
             import openai as _openai  # noqa: F401
         except ImportError:
-            _die("openai SDK not installed. Run with `uv run --with openai` or install with `uv pip install openai`.")
+            _die(
+                "openai SDK not installed. Run with `uv run --with openai` or install with `uv pip install openai`."
+            )
         _die(
             "AsyncOpenAI not available in this openai SDK version. Upgrade with `uv pip install -U openai`."
         )
@@ -214,7 +219,7 @@ def _print_json(obj: Any) -> None:
     print(json.dumps(_to_dict(obj), indent=2, sort_keys=True))
 
 
-def _print_request(payload: Dict[str, Any]) -> None:
+def _print_request(payload: dict[str, Any]) -> None:
     print(json.dumps(payload, indent=2, sort_keys=True))
 
 
@@ -225,7 +230,7 @@ def _slugify(value: str) -> str:
     return value[:60] if value else "job"
 
 
-def _normalize_job(job: Any, idx: int) -> Dict[str, Any]:
+def _normalize_job(job: Any, idx: int) -> dict[str, Any]:
     if isinstance(job, str):
         prompt = job.strip()
         if not prompt:
@@ -239,21 +244,18 @@ def _normalize_job(job: Any, idx: int) -> Dict[str, Any]:
     return {}  # unreachable
 
 
-def _read_jobs_jsonl(path: str) -> List[Dict[str, Any]]:
+def _read_jobs_jsonl(path: str) -> list[dict[str, Any]]:
     p = Path(path)
     if not p.exists():
         _die(f"Input file not found: {p}")
-    jobs: List[Dict[str, Any]] = []
+    jobs: list[dict[str, Any]] = []
     for line_no, raw in enumerate(p.read_text(encoding="utf-8").splitlines(), start=1):
         line = raw.strip()
         if not line or line.startswith("#"):
             continue
         try:
             item: Any
-            if line.startswith("{"):
-                item = json.loads(line)
-            else:
-                item = line
+            item = json.loads(line) if line.startswith("{") else line
             jobs.append(_normalize_job(item, idx=line_no))
         except json.JSONDecodeError as exc:
             _die(f"Invalid JSON on line {line_no}: {exc}")
@@ -264,7 +266,7 @@ def _read_jobs_jsonl(path: str) -> List[Dict[str, Any]]:
     return jobs
 
 
-def _merge_non_null(dst: Dict[str, Any], src: Dict[str, Any]) -> Dict[str, Any]:
+def _merge_non_null(dst: dict[str, Any], src: dict[str, Any]) -> dict[str, Any]:
     merged = dict(dst)
     for k, v in src.items():
         if v is not None:
@@ -272,7 +274,7 @@ def _merge_non_null(dst: Dict[str, Any], src: Dict[str, Any]) -> Dict[str, Any]:
     return merged
 
 
-def _job_output_path(out_dir: Path, idx: int, prompt: str, explicit_out: Optional[str]) -> Path:
+def _job_output_path(out_dir: Path, idx: int, prompt: str, explicit_out: str | None) -> Path:
     out_dir.mkdir(parents=True, exist_ok=True)
     if explicit_out:
         path = Path(explicit_out)
@@ -283,7 +285,7 @@ def _job_output_path(out_dir: Path, idx: int, prompt: str, explicit_out: Optiona
     return out_dir / f"{idx:03d}-{slug}.json"
 
 
-def _extract_retry_after_seconds(exc: Exception) -> Optional[float]:
+def _extract_retry_after_seconds(exc: Exception) -> float | None:
     for attr in ("retry_after", "retry_after_seconds"):
         val = getattr(exc, attr, None)
         if isinstance(val, (int, float)) and val >= 0:
@@ -316,7 +318,7 @@ def _is_transient_error(exc: Exception) -> bool:
     return "timeout" in msg or "timed out" in msg or "connection reset" in msg
 
 
-def _fields_from_args(args: argparse.Namespace) -> Dict[str, Optional[str]]:
+def _fields_from_args(args: argparse.Namespace) -> dict[str, str | None]:
     return {
         "use_case": getattr(args, "use_case", None),
         "scene": getattr(args, "scene", None),
@@ -335,11 +337,11 @@ def _fields_from_args(args: argparse.Namespace) -> Dict[str, Optional[str]]:
     }
 
 
-def _augment_prompt_fields(augment: bool, prompt: str, fields: Dict[str, Optional[str]]) -> str:
+def _augment_prompt_fields(augment: bool, prompt: str, fields: dict[str, str | None]) -> str:
     if not augment:
         return prompt
 
-    sections: List[str] = []
+    sections: list[str] = []
     if fields.get("use_case"):
         sections.append(f"Use case: {fields['use_case']}")
     sections.append(f"Primary request: {prompt}")
@@ -362,7 +364,7 @@ def _augment_prompt_fields(augment: bool, prompt: str, fields: Dict[str, Optiona
     if fields.get("audio"):
         sections.append(f"Audio: {fields['audio']}")
     if fields.get("text"):
-        sections.append(f"Text (verbatim): \"{fields['text']}\"")
+        sections.append(f'Text (verbatim): "{fields["text"]}"')
     if fields.get("dialogue"):
         dialogue = fields["dialogue"].strip()
         sections.append("Dialogue:\n<dialogue>\n" + dialogue + "\n</dialogue>")
@@ -379,7 +381,7 @@ def _augment_prompt(args: argparse.Namespace, prompt: str) -> str:
     return _augment_prompt_fields(args.augment, prompt, fields)
 
 
-def _get_status(video: Any) -> Optional[str]:
+def _get_status(video: Any) -> str | None:
     if isinstance(video, dict):
         for key in ("status", "state"):
             if key in video and isinstance(video[key], str):
@@ -397,7 +399,7 @@ def _get_status(video: Any) -> Optional[str]:
     return None
 
 
-def _get_video_id(video: Any) -> Optional[str]:
+def _get_video_id(video: Any) -> str | None:
     if isinstance(video, dict):
         if isinstance(video.get("id"), str):
             return video["id"]
@@ -414,10 +416,10 @@ def _poll_video(
     video_id: str,
     *,
     poll_interval: float,
-    timeout: Optional[float],
+    timeout: float | None,
 ) -> Any:
     start = time.time()
-    last_status: Optional[str] = None
+    last_status: str | None = None
 
     while True:
         video = client.videos.retrieve(video_id)
@@ -460,7 +462,7 @@ def _write_download(data: Any, out_path: Path, *, force: bool) -> None:
     print(f"Wrote {out_path}")
 
 
-def _build_create_payload(args: argparse.Namespace, prompt: str) -> Dict[str, Any]:
+def _build_create_payload(args: argparse.Namespace, prompt: str) -> dict[str, Any]:
     model = _normalize_model(args.model)
     size = _normalize_size(args.size, model)
     seconds = _normalize_seconds(args.seconds)
@@ -474,18 +476,18 @@ def _build_create_payload(args: argparse.Namespace, prompt: str) -> Dict[str, An
 
 def _prepare_job_payload(
     args: argparse.Namespace,
-    job: Dict[str, Any],
-    base_fields: Dict[str, Optional[str]],
-    base_payload: Dict[str, Any],
-) -> Tuple[Dict[str, Any], Optional[str], str]:
+    job: dict[str, Any],
+    base_fields: dict[str, str | None],
+    base_payload: dict[str, Any],
+) -> tuple[dict[str, Any], str | None, str]:
     prompt = str(job["prompt"]).strip()
     fields = _merge_non_null(base_fields, job.get("fields", {}))
-    fields = _merge_non_null(fields, {k: job.get(k) for k in base_fields.keys()})
+    fields = _merge_non_null(fields, {k: job.get(k) for k in base_fields})
     augmented = _augment_prompt_fields(args.augment, prompt, fields)
 
     payload = dict(base_payload)
     payload["prompt"] = augmented
-    payload = _merge_non_null(payload, {k: job.get(k) for k in base_payload.keys()})
+    payload = _merge_non_null(payload, {k: job.get(k) for k in base_payload})
     payload = {k: v for k, v in payload.items() if v is not None}
 
     model = _normalize_model(payload.get("model"))
@@ -511,7 +513,7 @@ def _write_json(path: Path, obj: Any) -> None:
     print(f"Wrote {path}")
 
 
-def _write_json_out(out_path: Optional[Path], obj: Any) -> None:
+def _write_json_out(out_path: Path | None, obj: Any) -> None:
     if out_path is None:
         return
     _write_json(out_path, obj)
@@ -519,12 +521,12 @@ def _write_json_out(out_path: Optional[Path], obj: Any) -> None:
 
 async def _create_one_with_retries(
     client: Any,
-    payload: Dict[str, Any],
+    payload: dict[str, Any],
     *,
     attempts: int,
     job_label: str,
 ) -> Any:
-    last_exc: Optional[Exception] = None
+    last_exc: Exception | None = None
     for attempt in range(1, attempts + 1):
         try:
             return await client.videos.create(**payload)
@@ -577,7 +579,7 @@ async def _run_create_batch(args: argparse.Namespace) -> int:
     sem = asyncio.Semaphore(args.concurrency)
     any_failed = False
 
-    async def run_job(i: int, job: Dict[str, Any]) -> Tuple[int, Optional[str]]:
+    async def run_job(i: int, job: dict[str, Any]) -> tuple[int, str | None]:
         nonlocal any_failed
         payload, input_ref, prompt = _prepare_job_payload(args, job, base_fields, base_payload)
         job_label = f"[job {i}/{len(jobs)}]"
@@ -639,7 +641,9 @@ def _cmd_create(args: argparse.Namespace) -> int:
         if args.input_reference:
             preview["input_reference"] = args.input_reference
         _print_request({"endpoint": "/v1/videos", **preview})
-        _write_json_out(json_out, {"dry_run": True, "request": {"endpoint": "/v1/videos", **preview}})
+        _write_json_out(
+            json_out, {"dry_run": True, "request": {"endpoint": "/v1/videos", **preview}}
+        )
         return 0
 
     client = _create_client()
@@ -670,7 +674,7 @@ def _cmd_create_and_poll(args: argparse.Namespace) -> int:
             out_path = _normalize_out_path(args.out, variant)
             print(f"Would download variant={variant} to {out_path}")
         if json_out:
-            dry_bundle: Dict[str, Any] = {
+            dry_bundle: dict[str, Any] = {
                 "dry_run": True,
                 "request": {"endpoint": "/v1/videos", **preview},
                 "poll": True,
@@ -759,7 +763,7 @@ def _cmd_status(args: argparse.Namespace) -> int:
 
 
 def _cmd_list(args: argparse.Namespace) -> int:
-    params: Dict[str, Any] = {
+    params: dict[str, Any] = {
         "limit": args.limit,
         "order": _normalize_order(args.order),
         "after": args.after,
@@ -830,10 +834,8 @@ class _SingleFile:
 
     def __exit__(self, exc_type, exc, tb):
         if self._handle:
-            try:
+            with contextlib.suppress(Exception):
                 self._handle.close()
-            except Exception:
-                pass
         return False
 
 
@@ -943,9 +945,13 @@ def main() -> int:
     download_parser.add_argument("--force", action="store_true")
     download_parser.set_defaults(func=_cmd_download)
 
-    batch_parser = subparsers.add_parser("create-batch", help="Create multiple video jobs (JSONL input)")
+    batch_parser = subparsers.add_parser(
+        "create-batch", help="Create multiple video jobs (JSONL input)"
+    )
     _add_create_args(batch_parser)
-    batch_parser.add_argument("--input", required=True, help="Path to JSONL file (one job per line)")
+    batch_parser.add_argument(
+        "--input", required=True, help="Path to JSONL file (one job per line)"
+    )
     batch_parser.add_argument("--out-dir", required=True)
     batch_parser.add_argument("--concurrency", type=int, default=DEFAULT_CONCURRENCY)
     batch_parser.add_argument("--max-attempts", type=int, default=DEFAULT_MAX_ATTEMPTS)
@@ -956,7 +962,10 @@ def main() -> int:
 
     if getattr(args, "concurrency", 1) < 1 or getattr(args, "concurrency", 1) > 10:
         _die("--concurrency must be between 1 and 10")
-    if getattr(args, "max_attempts", DEFAULT_MAX_ATTEMPTS) < 1 or getattr(args, "max_attempts", DEFAULT_MAX_ATTEMPTS) > 10:
+    if (
+        getattr(args, "max_attempts", DEFAULT_MAX_ATTEMPTS) < 1
+        or getattr(args, "max_attempts", DEFAULT_MAX_ATTEMPTS) > 10
+    ):
         _die("--max-attempts must be between 1 and 10")
 
     dry_run = bool(getattr(args, "dry_run", False))

@@ -116,11 +116,13 @@ def discover_skills(
         if skill_dir.name in existing_skills:
             continue
 
-        discovered.append({
-            "name": skill_dir.name,
-            "source": source_name,
-            "path": str(skill_dir),
-        })
+        discovered.append(
+            {
+                "name": skill_dir.name,
+                "source": source_name,
+                "path": str(skill_dir),
+            }
+        )
 
     return discovered
 
@@ -238,7 +240,9 @@ def import_skill(
     # Create branch and PR
     branch = f"import/{name}"
     try:
-        subprocess.run(["git", "checkout", "-b", branch], capture_output=True, check=True, timeout=10)
+        subprocess.run(
+            ["git", "checkout", "-b", branch], capture_output=True, check=True, timeout=10
+        )
         subprocess.run(["git", "add", str(target_dir)], capture_output=True, check=True, timeout=10)
         subprocess.run(
             ["git", "commit", "-m", f"feat: Import {name} from {source} (score {score:.1f})"],
@@ -246,7 +250,9 @@ def import_skill(
             check=True,
             timeout=10,
         )
-        subprocess.run(["git", "push", "-u", "origin", branch], capture_output=True, check=True, timeout=30)
+        subprocess.run(
+            ["git", "push", "-u", "origin", branch], capture_output=True, check=True, timeout=30
+        )
 
         pr_body = (
             f"## Import upstream skill: {name}\n\n"
@@ -312,7 +318,10 @@ def main() -> int:
 
     if args.source:
         if args.source not in sources:
-            print(f"Error: Unknown source '{args.source}'. Available: {', '.join(sources)}", file=sys.stderr)
+            print(
+                f"Error: Unknown source '{args.source}'. Available: {', '.join(sources)}",
+                file=sys.stderr,
+            )
             return 1
         sources = {args.source: sources[args.source]}
 
@@ -351,7 +360,10 @@ def main() -> int:
     imported = 0
     skipped = 0
 
-    print(f"\nEvaluating {len(all_discovered)} skill(s) (threshold: {args.threshold})...\n", file=sys.stderr)
+    print(
+        f"\nEvaluating {len(all_discovered)} skill(s) (threshold: {args.threshold})...\n",
+        file=sys.stderr,
+    )
     for skill_info in all_discovered:
         name = skill_info["name"]
         result = import_skill(skill_info, threshold=args.threshold, dry_run=args.dry_run)

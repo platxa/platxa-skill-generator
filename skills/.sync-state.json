@@ -1,400 +1,400 @@
 {
-  "last_synced": "2026-02-03T20:34:15Z",
+  "last_synced": "2026-02-03T21:23:27Z",
   "skills": {
     "algorithmic-art": {
       "sha": "69c0b1a0674149f27b61b2635f935524b6add202",
       "source": "anthropic",
-      "synced_at": "2026-02-03T20:33:28Z"
+      "synced_at": "2026-02-03T21:22:59Z"
     },
     "atlas": {
       "sha": "f46b2535abfc2ec4b383ba0da47a0357abfa198c",
       "source": "openai",
-      "synced_at": "2026-02-03T20:33:28Z"
+      "synced_at": "2026-02-03T21:22:59Z"
     },
     "backend-development": {
       "sha": "6195a031c29c5bc11d1d4b3e4c64e660e441f087",
       "source": "skillcreatorai",
-      "synced_at": "2026-02-03T20:33:29Z"
+      "synced_at": "2026-02-03T21:22:59Z"
     },
     "best-practices": {
       "sha": "6195a031c29c5bc11d1d4b3e4c64e660e441f087",
       "source": "skillcreatorai",
-      "synced_at": "2026-02-03T20:33:30Z"
+      "synced_at": "2026-02-03T21:23:00Z"
     },
     "brainstorming": {
       "sha": "06b92f36820f38175b2ed6ff3f8df45157d54731",
       "source": "obra",
-      "synced_at": "2026-02-03T20:33:30Z"
+      "synced_at": "2026-02-03T21:23:00Z"
     },
     "changelog-generator": {
       "sha": "6195a031c29c5bc11d1d4b3e4c64e660e441f087",
       "source": "skillcreatorai",
-      "synced_at": "2026-02-03T20:33:31Z"
+      "synced_at": "2026-02-03T21:23:00Z"
     },
     "cloudflare-deploy": {
       "sha": "f46b2535abfc2ec4b383ba0da47a0357abfa198c",
       "source": "openai",
-      "synced_at": "2026-02-03T20:33:32Z"
+      "synced_at": "2026-02-03T21:23:01Z"
     },
     "code-documentation": {
       "sha": "6195a031c29c5bc11d1d4b3e4c64e660e441f087",
       "source": "skillcreatorai",
-      "synced_at": "2026-02-03T20:33:32Z"
+      "synced_at": "2026-02-03T21:23:01Z"
     },
     "code-refactoring": {
       "sha": "6195a031c29c5bc11d1d4b3e4c64e660e441f087",
       "source": "skillcreatorai",
-      "synced_at": "2026-02-03T20:33:33Z"
+      "synced_at": "2026-02-03T21:23:02Z"
     },
     "code-review": {
       "sha": "6195a031c29c5bc11d1d4b3e4c64e660e441f087",
       "source": "skillcreatorai",
-      "synced_at": "2026-02-03T20:33:34Z"
+      "synced_at": "2026-02-03T21:23:02Z"
     },
     "composition-patterns": {
       "sha": "e23951b8cad2f4b1e7e176c5731127c1263fe86f",
       "source": "vercel",
-      "synced_at": "2026-02-03T20:33:34Z"
+      "synced_at": "2026-02-03T21:23:02Z"
     },
     "content-research-writer": {
       "sha": "6195a031c29c5bc11d1d4b3e4c64e660e441f087",
       "source": "skillcreatorai",
-      "synced_at": "2026-02-03T20:33:35Z"
+      "synced_at": "2026-02-03T21:23:03Z"
     },
     "database-design": {
       "sha": "6195a031c29c5bc11d1d4b3e4c64e660e441f087",
       "source": "skillcreatorai",
-      "synced_at": "2026-02-03T20:33:35Z"
+      "synced_at": "2026-02-03T21:23:03Z"
     },
     "develop-web-game": {
       "sha": "f46b2535abfc2ec4b383ba0da47a0357abfa198c",
       "source": "openai",
-      "synced_at": "2026-02-03T20:33:36Z"
+      "synced_at": "2026-02-03T21:23:03Z"
     },
     "dispatching-parallel-agents": {
       "sha": "06b92f36820f38175b2ed6ff3f8df45157d54731",
       "source": "obra",
-      "synced_at": "2026-02-03T20:33:37Z"
+      "synced_at": "2026-02-03T21:23:04Z"
     },
     "doc": {
       "sha": "f46b2535abfc2ec4b383ba0da47a0357abfa198c",
       "source": "openai",
-      "synced_at": "2026-02-03T20:33:37Z"
+      "synced_at": "2026-02-03T21:23:04Z"
     },
     "docx": {
       "sha": "69c0b1a0674149f27b61b2635f935524b6add202",
       "source": "anthropic",
-      "synced_at": "2026-02-03T20:33:38Z"
+      "synced_at": "2026-02-03T21:23:05Z"
     },
     "executing-plans": {
       "sha": "06b92f36820f38175b2ed6ff3f8df45157d54731",
       "source": "obra",
-      "synced_at": "2026-02-03T20:33:38Z"
+      "synced_at": "2026-02-03T21:23:05Z"
     },
     "figma": {
       "sha": "f46b2535abfc2ec4b383ba0da47a0357abfa198c",
       "source": "openai",
-      "synced_at": "2026-02-03T20:33:39Z"
+      "synced_at": "2026-02-03T21:23:05Z"
     },
     "figma-implement-design": {
       "sha": "f46b2535abfc2ec4b383ba0da47a0357abfa198c",
       "source": "openai",
-      "synced_at": "2026-02-03T20:33:40Z"
+      "synced_at": "2026-02-03T21:23:06Z"
     },
     "finishing-a-development-branch": {
       "sha": "06b92f36820f38175b2ed6ff3f8df45157d54731",
       "source": "obra",
-      "synced_at": "2026-02-03T20:33:40Z"
+      "synced_at": "2026-02-03T21:23:06Z"
     },
     "frontend-design": {
       "sha": "69c0b1a0674149f27b61b2635f935524b6add202",
       "source": "anthropic",
-      "synced_at": "2026-02-03T20:33:42Z"
+      "synced_at": "2026-02-03T21:23:07Z"
     },
     "gh-address-comments": {
       "sha": "f46b2535abfc2ec4b383ba0da47a0357abfa198c",
       "source": "openai",
-      "synced_at": "2026-02-03T20:33:43Z"
+      "synced_at": "2026-02-03T21:23:08Z"
     },
     "gh-fix-ci": {
       "sha": "f46b2535abfc2ec4b383ba0da47a0357abfa198c",
       "source": "openai",
-      "synced_at": "2026-02-03T20:33:43Z"
+      "synced_at": "2026-02-03T21:23:08Z"
     },
     "hugging-face-cli": {
       "sha": "2afeee6dc7270dd91bef2b59a5b60b2222fbd8a0",
       "source": "huggingface",
-      "synced_at": "2026-02-03T20:33:44Z"
+      "synced_at": "2026-02-03T21:23:08Z"
     },
     "hugging-face-datasets": {
       "sha": "2afeee6dc7270dd91bef2b59a5b60b2222fbd8a0",
       "source": "huggingface",
-      "synced_at": "2026-02-03T20:33:45Z"
+      "synced_at": "2026-02-03T21:23:09Z"
     },
     "hugging-face-evaluation": {
       "sha": "2afeee6dc7270dd91bef2b59a5b60b2222fbd8a0",
       "source": "huggingface",
-      "synced_at": "2026-02-03T20:33:45Z"
+      "synced_at": "2026-02-03T21:23:09Z"
     },
     "hugging-face-jobs": {
       "sha": "2afeee6dc7270dd91bef2b59a5b60b2222fbd8a0",
       "source": "huggingface",
-      "synced_at": "2026-02-03T20:33:46Z"
+      "synced_at": "2026-02-03T21:23:09Z"
     },
     "hugging-face-model-trainer": {
       "sha": "2afeee6dc7270dd91bef2b59a5b60b2222fbd8a0",
       "source": "huggingface",
-      "synced_at": "2026-02-03T20:33:46Z"
+      "synced_at": "2026-02-03T21:23:10Z"
     },
     "hugging-face-paper-publisher": {
       "sha": "2afeee6dc7270dd91bef2b59a5b60b2222fbd8a0",
       "source": "huggingface",
-      "synced_at": "2026-02-03T20:33:47Z"
+      "synced_at": "2026-02-03T21:23:10Z"
     },
     "hugging-face-tool-builder": {
       "sha": "2afeee6dc7270dd91bef2b59a5b60b2222fbd8a0",
       "source": "huggingface",
-      "synced_at": "2026-02-03T20:33:48Z"
+      "synced_at": "2026-02-03T21:23:11Z"
     },
     "hugging-face-trackio": {
       "sha": "2afeee6dc7270dd91bef2b59a5b60b2222fbd8a0",
       "source": "huggingface",
-      "synced_at": "2026-02-03T20:33:48Z"
+      "synced_at": "2026-02-03T21:23:11Z"
     },
     "imagegen": {
       "sha": "f46b2535abfc2ec4b383ba0da47a0357abfa198c",
       "source": "openai",
-      "synced_at": "2026-02-03T20:33:49Z"
+      "synced_at": "2026-02-03T21:23:11Z"
     },
     "javascript-typescript": {
       "sha": "6195a031c29c5bc11d1d4b3e4c64e660e441f087",
       "source": "skillcreatorai",
-      "synced_at": "2026-02-03T20:33:49Z"
+      "synced_at": "2026-02-03T21:23:12Z"
     },
     "jupyter-notebook": {
       "sha": "f46b2535abfc2ec4b383ba0da47a0357abfa198c",
       "source": "openai",
-      "synced_at": "2026-02-03T20:33:50Z"
+      "synced_at": "2026-02-03T21:23:12Z"
     },
     "linear": {
       "sha": "f46b2535abfc2ec4b383ba0da47a0357abfa198c",
       "source": "openai",
-      "synced_at": "2026-02-03T20:33:50Z"
+      "synced_at": "2026-02-03T21:23:12Z"
     },
     "llm-application-dev": {
       "sha": "6195a031c29c5bc11d1d4b3e4c64e660e441f087",
       "source": "skillcreatorai",
-      "synced_at": "2026-02-03T20:33:51Z"
+      "synced_at": "2026-02-03T21:23:13Z"
     },
     "mcp-builder": {
       "sha": "69c0b1a0674149f27b61b2635f935524b6add202",
       "source": "anthropic",
-      "synced_at": "2026-02-03T20:33:51Z"
+      "synced_at": "2026-02-03T21:23:13Z"
     },
     "netlify-deploy": {
       "sha": "f46b2535abfc2ec4b383ba0da47a0357abfa198c",
       "source": "openai",
-      "synced_at": "2026-02-03T20:33:52Z"
+      "synced_at": "2026-02-03T21:23:13Z"
     },
     "notion-knowledge-capture": {
       "sha": "f46b2535abfc2ec4b383ba0da47a0357abfa198c",
       "source": "openai",
-      "synced_at": "2026-02-03T20:33:53Z"
+      "synced_at": "2026-02-03T21:23:14Z"
     },
     "notion-meeting-intelligence": {
       "sha": "f46b2535abfc2ec4b383ba0da47a0357abfa198c",
       "source": "openai",
-      "synced_at": "2026-02-03T20:33:53Z"
+      "synced_at": "2026-02-03T21:23:14Z"
     },
     "notion-research-documentation": {
       "sha": "f46b2535abfc2ec4b383ba0da47a0357abfa198c",
       "source": "openai",
-      "synced_at": "2026-02-03T20:33:54Z"
+      "synced_at": "2026-02-03T21:23:14Z"
     },
     "notion-spec-to-implementation": {
       "sha": "f46b2535abfc2ec4b383ba0da47a0357abfa198c",
       "source": "openai",
-      "synced_at": "2026-02-03T20:33:54Z"
+      "synced_at": "2026-02-03T21:23:15Z"
     },
     "openai-docs": {
       "sha": "f46b2535abfc2ec4b383ba0da47a0357abfa198c",
       "source": "openai",
-      "synced_at": "2026-02-03T20:33:55Z"
+      "synced_at": "2026-02-03T21:23:15Z"
     },
     "pdf": {
       "sha": "69c0b1a0674149f27b61b2635f935524b6add202",
       "source": "anthropic",
-      "synced_at": "2026-02-03T20:33:55Z"
+      "synced_at": "2026-02-03T21:23:15Z"
     },
     "playwright": {
       "sha": "f46b2535abfc2ec4b383ba0da47a0357abfa198c",
       "source": "openai",
-      "synced_at": "2026-02-03T20:33:56Z"
+      "synced_at": "2026-02-03T21:23:16Z"
     },
     "pptx": {
       "sha": "69c0b1a0674149f27b61b2635f935524b6add202",
       "source": "anthropic",
-      "synced_at": "2026-02-03T20:33:56Z"
+      "synced_at": "2026-02-03T21:23:16Z"
     },
     "python-development": {
       "sha": "6195a031c29c5bc11d1d4b3e4c64e660e441f087",
       "source": "skillcreatorai",
-      "synced_at": "2026-02-03T20:33:57Z"
+      "synced_at": "2026-02-03T21:23:16Z"
     },
     "qa-regression": {
       "sha": "6195a031c29c5bc11d1d4b3e4c64e660e441f087",
       "source": "skillcreatorai",
-      "synced_at": "2026-02-03T20:33:58Z"
+      "synced_at": "2026-02-03T21:23:17Z"
     },
     "react-best-practices": {
       "sha": "e23951b8cad2f4b1e7e176c5731127c1263fe86f",
       "source": "vercel",
-      "synced_at": "2026-02-03T20:33:58Z"
+      "synced_at": "2026-02-03T21:23:17Z"
     },
     "react-native-skills": {
       "sha": "e23951b8cad2f4b1e7e176c5731127c1263fe86f",
       "source": "vercel",
-      "synced_at": "2026-02-03T20:33:59Z"
+      "synced_at": "2026-02-03T21:23:17Z"
     },
     "receiving-code-review": {
       "sha": "06b92f36820f38175b2ed6ff3f8df45157d54731",
       "source": "obra",
-      "synced_at": "2026-02-03T20:33:59Z"
+      "synced_at": "2026-02-03T21:23:18Z"
     },
     "render-deploy": {
       "sha": "f46b2535abfc2ec4b383ba0da47a0357abfa198c",
       "source": "openai",
-      "synced_at": "2026-02-03T20:34:00Z"
+      "synced_at": "2026-02-03T21:23:18Z"
     },
     "requesting-code-review": {
       "sha": "06b92f36820f38175b2ed6ff3f8df45157d54731",
       "source": "obra",
-      "synced_at": "2026-02-03T20:34:01Z"
+      "synced_at": "2026-02-03T21:23:18Z"
     },
     "screenshot": {
       "sha": "f46b2535abfc2ec4b383ba0da47a0357abfa198c",
       "source": "openai",
-      "synced_at": "2026-02-03T20:34:01Z"
+      "synced_at": "2026-02-03T21:23:19Z"
     },
     "security-best-practices": {
       "sha": "f46b2535abfc2ec4b383ba0da47a0357abfa198c",
       "source": "openai",
-      "synced_at": "2026-02-03T20:34:02Z"
+      "synced_at": "2026-02-03T21:23:19Z"
     },
     "security-ownership-map": {
       "sha": "f46b2535abfc2ec4b383ba0da47a0357abfa198c",
       "source": "openai",
-      "synced_at": "2026-02-03T20:34:02Z"
+      "synced_at": "2026-02-03T21:23:19Z"
     },
     "security-threat-model": {
       "sha": "f46b2535abfc2ec4b383ba0da47a0357abfa198c",
       "source": "openai",
-      "synced_at": "2026-02-03T20:34:03Z"
+      "synced_at": "2026-02-03T21:23:20Z"
     },
     "sentry": {
       "sha": "f46b2535abfc2ec4b383ba0da47a0357abfa198c",
       "source": "openai",
-      "synced_at": "2026-02-03T20:34:03Z"
+      "synced_at": "2026-02-03T21:23:20Z"
     },
     "skill-creator": {
       "sha": "69c0b1a0674149f27b61b2635f935524b6add202",
       "source": "anthropic",
-      "synced_at": "2026-02-03T20:34:04Z"
+      "synced_at": "2026-02-03T21:23:20Z"
     },
     "slack-gif-creator": {
       "sha": "69c0b1a0674149f27b61b2635f935524b6add202",
       "source": "anthropic",
-      "synced_at": "2026-02-03T20:34:05Z"
+      "synced_at": "2026-02-03T21:23:21Z"
     },
     "sora": {
       "sha": "f46b2535abfc2ec4b383ba0da47a0357abfa198c",
       "source": "openai",
-      "synced_at": "2026-02-03T20:34:05Z"
+      "synced_at": "2026-02-03T21:23:21Z"
     },
     "speech": {
       "sha": "f46b2535abfc2ec4b383ba0da47a0357abfa198c",
       "source": "openai",
-      "synced_at": "2026-02-03T20:34:06Z"
+      "synced_at": "2026-02-03T21:23:21Z"
     },
     "spreadsheet": {
       "sha": "f46b2535abfc2ec4b383ba0da47a0357abfa198c",
       "source": "openai",
-      "synced_at": "2026-02-03T20:34:06Z"
+      "synced_at": "2026-02-03T21:23:22Z"
     },
     "subagent-driven-development": {
       "sha": "06b92f36820f38175b2ed6ff3f8df45157d54731",
       "source": "obra",
-      "synced_at": "2026-02-03T20:34:07Z"
+      "synced_at": "2026-02-03T21:23:22Z"
     },
     "systematic-debugging": {
       "sha": "06b92f36820f38175b2ed6ff3f8df45157d54731",
       "source": "obra",
-      "synced_at": "2026-02-03T20:34:07Z"
+      "synced_at": "2026-02-03T21:23:22Z"
     },
     "test-driven-development": {
       "sha": "06b92f36820f38175b2ed6ff3f8df45157d54731",
       "source": "obra",
-      "synced_at": "2026-02-03T20:34:08Z"
+      "synced_at": "2026-02-03T21:23:23Z"
     },
     "transcribe": {
       "sha": "f46b2535abfc2ec4b383ba0da47a0357abfa198c",
       "source": "openai",
-      "synced_at": "2026-02-03T20:34:08Z"
+      "synced_at": "2026-02-03T21:23:23Z"
     },
     "using-git-worktrees": {
       "sha": "06b92f36820f38175b2ed6ff3f8df45157d54731",
       "source": "obra",
-      "synced_at": "2026-02-03T20:34:09Z"
+      "synced_at": "2026-02-03T21:23:23Z"
     },
     "using-superpowers": {
       "sha": "06b92f36820f38175b2ed6ff3f8df45157d54731",
       "source": "obra",
-      "synced_at": "2026-02-03T20:34:10Z"
+      "synced_at": "2026-02-03T21:23:24Z"
     },
     "vercel-deploy": {
       "sha": "f46b2535abfc2ec4b383ba0da47a0357abfa198c",
       "source": "openai",
-      "synced_at": "2026-02-03T20:34:10Z"
+      "synced_at": "2026-02-03T21:23:24Z"
     },
     "verification-before-completion": {
       "sha": "06b92f36820f38175b2ed6ff3f8df45157d54731",
       "source": "obra",
-      "synced_at": "2026-02-03T20:34:11Z"
+      "synced_at": "2026-02-03T21:23:24Z"
     },
     "web-artifacts-builder": {
       "sha": "69c0b1a0674149f27b61b2635f935524b6add202",
       "source": "anthropic",
-      "synced_at": "2026-02-03T20:34:11Z"
+      "synced_at": "2026-02-03T21:23:25Z"
     },
     "web-design-guidelines": {
       "sha": "e23951b8cad2f4b1e7e176c5731127c1263fe86f",
       "source": "vercel",
-      "synced_at": "2026-02-03T20:34:12Z"
+      "synced_at": "2026-02-03T21:23:25Z"
     },
     "webapp-testing": {
       "sha": "69c0b1a0674149f27b61b2635f935524b6add202",
       "source": "anthropic",
-      "synced_at": "2026-02-03T20:34:12Z"
+      "synced_at": "2026-02-03T21:23:25Z"
     },
     "writing-plans": {
       "sha": "06b92f36820f38175b2ed6ff3f8df45157d54731",
       "source": "obra",
-      "synced_at": "2026-02-03T20:34:13Z"
+      "synced_at": "2026-02-03T21:23:26Z"
     },
     "writing-skills": {
       "sha": "06b92f36820f38175b2ed6ff3f8df45157d54731",
       "source": "obra",
-      "synced_at": "2026-02-03T20:34:14Z"
+      "synced_at": "2026-02-03T21:23:26Z"
     },
     "xlsx": {
       "sha": "69c0b1a0674149f27b61b2635f935524b6add202",
       "source": "anthropic",
-      "synced_at": "2026-02-03T20:34:14Z"
+      "synced_at": "2026-02-03T21:23:26Z"
     },
     "yeet": {
       "sha": "f46b2535abfc2ec4b383ba0da47a0357abfa198c",
       "source": "openai",
-      "synced_at": "2026-02-03T20:34:15Z"
+      "synced_at": "2026-02-03T21:23:27Z"
     }
   }
 }

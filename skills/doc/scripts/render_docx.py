@@ -2,13 +2,14 @@ import argparse
 import os
 import re
 import subprocess
+import sys
 import tempfile
 import xml.etree.ElementTree as ET
+from collections.abc import Sequence
 from os import makedirs, replace
 from os.path import abspath, basename, exists, expanduser, join, splitext
 from shutil import which
-import sys
-from typing import Sequence, cast
+from typing import cast
 from zipfile import ZipFile
 
 from pdf2image import convert_from_path, pdfinfo_from_path
@@ -68,33 +69,35 @@ def calc_dpi_via_ooxml_docx(input_path: str, max_w_px: int, max_h_px: int) -> in
 
 def calc_dpi_via_pdf(input_path: str, max_w_px: int, max_h_px: int) -> int:
     """Convert input to PDF and compute DPI from its page size."""
-    with tempfile.TemporaryDirectory(prefix="soffice_profile_") as user_profile:
-        with tempfile.TemporaryDirectory(prefix="soffice_convert_") as convert_tmp_dir:
-            stem = splitext(basename(input_path))[0]
-            pdf_path = convert_to_pdf(input_path, user_profile, convert_tmp_dir, stem)
-            if not (pdf_path and exists(pdf_path)):
-                raise RuntimeError("Failed to convert input to PDF for DPI computation.")
+    with (
+        tempfile.TemporaryDirectory(prefix="soffice_profile_") as user_profile,
+        tempfile.TemporaryDirectory(prefix="soffice_convert_") as convert_tmp_dir,
+    ):
+        stem = splitext(basename(input_path))[0]
+        pdf_path = convert_to_pdf(input_path, user_profile, convert_tmp_dir, stem)
+        if not (pdf_path and exists(pdf_path)):
+            raise RuntimeError("Failed to convert input to PDF for DPI computation.")
 
-            info = pdfinfo_from_path(pdf_path)
-            size_val = info.get("Page size")
-            if not size_val:
-                for k, v in info.items():
-                    if isinstance(v, str) and "size" in k.lower() and "pts" in v:
-                        size_val = v
-                        break
-            if not isinstance(size_val, str):
-                raise RuntimeError("Failed to read PDF page size for DPI computation.")
+        info = pdfinfo_from_path(pdf_path)
+        size_val = info.get("Page size")
+        if not size_val:
+            for k, v in info.items():
+                if isinstance(v, str) and "size" in k.lower() and "pts" in v:
+                    size_val = v
+                    break
+        if not isinstance(size_val, str):
+            raise RuntimeError("Failed to read PDF page size for DPI computation.")
 
-            m = re.search(r"(\d+)\s*x\s*(\d+)\s*pts", size_val)
-            if not m:
-                raise RuntimeError("Unrecognized PDF page size format.")
-            width_pts = int(m.group(1))
-            height_pts = int(m.group(2))
-            width_in = width_pts / 72.0
-            height_in = height_pts / 72.0
-            if width_in <= 0 or height_in <= 0:
-                raise RuntimeError("Invalid PDF page size values.")
-            return round(min(max_w_px / width_in, max_h_px / height_in))
+        m = re.search(r"(\d+)\s*x\s*(\d+)\s*pts", size_val)
+        if not m:
+            raise RuntimeError("Unrecognized PDF page size format.")
+        width_pts = int(m.group(1))
+        height_pts = int(m.group(2))
+        width_in = width_pts / 72.0
+        height_in = height_pts / 72.0
+        if width_in <= 0 or height_in <= 0:
+            raise RuntimeError("Invalid PDF page size values.")
+        return round(min(max_w_px / width_in, max_h_px / height_in))
 
 
 def run_cmd_no_check(cmd: list[str]) -> None:
@@ -183,32 +186,32 @@ def rasterize(
     stem = splitext(basename(doc_path))[0]
 
     # Use a unique user profile to avoid LibreOffice profile lock when running concurrently
-    with tempfile.TemporaryDirectory(prefix="soffice_profile_") as user_profile:
+    with (
+        tempfile.TemporaryDirectory(prefix="soffice_profile_") as user_profile,
         # Write conversion outputs into a temp directory to avoid any IO oddities
-        with tempfile.TemporaryDirectory(prefix="soffice_convert_") as convert_tmp_dir:
-            pdf_path = convert_to_pdf(
-                doc_path,
-                user_profile,
-                convert_tmp_dir,
-                stem,
-            )
+        tempfile.TemporaryDirectory(prefix="soffice_convert_") as convert_tmp_dir,
+    ):
+        pdf_path = convert_to_pdf(
+            doc_path,
+            user_profile,
+            convert_tmp_dir,
+            stem,
+        )
 
-            if not pdf_path or not exists(pdf_path):
-                raise RuntimeError(
-                    "Failed to produce PDF for rasterization (direct and ODT fallback)."
-                )
-            paths_raw = cast(
-                list[str],
-                convert_from_path(
-                    pdf_path,
-                    dpi=dpi,
-                    fmt="png",
-                    thread_count=8,
-                    output_folder=out_dir,
-                    paths_only=True,
-                    output_file="page",
-                ),
-            )
+        if not pdf_path or not exists(pdf_path):
+            raise RuntimeError("Failed to produce PDF for rasterization (direct and ODT fallback).")
+        paths_raw = cast(
+            list[str],
+            convert_from_path(
+                pdf_path,
+                dpi=dpi,
+                fmt="png",
+                thread_count=8,
+                output_folder=out_dir,
+                paths_only=True,
+                output_file="page",
+            ),
+        )
 
     # Rename convert_from_path's output format f'page{thread_id:04d}-{page_num:02d}.<ext>' to 'page-<num>.<ext>'
     pages: list[tuple[int, str]] = []
@@ -289,7 +292,7 @@ def main() -> None:
         print("Pages rendered to " + out_dir)
     except RuntimeError as exc:
         print(f"Error: {exc}", file=sys.stderr)
-        raise SystemExit(1)
+        raise SystemExit(1) from exc
 
 
 if __name__ == "__main__":

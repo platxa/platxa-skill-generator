@@ -9,15 +9,16 @@ from __future__ import annotations
 import argparse
 import asyncio
 import base64
+import contextlib
 import json
 import os
-from pathlib import Path
 import re
 import sys
 import time
-from typing import Any, Dict, Iterable, List, Optional, Tuple
-
+from collections.abc import Iterable
 from io import BytesIO
+from pathlib import Path
+from typing import Any
 
 DEFAULT_MODEL = "gpt-image-1.5"
 DEFAULT_SIZE = "1024x1024"
@@ -53,7 +54,7 @@ def _ensure_api_key(dry_run: bool) -> None:
     _die("OPENAI_API_KEY is not set. Export it before running.")
 
 
-def _read_prompt(prompt: Optional[str], prompt_file: Optional[str]) -> str:
+def _read_prompt(prompt: str | None, prompt_file: str | None) -> str:
     if prompt and prompt_file:
         _die("Use --prompt or --prompt-file, not both.")
     if prompt_file:
@@ -67,8 +68,8 @@ def _read_prompt(prompt: Optional[str], prompt_file: Optional[str]) -> str:
     return ""  # unreachable
 
 
-def _check_image_paths(paths: Iterable[str]) -> List[Path]:
-    resolved: List[Path] = []
+def _check_image_paths(paths: Iterable[str]) -> list[Path]:
+    resolved: list[Path] = []
     for raw in paths:
         path = Path(raw)
         if not path.exists():
@@ -79,7 +80,7 @@ def _check_image_paths(paths: Iterable[str]) -> List[Path]:
     return resolved
 
 
-def _normalize_output_format(fmt: Optional[str]) -> str:
+def _normalize_output_format(fmt: str | None) -> str:
     if not fmt:
         return DEFAULT_OUTPUT_FORMAT
     fmt = fmt.lower()
@@ -90,9 +91,7 @@ def _normalize_output_format(fmt: Optional[str]) -> str:
 
 def _validate_size(size: str) -> None:
     if size not in ALLOWED_SIZES:
-        _die(
-            "size must be one of 1024x1024, 1536x1024, 1024x1536, or auto for GPT image models."
-        )
+        _die("size must be one of 1024x1024, 1536x1024, 1024x1536, or auto for GPT image models.")
 
 
 def _validate_quality(quality: str) -> None:
@@ -100,17 +99,17 @@ def _validate_quality(quality: str) -> None:
         _die("quality must be one of low, medium, high, or auto.")
 
 
-def _validate_background(background: Optional[str]) -> None:
+def _validate_background(background: str | None) -> None:
     if background not in ALLOWED_BACKGROUNDS:
         _die("background must be one of transparent, opaque, or auto.")
 
 
-def _validate_transparency(background: Optional[str], output_format: str) -> None:
+def _validate_transparency(background: str | None, output_format: str) -> None:
     if background == "transparent" and output_format not in {"png", "webp"}:
         _die("transparent background requires output-format png or webp.")
 
 
-def _validate_generate_payload(payload: Dict[str, Any]) -> None:
+def _validate_generate_payload(payload: dict[str, Any]) -> None:
     n = int(payload.get("n", 1))
     if n < 1 or n > 10:
         _die("n must be between 1 and 10")
@@ -129,8 +128,8 @@ def _build_output_paths(
     out: str,
     output_format: str,
     count: int,
-    out_dir: Optional[str],
-) -> List[Path]:
+    out_dir: str | None,
+) -> list[Path]:
     ext = "." + output_format
 
     if out_dir:
@@ -146,16 +145,13 @@ def _build_output_paths(
     if out_path.suffix == "":
         out_path = out_path.with_suffix(ext)
     elif output_format and out_path.suffix.lstrip(".").lower() != output_format:
-        _warn(
-            f"Output extension {out_path.suffix} does not match output-format {output_format}."
-        )
+        _warn(f"Output extension {out_path.suffix} does not match output-format {output_format}.")
 
     if count == 1:
         return [out_path]
 
     return [
-        out_path.with_name(f"{out_path.stem}-{i}{out_path.suffix}")
-        for i in range(1, count + 1)
+        out_path.with_name(f"{out_path.stem}-{i}{out_path.suffix}") for i in range(1, count + 1)
     ]
 
 
@@ -164,11 +160,11 @@ def _augment_prompt(args: argparse.Namespace, prompt: str) -> str:
     return _augment_prompt_fields(args.augment, prompt, fields)
 
 
-def _augment_prompt_fields(augment: bool, prompt: str, fields: Dict[str, Optional[str]]) -> str:
+def _augment_prompt_fields(augment: bool, prompt: str, fields: dict[str, str | None]) -> str:
     if not augment:
         return prompt
 
-    sections: List[str] = []
+    sections: list[str] = []
     if fields.get("use_case"):
         sections.append(f"Use case: {fields['use_case']}")
     sections.append(f"Primary request: {prompt}")
@@ -187,7 +183,7 @@ def _augment_prompt_fields(augment: bool, prompt: str, fields: Dict[str, Optiona
     if fields.get("materials"):
         sections.append(f"Materials/textures: {fields['materials']}")
     if fields.get("text"):
-        sections.append(f"Text (verbatim): \"{fields['text']}\"")
+        sections.append(f'Text (verbatim): "{fields["text"]}"')
     if fields.get("constraints"):
         sections.append(f"Constraints: {fields['constraints']}")
     if fields.get("negative"):
@@ -196,7 +192,7 @@ def _augment_prompt_fields(augment: bool, prompt: str, fields: Dict[str, Optiona
     return "\n".join(sections)
 
 
-def _fields_from_args(args: argparse.Namespace) -> Dict[str, Optional[str]]:
+def _fields_from_args(args: argparse.Namespace) -> dict[str, str | None]:
     return {
         "use_case": getattr(args, "use_case", None),
         "scene": getattr(args, "scene", None),
@@ -216,7 +212,7 @@ def _print_request(payload: dict) -> None:
     print(json.dumps(payload, indent=2, sort_keys=True))
 
 
-def _decode_and_write(images: List[str], outputs: List[Path], force: bool) -> None:
+def _decode_and_write(images: list[str], outputs: list[Path], force: bool) -> None:
     for idx, image_b64 in enumerate(images):
         if idx >= len(outputs):
             break
@@ -238,9 +234,7 @@ def _downscale_image_bytes(image_bytes: bytes, *, max_dim: int, output_format: s
     try:
         from PIL import Image
     except Exception:
-        _die(
-            "Downscaling requires Pillow. Install with `uv pip install pillow` (then re-run)."
-        )
+        _die("Downscaling requires Pillow. Install with `uv pip install pillow` (then re-run).")
 
     if max_dim < 1:
         _die("--downscale-max-dim must be >= 1")
@@ -271,11 +265,11 @@ def _downscale_image_bytes(image_bytes: bytes, *, max_dim: int, output_format: s
 
 
 def _decode_write_and_downscale(
-    images: List[str],
-    outputs: List[Path],
+    images: list[str],
+    outputs: list[Path],
     *,
     force: bool,
-    downscale_max_dim: Optional[int],
+    downscale_max_dim: int | None,
     downscale_suffix: str,
     output_format: str,
 ) -> None:
@@ -298,7 +292,9 @@ def _decode_write_and_downscale(
         if derived.exists() and not force:
             _die(f"Output already exists: {derived} (use --force to overwrite)")
         derived.parent.mkdir(parents=True, exist_ok=True)
-        resized = _downscale_image_bytes(raw, max_dim=downscale_max_dim, output_format=output_format)
+        resized = _downscale_image_bytes(
+            raw, max_dim=downscale_max_dim, output_format=output_format
+        )
         derived.write_bytes(resized)
         print(f"Wrote {derived}")
 
@@ -306,7 +302,7 @@ def _decode_write_and_downscale(
 def _create_client():
     try:
         from openai import OpenAI
-    except ImportError as exc:
+    except ImportError:
         _die("openai SDK not installed. Install with `uv pip install openai`.")
     return OpenAI()
 
@@ -332,7 +328,7 @@ def _slugify(value: str) -> str:
     return value[:60] if value else "job"
 
 
-def _normalize_job(job: Any, idx: int) -> Dict[str, Any]:
+def _normalize_job(job: Any, idx: int) -> dict[str, Any]:
     if isinstance(job, str):
         prompt = job.strip()
         if not prompt:
@@ -346,21 +342,18 @@ def _normalize_job(job: Any, idx: int) -> Dict[str, Any]:
     return {}  # unreachable
 
 
-def _read_jobs_jsonl(path: str) -> List[Dict[str, Any]]:
+def _read_jobs_jsonl(path: str) -> list[dict[str, Any]]:
     p = Path(path)
     if not p.exists():
         _die(f"Input file not found: {p}")
-    jobs: List[Dict[str, Any]] = []
+    jobs: list[dict[str, Any]] = []
     for line_no, raw in enumerate(p.read_text(encoding="utf-8").splitlines(), start=1):
         line = raw.strip()
         if not line or line.startswith("#"):
             continue
         try:
             item: Any
-            if line.startswith("{"):
-                item = json.loads(line)
-            else:
-                item = line
+            item = json.loads(line) if line.startswith("{") else line
             jobs.append(_normalize_job(item, idx=line_no))
         except json.JSONDecodeError as exc:
             _die(f"Invalid JSON on line {line_no}: {exc}")
@@ -371,7 +364,7 @@ def _read_jobs_jsonl(path: str) -> List[Dict[str, Any]]:
     return jobs
 
 
-def _merge_non_null(dst: Dict[str, Any], src: Dict[str, Any]) -> Dict[str, Any]:
+def _merge_non_null(dst: dict[str, Any], src: dict[str, Any]) -> dict[str, Any]:
     merged = dict(dst)
     for k, v in src.items():
         if v is not None:
@@ -386,8 +379,8 @@ def _job_output_paths(
     idx: int,
     prompt: str,
     n: int,
-    explicit_out: Optional[str],
-) -> List[Path]:
+    explicit_out: str | None,
+) -> list[Path]:
     out_dir.mkdir(parents=True, exist_ok=True)
     ext = "." + output_format
 
@@ -406,13 +399,10 @@ def _job_output_paths(
 
     if n == 1:
         return [base]
-    return [
-        base.with_name(f"{base.stem}-{i}{base.suffix}")
-        for i in range(1, n + 1)
-    ]
+    return [base.with_name(f"{base.stem}-{i}{base.suffix}") for i in range(1, n + 1)]
 
 
-def _extract_retry_after_seconds(exc: Exception) -> Optional[float]:
+def _extract_retry_after_seconds(exc: Exception) -> float | None:
     # Best-effort: openai SDK errors vary by version. Prefer a conservative fallback.
     for attr in ("retry_after", "retry_after_seconds"):
         val = getattr(exc, attr, None)
@@ -448,12 +438,12 @@ def _is_transient_error(exc: Exception) -> bool:
 
 async def _generate_one_with_retries(
     client: Any,
-    payload: Dict[str, Any],
+    payload: dict[str, Any],
     *,
     attempts: int,
     job_label: str,
 ) -> Any:
-    last_exc: Optional[Exception] = None
+    last_exc: Exception | None = None
     for attempt in range(1, attempts + 1):
         try:
             return await client.images.generate(**payload)
@@ -495,12 +485,12 @@ async def _run_generate_batch(args: argparse.Namespace) -> int:
             prompt = str(job["prompt"]).strip()
             fields = _merge_non_null(base_fields, job.get("fields", {}))
             # Allow flat job keys as well (use_case, scene, etc.)
-            fields = _merge_non_null(fields, {k: job.get(k) for k in base_fields.keys()})
+            fields = _merge_non_null(fields, {k: job.get(k) for k in base_fields})
             augmented = _augment_prompt_fields(args.augment, prompt, fields)
 
             job_payload = dict(base_payload)
             job_payload["prompt"] = augmented
-            job_payload = _merge_non_null(job_payload, {k: job.get(k) for k in base_payload.keys()})
+            job_payload = _merge_non_null(job_payload, {k: job.get(k) for k in base_payload})
             job_payload = {k: v for k, v in job_payload.items() if v is not None}
 
             _validate_generate_payload(job_payload)
@@ -539,18 +529,18 @@ async def _run_generate_batch(args: argparse.Namespace) -> int:
 
     any_failed = False
 
-    async def run_job(i: int, job: Dict[str, Any]) -> Tuple[int, Optional[str]]:
+    async def run_job(i: int, job: dict[str, Any]) -> tuple[int, str | None]:
         nonlocal any_failed
         prompt = str(job["prompt"]).strip()
         job_label = f"[job {i}/{len(jobs)}]"
 
         fields = _merge_non_null(base_fields, job.get("fields", {}))
-        fields = _merge_non_null(fields, {k: job.get(k) for k in base_fields.keys()})
+        fields = _merge_non_null(fields, {k: job.get(k) for k in base_fields})
         augmented = _augment_prompt_fields(args.augment, prompt, fields)
 
         payload = dict(base_payload)
         payload["prompt"] = augmented
-        payload = _merge_non_null(payload, {k: job.get(k) for k in base_payload.keys()})
+        payload = _merge_non_null(payload, {k: job.get(k) for k in base_payload})
         payload = {k: v for k, v in payload.items() if v is not None}
 
         n = int(payload.get("n", 1))
@@ -732,11 +722,11 @@ def _edit(args: argparse.Namespace) -> None:
     )
 
 
-def _open_files(paths: List[Path]):
+def _open_files(paths: list[Path]):
     return _FileBundle(paths)
 
 
-def _open_mask(mask_path: Optional[Path]):
+def _open_mask(mask_path: Path | None):
     if mask_path is None:
         return _NullContext()
     return _SingleFile(mask_path)
@@ -761,17 +751,15 @@ class _SingleFile:
 
     def __exit__(self, exc_type, exc, tb):
         if self._handle:
-            try:
+            with contextlib.suppress(Exception):
                 self._handle.close()
-            except Exception:
-                pass
         return False
 
 
 class _FileBundle:
-    def __init__(self, paths: List[Path]):
+    def __init__(self, paths: list[Path]):
         self._paths = paths
-        self._handles: List[object] = []
+        self._handles: list[object] = []
 
     def __enter__(self):
         self._handles = [p.open("rb") for p in self._paths]
@@ -779,10 +767,8 @@ class _FileBundle:
 
     def __exit__(self, exc_type, exc, tb):
         for handle in self._handles:
-            try:
+            with contextlib.suppress(Exception):
                 handle.close()
-            except Exception:
-                pass
         return False
 
 
@@ -836,7 +822,9 @@ def main() -> int:
         help="Generate multiple prompts concurrently (JSONL input)",
     )
     _add_shared_args(batch_parser)
-    batch_parser.add_argument("--input", required=True, help="Path to JSONL file (one job per line)")
+    batch_parser.add_argument(
+        "--input", required=True, help="Path to JSONL file (one job per line)"
+    )
     batch_parser.add_argument("--concurrency", type=int, default=DEFAULT_CONCURRENCY)
     batch_parser.add_argument("--max-attempts", type=int, default=3)
     batch_parser.add_argument("--fail-fast", action="store_true")
