@@ -269,6 +269,16 @@ def build_skill_entry(
     if manifest_info.get("compatibility"):
         entry["compatibility"] = manifest_info["compatibility"]
 
+    # Regeneration tracking fields
+    if manifest_info.get("regenerated"):
+        entry["regenerated"] = True
+    if manifest_info.get("regenerated_at"):
+        entry["regenerated_at"] = str(manifest_info["regenerated_at"])
+    if manifest_info.get("intent_confidence") is not None:
+        entry["intent_confidence"] = float(manifest_info["intent_confidence"])
+    if manifest_info.get("generator_version"):
+        entry["generator_version"] = str(manifest_info["generator_version"])
+
     return entry
 
 
@@ -385,9 +395,7 @@ def search_skills(
                 score += 10.0
             elif token in name:
                 score += 5.0
-            elif name.startswith(token) or any(
-                part.startswith(token) for part in name.split("-")
-            ):
+            elif name.startswith(token) or any(part.startswith(token) for part in name.split("-")):
                 score += 3.0
 
             # Category match
@@ -473,9 +481,7 @@ def main() -> int:
     if args.search_index:
         search = generate_search_index(index)
         args.search_index.parent.mkdir(parents=True, exist_ok=True)
-        args.search_index.write_text(
-            json.dumps(search, indent=indent, ensure_ascii=False) + "\n"
-        )
+        args.search_index.write_text(json.dumps(search, indent=indent, ensure_ascii=False) + "\n")
         print(
             f"Generated search-index.json: {len(search)} entries",
             file=sys.stderr,
