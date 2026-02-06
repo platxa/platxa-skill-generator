@@ -4,7 +4,7 @@
 >
 > **Maintained by**: [Platxa](https://platxa.com) | **License**: MIT | **Compatible with**: `npx skills`
 
-**100 skills** across **16 categories** — 21 local, 79 external
+**104 skills** across **17 categories** — 21 local, 83 external
 
 ---
 
@@ -55,6 +55,10 @@ cd platxa-skill-generator
 | [platxa-secrets-management](skills/platxa-secrets-management/SKILL.md) | ![trust](badges/platxa-secrets-management.svg) | Fernet encryption, Kubernetes secrets, and secure token patterns for Platxa s... | security | Internal | 6,971 | Platxa | `./scripts/install-from-catalog.sh platxa-secrets-management` |
 | [platxa-testing](skills/platxa-testing/SKILL.md) | ![trust](badges/platxa-testing.svg) | Automated testing patterns for Platxa platform using pytest, Vitest, and E2E ... | testing | Internal | 6,090 | Platxa | `./scripts/install-from-catalog.sh platxa-testing` |
 | [test-generator](skills/test-generator/SKILL.md) | ![trust](badges/test-generator.svg) | Generate unit tests for existing code across Python, JavaScript/TypeScript, J... | testing | Internal | 3,392 | Platxa | `./scripts/install-from-catalog.sh test-generator` |
+| [duplicate-code-detector](skills/duplicate-code-detector/SKILL.md) | ![trust](badges/duplicate-code-detector.svg) | Proactive duplicate code detection at feature boundaries. Classifies clones b... | uncategorized | Internal | 2,104 | unknown | `./scripts/install-from-catalog.sh duplicate-code-detector` |
+| [platxa-agent-builder](skills/platxa-agent-builder/SKILL.md) | ![trust](badges/platxa-agent-builder.svg) | Create Claude Code plugin agents with proper frontmatter, system prompts, tri... | uncategorized | Internal | 7,642 | unknown | `./scripts/install-from-catalog.sh platxa-agent-builder` |
+| [platxa-command-builder](skills/platxa-command-builder/SKILL.md) | ![trust](badges/platxa-command-builder.svg) | Create Claude Code slash commands with proper frontmatter, dynamic arguments,... | uncategorized | Internal | 7,299 | unknown | `./scripts/install-from-catalog.sh platxa-command-builder` |
+| [platxa-hook-builder](skills/platxa-hook-builder/SKILL.md) | ![trust](badges/platxa-hook-builder.svg) | Create Claude Code plugin hooks with proper configuration, event handling, ma... | uncategorized | Internal | 7,773 | unknown | `./scripts/install-from-catalog.sh platxa-hook-builder` |
 | [hugging-face-datasets](skills/hugging-face-datasets/SKILL.md) | ![trust](badges/hugging-face-datasets.svg) | Create and manage datasets on Hugging Face Hub. Supports initializing repos, ... | data | Essential | 4,034 | huggingface | `./scripts/install-from-catalog.sh hugging-face-datasets` |
 | [hugging-face-evaluation](skills/hugging-face-evaluation/SKILL.md) | ![trust](badges/hugging-face-evaluation.svg) | Add and manage evaluation results in Hugging Face model cards. Supports extra... | data | Essential | 5,895 | huggingface | `./scripts/install-from-catalog.sh hugging-face-evaluation` |
 | [hugging-face-model-trainer](skills/hugging-face-model-trainer/SKILL.md) | ![trust](badges/hugging-face-model-trainer.svg) | This skill should be used when users want to train or fine-tune language mode... | data | Essential | 23,224 | huggingface | `./scripts/install-from-catalog.sh hugging-face-model-trainer` |
@@ -156,6 +160,7 @@ cd platxa-skill-generator
 | odoo | 3 | Odoo ERP platform development |
 | security | 5 | Authentication, encryption, secrets |
 | testing | 6 | Test generation and automation |
+| uncategorized | 4 |  |
 | workflow | 14 | Agent workflow and orchestration |
 
 ---
@@ -164,7 +169,7 @@ cd platxa-skill-generator
 
 | Tier | Label | Description | Count |
 |------|-------|-------------|-------|
-| 0 | Internal | Platxa internal skills (local only) | 21 |
+| 0 | Internal | Platxa internal skills (local only) | 25 |
 | 1 | Essential | Essential, high-quality skills | 22 |
 | 2 | Useful | Useful, recommended skills | 51 |
 | 3 | Experimental | Experimental or niche skills | 6 |
@@ -232,7 +237,7 @@ python3 scripts/count-tokens.py skills/<skill-name>
 ## External vs Local Skills
 
 - **Local** (21 skills): Created and maintained in this repo. Never overwritten by sync.
-- **External** (79 skills): Synced from upstream repos (Anthropic, Vercel, Obra).
+- **External** (83 skills): Synced from upstream repos (Anthropic, Vercel, Obra).
 
 ```bash
 # Sync external skills from upstream
@@ -264,4 +269,4 @@ MIT License - See [LICENSE](../LICENSE) for details.
 
 ---
 
-*Auto-generated from registry data. 100 skills across 16 categories.*
+*Auto-generated from registry data. 104 skills across 17 categories.*
