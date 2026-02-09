@@ -4,7 +4,7 @@
 >
 > **Maintained by**: [Platxa](https://platxa.com) | **License**: MIT | **Compatible with**: `npx skills`
 
-**100 skills** across **16 categories** — 21 local, 79 external
+**104 skills** across **17 categories** — 21 local, 83 external
 
 ---
 
@@ -55,23 +55,27 @@ cd platxa-skill-generator
 | [platxa-secrets-management](skills/platxa-secrets-management/SKILL.md) | ![trust](badges/platxa-secrets-management.svg) | Fernet encryption, Kubernetes secrets, and secure token patterns for Platxa s... | security | Internal | 6,971 | Platxa | `./scripts/install-from-catalog.sh platxa-secrets-management` |
 | [platxa-testing](skills/platxa-testing/SKILL.md) | ![trust](badges/platxa-testing.svg) | Automated testing patterns for Platxa platform using pytest, Vitest, and E2E ... | testing | Internal | 6,090 | Platxa | `./scripts/install-from-catalog.sh platxa-testing` |
 | [test-generator](skills/test-generator/SKILL.md) | ![trust](badges/test-generator.svg) | Generate unit tests for existing code across Python, JavaScript/TypeScript, J... | testing | Internal | 3,392 | Platxa | `./scripts/install-from-catalog.sh test-generator` |
+| [duplicate-code-detector](skills/duplicate-code-detector/SKILL.md) | ![trust](badges/duplicate-code-detector.svg) | Proactive duplicate code detection at feature boundaries. Classifies clones b... | uncategorized | Internal | 2,104 | unknown | `./scripts/install-from-catalog.sh duplicate-code-detector` |
+| [platxa-agent-builder](skills/platxa-agent-builder/SKILL.md) | ![trust](badges/platxa-agent-builder.svg) | Create Claude Code plugin agents with proper frontmatter, system prompts, tri... | uncategorized | Internal | 7,642 | unknown | `./scripts/install-from-catalog.sh platxa-agent-builder` |
+| [platxa-command-builder](skills/platxa-command-builder/SKILL.md) | ![trust](badges/platxa-command-builder.svg) | Create Claude Code slash commands with proper frontmatter, dynamic arguments,... | uncategorized | Internal | 7,299 | unknown | `./scripts/install-from-catalog.sh platxa-command-builder` |
+| [platxa-hook-builder](skills/platxa-hook-builder/SKILL.md) | ![trust](badges/platxa-hook-builder.svg) | Create Claude Code plugin hooks with proper configuration, event handling, ma... | uncategorized | Internal | 7,773 | unknown | `./scripts/install-from-catalog.sh platxa-hook-builder` |
 | [hugging-face-datasets](skills/hugging-face-datasets/SKILL.md) | ![trust](badges/hugging-face-datasets.svg) | Create and manage datasets on Hugging Face Hub. Supports initializing repos, ... | data | Essential | 4,034 | huggingface | `./scripts/install-from-catalog.sh hugging-face-datasets` |
 | [hugging-face-evaluation](skills/hugging-face-evaluation/SKILL.md) | ![trust](badges/hugging-face-evaluation.svg) | Add and manage evaluation results in Hugging Face model cards. Supports extra... | data | Essential | 5,895 | huggingface | `./scripts/install-from-catalog.sh hugging-face-evaluation` |
-| [hugging-face-model-trainer](skills/hugging-face-model-trainer/SKILL.md) | ![trust](badges/hugging-face-model-trainer.svg) | This skill should be used when users want to train or fine-tune language mode... | data | Essential | 23,224 | huggingface | `./scripts/install-from-catalog.sh hugging-face-model-trainer` |
+| [hugging-face-model-trainer](skills/hugging-face-model-trainer/SKILL.md) | ![trust](badges/hugging-face-model-trainer.svg) | This skill should be used when users want to train or fine-tune language mode... | data | Essential | 25,646 | huggingface | `./scripts/install-from-catalog.sh hugging-face-model-trainer` |
 | [systematic-debugging](skills/systematic-debugging/SKILL.md) | ![trust](badges/systematic-debugging.svg) | Use when encountering any bug, test failure, or unexpected behavior, before p... | debugging | Essential | 2,330 | Obra | `./scripts/install-from-catalog.sh systematic-debugging` |
 | [figma](skills/figma/SKILL.md) | ![trust](badges/figma.svg) | Use the Figma MCP server to fetch design context, screenshots, variables, and... | design | Essential | 1,906 | openai | `./scripts/install-from-catalog.sh figma` |
 | [figma-implement-design](skills/figma-implement-design/SKILL.md) | ![trust](badges/figma-implement-design.svg) | Translate Figma nodes into production-ready code with 1:1 visual fidelity usi... | design | Essential | 2,747 | openai | `./scripts/install-from-catalog.sh figma-implement-design` |
 | [frontend-design](skills/frontend-design/SKILL.md) | ![trust](badges/frontend-design.svg) | Create distinctive, production-grade frontend interfaces with high design qua... | design | Essential | 1,084 | Anthropic | `./scripts/install-from-catalog.sh frontend-design` |
 | [gh-fix-ci](skills/gh-fix-ci/SKILL.md) | ![trust](badges/gh-fix-ci.svg) | Use when a user asks to debug or fix failing GitHub PR checks that run in Git... | devtools | Essential | 893 | openai | `./scripts/install-from-catalog.sh gh-fix-ci` |
 | [mcp-builder](skills/mcp-builder/SKILL.md) | ![trust](badges/mcp-builder.svg) | Guide for creating high-quality MCP (Model Context Protocol) servers that ena... | devtools | Essential | 1,922 | Anthropic | `./scripts/install-from-catalog.sh mcp-builder` |
-| [docx](skills/docx/SKILL.md) | ![trust](badges/docx.svg) | Comprehensive document creation, editing, and analysis with support for track... | documents | Essential | 2,448 | Anthropic | `./scripts/install-from-catalog.sh docx` |
-| [pdf](skills/pdf/SKILL.md) | ![trust](badges/pdf.svg) | Comprehensive PDF manipulation toolkit for extracting text and tables, creati... | documents | Essential | 1,804 | Anthropic | `./scripts/install-from-catalog.sh pdf` |
-| [xlsx](skills/xlsx/SKILL.md) | ![trust](badges/xlsx.svg) | Comprehensive spreadsheet creation, editing, and analysis with support for fo... | documents | Essential | 2,650 | Anthropic | `./scripts/install-from-catalog.sh xlsx` |
+| [docx](skills/docx/SKILL.md) | ![trust](badges/docx.svg) | Use this skill whenever the user wants to create, read, edit, or manipulate W... | documents | Essential | 4,945 | Anthropic | `./scripts/install-from-catalog.sh docx` |
+| [pdf](skills/pdf/SKILL.md) | ![trust](badges/pdf.svg) | Use this skill whenever the user wants to do anything with PDF files. This in... | documents | Essential | 2,079 | Anthropic | `./scripts/install-from-catalog.sh pdf` |
+| [xlsx](skills/xlsx/SKILL.md) | ![trust](badges/xlsx.svg) | Use this skill any time a spreadsheet file is the primary input or output. Th... | documents | Essential | 2,814 | Anthropic | `./scripts/install-from-catalog.sh xlsx` |
 | [react-best-practices](skills/react-best-practices/SKILL.md) | ![trust](badges/react-best-practices.svg) | React and Next.js performance optimization guidelines from Vercel Engineering... | frontend | Essential | 1,488 | Vercel | `./scripts/install-from-catalog.sh react-best-practices` |
 | [web-artifacts-builder](skills/web-artifacts-builder/SKILL.md) | ![trust](badges/web-artifacts-builder.svg) | Suite of tools for creating elaborate, multi-component claude.ai HTML artifac... | frontend | Essential | 702 | Anthropic | `./scripts/install-from-catalog.sh web-artifacts-builder` |
 | [using-git-worktrees](skills/using-git-worktrees/SKILL.md) | ![trust](badges/using-git-worktrees.svg) | Use when starting feature work that needs isolation from current workspace or... | git | Essential | 1,341 | Obra | `./scripts/install-from-catalog.sh using-git-worktrees` |
 | [security-best-practices](skills/security-best-practices/SKILL.md) | ![trust](badges/security-best-practices.svg) | Perform language and framework specific security best-practice reviews and su... | security | Essential | 2,832 | openai | `./scripts/install-from-catalog.sh security-best-practices` |
-| [playwright](skills/playwright/SKILL.md) | ![trust](badges/playwright.svg) | Use when the task requires automating a real browser from the terminal (navig... | testing | Essential | 1,969 | openai | `./scripts/install-from-catalog.sh playwright` |
+| [playwright](skills/playwright/SKILL.md) | ![trust](badges/playwright.svg) | Use when the task requires automating a real browser from the terminal (navig... | testing | Essential | 1,966 | openai | `./scripts/install-from-catalog.sh playwright` |
 | [test-driven-development](skills/test-driven-development/SKILL.md) | ![trust](badges/test-driven-development.svg) | Use when implementing any feature or bugfix, before writing implementation code | testing | Essential | 2,420 | Obra | `./scripts/install-from-catalog.sh test-driven-development` |
 | [webapp-testing](skills/webapp-testing/SKILL.md) | ![trust](badges/webapp-testing.svg) | Toolkit for interacting with and testing local web applications using Playwri... | testing | Essential | 881 | Anthropic | `./scripts/install-from-catalog.sh webapp-testing` |
 | [executing-plans](skills/executing-plans/SKILL.md) | ![trust](badges/executing-plans.svg) | Use when you have a written implementation plan to execute in a separate sess... | workflow | Essential | 562 | Obra | `./scripts/install-from-catalog.sh executing-plans` |
@@ -95,10 +99,10 @@ cd platxa-skill-generator
 | [jupyter-notebook](skills/jupyter-notebook/SKILL.md) | ![trust](badges/jupyter-notebook.svg) | Use when the user asks to create, scaffold, or edit Jupyter notebooks (`.ipyn... | devtools | Useful | 1,514 | openai | `./scripts/install-from-catalog.sh jupyter-notebook` |
 | [linear](skills/linear/SKILL.md) | ![trust](badges/linear.svg) | Manage issues, projects & team workflows in Linear. Use when the user wants t... | devtools | Useful | 1,078 | openai | `./scripts/install-from-catalog.sh linear` |
 | [openai-docs](skills/openai-docs/SKILL.md) | ![trust](badges/openai-docs.svg) | Use when the user asks how to build with OpenAI products or APIs and needs up... | devtools | Useful | 782 | openai | `./scripts/install-from-catalog.sh openai-docs` |
-| [skill-creator](skills/skill-creator/SKILL.md) | ![trust](badges/skill-creator.svg) | Guide for creating effective skills. This skill should be used when users wan... | devtools | Useful | 4,188 | Anthropic | `./scripts/install-from-catalog.sh skill-creator` |
+| [skill-creator](skills/skill-creator/SKILL.md) | ![trust](badges/skill-creator.svg) | Guide for creating effective skills. This skill should be used when users wan... | devtools | Useful | 4,242 | Anthropic | `./scripts/install-from-catalog.sh skill-creator` |
 | [writing-skills](skills/writing-skills/SKILL.md) | ![trust](badges/writing-skills.svg) | Use when creating new skills, editing existing skills, or verifying skills wo... | devtools | Useful | 5,061 | Obra | `./scripts/install-from-catalog.sh writing-skills` |
 | [doc](skills/doc/SKILL.md) | ![trust](badges/doc.svg) | Use when the task involves reading, creating, or editing `.docx` documents, e... | documents | Useful | 702 | openai | `./scripts/install-from-catalog.sh doc` |
-| [pptx](skills/pptx/SKILL.md) | ![trust](badges/pptx.svg) | Presentation creation, editing, and analysis. When Claude needs to work with ... | documents | Useful | 6,197 | Anthropic | `./scripts/install-from-catalog.sh pptx` |
+| [pptx](skills/pptx/SKILL.md) | ![trust](badges/pptx.svg) | Use this skill any time a .pptx file is involved in any way — as input, outpu... | documents | Useful | 2,403 | Anthropic | `./scripts/install-from-catalog.sh pptx` |
 | [spreadsheet](skills/spreadsheet/SKILL.md) | ![trust](badges/spreadsheet.svg) | Use when tasks involve creating, editing, analyzing, or formatting spreadshee... | documents | Useful | 1,145 | openai | `./scripts/install-from-catalog.sh spreadsheet` |
 | [composition-patterns](skills/composition-patterns/SKILL.md) | ![trust](badges/composition-patterns.svg) | React composition patterns that scale. Use when refactoring components with b... | frontend | Useful | 630 | Vercel | `./scripts/install-from-catalog.sh composition-patterns` |
 | [javascript-typescript](skills/javascript-typescript/SKILL.md) | ![trust](badges/javascript-typescript.svg) | JavaScript and TypeScript development with ES6+, Node.js, React, and modern w... | frontend | Useful | 792 | skillcreatorai | `./scripts/install-from-catalog.sh javascript-typescript` |
@@ -108,7 +112,7 @@ cd platxa-skill-generator
 | [hugging-face-jobs](skills/hugging-face-jobs/SKILL.md) | ![trust](badges/hugging-face-jobs.svg) | Run workloads on Hugging Face Jobs infrastructure. Covers UV scripts, Docker ... | infrastructure | Useful | 3,680 | huggingface | `./scripts/install-from-catalog.sh hugging-face-jobs` |
 | [netlify-deploy](skills/netlify-deploy/SKILL.md) | ![trust](badges/netlify-deploy.svg) | Deploy web projects to Netlify using the Netlify CLI (`npx netlify`). Use whe... | infrastructure | Useful | 5,201 | openai | `./scripts/install-from-catalog.sh netlify-deploy` |
 | [render-deploy](skills/render-deploy/SKILL.md) | ![trust](badges/render-deploy.svg) | Deploy applications to Render by analyzing codebases, generating render.yaml ... | infrastructure | Useful | 10,154 | openai | `./scripts/install-from-catalog.sh render-deploy` |
-| [vercel-deploy](skills/vercel-deploy/SKILL.md) | ![trust](badges/vercel-deploy.svg) | Deploy applications and websites to Vercel using the bundled `scripts/deploy.... | infrastructure | Useful | 879 | openai | `./scripts/install-from-catalog.sh vercel-deploy` |
+| [vercel-deploy](skills/vercel-deploy/SKILL.md) | ![trust](badges/vercel-deploy.svg) | Deploy applications and websites to Vercel. Use when the user requests deploy... | infrastructure | Useful | 487 | openai | `./scripts/install-from-catalog.sh vercel-deploy` |
 | [imagegen](skills/imagegen/SKILL.md) | ![trust](badges/imagegen.svg) | Use when the user asks to generate or edit images via the OpenAI Image API (f... | media | Useful | 8,933 | openai | `./scripts/install-from-catalog.sh imagegen` |
 | [screenshot](skills/screenshot/SKILL.md) | ![trust](badges/screenshot.svg) | Use when the user explicitly asks for a desktop or system screenshot (full sc... | media | Useful | 1,916 | openai | `./scripts/install-from-catalog.sh screenshot` |
 | [speech](skills/speech/SKILL.md) | ![trust](badges/speech.svg) | Use when the user asks for text-to-speech narration or voiceover, accessibili... | media | Useful | 4,995 | openai | `./scripts/install-from-catalog.sh speech` |
@@ -156,6 +160,7 @@ cd platxa-skill-generator
 | odoo | 3 | Odoo ERP platform development |
 | security | 5 | Authentication, encryption, secrets |
 | testing | 6 | Test generation and automation |
+| uncategorized | 4 |  |
 | workflow | 14 | Agent workflow and orchestration |
 
 ---
@@ -164,7 +169,7 @@ cd platxa-skill-generator
 
 | Tier | Label | Description | Count |
 |------|-------|-------------|-------|
-| 0 | Internal | Platxa internal skills (local only) | 21 |
+| 0 | Internal | Platxa internal skills (local only) | 25 |
 | 1 | Essential | Essential, high-quality skills | 22 |
 | 2 | Useful | Useful, recommended skills | 51 |
 | 3 | Experimental | Experimental or niche skills | 6 |
@@ -232,7 +237,7 @@ python3 scripts/count-tokens.py skills/<skill-name>
 ## External vs Local Skills
 
 - **Local** (21 skills): Created and maintained in this repo. Never overwritten by sync.
-- **External** (79 skills): Synced from upstream repos (Anthropic, Vercel, Obra).
+- **External** (83 skills): Synced from upstream repos (Anthropic, Vercel, Obra).
 
 ```bash
 # Sync external skills from upstream
@@ -264,4 +269,4 @@ MIT License - See [LICENSE](../LICENSE) for details.
 
 ---
 
-*Auto-generated from registry data. 100 skills across 16 categories.*
+*Auto-generated from registry data. 104 skills across 17 categories.*
