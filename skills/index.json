@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "generated_at": "2026-02-09T10:21:08Z",
+  "generated_at": "2026-02-09T10:26:18Z",
   "skills_count": 104,
   "skills": {
     "algorithmic-art": {
@@ -14,8 +14,8 @@
         "references": 0,
         "total": 4150
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -34,8 +34,8 @@
         "references": 183,
         "total": 910
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -54,8 +54,8 @@
         "references": 0,
         "total": 882
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -89,8 +89,8 @@
           "workflow"
         ]
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -109,8 +109,8 @@
         "references": 0,
         "total": 522
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -129,8 +129,8 @@
         "references": 0,
         "total": 657
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -149,8 +149,8 @@
         "references": 642,
         "total": 2482
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -169,8 +169,8 @@
         "references": 0,
         "total": 1335
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -206,8 +206,8 @@
           "developer-tools"
         ]
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "regenerated": false
     },
     "code-refactoring": {
@@ -221,8 +221,8 @@
         "references": 0,
         "total": 1273
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -241,8 +241,8 @@
         "references": 0,
         "total": 672
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -275,8 +275,8 @@
           "workflow"
         ]
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "regenerated": false
     },
     "composition-patterns": {
@@ -294,8 +294,8 @@
         "author": "vercel",
         "version": "1.0.0"
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -314,8 +314,8 @@
         "references": 0,
         "total": 3400
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -334,8 +334,8 @@
         "references": 0,
         "total": 1087
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -354,8 +354,8 @@
         "references": 0,
         "total": 2070
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -374,8 +374,8 @@
         "references": 0,
         "total": 1405
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -394,8 +394,8 @@
         "references": 0,
         "total": 702
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -414,8 +414,8 @@
         "references": 0,
         "total": 4945
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -449,8 +449,8 @@
           "analyzer"
         ]
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "regenerated": false
     },
     "executing-plans": {
@@ -464,8 +464,8 @@
         "references": 0,
         "total": 562
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -484,8 +484,8 @@
         "references": 1248,
         "total": 1906
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -504,8 +504,8 @@
         "references": 0,
         "total": 2747
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -524,8 +524,8 @@
         "references": 0,
         "total": 1088
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -545,7 +545,7 @@
         "total": 1084
       },
       "sha": "69c0b1a0674149f27b61b2635f935524b6add202",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -568,8 +568,8 @@
       "metadata": {
         "short-description": "Address comments in a GitHub PR review"
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -588,8 +588,8 @@
         "references": 0,
         "total": 893
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -608,8 +608,8 @@
         "references": 1959,
         "total": 3767
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -628,8 +628,8 @@
         "references": 0,
         "total": 4034
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -648,8 +648,8 @@
         "references": 0,
         "total": 5895
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -668,8 +668,8 @@
         "references": 1967,
         "total": 3680
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -688,8 +688,8 @@
         "references": 18620,
         "total": 25646
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -708,8 +708,8 @@
         "references": 1302,
         "total": 5609
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -728,8 +728,8 @@
         "references": 0,
         "total": 1209
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -748,8 +748,8 @@
         "references": 3014,
         "total": 3533
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -768,8 +768,8 @@
         "references": 6732,
         "total": 8933
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -788,8 +788,8 @@
         "references": 0,
         "total": 792
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -808,8 +808,8 @@
         "references": 579,
         "total": 1514
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -831,8 +831,8 @@
       "metadata": {
         "short-description": "Manage Linear issues in Codex"
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -851,8 +851,8 @@
         "references": 0,
         "total": 1259
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -871,8 +871,8 @@
         "references": 0,
         "total": 1922
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -891,8 +891,8 @@
         "references": 3569,
         "total": 5201
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -914,8 +914,8 @@
       "metadata": {
         "short-description": "Capture conversations into structured Notion pages"
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -937,8 +937,8 @@
       "metadata": {
         "short-description": "Prep meetings with Notion context and tailored agendas"
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -960,8 +960,8 @@
       "metadata": {
         "short-description": "Research Notion content and produce briefs/reports"
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -983,8 +983,8 @@
       "metadata": {
         "short-description": "Turn Notion specs into implementation plans, tasks, and progress tracking"
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -1003,8 +1003,8 @@
         "references": 0,
         "total": 782
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -1023,8 +1023,8 @@
         "references": 0,
         "total": 2079
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -1061,8 +1061,8 @@
           "claude-code"
         ]
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "regenerated": false
     },
     "platxa-command-builder": {
@@ -1094,8 +1094,8 @@
           "claude-code"
         ]
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "regenerated": false
     },
     "platxa-error-handling": {
@@ -1124,8 +1124,8 @@
           "logging"
         ]
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "regenerated": false
     },
     "platxa-frontend-builder": {
@@ -1158,8 +1158,8 @@
           "typescript"
         ]
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "regenerated": false
     },
     "platxa-hook-builder": {
@@ -1191,8 +1191,8 @@
           "claude-code"
         ]
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "regenerated": false
     },
     "platxa-jwt-auth": {
@@ -1224,8 +1224,8 @@
           "rs256"
         ]
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "regenerated": false
     },
     "platxa-k8s-ops": {
@@ -1254,8 +1254,8 @@
           "infrastructure"
         ]
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "compatibility": "Requires kubectl, helm",
       "regenerated": false
     },
@@ -1285,8 +1285,8 @@
           "scale-to-zero"
         ]
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "regenerated": false
     },
     "platxa-logging": {
@@ -1315,8 +1315,8 @@
           "observability"
         ]
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "regenerated": false
     },
     "platxa-monaco-config": {
@@ -1344,8 +1344,8 @@
           "configuration"
         ]
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "regenerated": false
     },
     "platxa-monitoring": {
@@ -1375,8 +1375,8 @@
           "observability"
         ]
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "regenerated": false
     },
     "platxa-odoo-blog": {
@@ -1399,8 +1399,8 @@
       "metadata": {
         "version": "1.0.0"
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "regenerated": false
     },
     "platxa-odoo-form": {
@@ -1423,8 +1423,8 @@
       "metadata": {
         "version": "1.0.0"
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "regenerated": false
     },
     "platxa-odoo-page": {
@@ -1447,8 +1447,8 @@
       "metadata": {
         "version": "1.0.0"
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "regenerated": false
     },
     "platxa-preview-service": {
@@ -1472,8 +1472,8 @@
       "metadata": {
         "version": "1.0.0"
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "regenerated": false
     },
     "platxa-secrets-management": {
@@ -1503,8 +1503,8 @@
           "secrets"
         ]
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "regenerated": false
     },
     "platxa-sidecar-builder": {
@@ -1538,8 +1538,8 @@
           "kubernetes"
         ]
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "regenerated": false
     },
     "platxa-testing": {
@@ -1571,8 +1571,8 @@
           "e2e"
         ]
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "regenerated": false
     },
     "platxa-token-sync": {
@@ -1595,8 +1595,8 @@
       "metadata": {
         "version": "1.0.0"
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "regenerated": false
     },
     "platxa-yjs-server": {
@@ -1625,8 +1625,8 @@
           "crdt"
         ]
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "regenerated": false
     },
     "playwright": {
@@ -1640,8 +1640,8 @@
         "references": 1019,
         "total": 1966
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -1660,8 +1660,8 @@
         "references": 0,
         "total": 2403
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -1695,8 +1695,8 @@
           "workflow"
         ]
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "regenerated": false
     },
     "python-development": {
@@ -1710,8 +1710,8 @@
         "references": 0,
         "total": 798
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -1730,8 +1730,8 @@
         "references": 0,
         "total": 2089
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -1754,8 +1754,8 @@
         "author": "vercel",
         "version": "1.0.0"
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -1778,8 +1778,8 @@
         "author": "vercel",
         "version": "1.0.0"
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -1798,8 +1798,8 @@
         "references": 0,
         "total": 1513
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -1836,8 +1836,8 @@
           "infrastructure"
         ]
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -1856,8 +1856,8 @@
         "references": 0,
         "total": 642
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -1876,8 +1876,8 @@
         "references": 0,
         "total": 1916
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -1896,8 +1896,8 @@
         "references": 1169,
         "total": 2832
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -1916,8 +1916,8 @@
         "references": 665,
         "total": 2748
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -1936,8 +1936,8 @@
         "references": 3054,
         "total": 4166
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -1956,8 +1956,8 @@
         "references": 0,
         "total": 1021
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -1976,8 +1976,8 @@
         "references": 537,
         "total": 4242
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -1996,8 +1996,8 @@
         "references": 0,
         "total": 1982
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -2016,8 +2016,8 @@
         "references": 6561,
         "total": 8517
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -2036,8 +2036,8 @@
         "references": 3291,
         "total": 4995
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -2056,8 +2056,8 @@
         "references": 0,
         "total": 1145
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -2076,8 +2076,8 @@
         "references": 0,
         "total": 2269
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -2096,8 +2096,8 @@
         "references": 0,
         "total": 2330
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -2116,8 +2116,8 @@
         "references": 0,
         "total": 2420
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -2153,8 +2153,8 @@
           "developer-tools"
         ]
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "regenerated": false
     },
     "transcribe": {
@@ -2168,8 +2168,8 @@
         "references": 130,
         "total": 842
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -2188,8 +2188,8 @@
         "references": 0,
         "total": 1341
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -2208,8 +2208,8 @@
         "references": 0,
         "total": 925
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -2228,8 +2228,8 @@
         "references": 0,
         "total": 487
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -2248,8 +2248,8 @@
         "references": 0,
         "total": 987
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -2268,8 +2268,8 @@
         "references": 0,
         "total": 702
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -2293,8 +2293,8 @@
         "version": "1.0.0",
         "argument-hint": "<file-or-pattern>"
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -2313,8 +2313,8 @@
         "references": 0,
         "total": 881
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -2333,8 +2333,8 @@
         "references": 0,
         "total": 795
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -2353,8 +2353,8 @@
         "references": 0,
         "total": 5061
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -2373,8 +2373,8 @@
         "references": 0,
         "total": 2814
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -2393,8 +2393,8 @@
         "references": 0,
         "total": 411
       },
-      "sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
-      "git_sha": "9bfec61b4c4a00b865352a0d412735ac9b341f92",
+      "sha": "472184935efa72699a50ce103e90bef857574b95",
+      "git_sha": "472184935efa72699a50ce103e90bef857574b95",
       "ref": "main",
       "regenerated": false,
       "provenance": {
