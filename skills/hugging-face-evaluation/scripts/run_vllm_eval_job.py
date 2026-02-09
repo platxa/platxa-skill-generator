@@ -30,9 +30,10 @@ import os
 import subprocess
 import sys
 from pathlib import Path
+from typing import Optional
 
-from dotenv import load_dotenv
 from huggingface_hub import get_token
+from dotenv import load_dotenv
 
 load_dotenv()
 
@@ -43,21 +44,21 @@ INSPECT_SCRIPT = SCRIPT_DIR / "inspect_vllm_uv.py"
 
 # Hardware flavor recommendations for different model sizes
 HARDWARE_RECOMMENDATIONS = {
-    "small": "t4-small",  # < 3B parameters
-    "medium": "a10g-small",  # 3B - 13B parameters
-    "large": "a10g-large",  # 13B - 34B parameters
-    "xlarge": "a100-large",  # 34B+ parameters
+    "small": "t4-small",       # < 3B parameters
+    "medium": "a10g-small",    # 3B - 13B parameters
+    "large": "a10g-large",     # 13B - 34B parameters
+    "xlarge": "a100-large",    # 34B+ parameters
 }
 
 
 def estimate_hardware(model_id: str) -> str:
     """
     Estimate appropriate hardware based on model ID naming conventions.
-
+    
     Returns a hardware flavor recommendation.
     """
     model_lower = model_id.lower()
-
+    
     # Check for explicit size indicators in model name
     if any(x in model_lower for x in ["70b", "72b", "65b"]):
         return "a100-large"
@@ -67,7 +68,7 @@ def estimate_hardware(model_id: str) -> str:
         return "a10g-small"
     elif any(x in model_lower for x in ["3b", "2b", "1b", "0.5b", "small", "mini"]):
         return "t4-small"
-
+    
     # Default to medium hardware
     return "a10g-small"
 
@@ -76,8 +77,8 @@ def create_lighteval_job(
     model_id: str,
     tasks: str,
     hardware: str,
-    hf_token: str | None = None,
-    max_samples: int | None = None,
+    hf_token: Optional[str] = None,
+    max_samples: Optional[int] = None,
     backend: str = "vllm",
     batch_size: int = 1,
     tensor_parallel_size: int = 1,
@@ -100,26 +101,16 @@ def create_lighteval_job(
     print(f"  Hardware: {hardware}")
 
     cmd = [
-        "hf",
-        "jobs",
-        "uv",
-        "run",
+        "hf", "jobs", "uv", "run",
         str(LIGHTEVAL_SCRIPT),
-        "--flavor",
-        hardware,
-        "--secrets",
-        f"HF_TOKEN={token}",
+        "--flavor", hardware,
+        "--secrets", f"HF_TOKEN={token}",
         "--",
-        "--model",
-        model_id,
-        "--tasks",
-        tasks,
-        "--backend",
-        backend,
-        "--batch-size",
-        str(batch_size),
-        "--tensor-parallel-size",
-        str(tensor_parallel_size),
+        "--model", model_id,
+        "--tasks", tasks,
+        "--backend", backend,
+        "--batch-size", str(batch_size),
+        "--tensor-parallel-size", str(tensor_parallel_size),
     ]
 
     if max_samples:
@@ -135,7 +126,7 @@ def create_lighteval_job(
 
     try:
         subprocess.run(cmd, check=True)
-    except subprocess.CalledProcessError:
+    except subprocess.CalledProcessError as exc:
         print("hf jobs command failed", file=sys.stderr)
         raise
 
@@ -144,8 +135,8 @@ def create_inspect_job(
     model_id: str,
     task: str,
     hardware: str,
-    hf_token: str | None = None,
-    limit: int | None = None,
+    hf_token: Optional[str] = None,
+    limit: Optional[int] = None,
     backend: str = "vllm",
     tensor_parallel_size: int = 1,
     trust_remote_code: bool = False,
@@ -166,24 +157,15 @@ def create_inspect_job(
     print(f"  Hardware: {hardware}")
 
     cmd = [
-        "hf",
-        "jobs",
-        "uv",
-        "run",
+        "hf", "jobs", "uv", "run",
         str(INSPECT_SCRIPT),
-        "--flavor",
-        hardware,
-        "--secrets",
-        f"HF_TOKEN={token}",
+        "--flavor", hardware,
+        "--secrets", f"HF_TOKEN={token}",
         "--",
-        "--model",
-        model_id,
-        "--task",
-        task,
-        "--backend",
-        backend,
-        "--tensor-parallel-size",
-        str(tensor_parallel_size),
+        "--model", model_id,
+        "--task", task,
+        "--backend", backend,
+        "--tensor-parallel-size", str(tensor_parallel_size),
     ]
 
     if limit:
@@ -196,7 +178,7 @@ def create_inspect_job(
 
     try:
         subprocess.run(cmd, check=True)
-    except subprocess.CalledProcessError:
+    except subprocess.CalledProcessError as exc:
         print("hf jobs command failed", file=sys.stderr)
         raise
 
@@ -346,3 +328,4 @@ Task formats:
 
 if __name__ == "__main__":
     main()
+

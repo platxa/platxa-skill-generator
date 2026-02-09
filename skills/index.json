@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "generated_at": "2026-02-04T21:23:39Z",
-  "skills_count": 100,
+  "generated_at": "2026-02-09T06:55:13Z",
+  "skills_count": 104,
   "skills": {
     "algorithmic-art": {
       "name": "algorithmic-art",
@@ -14,8 +14,8 @@
         "references": 0,
         "total": 4150
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
+      "git_sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -34,8 +34,8 @@
         "references": 183,
         "total": 910
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "7407fd7aea8035eea7da0d460eb11ab9584155bd",
+      "git_sha": "7407fd7aea8035eea7da0d460eb11ab9584155bd",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -54,8 +54,8 @@
         "references": 0,
         "total": 882
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
+      "git_sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -89,8 +89,8 @@
           "workflow"
         ]
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
+      "git_sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -109,8 +109,8 @@
         "references": 0,
         "total": 522
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
+      "git_sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -129,8 +129,8 @@
         "references": 0,
         "total": 657
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
+      "git_sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -149,8 +149,8 @@
         "references": 642,
         "total": 2482
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
+      "git_sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -169,8 +169,8 @@
         "references": 0,
         "total": 1335
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
+      "git_sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -206,8 +206,8 @@
           "developer-tools"
         ]
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
+      "git_sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
       "regenerated": false
     },
     "code-refactoring": {
@@ -221,8 +221,8 @@
         "references": 0,
         "total": 1273
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
+      "git_sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -241,8 +241,8 @@
         "references": 0,
         "total": 672
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
+      "git_sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -275,8 +275,8 @@
           "workflow"
         ]
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
+      "git_sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
       "regenerated": false
     },
     "composition-patterns": {
@@ -294,8 +294,8 @@
         "author": "vercel",
         "version": "1.0.0"
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
+      "git_sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -314,8 +314,8 @@
         "references": 0,
         "total": 3400
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
+      "git_sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -334,8 +334,8 @@
         "references": 0,
         "total": 1087
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
+      "git_sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -354,8 +354,8 @@
         "references": 0,
         "total": 2070
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
+      "git_sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -374,8 +374,8 @@
         "references": 0,
         "total": 1405
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
+      "git_sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -394,8 +394,8 @@
         "references": 0,
         "total": 702
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "7407fd7aea8035eea7da0d460eb11ab9584155bd",
+      "git_sha": "7407fd7aea8035eea7da0d460eb11ab9584155bd",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -405,23 +405,53 @@
     },
     "docx": {
       "name": "docx",
-      "description": "Comprehensive document creation, editing, and analysis with support for tracked changes, comments, formatting preservation, and text extraction. When Claude needs to work with professional documents (.docx files) for: (1) Creating new documents, (2) Modifying or editing content, (3) Working with tracked changes, (4) Adding comments, or any other document tasks",
+      "description": "Use this skill whenever the user wants to create, read, edit, or manipulate Word documents (.docx files). Triggers include: any mention of \"Word doc\", \"word document\", \".docx\", or requests to produce professional documents with formatting like tables of contents, headings, page numbers, or letterheads. Also use when extracting or reorganizing content from .docx files, inserting or replacing images in documents, performing find-and-replace in Word files, working with tracked changes or comments, or converting content into a polished Word document. If the user asks for a \"report\", \"memo\", \"letter\", \"template\", or similar deliverable as a Word or .docx file, use this skill. Do NOT use for PDFs, spreadsheets, Google Docs, or general coding tasks unrelated to document generation.",
       "category": "documents",
       "tier": 1,
       "source": "anthropic",
       "token_counts": {
-        "skill_md": 2448,
+        "skill_md": 4945,
         "references": 0,
-        "total": 2448
+        "total": 4945
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "7407fd7aea8035eea7da0d460eb11ab9584155bd",
+      "git_sha": "7407fd7aea8035eea7da0d460eb11ab9584155bd",
       "ref": "main",
       "regenerated": false,
       "provenance": {
         "upstream_source": "anthropic",
         "upstream_ref": "main"
       }
+    },
+    "duplicate-code-detector": {
+      "name": "duplicate-code-detector",
+      "description": "Proactive duplicate code detection at feature boundaries. Classifies clones by type (exact, renamed, structural, semantic), scans incrementally on changed files, and reports findings with similarity scores and refactoring actions.",
+      "category": "uncategorized",
+      "tier": 0,
+      "source": "unknown",
+      "token_counts": {
+        "skill_md": 2104,
+        "references": 0,
+        "total": 2104
+      },
+      "allowed_tools": [
+        "Read",
+        "Glob",
+        "Grep",
+        "Bash"
+      ],
+      "metadata": {
+        "version": "2.0.0",
+        "tags": [
+          "code-quality",
+          "refactoring",
+          "duplicate-detection",
+          "analyzer"
+        ]
+      },
+      "sha": "f085676117d46a5590595a726da04450b4fc8c81",
+      "git_sha": "f085676117d46a5590595a726da04450b4fc8c81",
+      "regenerated": false
     },
     "executing-plans": {
       "name": "executing-plans",
@@ -434,8 +464,8 @@
         "references": 0,
         "total": 562
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
+      "git_sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -454,8 +484,8 @@
         "references": 1248,
         "total": 1906
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
+      "git_sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -474,8 +504,8 @@
         "references": 0,
         "total": 2747
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
+      "git_sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -494,8 +524,8 @@
         "references": 0,
         "total": 1088
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
+      "git_sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -515,7 +545,7 @@
         "total": 1084
       },
       "sha": "69c0b1a0674149f27b61b2635f935524b6add202",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "git_sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -538,8 +568,8 @@
       "metadata": {
         "short-description": "Address comments in a GitHub PR review"
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "7407fd7aea8035eea7da0d460eb11ab9584155bd",
+      "git_sha": "7407fd7aea8035eea7da0d460eb11ab9584155bd",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -558,8 +588,8 @@
         "references": 0,
         "total": 893
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "7407fd7aea8035eea7da0d460eb11ab9584155bd",
+      "git_sha": "7407fd7aea8035eea7da0d460eb11ab9584155bd",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -578,8 +608,8 @@
         "references": 1959,
         "total": 3767
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
+      "git_sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -598,8 +628,8 @@
         "references": 0,
         "total": 4034
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "7407fd7aea8035eea7da0d460eb11ab9584155bd",
+      "git_sha": "7407fd7aea8035eea7da0d460eb11ab9584155bd",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -618,8 +648,8 @@
         "references": 0,
         "total": 5895
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "7407fd7aea8035eea7da0d460eb11ab9584155bd",
+      "git_sha": "7407fd7aea8035eea7da0d460eb11ab9584155bd",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -638,8 +668,8 @@
         "references": 1967,
         "total": 3680
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "7407fd7aea8035eea7da0d460eb11ab9584155bd",
+      "git_sha": "7407fd7aea8035eea7da0d460eb11ab9584155bd",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -654,12 +684,12 @@
       "tier": 1,
       "source": "huggingface",
       "token_counts": {
-        "skill_md": 6845,
-        "references": 16379,
-        "total": 23224
+        "skill_md": 7026,
+        "references": 18620,
+        "total": 25646
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "7407fd7aea8035eea7da0d460eb11ab9584155bd",
+      "git_sha": "7407fd7aea8035eea7da0d460eb11ab9584155bd",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -678,8 +708,8 @@
         "references": 1302,
         "total": 5609
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "7407fd7aea8035eea7da0d460eb11ab9584155bd",
+      "git_sha": "7407fd7aea8035eea7da0d460eb11ab9584155bd",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -698,8 +728,8 @@
         "references": 0,
         "total": 1209
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
+      "git_sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -718,8 +748,8 @@
         "references": 3014,
         "total": 3533
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
+      "git_sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -738,8 +768,8 @@
         "references": 6732,
         "total": 8933
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "7407fd7aea8035eea7da0d460eb11ab9584155bd",
+      "git_sha": "7407fd7aea8035eea7da0d460eb11ab9584155bd",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -758,8 +788,8 @@
         "references": 0,
         "total": 792
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
+      "git_sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -778,8 +808,8 @@
         "references": 579,
         "total": 1514
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "7407fd7aea8035eea7da0d460eb11ab9584155bd",
+      "git_sha": "7407fd7aea8035eea7da0d460eb11ab9584155bd",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -801,8 +831,8 @@
       "metadata": {
         "short-description": "Manage Linear issues in Codex"
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
+      "git_sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -821,8 +851,8 @@
         "references": 0,
         "total": 1259
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
+      "git_sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -841,8 +871,8 @@
         "references": 0,
         "total": 1922
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "7407fd7aea8035eea7da0d460eb11ab9584155bd",
+      "git_sha": "7407fd7aea8035eea7da0d460eb11ab9584155bd",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -861,8 +891,8 @@
         "references": 3569,
         "total": 5201
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
+      "git_sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -884,8 +914,8 @@
       "metadata": {
         "short-description": "Capture conversations into structured Notion pages"
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
+      "git_sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -907,8 +937,8 @@
       "metadata": {
         "short-description": "Prep meetings with Notion context and tailored agendas"
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
+      "git_sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -930,8 +960,8 @@
       "metadata": {
         "short-description": "Research Notion content and produce briefs/reports"
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
+      "git_sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -953,8 +983,8 @@
       "metadata": {
         "short-description": "Turn Notion specs into implementation plans, tasks, and progress tracking"
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
+      "git_sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -973,8 +1003,8 @@
         "references": 0,
         "total": 782
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
+      "git_sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -984,23 +1014,89 @@
     },
     "pdf": {
       "name": "pdf",
-      "description": "Comprehensive PDF manipulation toolkit for extracting text and tables, creating new PDFs, merging/splitting documents, and handling forms. When Claude needs to fill in a PDF form or programmatically process, generate, or analyze PDF documents at scale.",
+      "description": "Use this skill whenever the user wants to do anything with PDF files. This includes reading or extracting text/tables from PDFs, combining or merging multiple PDFs into one, splitting PDFs apart, rotating pages, adding watermarks, creating new PDFs, filling PDF forms, encrypting/decrypting PDFs, extracting images, and OCR on scanned PDFs to make them searchable. If the user mentions a .pdf file or asks to produce one, use this skill.",
       "category": "documents",
       "tier": 1,
       "source": "anthropic",
       "token_counts": {
-        "skill_md": 1804,
+        "skill_md": 2079,
         "references": 0,
-        "total": 1804
+        "total": 2079
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "7407fd7aea8035eea7da0d460eb11ab9584155bd",
+      "git_sha": "7407fd7aea8035eea7da0d460eb11ab9584155bd",
       "ref": "main",
       "regenerated": false,
       "provenance": {
         "upstream_source": "anthropic",
         "upstream_ref": "main"
       }
+    },
+    "platxa-agent-builder": {
+      "name": "platxa-agent-builder",
+      "description": "Create Claude Code plugin agents with proper frontmatter, system prompts, triggering examples, and validation. Use when the user asks to \"create an agent\", \"add a plugin agent\", \"write a subagent\", \"build an autonomous agent\", or needs guidance on agent structure, triggering patterns, system prompt design, or agent organization.",
+      "category": "uncategorized",
+      "tier": 0,
+      "source": "unknown",
+      "token_counts": {
+        "skill_md": 3591,
+        "references": 4051,
+        "total": 7642
+      },
+      "allowed_tools": [
+        "Read",
+        "Write",
+        "Edit",
+        "Glob",
+        "Grep",
+        "Bash",
+        "AskUserQuestion"
+      ],
+      "metadata": {
+        "version": "1.0.0",
+        "tags": [
+          "builder",
+          "agents",
+          "plugins",
+          "claude-code"
+        ]
+      },
+      "sha": "2c28d28dff543a488c9c6fc36ce53d4d4a23f226",
+      "git_sha": "2c28d28dff543a488c9c6fc36ce53d4d4a23f226",
+      "regenerated": false
+    },
+    "platxa-command-builder": {
+      "name": "platxa-command-builder",
+      "description": "Create Claude Code slash commands with proper frontmatter, dynamic arguments, file references, bash execution, and plugin integration. Use when the user asks to \"create a slash command\", \"add a command\", \"write a custom command\", \"build a CLI command\", or needs guidance on command structure, YAML frontmatter, arguments, or command organization.",
+      "category": "uncategorized",
+      "tier": 0,
+      "source": "unknown",
+      "token_counts": {
+        "skill_md": 2743,
+        "references": 4556,
+        "total": 7299
+      },
+      "allowed_tools": [
+        "Read",
+        "Write",
+        "Edit",
+        "Glob",
+        "Grep",
+        "Bash",
+        "AskUserQuestion"
+      ],
+      "metadata": {
+        "version": "1.0.0",
+        "tags": [
+          "builder",
+          "commands",
+          "cli",
+          "claude-code"
+        ]
+      },
+      "sha": "67322e55169deb9cf538542f60e057de21c052c7",
+      "git_sha": "67322e55169deb9cf538542f60e057de21c052c7",
+      "regenerated": false
     },
     "platxa-error-handling": {
       "name": "platxa-error-handling",
@@ -1028,8 +1124,8 @@
           "logging"
         ]
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
+      "git_sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
       "regenerated": false
     },
     "platxa-frontend-builder": {
@@ -1062,8 +1158,41 @@
           "typescript"
         ]
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
+      "git_sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
+      "regenerated": false
+    },
+    "platxa-hook-builder": {
+      "name": "platxa-hook-builder",
+      "description": "Create Claude Code plugin hooks with proper configuration, event handling, matchers, and security patterns. Use when the user asks to \"create a hook\", \"add a PreToolUse hook\", \"validate tool use\", \"block dangerous commands\", \"enforce test execution\", or needs guidance on hook events, prompt-based hooks, command hooks, matchers, or hooks.json configuration.",
+      "category": "uncategorized",
+      "tier": 0,
+      "source": "unknown",
+      "token_counts": {
+        "skill_md": 3580,
+        "references": 4193,
+        "total": 7773
+      },
+      "allowed_tools": [
+        "Read",
+        "Write",
+        "Edit",
+        "Glob",
+        "Grep",
+        "Bash",
+        "AskUserQuestion"
+      ],
+      "metadata": {
+        "version": "1.0.0",
+        "tags": [
+          "builder",
+          "hooks",
+          "plugins",
+          "claude-code"
+        ]
+      },
+      "sha": "468adc92f1995bfb4266722911637c5e51a70bef",
+      "git_sha": "468adc92f1995bfb4266722911637c5e51a70bef",
       "regenerated": false
     },
     "platxa-jwt-auth": {
@@ -1095,8 +1224,8 @@
           "rs256"
         ]
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
+      "git_sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
       "regenerated": false
     },
     "platxa-k8s-ops": {
@@ -1125,8 +1254,8 @@
           "infrastructure"
         ]
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
+      "git_sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
       "compatibility": "Requires kubectl, helm",
       "regenerated": false
     },
@@ -1156,8 +1285,8 @@
           "scale-to-zero"
         ]
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
+      "git_sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
       "regenerated": false
     },
     "platxa-logging": {
@@ -1186,8 +1315,8 @@
           "observability"
         ]
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
+      "git_sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
       "regenerated": false
     },
     "platxa-monaco-config": {
@@ -1215,8 +1344,8 @@
           "configuration"
         ]
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
+      "git_sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
       "regenerated": false
     },
     "platxa-monitoring": {
@@ -1246,8 +1375,8 @@
           "observability"
         ]
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
+      "git_sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
       "regenerated": false
     },
     "platxa-odoo-blog": {
@@ -1270,8 +1399,8 @@
       "metadata": {
         "version": "1.0.0"
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
+      "git_sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
       "regenerated": false
     },
     "platxa-odoo-form": {
@@ -1294,8 +1423,8 @@
       "metadata": {
         "version": "1.0.0"
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
+      "git_sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
       "regenerated": false
     },
     "platxa-odoo-page": {
@@ -1318,8 +1447,8 @@
       "metadata": {
         "version": "1.0.0"
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
+      "git_sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
       "regenerated": false
     },
     "platxa-preview-service": {
@@ -1343,8 +1472,8 @@
       "metadata": {
         "version": "1.0.0"
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
+      "git_sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
       "regenerated": false
     },
     "platxa-secrets-management": {
@@ -1374,8 +1503,8 @@
           "secrets"
         ]
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
+      "git_sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
       "regenerated": false
     },
     "platxa-sidecar-builder": {
@@ -1409,8 +1538,8 @@
           "kubernetes"
         ]
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
+      "git_sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
       "regenerated": false
     },
     "platxa-testing": {
@@ -1442,8 +1571,8 @@
           "e2e"
         ]
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
+      "git_sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
       "regenerated": false
     },
     "platxa-token-sync": {
@@ -1466,8 +1595,8 @@
       "metadata": {
         "version": "1.0.0"
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
+      "git_sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
       "regenerated": false
     },
     "platxa-yjs-server": {
@@ -1496,8 +1625,8 @@
           "crdt"
         ]
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
+      "git_sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
       "regenerated": false
     },
     "playwright": {
@@ -1507,12 +1636,12 @@
       "tier": 1,
       "source": "openai",
       "token_counts": {
-        "skill_md": 950,
+        "skill_md": 947,
         "references": 1019,
-        "total": 1969
+        "total": 1966
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
+      "git_sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -1522,17 +1651,17 @@
     },
     "pptx": {
       "name": "pptx",
-      "description": "Presentation creation, editing, and analysis. When Claude needs to work with presentations (.pptx files) for: (1) Creating new presentations, (2) Modifying or editing content, (3) Working with layouts, (4) Adding comments or speaker notes, or any other presentation tasks",
+      "description": "Use this skill any time a .pptx file is involved in any way — as input, output, or both. This includes: creating slide decks, pitch decks, or presentations; reading, parsing, or extracting text from any .pptx file (even if the extracted content will be used elsewhere, like in an email or summary); editing, modifying, or updating existing presentations; combining or splitting slide files; working with templates, layouts, speaker notes, or comments. Trigger whenever the user mentions \"deck,\" \"slides,\" \"presentation,\" or references a .pptx filename, regardless of what they plan to do with the content afterward. If a .pptx file needs to be opened, created, or touched, use this skill.",
       "category": "documents",
       "tier": 2,
       "source": "anthropic",
       "token_counts": {
-        "skill_md": 6197,
+        "skill_md": 2403,
         "references": 0,
-        "total": 6197
+        "total": 2403
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "7407fd7aea8035eea7da0d460eb11ab9584155bd",
+      "git_sha": "7407fd7aea8035eea7da0d460eb11ab9584155bd",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -1566,8 +1695,8 @@
           "workflow"
         ]
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
+      "git_sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
       "regenerated": false
     },
     "python-development": {
@@ -1581,8 +1710,8 @@
         "references": 0,
         "total": 798
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
+      "git_sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -1601,8 +1730,8 @@
         "references": 0,
         "total": 2089
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
+      "git_sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -1625,8 +1754,8 @@
         "author": "vercel",
         "version": "1.0.0"
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
+      "git_sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -1649,8 +1778,8 @@
         "author": "vercel",
         "version": "1.0.0"
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
+      "git_sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -1669,8 +1798,8 @@
         "references": 0,
         "total": 1513
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
+      "git_sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -1707,8 +1836,8 @@
           "infrastructure"
         ]
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
+      "git_sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -1727,8 +1856,8 @@
         "references": 0,
         "total": 642
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
+      "git_sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -1747,8 +1876,8 @@
         "references": 0,
         "total": 1916
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "fae15877b8bf497211218057c83984817346c637",
+      "git_sha": "fae15877b8bf497211218057c83984817346c637",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -1767,8 +1896,8 @@
         "references": 1169,
         "total": 2832
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
+      "git_sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -1787,8 +1916,8 @@
         "references": 665,
         "total": 2748
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "7407fd7aea8035eea7da0d460eb11ab9584155bd",
+      "git_sha": "7407fd7aea8035eea7da0d460eb11ab9584155bd",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -1807,8 +1936,8 @@
         "references": 3054,
         "total": 4166
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
+      "git_sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -1827,8 +1956,8 @@
         "references": 0,
         "total": 1021
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
+      "git_sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -1843,12 +1972,12 @@
       "tier": 2,
       "source": "anthropic",
       "token_counts": {
-        "skill_md": 3651,
+        "skill_md": 3705,
         "references": 537,
-        "total": 4188
+        "total": 4242
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "7407fd7aea8035eea7da0d460eb11ab9584155bd",
+      "git_sha": "7407fd7aea8035eea7da0d460eb11ab9584155bd",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -1867,8 +1996,8 @@
         "references": 0,
         "total": 1982
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "7407fd7aea8035eea7da0d460eb11ab9584155bd",
+      "git_sha": "7407fd7aea8035eea7da0d460eb11ab9584155bd",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -1887,8 +2016,8 @@
         "references": 6561,
         "total": 8517
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "7407fd7aea8035eea7da0d460eb11ab9584155bd",
+      "git_sha": "7407fd7aea8035eea7da0d460eb11ab9584155bd",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -1907,8 +2036,8 @@
         "references": 3291,
         "total": 4995
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "7407fd7aea8035eea7da0d460eb11ab9584155bd",
+      "git_sha": "7407fd7aea8035eea7da0d460eb11ab9584155bd",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -1927,8 +2056,8 @@
         "references": 0,
         "total": 1145
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
+      "git_sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -1947,8 +2076,8 @@
         "references": 0,
         "total": 2269
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
+      "git_sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -1967,8 +2096,8 @@
         "references": 0,
         "total": 2330
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
+      "git_sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -1987,8 +2116,8 @@
         "references": 0,
         "total": 2420
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
+      "git_sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -2024,8 +2153,8 @@
           "developer-tools"
         ]
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
+      "git_sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
       "regenerated": false
     },
     "transcribe": {
@@ -2039,8 +2168,8 @@
         "references": 130,
         "total": 842
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "7407fd7aea8035eea7da0d460eb11ab9584155bd",
+      "git_sha": "7407fd7aea8035eea7da0d460eb11ab9584155bd",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -2059,8 +2188,8 @@
         "references": 0,
         "total": 1341
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
+      "git_sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -2079,8 +2208,8 @@
         "references": 0,
         "total": 925
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
+      "git_sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -2090,17 +2219,17 @@
     },
     "vercel-deploy": {
       "name": "vercel-deploy",
-      "description": "Deploy applications and websites to Vercel using the bundled `scripts/deploy.sh` claimable-preview flow. Use when the user asks to deploy to Vercel, wants a preview URL, or says to push a project live on Vercel.",
+      "description": "Deploy applications and websites to Vercel. Use when the user requests deployment actions like \"deploy my app\", \"deploy and give me the link\", \"push this live\", or \"create a preview deployment\".",
       "category": "infrastructure",
       "tier": 2,
       "source": "openai",
       "token_counts": {
-        "skill_md": 879,
+        "skill_md": 487,
         "references": 0,
-        "total": 879
+        "total": 487
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "fae15877b8bf497211218057c83984817346c637",
+      "git_sha": "fae15877b8bf497211218057c83984817346c637",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -2119,8 +2248,8 @@
         "references": 0,
         "total": 987
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
+      "git_sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -2139,8 +2268,8 @@
         "references": 0,
         "total": 702
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
+      "git_sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -2164,8 +2293,8 @@
         "version": "1.0.0",
         "argument-hint": "<file-or-pattern>"
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
+      "git_sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -2184,8 +2313,8 @@
         "references": 0,
         "total": 881
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "7407fd7aea8035eea7da0d460eb11ab9584155bd",
+      "git_sha": "7407fd7aea8035eea7da0d460eb11ab9584155bd",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -2204,8 +2333,8 @@
         "references": 0,
         "total": 795
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
+      "git_sha": "2f2d0c426d23c3adf37ebe2b29e72df39bc5ea07",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -2224,8 +2353,8 @@
         "references": 0,
         "total": 5061
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
+      "git_sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -2235,17 +2364,17 @@
     },
     "xlsx": {
       "name": "xlsx",
-      "description": "Comprehensive spreadsheet creation, editing, and analysis with support for formulas, formatting, data analysis, and visualization. When Claude needs to work with spreadsheets (.xlsx, .xlsm, .csv, .tsv, etc) for: (1) Creating new spreadsheets with formulas and formatting, (2) Reading or analyzing data, (3) Modify existing spreadsheets while preserving formulas, (4) Data analysis and visualization in spreadsheets, or (5) Recalculating formulas",
+      "description": "Use this skill any time a spreadsheet file is the primary input or output. This means any task where the user wants to: open, read, edit, or fix an existing .xlsx, .xlsm, .csv, or .tsv file (e.g., adding columns, computing formulas, formatting, charting, cleaning messy data); create a new spreadsheet from scratch or from other data sources; or convert between tabular file formats. Trigger especially when the user references a spreadsheet file by name or path — even casually (like \"the xlsx in my downloads\") — and wants something done to it or produced from it. Also trigger for cleaning or restructuring messy tabular data files (malformed rows, misplaced headers, junk data) into proper spreadsheets. The deliverable must be a spreadsheet file. Do NOT trigger when the primary deliverable is a Word document, HTML report, standalone Python script, database pipeline, or Google Sheets API integration, even if tabular data is involved.",
       "category": "documents",
       "tier": 1,
       "source": "anthropic",
       "token_counts": {
-        "skill_md": 2650,
+        "skill_md": 2814,
         "references": 0,
-        "total": 2650
+        "total": 2814
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "7407fd7aea8035eea7da0d460eb11ab9584155bd",
+      "git_sha": "7407fd7aea8035eea7da0d460eb11ab9584155bd",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -2264,8 +2393,8 @@
         "references": 0,
         "total": 411
       },
-      "sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
-      "git_sha": "0356295ef3bd0c9e7dfb6aa1e10f7ea6c65a69a1",
+      "sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
+      "git_sha": "c0e08fdaa8ed6929110c97d1b867d101fd70218f",
       "ref": "main",
       "regenerated": false,
       "provenance": {
@@ -2286,6 +2415,7 @@
     "design": 5,
     "git": 5,
     "security": 5,
+    "uncategorized": 4,
     "observability": 4,
     "data": 3,
     "odoo": 3,
