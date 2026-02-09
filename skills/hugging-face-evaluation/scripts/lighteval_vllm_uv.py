@@ -31,6 +31,7 @@ import argparse
 import os
 import subprocess
 import sys
+from typing import Optional
 
 
 def setup_environment() -> None:
@@ -44,15 +45,15 @@ def setup_environment() -> None:
 def run_lighteval_vllm(
     model_id: str,
     tasks: str,
-    output_dir: str | None = None,
-    max_samples: int | None = None,
+    output_dir: Optional[str] = None,
+    max_samples: Optional[int] = None,
     batch_size: int = 1,
     tensor_parallel_size: int = 1,
     gpu_memory_utilization: float = 0.8,
     dtype: str = "auto",
     trust_remote_code: bool = False,
     use_chat_template: bool = False,
-    system_prompt: str | None = None,
+    system_prompt: Optional[str] = None,
 ) -> None:
     """
     Run lighteval with vLLM backend for efficient GPU inference.
@@ -78,14 +79,10 @@ def run_lighteval_vllm(
         "vllm",
         model_id,
         tasks,
-        "--batch-size",
-        str(batch_size),
-        "--tensor-parallel-size",
-        str(tensor_parallel_size),
-        "--gpu-memory-utilization",
-        str(gpu_memory_utilization),
-        "--dtype",
-        dtype,
+        "--batch-size", str(batch_size),
+        "--tensor-parallel-size", str(tensor_parallel_size),
+        "--gpu-memory-utilization", str(gpu_memory_utilization),
+        "--dtype", dtype,
     ]
 
     if output_dir:
@@ -116,13 +113,13 @@ def run_lighteval_vllm(
 def run_lighteval_accelerate(
     model_id: str,
     tasks: str,
-    output_dir: str | None = None,
-    max_samples: int | None = None,
+    output_dir: Optional[str] = None,
+    max_samples: Optional[int] = None,
     batch_size: int = 1,
     dtype: str = "bfloat16",
     trust_remote_code: bool = False,
     use_chat_template: bool = False,
-    system_prompt: str | None = None,
+    system_prompt: Optional[str] = None,
 ) -> None:
     """
     Run lighteval with accelerate backend for multi-GPU distributed inference.
@@ -148,10 +145,8 @@ def run_lighteval_accelerate(
         "accelerate",
         model_id,
         tasks,
-        "--batch-size",
-        str(batch_size),
-        "--dtype",
-        dtype,
+        "--batch-size", str(batch_size),
+        "--dtype", dtype,
     ]
 
     if output_dir:
@@ -305,3 +300,4 @@ Task format:
 
 if __name__ == "__main__":
     main()
+

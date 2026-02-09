@@ -6,10 +6,9 @@ import json
 import re
 import subprocess
 import sys
-from collections.abc import Iterable, Sequence
 from pathlib import Path
 from shutil import which
-from typing import Any
+from typing import Any, Iterable, Sequence
 
 FAILURE_CONCLUSIONS = {
     "failure",

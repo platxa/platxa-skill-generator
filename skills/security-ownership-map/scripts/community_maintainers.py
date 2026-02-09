@@ -12,8 +12,8 @@ import re
 import subprocess
 import sys
 from collections import Counter, defaultdict
-from collections.abc import Iterable
 from pathlib import Path
+from typing import Iterable
 
 
 def parse_args() -> argparse.Namespace:
@@ -269,8 +269,14 @@ def iter_commits_from_json(
             entry = json.loads(line)
             author_date = entry.get("author_date") or entry.get("date")
             committer_date = entry.get("committer_date")
-            author_dt = parse_date(author_date) if author_date else None
-            committer_dt = parse_date(committer_date) if committer_date else None
+            if author_date:
+                author_dt = parse_date(author_date)
+            else:
+                author_dt = None
+            if committer_date:
+                committer_dt = parse_date(committer_date)
+            else:
+                committer_dt = None
             if date_field == "committer":
                 commit_date = committer_dt or author_dt
             else:
@@ -459,29 +465,21 @@ def main() -> int:
         if args.window_days > 0:
             window_start = bucket_end - dt.timedelta(days=args.window_days)
 
-            def in_bucket(
-                commit_date: dt.datetime,
-                _ws: dt.datetime = window_start,
-                _be: dt.datetime = bucket_end,
-            ) -> bool:
-                return _ws <= commit_date <= _be
+            def in_bucket(commit_date: dt.datetime) -> bool:
+                return window_start <= commit_date <= bucket_end
         else:
             if args.bucket == "quarter":
                 bucket_start = quarter_start(period_cursor)
 
-                def in_bucket(
-                    commit_date: dt.datetime,
-                    _bs: dt.datetime = bucket_start,
-                    _be: dt.datetime = bucket_end,
-                ) -> bool:
-                    return _bs <= commit_date <= _be
+                def in_bucket(commit_date: dt.datetime) -> bool:
+                    return bucket_start <= commit_date <= bucket_end
             else:
 
-                def in_bucket(
-                    commit_date: dt.datetime,
-                    _be: dt.datetime = bucket_end,
-                ) -> bool:
-                    return commit_date.year == _be.year and commit_date.month == _be.month
+                def in_bucket(commit_date: dt.datetime) -> bool:
+                    return (
+                        commit_date.year == bucket_end.year
+                        and commit_date.month == bucket_end.month
+                    )
 
         for commit_date, person_id, touches, _name, _email in commit_rows:
             if not in_bucket(commit_date):
@@ -523,7 +521,10 @@ def main() -> int:
             if rank > args.top:
                 break
             person = people.get(person_id, {})
-            touches_value = f"{touches:.4f}" if args.weight == "recency" else f"{touches:.0f}"
+            if args.weight == "recency":
+                touches_value = f"{touches:.4f}"
+            else:
+                touches_value = f"{touches:.0f}"
             writer.writerow(
                 [
                     period,

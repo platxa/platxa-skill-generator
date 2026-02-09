@@ -238,8 +238,6 @@ fi
 echo "Deploying..." >&2
 RESPONSE=$(curl -s -X POST "$DEPLOY_ENDPOINT" -F "file=@$TARBALL" -F "framework=$FRAMEWORK")
 
-echo "Your deployment is building." >&2
-
 # Check for error in response
 if echo "$RESPONSE" | grep -q '"error"'; then
     ERROR_MSG=$(echo "$RESPONSE" | grep -o '"error":"[^"]*"' | cut -d'"' -f4)
@@ -257,8 +255,43 @@ if [ -z "$PREVIEW_URL" ]; then
     exit 1
 fi
 
-echo "" >&2
-echo "Deployment successful!" >&2
+echo "Deployment started. Waiting for build to complete..." >&2
+echo "Preview URL: $PREVIEW_URL" >&2
+
+# Poll the preview URL until it returns 200 (not 5xx which indicates still building)
+MAX_ATTEMPTS=60  # 5 minutes max (60 * 5 seconds)
+ATTEMPT=0
+
+while [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
+    HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$PREVIEW_URL")
+    
+    if [ "$HTTP_STATUS" -eq 200 ]; then
+        echo "" >&2
+        echo "Deployment ready!" >&2
+        break
+    elif [ "$HTTP_STATUS" -ge 500 ]; then
+        # 5xx means still building/deploying
+        echo "Building... (attempt $((ATTEMPT + 1))/$MAX_ATTEMPTS)" >&2
+        sleep 5
+        ATTEMPT=$((ATTEMPT + 1))
+    elif [ "$HTTP_STATUS" -ge 400 ] && [ "$HTTP_STATUS" -lt 500 ]; then
+        # 4xx might be an error or the app itself returns 4xx - check if it's responding
+        echo "" >&2
+        echo "Deployment ready (returned $HTTP_STATUS)!" >&2
+        break
+    else
+        # Any other status, assume it's ready
+        echo "" >&2
+        echo "Deployment ready!" >&2
+        break
+    fi
+done
+
+if [ $ATTEMPT -eq $MAX_ATTEMPTS ]; then
+    echo "" >&2
+    echo "Warning: Timed out waiting for deployment, but it may still be building." >&2
+fi
+
 echo "" >&2
 echo "Preview URL: $PREVIEW_URL" >&2
 echo "Claim URL:   $CLAIM_URL" >&2

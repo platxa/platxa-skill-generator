@@ -18,9 +18,10 @@ import os
 import subprocess
 import sys
 from pathlib import Path
+from typing import Optional
 
 
-def _inspect_evals_tasks_root() -> Path | None:
+def _inspect_evals_tasks_root() -> Optional[Path]:
     """Return the installed inspect_evals package path if available."""
     try:
         import inspect_evals
@@ -43,9 +44,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Inspect-ai job runner")
     parser.add_argument("--model", required=True, help="Model ID on Hugging Face Hub")
     parser.add_argument("--task", required=True, help="inspect-ai task to execute")
-    parser.add_argument(
-        "--limit", type=int, default=None, help="Limit number of samples to evaluate"
-    )
+    parser.add_argument("--limit", type=int, default=None, help="Limit number of samples to evaluate")
     parser.add_argument(
         "--tasks-root",
         default=None,
@@ -102,3 +101,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+

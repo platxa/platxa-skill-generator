@@ -12,7 +12,7 @@
 Hugging Face Dataset SQL Manager
 
 Query, transform, and push Hugging Face datasets using DuckDB's SQL interface.
-Supports the hf:// protocol for direct dataset access, data wrangling, and
+Supports the hf:// protocol for direct dataset access, data wrangling, and 
 pushing results back to the Hub.
 
 Version: 1.0.0
@@ -20,31 +20,32 @@ Version: 1.0.0
 Usage:
     # Query a dataset
     uv run sql_manager.py query --dataset "cais/mmlu" --sql "SELECT * FROM data LIMIT 10"
-
+    
     # Query and push to new dataset
     uv run sql_manager.py query --dataset "cais/mmlu" --sql "SELECT * FROM data WHERE subject='nutrition'" \
         --push-to "username/nutrition-subset"
-
+    
     # Describe dataset schema
     uv run sql_manager.py describe --dataset "cais/mmlu"
-
+    
     # List available splits/configs
     uv run sql_manager.py info --dataset "cais/mmlu"
-
+    
     # Get random sample
     uv run sql_manager.py sample --dataset "cais/mmlu" --n 5
-
+    
     # Export to parquet
     uv run sql_manager.py export --dataset "cais/mmlu" --output "data.parquet"
 """
 
-import argparse
-import json
 import os
-from typing import Any
+import json
+import argparse
+from typing import Optional, List, Dict, Any, Union
 
 import duckdb
 from huggingface_hub import HfApi
+
 
 # Configuration
 HF_TOKEN = os.environ.get("HF_TOKEN")
@@ -61,7 +62,7 @@ class HFDatasetSQL:
         >>> sql.query_and_push("cais/mmlu", "SELECT * FROM data WHERE subject='nutrition'", "user/nutrition-qa")
     """
 
-    def __init__(self, token: str | None = None):
+    def __init__(self, token: Optional[str] = None):
         """Initialize the SQL manager with optional HF token."""
         self.token = token or HF_TOKEN
         self.conn = duckdb.connect()
@@ -74,11 +75,7 @@ class HFDatasetSQL:
             self.conn.execute(f"CREATE SECRET hf_token (TYPE HUGGINGFACE, TOKEN '{self.token}');")
 
     def _build_hf_path(
-        self,
-        dataset_id: str,
-        split: str = "*",
-        config: str | None = None,
-        revision: str = "~parquet",
+        self, dataset_id: str, split: str = "*", config: Optional[str] = None, revision: str = "~parquet"
     ) -> str:
         """
         Build the hf:// path for a dataset.
@@ -100,8 +97,8 @@ class HFDatasetSQL:
     def _build_hf_path_flexible(
         self,
         dataset_id: str,
-        split: str | None = None,
-        config: str | None = None,
+        split: Optional[str] = None,
+        config: Optional[str] = None,
     ) -> str:
         """
         Build flexible hf:// path with wildcards for discovery.
@@ -130,10 +127,10 @@ class HFDatasetSQL:
         dataset_id: str,
         sql: str,
         split: str = "train",
-        config: str | None = None,
-        limit: int | None = None,
+        config: Optional[str] = None,
+        limit: Optional[int] = None,
         output_format: str = "dict",
-    ) -> list[dict] | Any:
+    ) -> Union[List[Dict], Any]:
         """
         Execute SQL query on a Hugging Face dataset.
 
@@ -182,14 +179,14 @@ class HFDatasetSQL:
             else:  # dict
                 columns = [desc[0] for desc in result.description]
                 rows = result.fetchall()
-                return [dict(zip(columns, row, strict=False)) for row in rows]
+                return [dict(zip(columns, row)) for row in rows]
 
         except Exception as e:
             print(f"❌ Query error: {e}")
             print(f"   SQL: {processed_sql[:200]}...")
             raise
 
-    def query_raw(self, sql: str, output_format: str = "dict") -> list[dict] | Any:
+    def query_raw(self, sql: str, output_format: str = "dict") -> Union[List[Dict], Any]:
         """
         Execute raw SQL query without path substitution.
 
@@ -214,11 +211,9 @@ class HFDatasetSQL:
         else:
             columns = [desc[0] for desc in result.description]
             rows = result.fetchall()
-            return [dict(zip(columns, row, strict=False)) for row in rows]
+            return [dict(zip(columns, row)) for row in rows]
 
-    def describe(
-        self, dataset_id: str, split: str = "train", config: str | None = None
-    ) -> list[dict[str, str]]:
+    def describe(self, dataset_id: str, split: str = "train", config: Optional[str] = None) -> List[Dict[str, str]]:
         """
         Get schema/structure of a dataset.
 
@@ -238,16 +233,16 @@ class HFDatasetSQL:
         columns = [desc[0] for desc in result.description]
         rows = result.fetchall()
 
-        return [dict(zip(columns, row, strict=False)) for row in rows]
+        return [dict(zip(columns, row)) for row in rows]
 
     def sample(
         self,
         dataset_id: str,
         n: int = 10,
         split: str = "train",
-        config: str | None = None,
-        seed: int | None = None,
-    ) -> list[dict]:
+        config: Optional[str] = None,
+        seed: Optional[int] = None,
+    ) -> List[Dict]:
         """
         Get a random sample from a dataset.
 
@@ -271,11 +266,7 @@ class HFDatasetSQL:
         return self.query_raw(sql)
 
     def count(
-        self,
-        dataset_id: str,
-        split: str = "train",
-        config: str | None = None,
-        where: str | None = None,
+        self, dataset_id: str, split: str = "train", config: Optional[str] = None, where: Optional[str] = None
     ) -> int:
         """
         Count rows in a dataset, optionally with filter.
@@ -299,13 +290,8 @@ class HFDatasetSQL:
         return result[0] if result else 0
 
     def unique_values(
-        self,
-        dataset_id: str,
-        column: str,
-        split: str = "train",
-        config: str | None = None,
-        limit: int = 100,
-    ) -> list[Any]:
+        self, dataset_id: str, column: str, split: str = "train", config: Optional[str] = None, limit: int = 100
+    ) -> List[Any]:
         """
         Get unique values in a column.
 
@@ -327,13 +313,8 @@ class HFDatasetSQL:
         return [row[0] for row in result]
 
     def histogram(
-        self,
-        dataset_id: str,
-        column: str,
-        split: str = "train",
-        config: str | None = None,
-        bins: int = 10,
-    ) -> list[dict]:
+        self, dataset_id: str, column: str, split: str = "train", config: Optional[str] = None, bins: int = 10
+    ) -> List[Dict]:
         """
         Get value distribution/histogram for a column.
 
@@ -350,7 +331,7 @@ class HFDatasetSQL:
         hf_path = self._build_hf_path(dataset_id, split=split, config=config)
 
         sql = f"""
-        SELECT
+        SELECT 
             {column},
             COUNT(*) as count
         FROM '{hf_path}'
@@ -365,13 +346,13 @@ class HFDatasetSQL:
         self,
         dataset_id: str,
         select: str = "*",
-        where: str | None = None,
-        group_by: str | None = None,
-        order_by: str | None = None,
+        where: Optional[str] = None,
+        group_by: Optional[str] = None,
+        order_by: Optional[str] = None,
         split: str = "train",
-        config: str | None = None,
-        limit: int | None = None,
-    ) -> list[dict]:
+        config: Optional[str] = None,
+        limit: Optional[int] = None,
+    ) -> List[Dict]:
         """
         Filter and transform dataset with SQL clauses.
 
@@ -422,10 +403,10 @@ class HFDatasetSQL:
         join_type: str = "INNER",
         left_split: str = "train",
         right_split: str = "train",
-        left_config: str | None = None,
-        right_config: str | None = None,
-        limit: int | None = None,
-    ) -> list[dict]:
+        left_config: Optional[str] = None,
+        right_config: Optional[str] = None,
+        limit: Optional[int] = None,
+    ) -> List[Dict]:
         """
         Join two datasets.
 
@@ -463,9 +444,9 @@ class HFDatasetSQL:
         self,
         dataset_id: str,
         output_path: str,
-        sql: str | None = None,
+        sql: Optional[str] = None,
         split: str = "train",
-        config: str | None = None,
+        config: Optional[str] = None,
     ) -> str:
         """
         Export query results to a local Parquet file.
@@ -499,9 +480,9 @@ class HFDatasetSQL:
         self,
         dataset_id: str,
         output_path: str,
-        sql: str | None = None,
+        sql: Optional[str] = None,
         split: str = "train",
-        config: str | None = None,
+        config: Optional[str] = None,
     ) -> str:
         """
         Export query results to JSONL format.
@@ -529,12 +510,12 @@ class HFDatasetSQL:
         self,
         dataset_id: str,
         target_repo: str,
-        sql: str | None = None,
+        sql: Optional[str] = None,
         split: str = "train",
-        config: str | None = None,
+        config: Optional[str] = None,
         target_split: str = "train",
         private: bool = True,
-        commit_message: str | None = None,
+        commit_message: Optional[str] = None,
     ) -> str:
         """
         Query a dataset and push results to a new Hub repository.
@@ -554,10 +535,8 @@ class HFDatasetSQL:
         """
         try:
             from datasets import Dataset
-        except ImportError as exc:
-            raise ImportError(
-                "datasets library required for push_to_hub. Install with: pip install datasets"
-            ) from exc
+        except ImportError:
+            raise ImportError("datasets library required for push_to_hub. Install with: pip install datasets")
 
         # Execute query
         results = self.query(dataset_id, sql or "SELECT * FROM data", split=split, config=config)
@@ -582,9 +561,7 @@ class HFDatasetSQL:
         print(f"✅ Pushed {len(results)} rows to {url}")
         return url
 
-    def create_view(
-        self, name: str, dataset_id: str, split: str = "train", config: str | None = None
-    ):
+    def create_view(self, name: str, dataset_id: str, split: str = "train", config: Optional[str] = None):
         """
         Create a DuckDB view for easier querying.
 
@@ -598,7 +575,7 @@ class HFDatasetSQL:
         self.conn.execute(f"CREATE OR REPLACE VIEW {name} AS SELECT * FROM '{hf_path}'")
         print(f"✅ Created view '{name}' for {dataset_id}")
 
-    def info(self, dataset_id: str) -> dict[str, Any]:
+    def info(self, dataset_id: str) -> Dict[str, Any]:
         """
         Get information about a dataset including available configs and splits.
 
@@ -648,27 +625,27 @@ def main():
 Examples:
   # Query dataset with SQL
   python sql_manager.py query --dataset "cais/mmlu" --sql "SELECT * FROM data WHERE subject='nutrition' LIMIT 10"
-
+  
   # Get random sample
   python sql_manager.py sample --dataset "cais/mmlu" --n 5
-
+  
   # Describe schema
   python sql_manager.py describe --dataset "cais/mmlu"
-
+  
   # Get value counts
   python sql_manager.py histogram --dataset "cais/mmlu" --column "subject"
-
+  
   # Filter and transform
   python sql_manager.py transform --dataset "cais/mmlu" \\
     --select "subject, COUNT(*) as cnt" \\
     --group-by "subject" \\
     --order-by "cnt DESC"
-
+  
   # Query and push to Hub
   python sql_manager.py query --dataset "cais/mmlu" \\
     --sql "SELECT * FROM data WHERE subject='nutrition'" \\
     --push-to "username/nutrition-subset"
-
+  
   # Export to Parquet
   python sql_manager.py export --dataset "cais/mmlu" \\
     --sql "SELECT * FROM data WHERE subject='nutrition'" \\
@@ -689,9 +666,7 @@ Examples:
     add_common_args(query_parser)
     query_parser.add_argument("--sql", required=True, help="SQL query (use 'data' as table name)")
     query_parser.add_argument("--limit", "-l", type=int, help="Limit results")
-    query_parser.add_argument(
-        "--format", choices=["json", "table", "csv"], default="json", help="Output format"
-    )
+    query_parser.add_argument("--format", choices=["json", "table", "csv"], default="json", help="Output format")
     query_parser.add_argument("--push-to", help="Push results to this Hub repo")
     query_parser.add_argument("--private", action="store_true", help="Make pushed repo private")
 
@@ -737,9 +712,7 @@ Examples:
     add_common_args(export_parser)
     export_parser.add_argument("--sql", help="SQL query (defaults to SELECT *)")
     export_parser.add_argument("--output", "-o", required=True, help="Output file path")
-    export_parser.add_argument(
-        "--format", choices=["parquet", "jsonl"], default="parquet", help="Output format"
-    )
+    export_parser.add_argument("--format", choices=["parquet", "jsonl"], default="parquet", help="Output format")
 
     # Info command
     info_parser = subparsers.add_parser("info", help="Get dataset information")
@@ -748,9 +721,7 @@ Examples:
     # Raw SQL command
     raw_parser = subparsers.add_parser("raw", help="Execute raw SQL with full hf:// paths")
     raw_parser.add_argument("--sql", required=True, help="Complete SQL query")
-    raw_parser.add_argument(
-        "--format", choices=["json", "table", "csv"], default="json", help="Output format"
-    )
+    raw_parser.add_argument("--format", choices=["json", "table", "csv"], default="json", help="Output format")
 
     args = parser.parse_args()
 
@@ -759,26 +730,17 @@ Examples:
 
     try:
         if args.command == "query":
-            results = sql.query(
-                args.dataset, args.sql, split=args.split, config=args.config, limit=args.limit
-            )
+            results = sql.query(args.dataset, args.sql, split=args.split, config=args.config, limit=args.limit)
 
             if getattr(args, "push_to", None):
                 sql.push_to_hub(
-                    args.dataset,
-                    args.push_to,
-                    sql=args.sql,
-                    split=args.split,
-                    config=args.config,
-                    private=args.private,
+                    args.dataset, args.push_to, sql=args.sql, split=args.split, config=args.config, private=args.private
                 )
             else:
                 _print_results(results, args.format)
 
         elif args.command == "sample":
-            results = sql.sample(
-                args.dataset, n=args.n, split=args.split, config=args.config, seed=args.seed
-            )
+            results = sql.sample(args.dataset, n=args.n, split=args.split, config=args.config, seed=args.seed)
             _print_results(results, "json")
 
         elif args.command == "describe":
@@ -790,9 +752,7 @@ Examples:
             print(f"Count: {count:,}")
 
         elif args.command == "histogram":
-            results = sql.histogram(
-                args.dataset, args.column, split=args.split, config=args.config, bins=args.bins
-            )
+            results = sql.histogram(args.dataset, args.column, split=args.split, config=args.config, bins=args.bins)
             _print_results(results, "table")
 
         elif args.command == "unique":
@@ -826,21 +786,15 @@ Examples:
                 if args.limit:
                     query_sql += f" LIMIT {args.limit}"
 
-                sql.push_to_hub(
-                    args.dataset, args.push_to, sql=query_sql, split=args.split, config=args.config
-                )
+                sql.push_to_hub(args.dataset, args.push_to, sql=query_sql, split=args.split, config=args.config)
             else:
                 _print_results(results, "json")
 
         elif args.command == "export":
             if args.format == "parquet":
-                sql.export_to_parquet(
-                    args.dataset, args.output, sql=args.sql, split=args.split, config=args.config
-                )
+                sql.export_to_parquet(args.dataset, args.output, sql=args.sql, split=args.split, config=args.config)
             else:
-                sql.export_to_jsonl(
-                    args.dataset, args.output, sql=args.sql, split=args.split, config=args.config
-                )
+                sql.export_to_jsonl(args.dataset, args.output, sql=args.sql, split=args.split, config=args.config)
 
         elif args.command == "info":
             info = sql.info(args.dataset)
@@ -854,7 +808,7 @@ Examples:
         sql.close()
 
 
-def _print_results(results: list[dict], format: str):
+def _print_results(results: List[Dict], format: str):
     """Print results in specified format."""
     if not results:
         print("No results")
@@ -870,19 +824,20 @@ def _print_results(results: list[dict], format: str):
             for row in results:
                 print(",".join(str(row.get(k, "")) for k in keys))
 
-    elif format == "table" and results:
-        keys = list(results[0].keys())
-        # Calculate column widths
-        widths = {k: max(len(str(k)), max(len(str(r.get(k, ""))) for r in results)) for k in keys}
+    elif format == "table":
+        if results:
+            keys = list(results[0].keys())
+            # Calculate column widths
+            widths = {k: max(len(str(k)), max(len(str(r.get(k, ""))) for r in results)) for k in keys}
 
-        # Header
-        header = " | ".join(str(k).ljust(widths[k]) for k in keys)
-        print(header)
-        print("-" * len(header))
+            # Header
+            header = " | ".join(str(k).ljust(widths[k]) for k in keys)
+            print(header)
+            print("-" * len(header))
 
-        # Rows
-        for row in results:
-            print(" | ".join(str(row.get(k, "")).ljust(widths[k]) for k in keys))
+            # Rows
+            for row in results:
+                print(" | ".join(str(row.get(k, "")).ljust(widths[k]) for k in keys))
 
 
 if __name__ == "__main__":

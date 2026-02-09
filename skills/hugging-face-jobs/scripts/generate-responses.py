@@ -43,6 +43,7 @@ import logging
 import os
 import sys
 from datetime import datetime
+from typing import Optional
 
 from datasets import load_dataset
 from huggingface_hub import DatasetCard, get_token, login
@@ -54,7 +55,9 @@ from vllm import LLM, SamplingParams
 # Enable HF Transfer for faster downloads
 os.environ["HF_HUB_ENABLE_HF_TRANSFER"] = "1"
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
 logger = logging.getLogger(__name__)
 
 
@@ -62,7 +65,9 @@ def check_gpu_availability() -> int:
     """Check if CUDA is available and return the number of GPUs."""
     if not cuda.is_available():
         logger.error("CUDA is not available. This script requires a GPU.")
-        logger.error("Please run on a machine with NVIDIA GPU or use HF Jobs with GPU flavor.")
+        logger.error(
+            "Please run on a machine with NVIDIA GPU or use HF Jobs with GPU flavor."
+        )
         sys.exit(1)
 
     num_gpus = cuda.device_count()
@@ -78,13 +83,13 @@ def create_dataset_card(
     source_dataset: str,
     model_id: str,
     messages_column: str,
-    prompt_column: str | None,
+    prompt_column: Optional[str],
     sampling_params: SamplingParams,
     tensor_parallel_size: int,
     num_examples: int,
     generation_time: str,
     num_skipped: int = 0,
-    max_model_len_used: int | None = None,
+    max_model_len_used: Optional[int] = None,
 ) -> str:
     """Create a comprehensive dataset card documenting the generation process."""
     filtering_section = ""
@@ -102,9 +107,6 @@ def create_dataset_card(
 
 Note: Prompts exceeding the maximum model length were skipped and have empty responses."""
 
-    max_model_len_suffix = (
-        " \\\\\n    --max-model-len " + str(max_model_len_used) if max_model_len_used else ""
-    )
     return f"""---
 tags:
 - generated
@@ -158,7 +160,7 @@ uv run https://huggingface.co/datasets/uv-scripts/vllm/raw/main/generate-respons
     --temperature {sampling_params.temperature} \\
     --top-p {sampling_params.top_p} \\
     --top-k {sampling_params.top_k} \\
-    --max-tokens {sampling_params.max_tokens}{max_model_len_suffix}
+    --max-tokens {sampling_params.max_tokens}{f" \\\\\\n    --max-model-len {max_model_len_used}" if max_model_len_used else ""}
 ```
 """
 
@@ -168,7 +170,7 @@ def main(
     output_dataset_hub_id: str,
     model_id: str = "Qwen/Qwen3-30B-A3B-Instruct-2507",
     messages_column: str = "messages",
-    prompt_column: str | None = None,
+    prompt_column: Optional[str] = None,
     output_column: str = "response",
     temperature: float = 0.7,
     top_p: float = 0.8,
@@ -177,11 +179,11 @@ def main(
     max_tokens: int = 16384,
     repetition_penalty: float = 1.0,
     gpu_memory_utilization: float = 0.90,
-    max_model_len: int | None = None,
-    tensor_parallel_size: int | None = None,
+    max_model_len: Optional[int] = None,
+    tensor_parallel_size: Optional[int] = None,
     skip_long_prompts: bool = True,
-    max_samples: int | None = None,
-    hf_token: str | None = None,
+    max_samples: Optional[int] = None,
+    hf_token: Optional[str] = None,
 ):
     """
     Main generation pipeline.
@@ -218,7 +220,9 @@ def main(
     else:
         logger.info(f"Using specified tensor_parallel_size={tensor_parallel_size}")
         if tensor_parallel_size > num_gpus:
-            logger.warning(f"Requested {tensor_parallel_size} GPUs but only {num_gpus} available")
+            logger.warning(
+                f"Requested {tensor_parallel_size} GPUs but only {num_gpus} available"
+            )
 
     # Authentication - try multiple methods
     HF_TOKEN = hf_token or os.environ.get("HF_TOKEN") or get_token()
@@ -344,7 +348,7 @@ def main(
             f"Skipped {len(skipped_info)} prompts that exceed max_model_len ({effective_max_len} tokens)"
         )
         logger.info("Skipped prompt details (first 10):")
-        for _idx, (prompt_idx, token_count) in enumerate(skipped_info[:10]):
+        for idx, (prompt_idx, token_count) in enumerate(skipped_info[:10]):
             logger.info(
                 f"  - Example {prompt_idx}: {token_count} tokens (exceeds by {token_count - effective_max_len})"
             )
@@ -402,7 +406,9 @@ def main(
     card.push_to_hub(output_dataset_hub_id, token=HF_TOKEN)
 
     logger.info("✅ Generation complete!")
-    logger.info(f"Dataset available at: https://huggingface.co/datasets/{output_dataset_hub_id}")
+    logger.info(
+        f"Dataset available at: https://huggingface.co/datasets/{output_dataset_hub_id}"
+    )
 
 
 if __name__ == "__main__":
@@ -414,18 +420,18 @@ if __name__ == "__main__":
 Examples:
   # Basic usage with default Qwen model
   uv run generate-responses.py input-dataset output-dataset
-
+  
   # With custom model and parameters
   uv run generate-responses.py input-dataset output-dataset \\
     --model-id meta-llama/Llama-3.1-8B-Instruct \\
     --temperature 0.9 \\
     --max-tokens 2048
-
+  
   # Force specific GPU configuration
   uv run generate-responses.py input-dataset output-dataset \\
     --tensor-parallel-size 2 \\
     --gpu-memory-utilization 0.95
-
+  
   # Using environment variable for token
   HF_TOKEN=hf_xxx uv run generate-responses.py input-dataset output-dataset
             """,
@@ -435,7 +441,9 @@ Examples:
             "src_dataset_hub_id",
             help="Input dataset on Hugging Face Hub (e.g., username/dataset-name)",
         )
-        parser.add_argument("output_dataset_hub_id", help="Output dataset name on Hugging Face Hub")
+        parser.add_argument(
+            "output_dataset_hub_id", help="Output dataset name on Hugging Face Hub"
+        )
         parser.add_argument(
             "--model-id",
             type=str,

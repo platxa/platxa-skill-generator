@@ -9,11 +9,11 @@ from __future__ import annotations
 import argparse
 import json
 import os
+from pathlib import Path
 import re
 import sys
 import time
-from pathlib import Path
-from typing import Any
+from typing import Any, Dict, List, Optional
 
 DEFAULT_MODEL = "gpt-4o-mini-tts-2025-12-15"
 DEFAULT_VOICE = "cedar"
@@ -62,7 +62,7 @@ def _ensure_api_key(dry_run: bool) -> None:
     _die("OPENAI_API_KEY is not set. Export it before running.")
 
 
-def _read_text(text: str | None, text_file: str | None, label: str) -> str:
+def _read_text(text: Optional[str], text_file: Optional[str], label: str) -> str:
     if text and text_file:
         _die(f"Use --{label} or --{label}-file, not both.")
     if text_file:
@@ -80,19 +80,23 @@ def _validate_input(text: str) -> None:
     if not text:
         _die("Input text is empty.")
     if len(text) > MAX_INPUT_CHARS:
-        _die(f"Input text exceeds {MAX_INPUT_CHARS} characters. Split into smaller chunks.")
+        _die(
+            f"Input text exceeds {MAX_INPUT_CHARS} characters. Split into smaller chunks."
+        )
 
 
-def _normalize_voice(voice: str | None) -> str:
+def _normalize_voice(voice: Optional[str]) -> str:
     if not voice:
         return DEFAULT_VOICE
     value = str(voice).strip().lower()
     if value not in ALLOWED_VOICES:
-        _die("voice must be one of: " + ", ".join(sorted(ALLOWED_VOICES)))
+        _die(
+            "voice must be one of: " + ", ".join(sorted(ALLOWED_VOICES))
+        )
     return value
 
 
-def _normalize_format(fmt: str | None) -> str:
+def _normalize_format(fmt: Optional[str]) -> str:
     if not fmt:
         return DEFAULT_RESPONSE_FORMAT
     value = str(fmt).strip().lower()
@@ -101,7 +105,7 @@ def _normalize_format(fmt: str | None) -> str:
     return value
 
 
-def _normalize_speed(speed: float | None) -> float | None:
+def _normalize_speed(speed: Optional[float]) -> Optional[float]:
     if speed is None:
         return None
     try:
@@ -113,7 +117,7 @@ def _normalize_speed(speed: float | None) -> float | None:
     return value
 
 
-def _normalize_output_path(out: str | None, response_format: str) -> Path:
+def _normalize_output_path(out: Optional[str], response_format: str) -> Path:
     if out:
         path = Path(out)
         if path.exists() and path.is_dir():
@@ -136,7 +140,7 @@ def _create_client():
     return OpenAI()
 
 
-def _extract_retry_after_seconds(exc: Exception) -> float | None:
+def _extract_retry_after_seconds(exc: Exception) -> Optional[float]:
     for attr in ("retry_after", "retry_after_seconds"):
         val = getattr(exc, attr, None)
         if isinstance(val, (int, float)) and val >= 0:
@@ -169,20 +173,20 @@ def _is_transient_error(exc: Exception) -> bool:
     return "timeout" in msg or "timed out" in msg or "connection reset" in msg
 
 
-def _maybe_drop_instructions(model: str, instructions: str | None) -> str | None:
+def _maybe_drop_instructions(model: str, instructions: Optional[str]) -> Optional[str]:
     if instructions and model in {"tts-1", "tts-1-hd"}:
         _warn("instructions are not supported for tts-1 / tts-1-hd; ignoring.")
         return None
     return instructions
 
 
-def _print_payload(payload: dict[str, Any]) -> None:
+def _print_payload(payload: Dict[str, Any]) -> None:
     print(json.dumps(payload, indent=2, sort_keys=True))
 
 
 def _write_audio(
     client: Any,
-    payload: dict[str, Any],
+    payload: Dict[str, Any],
     out_path: Path,
     *,
     dry_run: bool,
@@ -201,7 +205,7 @@ def _write_audio(
 
     out_path.parent.mkdir(parents=True, exist_ok=True)
 
-    last_exc: Exception | None = None
+    last_exc: Optional[Exception] = None
     for attempt in range(1, attempts + 1):
         try:
             with client.audio.speech.with_streaming_response.create(**payload) as response:
@@ -214,7 +218,7 @@ def _write_audio(
                 raise
             sleep_s = _extract_retry_after_seconds(exc)
             if sleep_s is None:
-                sleep_s = min(60.0, 2.0**attempt)
+                sleep_s = min(60.0, 2.0 ** attempt)
             print(
                 f"Attempt {attempt}/{attempts} failed ({exc.__class__.__name__}); retrying in {sleep_s:.1f}s",
                 file=sys.stderr,
@@ -232,11 +236,11 @@ def _slugify(value: str) -> str:
     return value[:60] if value else "job"
 
 
-def _read_jobs_jsonl(path: str) -> list[dict[str, Any]]:
+def _read_jobs_jsonl(path: str) -> List[Dict[str, Any]]:
     p = Path(path)
     if not p.exists():
         _die(f"Input file not found: {p}")
-    jobs: list[dict[str, Any]] = []
+    jobs: List[Dict[str, Any]] = []
     for line_no, raw in enumerate(p.read_text(encoding="utf-8").splitlines(), start=1):
         line = raw.strip()
         if not line or line.startswith("#"):
@@ -256,7 +260,7 @@ def _read_jobs_jsonl(path: str) -> list[dict[str, Any]]:
     return jobs
 
 
-def _job_input(job: dict[str, Any]) -> str:
+def _job_input(job: Dict[str, Any]) -> str:
     for key in ("input", "text", "prompt"):
         if key in job and str(job[key]).strip():
             return str(job[key]).strip()
@@ -264,7 +268,7 @@ def _job_input(job: dict[str, Any]) -> str:
     return ""  # unreachable
 
 
-def _merge_non_null(base: dict[str, Any], extra: dict[str, Any]) -> dict[str, Any]:
+def _merge_non_null(base: Dict[str, Any], extra: Dict[str, Any]) -> Dict[str, Any]:
     merged = dict(base)
     for k, v in extra.items():
         if v is not None:
@@ -281,7 +285,7 @@ def _enforce_rpm(rpm: int) -> int:
     return rpm
 
 
-def _sleep_for_rate_limit(last_ts: float | None, rpm: int) -> float:
+def _sleep_for_rate_limit(last_ts: Optional[float], rpm: int) -> float:
     min_interval = 60.0 / float(rpm)
     now = time.monotonic()
     if last_ts is None:
@@ -316,7 +320,7 @@ def _run_speak(args: argparse.Namespace) -> int:
 
     instructions = _maybe_drop_instructions(model, instructions)
 
-    payload: dict[str, Any] = {
+    payload: Dict[str, Any] = {
         "model": model,
         "voice": voice,
         "input": input_text,
@@ -364,7 +368,7 @@ def _run_speak_batch(args: argparse.Namespace) -> int:
     }
 
     rpm = _enforce_rpm(args.rpm)
-    last_ts: float | None = None
+    last_ts: Optional[float] = None
 
     if args.dry_run:
         _ensure_api_key(True)
@@ -378,15 +382,13 @@ def _run_speak_batch(args: argparse.Namespace) -> int:
         job_payload = dict(base_payload)
         job_payload["input"] = input_text
 
-        overrides: dict[str, Any] = {}
+        overrides: Dict[str, Any] = {}
         if "model" in job:
             overrides["model"] = str(job["model"]).strip()
         if "voice" in job:
             overrides["voice"] = _normalize_voice(job["voice"])
         if "response_format" in job or "format" in job:
-            overrides["response_format"] = _normalize_format(
-                job.get("response_format") or job.get("format")
-            )
+            overrides["response_format"] = _normalize_format(job.get("response_format") or job.get("format"))
         if "speed" in job and job["speed"] is not None:
             overrides["speed"] = _normalize_speed(job["speed"])
         if "instructions" in job and str(job["instructions"]).strip():
@@ -404,7 +406,10 @@ def _run_speak_batch(args: argparse.Namespace) -> int:
         explicit_out = job.get("out")
         if explicit_out:
             out_path = _normalize_output_path(str(explicit_out), response_format)
-            out_path = out_dir / out_path.name if out_path.is_absolute() else out_dir / out_path
+            if out_path.is_absolute():
+                out_path = out_dir / out_path.name
+            else:
+                out_path = out_dir / out_path
         else:
             slug = _slugify(input_text[:80])
             out_path = out_dir / f"{idx:03d}-{slug}.{response_format}"

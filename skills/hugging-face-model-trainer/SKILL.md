@@ -36,6 +36,16 @@ Use this skill when users want to:
 - Ensure trained models are permanently saved to the Hub
 - Use modern workflows with optimized defaults
 
+### When to Use Unsloth
+
+Use **Unsloth** (`references/unsloth.md`) instead of standard TRL when:
+- **Limited GPU memory** - Unsloth uses ~60% less VRAM
+- **Speed matters** - Unsloth is ~2x faster
+- Training **large models (>13B)** - memory efficiency is critical
+- Training **Vision-Language Models (VLMs)** - Unsloth has `FastVisionModel` support
+
+See `references/unsloth.md` for complete Unsloth documentation and `scripts/unsloth_sft_example.py` for a production-ready training script.
+
 ## Key Directives
 
 When assisting with training jobs:
@@ -667,6 +677,7 @@ Add to PEP 723 header:
 ### References (In This Skill)
 - `references/training_methods.md` - Overview of SFT, DPO, GRPO, KTO, PPO, Reward Modeling
 - `references/training_patterns.md` - Common training patterns and examples
+- `references/unsloth.md` - Unsloth for fast VLM training (~2x speed, 60% less VRAM)
 - `references/gguf_conversion.md` - Complete GGUF conversion guide
 - `references/trackio_guide.md` - Trackio monitoring setup
 - `references/hardware_guide.md` - Hardware specs and selection
@@ -677,6 +688,7 @@ Add to PEP 723 header:
 - `scripts/train_sft_example.py` - Production SFT template
 - `scripts/train_dpo_example.py` - Production DPO template
 - `scripts/train_grpo_example.py` - Production GRPO template
+- `scripts/unsloth_sft_example.py` - Unsloth text LLM training template (faster, less VRAM)
 - `scripts/estimate_cost.py` - Estimate time and cost (offer when appropriate)
 - `scripts/convert_to_gguf.py` - Complete GGUF conversion script
 
