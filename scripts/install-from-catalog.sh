@@ -182,21 +182,39 @@ install_skill() {
     # Create target directory
     mkdir -p "$(dirname "$target_dir")"
 
-    # Install (copy)
+    # Install using rsync with exclusion patterns
     echo -e "${BLUE}[Installing]${NC} $skill_name → $target_dir"
 
     if [[ -d "$target_dir" ]]; then
         rm -rf "$target_dir"
     fi
 
-    cp -r "$skill_dir" "$target_dir"
+    mkdir -p "$target_dir"
+
+    # Exclude session state, build artifacts, OS files
+    rsync -a \
+        --exclude ".claude/" \
+        --exclude "__pycache__/" \
+        --exclude "*.pyc" \
+        --exclude "*.pyo" \
+        --exclude ".gitkeep" \
+        --exclude ".DS_Store" \
+        --exclude "Thumbs.db" \
+        --exclude ".git/" \
+        --exclude "node_modules/" \
+        "$skill_dir/" "$target_dir/"
 
     # Make scripts executable
     if [[ -d "$target_dir/scripts" ]]; then
         chmod +x "$target_dir/scripts/"*.sh 2>/dev/null || true
     fi
 
-    echo -e "${GREEN}✓${NC} Installed '$skill_name' successfully"
+    # Verify
+    local file_count
+    file_count=$(find "$target_dir" -type f | wc -l)
+    local total_size
+    total_size=$(du -sh "$target_dir" | cut -f1)
+    echo -e "${GREEN}✓${NC} Installed '$skill_name' ($file_count files, $total_size)"
     echo ""
 }
 

@@ -1,83 +1,130 @@
 #!/usr/bin/env bash
 # Install a Claude Code skill to user or project location
-# Usage: install-skill.sh <skill-directory> [--project|--user]
+# Usage: install-skill.sh <skill-directory> [--project|--user] [--force]
+#
+# Copies only skill-relevant files (SKILL.md, references/, scripts/, assets/)
+# and excludes session state, build artifacts, and other junk.
 
 set -euo pipefail
 
 SKILL_DIR="${1:-.}"
-LOCATION="${2:---user}"
+LOCATION=""
+FORCE=false
+
+# Parse arguments
+shift || true
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --user|-u)   LOCATION="user" ;;
+        --project|-p) LOCATION="project" ;;
+        --force|-f)  FORCE=true ;;
+        *)
+            echo "Usage: install-skill.sh <skill-directory> [--project|--user] [--force]"
+            echo "  --user, -u    Install to ~/.claude/skills/ (default)"
+            echo "  --project, -p Install to .claude/skills/"
+            echo "  --force, -f   Overwrite without prompting"
+            exit 1
+            ;;
+    esac
+    shift
+done
+LOCATION="${LOCATION:-user}"
+
+# Resolve absolute path for skill directory
+SKILL_DIR="$(cd "$SKILL_DIR" && pwd)"
 
 # Resolve skill name from SKILL.md
 SKILL_MD="$SKILL_DIR/SKILL.md"
 if [[ ! -f "$SKILL_MD" ]]; then
-    echo "❌ ERROR: SKILL.md not found in $SKILL_DIR"
+    echo "ERROR: SKILL.md not found in $SKILL_DIR"
     exit 1
 fi
 
 SKILL_NAME=$(grep "^name:" "$SKILL_MD" | head -1 | sed 's/name: *//' | tr -d '"' | tr -d "'")
 if [[ -z "$SKILL_NAME" ]]; then
-    echo "❌ ERROR: Could not extract skill name from SKILL.md"
+    echo "ERROR: Could not extract skill name from SKILL.md"
     exit 1
 fi
 
 # Determine target directory
 case "$LOCATION" in
-    --user|-u)
+    user)
         TARGET_DIR="$HOME/.claude/skills/$SKILL_NAME"
-        LOCATION_NAME="user"
         ;;
-    --project|-p)
+    project)
         TARGET_DIR=".claude/skills/$SKILL_NAME"
-        LOCATION_NAME="project"
-        ;;
-    *)
-        echo "Usage: install-skill.sh <skill-directory> [--project|--user]"
-        echo "  --user, -u    Install to ~/.claude/skills/ (default)"
-        echo "  --project, -p Install to .claude/skills/"
-        exit 1
         ;;
 esac
 
-echo "═══════════════════════════════════════════════════"
-echo "Installing skill: $SKILL_NAME"
-echo "Location: $LOCATION_NAME ($TARGET_DIR)"
-echo "═══════════════════════════════════════════════════"
+echo "=== Installing skill: $SKILL_NAME ==="
+echo "  Source:   $SKILL_DIR"
+echo "  Target:   $TARGET_DIR"
+echo "  Location: $LOCATION"
 
 # Validate first
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 if [[ -x "$SCRIPT_DIR/validate-skill.sh" ]]; then
-    echo -e "\n--- Validating skill ---"
+    echo ""
+    echo "--- Validating skill ---"
     if ! "$SCRIPT_DIR/validate-skill.sh" "$SKILL_DIR"; then
-        echo -e "\n❌ Skill validation failed. Fix errors before installing."
+        echo ""
+        echo "ERROR: Skill validation failed. Fix errors before installing."
         exit 1
     fi
 fi
 
 # Check if already installed
 if [[ -d "$TARGET_DIR" ]]; then
-    echo -e "\n⚠️  Skill already installed at $TARGET_DIR"
-    read -p "Overwrite? (y/N) " -n 1 -r
-    echo
-    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-        echo "Installation cancelled."
-        exit 0
+    if [[ "$FORCE" == true ]]; then
+        rm -rf "$TARGET_DIR"
+    else
+        echo ""
+        echo "Skill already installed at $TARGET_DIR"
+        read -p "Overwrite? (y/N) " -n 1 -r
+        echo
+        if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+            echo "Installation cancelled."
+            exit 0
+        fi
+        rm -rf "$TARGET_DIR"
     fi
-    rm -rf "$TARGET_DIR"
 fi
+
+# Exclusion patterns for rsync
+# Session state, build artifacts, version control, OS files
+EXCLUDE_PATTERNS=(
+    ".claude/"
+    "__pycache__/"
+    "*.pyc"
+    "*.pyo"
+    ".gitkeep"
+    ".DS_Store"
+    "Thumbs.db"
+    ".git/"
+    "node_modules/"
+)
+
+# Build rsync exclude args
+RSYNC_EXCLUDES=()
+for pattern in "${EXCLUDE_PATTERNS[@]}"; do
+    RSYNC_EXCLUDES+=(--exclude "$pattern")
+done
 
 # Create target directory
 mkdir -p "$TARGET_DIR"
 
-# Copy files
-echo -e "\n--- Copying files ---"
+# Copy SKILL.md
+echo ""
+echo "--- Copying files ---"
 cp "$SKILL_MD" "$TARGET_DIR/"
-echo "✓ SKILL.md"
+echo "  SKILL.md"
 
-# Copy directories if they exist
+# Copy directories using rsync with exclusions
 for dir in references scripts assets; do
     if [[ -d "$SKILL_DIR/$dir" ]]; then
-        cp -r "$SKILL_DIR/$dir" "$TARGET_DIR/"
-        echo "✓ $dir/"
+        rsync -a "${RSYNC_EXCLUDES[@]}" "$SKILL_DIR/$dir/" "$TARGET_DIR/$dir/"
+        file_count=$(find "$TARGET_DIR/$dir" -type f | wc -l)
+        echo "  $dir/ ($file_count files)"
     fi
 done
 
@@ -86,9 +133,38 @@ if [[ -d "$TARGET_DIR/scripts" ]]; then
     chmod +x "$TARGET_DIR/scripts"/*.sh 2>/dev/null || true
 fi
 
-echo -e "\n═══════════════════════════════════════════════════"
-echo "✓ Skill installed successfully!"
-echo "  Location: $TARGET_DIR"
+# Post-install summary
+total_files=$(find "$TARGET_DIR" -type f | wc -l)
+total_size=$(du -sh "$TARGET_DIR" | cut -f1)
+
 echo ""
-echo "To use: /$(echo "$SKILL_NAME" | tr '-' ' ' | awk '{print $1}')"
-echo "═══════════════════════════════════════════════════"
+echo "--- Verification ---"
+
+# Check for files that should not be present
+junk_count=0
+while IFS= read -r -d '' junk_file; do
+    echo "  WARNING: Excluded file leaked: $junk_file"
+    junk_count=$((junk_count + 1))
+done < <(find "$TARGET_DIR" \( -name ".claude" -o -name "__pycache__" -o -name "*.pyc" -o -name "*.pyo" -o -name ".DS_Store" -o -name ".gitkeep" -o -name "Thumbs.db" \) -print0 2>/dev/null)
+
+if [[ "$junk_count" -eq 0 ]]; then
+    echo "  Clean: No excluded files detected"
+fi
+
+# Verify SKILL.md is present and has frontmatter
+if [[ -f "$TARGET_DIR/SKILL.md" ]]; then
+    first_line=$(head -1 "$TARGET_DIR/SKILL.md")
+    if [[ "$first_line" == "---" ]]; then
+        echo "  SKILL.md: Valid frontmatter"
+    else
+        echo "  WARNING: SKILL.md missing frontmatter"
+    fi
+else
+    echo "  ERROR: SKILL.md not found in target"
+    exit 1
+fi
+
+echo ""
+echo "=== Installed: $SKILL_NAME ==="
+echo "  Files: $total_files | Size: $total_size"
+echo "  Target: $TARGET_DIR"
