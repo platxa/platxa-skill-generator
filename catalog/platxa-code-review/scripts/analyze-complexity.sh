@@ -68,8 +68,6 @@ while IFS= read -r file; do
     # Count functions and check length
     # Python: def keyword
     if [[ "$file" == *.py ]]; then
-        FUNC_LINES=()
-        FUNC_NAMES=()
         CURRENT_FUNC=""
         CURRENT_START=0
         LINE_NUM=0

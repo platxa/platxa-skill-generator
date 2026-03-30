@@ -495,9 +495,4 @@ After configuring Kubernetes scaling, verify:
 - [ ] Pod anti-affinity for HA distribution
 - [ ] Monitoring alerts for scaling events
 
-## Related Resources
-
-- **K8s Operations**: Use `platxa-k8s-ops` skill for debugging
-- **Scale-to-Zero Flow**: See `references/scale-to-zero-flow.md`
-- **HPA Details**: See `references/hpa-configuration.md`
-- **Tier Settings**: See `references/tier-configuration.md`
+See also: `platxa-k8s-ops` (debugging), `references/scale-to-zero-flow.md`, `references/hpa-configuration.md`, `references/tier-configuration.md`
