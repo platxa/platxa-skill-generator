@@ -21,6 +21,7 @@ Skill directory: {skill_directory}
 
 1. **Generate SKILL.md**
    - Valid YAML frontmatter (name, description, allowed-tools, metadata)
+   - If discovery found related existing skills, add `depends-on` (required) and/or `suggests` (optional companions)
    - All sections from architecture blueprint
    - Examples with realistic usage scenarios
    - Output checklist with verification items
@@ -45,6 +46,10 @@ description: {description_under_1024_chars}
 allowed-tools:
   - Tool1
   - Tool2
+depends-on:               # Only if discovery found required skills
+  - required-skill-name
+suggests:                 # Only if discovery found beneficial companions
+  - companion-skill-name
 metadata:
   version: "1.0.0"
   author: "{author}"

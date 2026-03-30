@@ -9,6 +9,11 @@ allowed-tools:
   - Grep
   - Bash
   - AskUserQuestion
+suggests:
+  - platxa-logging
+  - platxa-error-handling
+  - platxa-testing
+  - platxa-yjs-server
 metadata:
   version: "1.0.0"
   tags:
@@ -318,6 +323,11 @@ export class WebSocketServer {
 # k8s/sidecar-pod.yaml
 apiVersion: v1
 kind: Pod
+suggests:
+  - platxa-logging
+  - platxa-error-handling
+  - platxa-testing
+  - platxa-yjs-server
 metadata:
   name: platxa-instance
 spec:

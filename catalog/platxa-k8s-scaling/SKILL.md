@@ -5,6 +5,9 @@ allowed-tools:
   - Read
   - Glob
   - Grep
+suggests:
+  - platxa-k8s-ops
+  - platxa-monitoring
 metadata:
   version: "1.0.0"
   tags:
@@ -105,6 +108,9 @@ User Request → Traefik Ingress → Waking-Service
 ```yaml
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
+suggests:
+  - platxa-k8s-ops
+  - platxa-monitoring
 metadata:
   name: waking-service
   namespace: traefik-system
@@ -155,6 +161,9 @@ behavior:
 ```yaml
 apiVersion: policy/v1
 kind: PodDisruptionBudget
+suggests:
+  - platxa-k8s-ops
+  - platxa-monitoring
 metadata:
   name: waking-service
 spec:
@@ -273,6 +282,9 @@ Generated deployment:
 ```yaml
 apiVersion: apps/v1
 kind: Deployment
+suggests:
+  - platxa-k8s-ops
+  - platxa-monitoring
 metadata:
   name: odoo-abc123xy
   namespace: instance-abc123xy
@@ -300,6 +312,9 @@ spec:
 ```yaml
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
+suggests:
+  - platxa-k8s-ops
+  - platxa-monitoring
 metadata:
   name: waking-service
   namespace: traefik-system
@@ -341,6 +356,9 @@ spec:
 ---
 apiVersion: policy/v1
 kind: PodDisruptionBudget
+suggests:
+  - platxa-k8s-ops
+  - platxa-monitoring
 metadata:
   name: waking-service
   namespace: traefik-system
@@ -372,6 +390,9 @@ Generated deployment:
 ```yaml
 apiVersion: apps/v1
 kind: Deployment
+suggests:
+  - platxa-k8s-ops
+  - platxa-monitoring
 metadata:
   name: odoo-enterprise01
   namespace: instance-enterprise01

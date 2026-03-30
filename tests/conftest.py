@@ -11,11 +11,10 @@ from __future__ import annotations
 import os
 import subprocess
 import tempfile
+from collections.abc import Callable, Generator
 from pathlib import Path
-from typing import Callable, Generator
 
 import pytest
-
 
 # Path to the skill generator root
 SKILL_GENERATOR_ROOT = Path(__file__).parent.parent
@@ -37,7 +36,11 @@ def temp_skill_dir() -> Generator[Path, None, None]:
             skill_md = temp_skill_dir / "SKILL.md"
             skill_md.write_text("---\\nname: test-skill\\n---")
     """
-    with tempfile.TemporaryDirectory(prefix="skill_test_") as tmpdir:
+    # Use project .pytest_tmp/ instead of /tmp so that snap-confined tools
+    # (e.g., shellcheck installed via snap) can access the files.
+    local_tmp = SKILL_GENERATOR_ROOT / ".pytest_tmp"
+    local_tmp.mkdir(exist_ok=True)
+    with tempfile.TemporaryDirectory(prefix="skill_test_", dir=local_tmp) as tmpdir:
         yield Path(tmpdir)
 
 
@@ -121,9 +124,7 @@ def run_count_tokens(scripts_dir: Path) -> Callable[[Path, bool, int], subproces
     script_path = scripts_dir / "count-tokens.py"
 
     def _run(
-        skill_dir: Path,
-        json_output: bool = False,
-        warn_threshold: int = 80
+        skill_dir: Path, json_output: bool = False, warn_threshold: int = 80
     ) -> subprocess.CompletedProcess:
         cmd = ["python3", str(script_path)]
         if json_output:
@@ -193,6 +194,7 @@ def create_valid_skill(temp_skill_dir: Path) -> Callable[[], Path]:
     Returns:
         A callable that creates and returns the skill directory path
     """
+
     def _create() -> Path:
         # Create SKILL.md with valid frontmatter
         skill_md = temp_skill_dir / "SKILL.md"
@@ -259,13 +261,14 @@ def create_skill_md() -> Callable[[Path, str, str, list[str] | None, str | None]
                 tools=["Read", "Write"]
             )
     """
+
     def _create(
         skill_dir: Path,
         name: str,
         description: str,
         tools: list[str] | None = None,
         model: str | None = None,
-        content: str = "# Skill Content\n\nSkill instructions here.\n"
+        content: str = "# Skill Content\n\nSkill instructions here.\n",
     ) -> Path:
         frontmatter_lines = [
             "---",
@@ -304,7 +307,9 @@ def self_skill_dir() -> Path:
 
 
 @pytest.fixture
-def run_install_skill(scripts_dir: Path) -> Callable[[Path, Path, str], subprocess.CompletedProcess]:
+def run_install_skill(
+    scripts_dir: Path,
+) -> Callable[[Path, Path, str], subprocess.CompletedProcess]:
     """Fixture that returns a function to run install-skill.sh.
 
     Returns:

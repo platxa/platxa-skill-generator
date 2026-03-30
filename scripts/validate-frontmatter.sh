@@ -154,12 +154,12 @@ fi
 echo ""
 echo "Checking optional fields..."
 
-# Check tools field - extract all tool entries under tools: section
-HAS_TOOLS=$(echo "$FRONTMATTER" | grep -E '^tools:' || echo "")
+# Check tools field - support both "tools:" and "allowed-tools:" (Claude Code official)
+HAS_TOOLS=$(echo "$FRONTMATTER" | grep -E '^(tools|allowed-tools):' || echo "")
 
 if [[ -n "$HAS_TOOLS" ]]; then
-    # Extract all lines that look like tool entries (lines starting with - after tools:)
-    TOOLS=$(echo "$FRONTMATTER" | sed -n '/^tools:/,/^[a-z_]*:/p' | grep -E '^\s*-' | sed 's/^\s*-\s*//' || echo "")
+    # Extract all lines that look like tool entries (lines starting with - after tools:/allowed-tools:)
+    TOOLS=$(echo "$FRONTMATTER" | sed -n '/^\(tools\|allowed-tools\):/,/^[a-z][a-z0-9_-]*:/p' | grep -E '^\s*-' | sed 's/^\s*-\s*//' || echo "")
 
     if [[ -n "$TOOLS" ]]; then
         TOOL_COUNT=$(echo "$TOOLS" | wc -l)
@@ -199,12 +199,47 @@ if [[ -n "$SUBAGENT" ]]; then
     info "subagent_type field present: $SUBAGENT"
 fi
 
+# Check depends-on field - validate each entry is a valid skill name
+DEPENDS_ON=$(echo "$FRONTMATTER" | sed -n '/^depends-on:/,/^[a-z][a-z0-9_-]*:/p' | grep -E '^\s*-' | sed 's/^\s*-\s*//' || echo "")
+
+if [[ -n "$DEPENDS_ON" ]]; then
+    DEP_COUNT=$(echo "$DEPENDS_ON" | wc -l)
+    info "depends-on field present with $DEP_COUNT dependencies"
+
+    while IFS= read -r dep; do
+        [[ -z "$dep" ]] && continue
+        if [[ ! "$dep" =~ ^[a-z][a-z0-9-]*[a-z0-9]$ ]]; then
+            error "Invalid dependency name: $dep (must be hyphen-case)"
+        elif [[ ${#dep} -gt 64 ]]; then
+            error "Dependency name too long: $dep (max 64 chars)"
+        elif [[ "$dep" == *"--"* ]]; then
+            error "Dependency name has consecutive hyphens: $dep"
+        fi
+    done <<< "$DEPENDS_ON"
+fi
+
+# Check suggests field - validate each entry is a valid skill name
+SUGGESTS=$(echo "$FRONTMATTER" | sed -n '/^suggests:/,/^[a-z][a-z0-9_-]*:/p' | grep -E '^\s*-' | sed 's/^\s*-\s*//' || echo "")
+
+if [[ -n "$SUGGESTS" ]]; then
+    SUG_COUNT=$(echo "$SUGGESTS" | wc -l)
+    info "suggests field present with $SUG_COUNT suggestions"
+
+    while IFS= read -r sug; do
+        [[ -z "$sug" ]] && continue
+        if [[ ! "$sug" =~ ^[a-z][a-z0-9-]*[a-z0-9]$ ]]; then
+            error "Invalid suggestion name: $sug (must be hyphen-case)"
+        fi
+    done <<< "$SUGGESTS"
+fi
+
 # Check for unknown fields
 echo ""
 echo "Checking for unknown fields..."
 
-KNOWN_FIELDS="name description tools model subagent_type run_in_background"
-FIELD_NAMES=$(echo "$FRONTMATTER" | grep -E '^[a-z_]+:' | sed 's/:.*$//' || echo "")
+# All fields recognized by Claude Code skills spec + our extensions
+KNOWN_FIELDS="name description allowed-tools tools model agent context disable-model-invocation user-invocable argument-hint effort hooks paths shell metadata depends-on suggests subagent_type run_in_background"
+FIELD_NAMES=$(echo "$FRONTMATTER" | grep -E '^[a-z][a-z0-9_-]*:' | sed 's/:.*$//' || echo "")
 
 while IFS= read -r field; do
     [[ -z "$field" ]] && continue

@@ -88,6 +88,13 @@ dmypy.json
 .DS_Store
 Thumbs.db
 
+# Test temp directories (under project root for snap-confined tool access)
+.pytest_tmp/
+
+# platxa-code-agent runtime artifacts
+checkpoints/
+mao_state.db
+
 # Project specific
 .claude/
 CLAUDE.md

@@ -5,6 +5,8 @@ allowed-tools:
   - Read
   - Glob
   - Grep
+suggests:
+  - platxa-sidecar-builder
 metadata:
   version: "1.0.0"
   tags:

@@ -35,7 +35,13 @@ Target users: {target_users}
    - Recommended: Examples, Output Checklist
    - Type-specific: Templates (Builder), Steps (Guide), etc.
 
-4. **Token Budget**: Ensure efficiency
+4. **Analyze Dependencies**: Check if this skill relates to existing skills
+   - Search ~/.claude/skills/ and .claude/skills/ for installed skills
+   - If the new skill requires functionality from another skill → `depends-on`
+   - If the new skill works better alongside another skill → `suggests`
+   - Only declare real relationships, not speculative ones
+
+5. **Token Budget**: Ensure efficiency
    - SKILL.md: < 500 lines
    - Metadata: ~100 tokens
    - References: Load on demand
@@ -59,6 +65,8 @@ Target users: {target_users}
   "references": [
     {"name": "reference-name.md", "purpose": "What knowledge it contains"}
   ],
+  "depends_on": ["skill-name"],
+  "suggests": ["companion-skill"],
   "allowed_tools": ["Read", "Write", "Edit", "Bash", "Task"],
   "estimated_tokens": {
     "skill_md": 400,

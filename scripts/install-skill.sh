@@ -73,6 +73,18 @@ if [[ -x "$SCRIPT_DIR/validate-skill.sh" ]]; then
     fi
 fi
 
+# Check dependencies (non-blocking warning)
+if [[ -x "$SCRIPT_DIR/check-dependencies.sh" ]]; then
+    echo ""
+    echo "--- Checking dependencies ---"
+    if ! "$SCRIPT_DIR/check-dependencies.sh" "$SKILL_DIR" 2>/dev/null; then
+        echo ""
+        echo "WARNING: Some dependencies are not installed."
+        echo "The skill may not work correctly until dependencies are satisfied."
+        echo ""
+    fi
+fi
+
 # Check if already installed
 if [[ -d "$TARGET_DIR" ]]; then
     if [[ "$FORCE" == true ]]; then
@@ -162,6 +174,18 @@ if [[ -f "$TARGET_DIR/SKILL.md" ]]; then
 else
     echo "  ERROR: SKILL.md not found in target"
     exit 1
+fi
+
+# Show suggested companion skills
+FRONTMATTER=$(sed -n '2,/^---$/p' "$SKILL_MD" | sed '$d')
+SUGGESTS=$(echo "$FRONTMATTER" | sed -n '/^suggests:/,/^[a-z][a-z0-9_-]*:/p' | grep -E '^\s*-' | sed 's/^\s*-\s*//' || echo "")
+if [[ -n "$SUGGESTS" ]]; then
+    echo ""
+    echo "--- You might also want ---"
+    while IFS= read -r sug; do
+        [[ -z "$sug" ]] && continue
+        echo "  - $sug"
+    done <<< "$SUGGESTS"
 fi
 
 echo ""

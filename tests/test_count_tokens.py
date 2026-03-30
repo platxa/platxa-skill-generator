@@ -19,7 +19,6 @@ import json
 from pathlib import Path
 
 import pytest
-
 from helpers import (
     create_reference_file,
     create_skill_md,
@@ -80,7 +79,7 @@ class TestSkillMdLimits:
 
         result = run_count_tokens(temp_skill_dir, json_output=True)
 
-        assert result.returncode == 1, f"Expected exit 1 for token limit exceeded"
+        assert result.returncode == 1, "Expected exit 1 for token limit exceeded"
 
         data = json.loads(result.stdout)
         assert data["passed"] is False
@@ -106,7 +105,7 @@ class TestSkillMdLimits:
 
         result = run_count_tokens(temp_skill_dir, json_output=True)
 
-        assert result.returncode == 1, f"Expected exit 1 for line limit exceeded"
+        assert result.returncode == 1, "Expected exit 1 for line limit exceeded"
 
         data = json.loads(result.stdout)
         assert data["passed"] is False
@@ -135,11 +134,13 @@ class TestReferenceLimits:
 
         # Create reference > 2000 tokens (~2600 words)
         long_ref_content = generate_long_text(2500)
-        create_reference_file(refs_dir, "large-ref.md", f"# Large Reference\n\n{long_ref_content}\n")
+        create_reference_file(
+            refs_dir, "large-ref.md", f"# Large Reference\n\n{long_ref_content}\n"
+        )
 
         result = run_count_tokens(temp_skill_dir, json_output=True)
 
-        assert result.returncode == 1, f"Expected exit 1 for single ref limit exceeded"
+        assert result.returncode == 1, "Expected exit 1 for single ref limit exceeded"
 
         data = json.loads(result.stdout)
         assert data["passed"] is False
@@ -171,7 +172,7 @@ class TestReferenceLimits:
 
         result = run_count_tokens(temp_skill_dir, json_output=True)
 
-        assert result.returncode == 1, f"Expected exit 1 for total refs limit exceeded"
+        assert result.returncode == 1, "Expected exit 1 for total refs limit exceeded"
 
         data = json.loads(result.stdout)
         assert data["passed"] is False
@@ -208,7 +209,7 @@ class TestTotalSkillLimit:
 
         result = run_count_tokens(temp_skill_dir, json_output=True)
 
-        assert result.returncode == 1, f"Expected exit 1 for total skill limit exceeded"
+        assert result.returncode == 1, "Expected exit 1 for total skill limit exceeded"
 
         data = json.loads(result.stdout)
         assert data["passed"] is False
@@ -278,7 +279,7 @@ class TestMissingSkillMd:
         result = run_count_tokens(temp_skill_dir, json_output=True)
 
         # Should fail but not crash
-        assert result.returncode == 1, f"Expected exit 1 for missing SKILL.md"
+        assert result.returncode == 1, "Expected exit 1 for missing SKILL.md"
 
         data = json.loads(result.stdout)
         assert data["passed"] is False

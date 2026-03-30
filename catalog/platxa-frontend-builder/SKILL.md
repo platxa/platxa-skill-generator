@@ -9,6 +9,9 @@ allowed-tools:
   - Grep
   - Bash
   - AskUserQuestion
+suggests:
+  - platxa-testing
+  - platxa-monaco-config
 metadata:
   version: "1.0.0"
   tags:

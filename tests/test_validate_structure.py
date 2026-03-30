@@ -16,7 +16,6 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
-
 from helpers import (
     create_executable_script,
     create_reference_file,
@@ -73,7 +72,7 @@ class TestSkillMdValidation:
 
         result = run_validate_structure(temp_skill_dir)
 
-        assert result.returncode == 1, f"Expected exit 1 for missing SKILL.md"
+        assert result.returncode == 1, "Expected exit 1 for missing SKILL.md"
         assert "SKILL.md" in result.stderr or "not found" in result.stderr.lower()
 
     @pytest.mark.structure
@@ -89,7 +88,7 @@ class TestSkillMdValidation:
 
         result = run_validate_structure(temp_skill_dir)
 
-        assert result.returncode == 1, f"Expected exit 1 for empty SKILL.md"
+        assert result.returncode == 1, "Expected exit 1 for empty SKILL.md"
         assert "empty" in result.stderr.lower() or "ERROR" in result.stderr
 
     @pytest.mark.structure
@@ -112,7 +111,7 @@ Just use it.
 
         result = run_validate_structure(temp_skill_dir)
 
-        assert result.returncode == 1, f"Expected exit 1 for missing frontmatter"
+        assert result.returncode == 1, "Expected exit 1 for missing frontmatter"
         assert "frontmatter" in result.stderr.lower() or "---" in result.stderr
 
 
@@ -162,7 +161,7 @@ class TestReferencesDirectoryValidation:
         result = run_validate_structure(temp_skill_dir)
 
         # Should pass but with warning
-        assert result.returncode == 0, f"Expected exit 0 (warning only)"
+        assert result.returncode == 0, "Expected exit 0 (warning only)"
         assert "empty" in result.stderr.lower() or "WARN" in result.stderr
 
 
@@ -215,7 +214,7 @@ class TestScriptsDirectoryValidation:
 
         result = run_validate_structure(temp_skill_dir)
 
-        assert result.returncode == 1, f"Expected exit 1 for non-executable script"
+        assert result.returncode == 1, "Expected exit 1 for non-executable script"
         assert "executable" in result.stderr.lower() or "permission" in result.stderr.lower()
 
 
@@ -242,7 +241,7 @@ class TestUnexpectedFilesValidation:
         result = run_validate_structure(temp_skill_dir)
 
         # Should pass but with warning
-        assert result.returncode == 0, f"Expected exit 0 (warning only)"
+        assert result.returncode == 0, "Expected exit 0 (warning only)"
         assert "unexpected" in result.stderr.lower() or "WARN" in result.stderr
 
     @pytest.mark.structure
@@ -265,7 +264,7 @@ class TestUnexpectedFilesValidation:
         result = run_validate_structure(temp_skill_dir)
 
         # Should pass but with warning
-        assert result.returncode == 0, f"Expected exit 0 (warning only)"
+        assert result.returncode == 0, "Expected exit 0 (warning only)"
         assert "hidden" in result.stderr.lower() or "WARN" in result.stderr
 
 
@@ -296,7 +295,7 @@ class TestFileSizeValidation:
         result = run_validate_structure(temp_skill_dir)
 
         # Should pass but with warning
-        assert result.returncode == 0, f"Expected exit 0 (warning only)"
+        assert result.returncode == 0, "Expected exit 0 (warning only)"
         assert "100" in result.stderr or "large" in result.stderr.lower() or "WARN" in result.stderr
 
 

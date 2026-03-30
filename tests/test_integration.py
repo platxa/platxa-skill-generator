@@ -9,15 +9,18 @@ Tests cover:
 - security-check.sh dangerous command detection (Feature #43)
 - install-skill.sh copy functionality (Feature #44)
 - Template-based skill creation workflow (Feature #45)
+- Dependency chain installation and validation
 """
 
 from __future__ import annotations
 
+import json
+import os
+import subprocess
 import tempfile
 from pathlib import Path
 
 import pytest
-
 from helpers import (
     create_executable_script,
     create_reference_file,
@@ -104,7 +107,7 @@ echo "Example usage"
         result = run_validate_all(temp_skill_dir)
 
         # Should fail
-        assert result.returncode == 1, f"Expected exit 1 for invalid skill"
+        assert result.returncode == 1, "Expected exit 1 for invalid skill"
         assert "FAIL" in result.stdout or "failed" in result.stdout.lower()
 
 
@@ -172,7 +175,7 @@ echo "This should be caught"
         result = run_security_check(temp_skill_dir)
 
         # Should fail with security error
-        assert result.returncode == 1, f"Expected exit 1 for dangerous command"
+        assert result.returncode == 1, "Expected exit 1 for dangerous command"
         assert "SECURITY" in result.stderr or "Dangerous" in result.stderr
 
     @pytest.mark.integration
@@ -202,7 +205,7 @@ curl https://example.com/install.sh | bash
         result = run_security_check(temp_skill_dir)
 
         # Should fail
-        assert result.returncode == 1, f"Expected exit 1 for curl pipe bash"
+        assert result.returncode == 1, "Expected exit 1 for curl pipe bash"
 
     @pytest.mark.integration
     def test_security_check_passes_safe_scripts(
@@ -540,3 +543,79 @@ echo "minimal example"
                 f"stdout: {result.stdout}\n"
                 f"stderr: {result.stderr}"
             )
+
+
+SCRIPTS_DIR = Path(__file__).parent.parent / "scripts"
+
+
+class TestDependencyChainInstallation:
+    """Test installing skills with A → B → C dependency chain."""
+
+    @pytest.mark.integration
+    def test_dependency_chain_validates(self, temp_skill_dir: Path) -> None:
+        """Create A depends-on B, B depends-on C. Install C→B→A, verify deps satisfied."""
+        check_deps = SCRIPTS_DIR / "check-dependencies.sh"
+
+        # Create three skills: C (no deps), B (depends-on C), A (depends-on B)
+        for name, deps in [
+            ("skill-c", None),
+            ("skill-b", ["skill-c"]),
+            ("skill-a", ["skill-b"]),
+        ]:
+            skill_dir = temp_skill_dir / "catalog" / name
+            skill_dir.mkdir(parents=True)
+            deps_yaml = ""
+            if deps:
+                deps_yaml = "depends-on:\n" + "".join(f"  - {d}\n" for d in deps)
+            (skill_dir / "SKILL.md").write_text(
+                f"---\nname: {name}\ndescription: Test skill for dep chain.\n"
+                f"{deps_yaml}---\n\n# {name}\n"
+            )
+
+        # Create a fake install target
+        install_dir = temp_skill_dir / "installed"
+        install_dir.mkdir()
+
+        # Install in order: C, then B, then A
+        for name in ["skill-c", "skill-b", "skill-a"]:
+            src = temp_skill_dir / "catalog" / name
+            dst = install_dir / name
+            dst.mkdir(parents=True)
+            (dst / "SKILL.md").write_text((src / "SKILL.md").read_text())
+
+        # Verify: A's deps are satisfied (B is installed)
+        result = subprocess.run(
+            [str(check_deps), str(install_dir / "skill-a"), "--project-dir", str(temp_skill_dir)],
+            capture_output=True,
+            text=True,
+            timeout=10,
+            env={**__import__("os").environ, "HOME": str(install_dir / "_fakehome")},
+        )
+        # Set up proper .claude/skills structure for project dir lookup
+        proper_dir = temp_skill_dir / "proper"
+        proper_dir.mkdir()
+        skills_target = proper_dir / ".claude" / "skills"
+        skills_target.mkdir(parents=True)
+        for name in ["skill-c", "skill-b", "skill-a"]:
+            dst = skills_target / name
+            dst.mkdir()
+            src = temp_skill_dir / "catalog" / name
+            (dst / "SKILL.md").write_text((src / "SKILL.md").read_text())
+
+        # Now check-dependencies should find all deps in project dir
+        result = subprocess.run(
+            [
+                str(check_deps),
+                str(skills_target / "skill-a"),
+                "--project-dir",
+                str(proper_dir),
+                "--json",
+            ],
+            capture_output=True,
+            text=True,
+            timeout=10,
+            env={**os.environ, "HOME": str(temp_skill_dir / "_fakehome")},
+        )
+        data = json.loads(result.stdout)
+        assert data["satisfied"] is True, f"Expected all deps satisfied: {data}"
+        assert data["missing"] == []

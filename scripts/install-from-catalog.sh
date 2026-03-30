@@ -179,6 +179,38 @@ install_skill() {
         fi
     fi
 
+    # Auto-install depends-on from catalog
+    local frontmatter
+    frontmatter=$(sed -n '2,/^---$/p' "$skill_dir/SKILL.md" | sed '$d')
+    local deps
+    deps=$(echo "$frontmatter" | sed -n '/^depends-on:/,/^[a-z][a-z0-9_-]*:/p' | grep -E '^\s*-' | sed 's/^\s*-\s*//' || echo "")
+
+    if [[ -n "$deps" ]]; then
+        while IFS= read -r dep; do
+            [[ -z "$dep" ]] && continue
+
+            # Check if already installed
+            local dep_installed=false
+            if [[ "$INSTALL_TARGET" == "project" ]]; then
+                [[ -d ".claude/skills/$dep/SKILL.md" ]] && dep_installed=true
+            else
+                [[ -f "$HOME/.claude/skills/$dep/SKILL.md" ]] && dep_installed=true
+            fi
+
+            if $dep_installed; then
+                continue
+            fi
+
+            # Check if available in catalog
+            if [[ -d "$CATALOG_DIR/$dep" ]] && [[ -f "$CATALOG_DIR/$dep/SKILL.md" ]]; then
+                echo -e "${BLUE}[Dependency]${NC} Installing required: $dep"
+                install_skill "$dep"
+            else
+                echo -e "${YELLOW}Warning:${NC} Dependency '$dep' not in catalog and not installed"
+            fi
+        done <<< "$deps"
+    fi
+
     # Create target directory
     mkdir -p "$(dirname "$target_dir")"
 
@@ -218,6 +250,63 @@ install_skill() {
     echo ""
 }
 
+topo_sort_skills() {
+    # Build dependency graph and return topologically sorted skill names.
+    # Skills with no deps come first, then skills whose deps are already listed.
+    local -A deps_map
+    local -a all_skills=()
+
+    for skill_dir in "$CATALOG_DIR"/*/; do
+        [[ -f "${skill_dir}SKILL.md" ]] || continue
+        local name
+        name=$(basename "$skill_dir")
+        all_skills+=("$name")
+
+        local frontmatter
+        frontmatter=$(sed -n '2,/^---$/p' "${skill_dir}SKILL.md" | sed '$d')
+        local skill_deps
+        skill_deps=$(echo "$frontmatter" | sed -n '/^depends-on:/,/^[a-z][a-z0-9_-]*:/p' | grep -E '^\s*-' | sed 's/^\s*-\s*//' | tr '\n' ',' | sed 's/,$//' || echo "")
+        deps_map[$name]="$skill_deps"
+    done
+
+    # Kahn's algorithm: repeatedly emit skills whose deps are all emitted
+    local -A emitted
+    local -a sorted=()
+    local changed=true
+
+    while $changed; do
+        changed=false
+        for name in "${all_skills[@]}"; do
+            [[ -n "${emitted[$name]:-}" ]] && continue
+
+            local satisfied=true
+            if [[ -n "${deps_map[$name]}" ]]; then
+                IFS=',' read -ra dep_list <<< "${deps_map[$name]}"
+                for dep in "${dep_list[@]}"; do
+                    # Only block on deps that are in the catalog
+                    if [[ -d "$CATALOG_DIR/$dep" ]] && [[ -z "${emitted[$dep]:-}" ]]; then
+                        satisfied=false
+                        break
+                    fi
+                done
+            fi
+
+            if $satisfied; then
+                sorted+=("$name")
+                emitted[$name]=1
+                changed=true
+            fi
+        done
+    done
+
+    # Any remaining skills have unresolvable deps — append them at the end
+    for name in "${all_skills[@]}"; do
+        [[ -z "${emitted[$name]:-}" ]] && sorted+=("$name")
+    done
+
+    echo "${sorted[@]}"
+}
+
 install_all() {
     local count=0
     local failed=0
@@ -226,14 +315,15 @@ install_all() {
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     echo ""
 
-    for skill_dir in "$CATALOG_DIR"/*/; do
-        if [[ -f "${skill_dir}SKILL.md" ]]; then
-            skill_name=$(basename "$skill_dir")
-            if install_skill "$skill_name"; then
-                count=$((count + 1))
-            else
-                failed=$((failed + 1))
-            fi
+    # Install in topological order: skills with no deps first
+    local sorted_skills
+    read -ra sorted_skills <<< "$(topo_sort_skills)"
+
+    for skill_name in "${sorted_skills[@]}"; do
+        if install_skill "$skill_name"; then
+            count=$((count + 1))
+        else
+            failed=$((failed + 1))
         fi
     done
 

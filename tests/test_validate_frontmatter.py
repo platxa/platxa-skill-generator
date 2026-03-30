@@ -10,6 +10,8 @@ Tests cover:
 - Description field validation (Features #13-15)
 - Tools field validation (Features #16-17)
 - Model field validation (Feature #18)
+- Claude Code spec fields (allowed-tools, context, agent, etc.)
+- Composition fields (depends-on, suggests)
 """
 
 from __future__ import annotations
@@ -17,7 +19,6 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
-
 from helpers import create_skill_md
 
 # Incomplete work marker strings for testing rejection - constructed dynamically
@@ -46,7 +47,9 @@ class TestValidFrontmatter:
 
         result = run_validate_frontmatter(temp_skill_dir)
 
-        assert result.returncode == 0, f"Expected exit 0, got {result.returncode}. stderr: {result.stderr}"
+        assert result.returncode == 0, (
+            f"Expected exit 0, got {result.returncode}. stderr: {result.stderr}"
+        )
         assert "PASSED" in result.stdout or "OK" in result.stdout
 
 
@@ -347,7 +350,9 @@ class TestModelFieldValidation:
 
             result = run_validate_frontmatter(skill_dir)
 
-            assert result.returncode == 0, f"Expected exit 0 for model={model}. stderr: {result.stderr}"
+            assert result.returncode == 0, (
+                f"Expected exit 0 for model={model}. stderr: {result.stderr}"
+            )
 
     @pytest.mark.frontmatter
     def test_invalid_model_fails(
@@ -370,3 +375,168 @@ model: gpt-4
 
         assert result.returncode == 1, "Expected exit 1 for invalid model"
         assert "model" in result.stderr.lower() or "invalid" in result.stderr.lower()
+
+
+class TestClaudeCodeSpecFields:
+    """Tests for Claude Code official frontmatter fields."""
+
+    @pytest.mark.frontmatter
+    def test_allowed_tools_accepted(
+        self,
+        temp_skill_dir: Path,
+        run_validate_frontmatter,
+    ) -> None:
+        """allowed-tools (Claude Code official) is accepted without warning."""
+        skill_md = temp_skill_dir / "SKILL.md"
+        skill_md.write_text(
+            "---\n"
+            "name: allowed-tools-skill\n"
+            "description: Uses allowed-tools instead of tools field.\n"
+            "allowed-tools:\n"
+            "  - Read\n"
+            "  - Write\n"
+            "---\n\n# Content\n"
+        )
+        result = run_validate_frontmatter(temp_skill_dir)
+        assert result.returncode == 0
+        assert "Unknown field" not in result.stderr
+
+    @pytest.mark.frontmatter
+    def test_all_spec_fields_no_warnings(
+        self,
+        temp_skill_dir: Path,
+        run_validate_frontmatter,
+    ) -> None:
+        """All Claude Code spec fields pass without unknown-field warnings."""
+        skill_md = temp_skill_dir / "SKILL.md"
+        skill_md.write_text(
+            "---\n"
+            "name: full-spec-skill\n"
+            "description: A skill using every Claude Code frontmatter field.\n"
+            "allowed-tools:\n"
+            "  - Read\n"
+            "context: fork\n"
+            "agent: Explore\n"
+            "disable-model-invocation: true\n"
+            "user-invocable: true\n"
+            'argument-hint: "[filename]"\n'
+            "effort: high\n"
+            'paths: "src/**/*.ts"\n'
+            "shell: bash\n"
+            "metadata:\n"
+            '  version: "1.0.0"\n'
+            "  author: test\n"
+            "---\n\n# Content\n"
+        )
+        result = run_validate_frontmatter(temp_skill_dir)
+        assert result.returncode == 0
+        assert "Unknown field" not in result.stderr
+
+
+class TestDependsOnValidation:
+    """Tests for depends-on field validation."""
+
+    @pytest.mark.frontmatter
+    def test_valid_depends_on_passes(
+        self,
+        temp_skill_dir: Path,
+        run_validate_frontmatter,
+    ) -> None:
+        """Valid depends-on entries are accepted."""
+        skill_md = temp_skill_dir / "SKILL.md"
+        skill_md.write_text(
+            "---\n"
+            "name: dep-skill\n"
+            "description: A skill with valid dependency declarations.\n"
+            "depends-on:\n"
+            "  - platxa-logging\n"
+            "  - platxa-error-handling\n"
+            "---\n\n# Content\n"
+        )
+        result = run_validate_frontmatter(temp_skill_dir)
+        assert result.returncode == 0
+        assert "depends-on field present with 2" in result.stdout
+
+    @pytest.mark.frontmatter
+    def test_invalid_depends_on_name_fails(
+        self,
+        temp_skill_dir: Path,
+        run_validate_frontmatter,
+    ) -> None:
+        """Invalid dependency names are rejected."""
+        skill_md = temp_skill_dir / "SKILL.md"
+        skill_md.write_text(
+            "---\n"
+            "name: bad-dep-skill\n"
+            "description: A skill with invalid dependency names.\n"
+            "depends-on:\n"
+            "  - UPPERCASE_BAD\n"
+            "---\n\n# Content\n"
+        )
+        result = run_validate_frontmatter(temp_skill_dir)
+        assert result.returncode == 1
+        assert "Invalid dependency name" in result.stderr
+
+    @pytest.mark.frontmatter
+    def test_consecutive_hyphens_in_dep_fails(
+        self,
+        temp_skill_dir: Path,
+        run_validate_frontmatter,
+    ) -> None:
+        """Consecutive hyphens in dependency names are rejected."""
+        skill_md = temp_skill_dir / "SKILL.md"
+        skill_md.write_text(
+            "---\n"
+            "name: bad-dep-hyphens\n"
+            "description: A skill with double-hyphen dependency name.\n"
+            "depends-on:\n"
+            "  - bad--name\n"
+            "---\n\n# Content\n"
+        )
+        result = run_validate_frontmatter(temp_skill_dir)
+        assert result.returncode == 1
+        assert "consecutive hyphens" in result.stderr
+
+
+class TestSuggestsValidation:
+    """Tests for suggests field validation."""
+
+    @pytest.mark.frontmatter
+    def test_valid_suggests_passes(
+        self,
+        temp_skill_dir: Path,
+        run_validate_frontmatter,
+    ) -> None:
+        """Valid suggests entries are accepted."""
+        skill_md = temp_skill_dir / "SKILL.md"
+        skill_md.write_text(
+            "---\n"
+            "name: sug-skill\n"
+            "description: A skill with valid suggestion declarations.\n"
+            "suggests:\n"
+            "  - platxa-testing\n"
+            "---\n\n# Content\n"
+        )
+        result = run_validate_frontmatter(temp_skill_dir)
+        assert result.returncode == 0
+        assert "suggests field present with 1" in result.stdout
+
+    @pytest.mark.frontmatter
+    def test_invalid_suggests_name_fails(
+        self,
+        temp_skill_dir: Path,
+        run_validate_frontmatter,
+    ) -> None:
+        """Invalid suggestion names are rejected."""
+        skill_md = temp_skill_dir / "SKILL.md"
+        skill_md.write_text(
+            "---\n"
+            "name: bad-sug-skill\n"
+            "description: A skill with invalid suggestion names.\n"
+            "suggests:\n"
+            "  - Not Valid\n"
+            "---\n\n# Content\n"
+        )
+        result = run_validate_frontmatter(temp_skill_dir)
+        assert result.returncode == 1
+        assert "Invalid suggestion name" in result.stderr

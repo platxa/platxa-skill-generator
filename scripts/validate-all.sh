@@ -39,6 +39,7 @@ usage() {
 # Parse arguments
 VERBOSE=false
 JSON_OUTPUT=false
+CHECK_DEPS=false
 SKILL_DIR=""
 
 while [[ $# -gt 0 ]]; do
@@ -52,6 +53,10 @@ while [[ $# -gt 0 ]]; do
             ;;
         --json)
             JSON_OUTPUT=true
+            shift
+            ;;
+        --check-deps)
+            CHECK_DEPS=true
             shift
             ;;
         *)
@@ -165,12 +170,23 @@ fi
 SCRIPTS_DIR="$SKILL_DIR/scripts"
 if [[ -d "$SCRIPTS_DIR" ]]; then
     # Check bash scripts with shellcheck
-    # Note: tr converts newlines to spaces to prevent newlines from being interpreted as command separators
     # -S warning: Only fail on warnings and errors, not style suggestions
     if command -v shellcheck &>/dev/null; then
         SHELL_SCRIPTS=$(find "$SCRIPTS_DIR" -name "*.sh" -type f 2>/dev/null | tr '\n' ' ')
         if [[ -n "${SHELL_SCRIPTS// /}" ]]; then
-            run_validator "Shellcheck" "shellcheck -S warning -s bash $SHELL_SCRIPTS" || OVERALL_PASS=false
+            # Detect snap-confined shellcheck which cannot access /tmp or other confined paths.
+            # Test with the first script file to see if shellcheck can actually read it.
+            FIRST_SCRIPT="${SHELL_SCRIPTS%% *}"
+            if shellcheck --severity=error "$FIRST_SCRIPT" >/dev/null 2>&1 || [[ $? -eq 1 ]]; then
+                # shellcheck can read the file (exit 0 = clean, exit 1 = warnings found)
+                run_validator "Shellcheck" "shellcheck -S warning -s bash $SHELL_SCRIPTS" || OVERALL_PASS=false
+            else
+                # shellcheck cannot read the file (exit 2 = file access error)
+                if ! $JSON_OUTPUT; then
+                    echo -e "\n${YELLOW}[Shellcheck]${NC} Skipped - shellcheck cannot access $SCRIPTS_DIR (snap confinement)"
+                fi
+                RESULTS["Shellcheck"]="SKIP"
+            fi
         fi
     fi
 
@@ -179,6 +195,11 @@ if [[ -d "$SCRIPTS_DIR" ]]; then
     if [[ -n "${PY_SCRIPTS// /}" ]]; then
         run_validator "Python Syntax" "python3 -m py_compile $PY_SCRIPTS" || OVERALL_PASS=false
     fi
+fi
+
+# 6. Dependency check (optional, non-blocking)
+if $CHECK_DEPS && [[ -x "$SCRIPT_DIR/check-dependencies.sh" ]]; then
+    run_validator "Dependencies" "$SCRIPT_DIR/check-dependencies.sh '$SKILL_DIR'" || OVERALL_PASS=false
 fi
 
 # Output results

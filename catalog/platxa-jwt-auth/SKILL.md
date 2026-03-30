@@ -8,6 +8,8 @@ allowed-tools:
   - Bash
   - Glob
   - Grep
+suggests:
+  - platxa-secrets-management
 metadata:
   version: "1.0.0"
   tags:

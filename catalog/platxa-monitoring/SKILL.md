@@ -6,6 +6,8 @@ allowed-tools:
   - Bash
   - Glob
   - Grep
+suggests:
+  - platxa-logging
 metadata:
   version: "1.0.0"
   tags:
