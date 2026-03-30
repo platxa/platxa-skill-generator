@@ -1,0 +1,286 @@
+# Efficiency Anti-Patterns
+
+Common performance issues across languages with detection patterns and fixes.
+
+## N+1 Queries
+
+**Detection:** Loop body contains database query fetching single item.
+
+**Python (SQLAlchemy/Django):**
+```python
+# BAD: N+1
+for order in orders:
+    customer = db.query(Customer).get(order.customer_id)  # 1 query per order
+
+# GOOD: Eager load
+orders = db.query(Order).options(joinedload(Order.customer)).all()
+```
+
+**TypeScript (Prisma/TypeORM):**
+```typescript
+// BAD: N+1
+for (const post of posts) {
+  const author = await prisma.user.findUnique({ where: { id: post.authorId } })
+}
+
+// GOOD: Batch
+const posts = await prisma.post.findMany({ include: { author: true } })
+```
+
+**Go (database/sql):**
+```go
+// BAD: N+1
+for _, id := range userIDs {
+    row := db.QueryRow("SELECT name FROM users WHERE id = $1", id)
+}
+
+// GOOD: Batch
+rows, _ := db.Query("SELECT name FROM users WHERE id = ANY($1)", pq.Array(userIDs))
+```
+
+**Score impact:** -2.0 per occurrence
+
+---
+
+## String Concatenation in Loops
+
+**Detection:** String variable reassigned with `+` or `+=` inside loop.
+
+**Python:**
+```python
+# BAD: O(n^2) - creates new string each iteration
+result = ""
+for item in items:
+    result += str(item) + ","
+
+# GOOD: O(n)
+result = ",".join(str(item) for item in items)
+```
+
+**Java:**
+```java
+// BAD: O(n^2)
+String result = "";
+for (String s : items) { result += s; }
+
+// GOOD: O(n)
+StringBuilder sb = new StringBuilder();
+for (String s : items) { sb.append(s); }
+```
+
+**Go:**
+```go
+// BAD
+result := ""
+for _, s := range items { result += s }
+
+// GOOD
+var b strings.Builder
+for _, s := range items { b.WriteString(s) }
+```
+
+**Score impact:** -1.0 per occurrence
+
+---
+
+## Unnecessary Object Creation in Loops
+
+**Detection:** Object/collection instantiated inside loop when it could be outside.
+
+```python
+# BAD: Compiles regex every iteration
+for line in lines:
+    match = re.compile(r"\d+").search(line)
+
+# GOOD: Compile once
+pattern = re.compile(r"\d+")
+for line in lines:
+    match = pattern.search(line)
+```
+
+```typescript
+// BAD: Creates new Date each iteration
+for (const event of events) {
+  const now = new Date()
+  if (event.date > now) { ... }
+}
+
+// GOOD
+const now = new Date()
+for (const event of events) {
+  if (event.date > now) { ... }
+}
+```
+
+**Score impact:** -1.0 per occurrence
+
+---
+
+## Unbounded Collection Growth
+
+**Detection:** Collection grows in loop or handler without size check or eviction.
+
+```python
+# BAD: Memory leak in long-running process
+cache = {}
+def handle_request(key, value):
+    cache[key] = value  # Grows forever
+
+# GOOD: Bounded cache
+from functools import lru_cache
+@lru_cache(maxsize=1000)
+def get_value(key): ...
+```
+
+```go
+// BAD
+var results []Result
+for item := range stream {
+    results = append(results, process(item))  // Unbounded
+}
+
+// GOOD
+results := make([]Result, 0, maxBatchSize)
+```
+
+**Score impact:** -2.0 (critical in long-running services)
+
+---
+
+## Blocking I/O in Async Context
+
+**Detection:** Synchronous file/network/DB call inside async function.
+
+```python
+# BAD: Blocks event loop
+async def handle():
+    data = open("file.txt").read()         # Sync file I/O
+    result = requests.get("https://...")    # Sync HTTP
+
+# GOOD
+async def handle():
+    async with aiofiles.open("file.txt") as f:
+        data = await f.read()
+    async with httpx.AsyncClient() as client:
+        result = await client.get("https://...")
+```
+
+```typescript
+// BAD: fs.readFileSync in async handler
+app.get('/data', async (req, res) => {
+  const data = fs.readFileSync('data.json')  // Blocks
+})
+
+// GOOD
+app.get('/data', async (req, res) => {
+  const data = await fs.promises.readFile('data.json')
+})
+```
+
+**Score impact:** -2.0 per occurrence
+
+---
+
+## Fetch-All-Then-Filter
+
+**Detection:** Query fetches all records, then filters in application code.
+
+```python
+# BAD: Fetches entire table
+all_users = User.objects.all()
+active = [u for u in all_users if u.is_active]
+
+# GOOD: Filter at database
+active = User.objects.filter(is_active=True)
+```
+
+```typescript
+// BAD
+const allOrders = await prisma.order.findMany()
+const recent = allOrders.filter(o => o.date > cutoff)
+
+// GOOD
+const recent = await prisma.order.findMany({ where: { date: { gt: cutoff } } })
+```
+
+**Score impact:** -1.5 per occurrence
+
+---
+
+## Redundant Computation
+
+**Detection:** Same expensive calculation performed multiple times.
+
+```python
+# BAD: Computes len() twice per iteration
+for i in range(len(items)):
+    if i < len(items) - 1:  # Redundant len() call
+        ...
+
+# GOOD
+count = len(items)
+for i in range(count):
+    if i < count - 1:
+        ...
+```
+
+```typescript
+// BAD: Calls getBoundingRect() on every scroll event
+window.addEventListener('scroll', () => {
+  const rect = element.getBoundingClientRect()  // Expensive
+  if (rect.top < window.innerHeight) { ... }
+})
+
+// GOOD: Throttle + cache
+let cachedRect = element.getBoundingClientRect()
+const throttledCheck = throttle(() => {
+  cachedRect = element.getBoundingClientRect()
+  if (cachedRect.top < window.innerHeight) { ... }
+}, 100)
+```
+
+**Score impact:** -0.5 per occurrence
+
+---
+
+## Missing Early Return
+
+**Detection:** Entire function body wrapped in condition, or processing continues after determination.
+
+```python
+# BAD: Deep nesting
+def process(items):
+    if items:
+        if len(items) > 0:
+            for item in items:
+                if item.is_valid():
+                    # actual work here at 4 levels deep
+                    ...
+
+# GOOD: Guard clauses
+def process(items):
+    if not items:
+        return
+    for item in items:
+        if not item.is_valid():
+            continue
+        # actual work at 2 levels
+        ...
+```
+
+**Score impact:** -0.5 per occurrence (compounds with nesting depth)
+
+---
+
+## Summary: Detection Priority
+
+| Anti-Pattern | Impact | Frequency | Detection Difficulty |
+|-------------|--------|-----------|---------------------|
+| N+1 queries | Very High | Common | Medium (look for DB calls in loops) |
+| Unbounded growth | Very High | Common | Medium (check collections in handlers) |
+| Blocking I/O | High | Common | Easy (sync calls in async functions) |
+| String concat in loops | Medium | Very Common | Easy (+= in loop) |
+| Object creation in loops | Medium | Common | Easy (new/constructor in loop) |
+| Fetch-all-then-filter | Medium | Common | Medium (query then filter) |
+| Redundant computation | Low-Medium | Very Common | Medium (repeated expressions) |
+| Missing early return | Low | Very Common | Easy (nesting depth >3) |
