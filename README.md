@@ -2,7 +2,7 @@
 
 > Autonomous skill creator for Claude Code CLI using multi-phase orchestrated workflows with Task tool subagents.
 >
-> **Created by**: DJ Patel — Founder & CEO, Platxa | https://platxa.com
+> **Created by**: DJ Patel -- Founder & CEO, Platxa | https://platxa.com
 >
 > **Based on**: Anthropic's [Agent Skills](https://github.com/anthropics/skills) specification
 
@@ -14,39 +14,50 @@
 - [Overview](#overview)
 - [Features](#features)
 - [Prerequisites](#prerequisites)
-- [Quick Start (5 Minutes)](#quick-start-5-minutes)
+- [Quick Start](#quick-start)
 - [Installation](#installation)
 - [Usage](#usage)
+- [Scripts Reference](#scripts-reference)
 - [Skill Types](#skill-types)
-- [Examples](#examples)
 - [Project Structure](#project-structure)
 - [Quality Standards](#quality-standards)
+- [Testing](#testing)
 - [Troubleshooting](#troubleshooting)
 - [Contributing](#contributing)
 - [License](#license)
-- [Acknowledgments](#acknowledgments)
 
 ---
 
 ## Skills Catalog
 
-**Ready-to-use skills for the community!** Browse and install production-ready skills from our curated catalog.
+**16 ready-to-use skills** for the community. Browse and install production-ready skills:
 
-| Skill | Description | Install |
-|-------|-------------|---------|
-| **[code-documenter](catalog/code-documenter/)** | Generate docs for Python, JS/TS, Java, Go, Rust | `./scripts/install-from-catalog.sh code-documenter` |
-| **[commit-message](catalog/commit-message/)** | Generate conventional commit messages | `./scripts/install-from-catalog.sh commit-message` |
-| **[test-generator](catalog/test-generator/)** | Generate comprehensive unit tests | `./scripts/install-from-catalog.sh test-generator` |
-| **[pr-description](catalog/pr-description/)** | Generate PR descriptions from git history | `./scripts/install-from-catalog.sh pr-description` |
+| Skill | Type | Description |
+|-------|------|-------------|
+| **[code-documenter](catalog/code-documenter/)** | Automation | Generate docs for Python, JS/TS, Java, Go, Rust |
+| **[commit-message](catalog/commit-message/)** | Automation | Generate conventional commit messages |
+| **[test-generator](catalog/test-generator/)** | Builder | Generate comprehensive unit tests |
+| **[pr-description](catalog/pr-description/)** | Automation | Generate PR descriptions from git history |
+| **[platxa-frontend-builder](catalog/platxa-frontend-builder/)** | Builder | React/Next.js component generation |
+| **[platxa-sidecar-builder](catalog/platxa-sidecar-builder/)** | Builder | Node.js sidecar service builder |
+| **[platxa-error-handling](catalog/platxa-error-handling/)** | Guide | Error handling patterns across Platxa stack |
+| **[platxa-jwt-auth](catalog/platxa-jwt-auth/)** | Builder | RS256 JWT authentication with JWKS |
+| **[platxa-k8s-ops](catalog/platxa-k8s-ops/)** | Automation | Kubernetes operations automation |
+| **[platxa-k8s-scaling](catalog/platxa-k8s-scaling/)** | Guide | Kubernetes scaling patterns (HPA, scale-to-zero) |
+| **[platxa-logging](catalog/platxa-logging/)** | Guide | Structured logging and correlation IDs |
+| **[platxa-monaco-config](catalog/platxa-monaco-config/)** | Guide | Monaco editor configuration |
+| **[platxa-monitoring](catalog/platxa-monitoring/)** | Guide | Prometheus/Loki observability |
+| **[platxa-secrets-management](catalog/platxa-secrets-management/)** | Guide | Fernet encryption and K8s secrets |
+| **[platxa-testing](catalog/platxa-testing/)** | Guide | pytest/Vitest testing patterns |
+| **[platxa-yjs-server](catalog/platxa-yjs-server/)** | Guide | Yjs CRDT WebSocket servers |
 
 ```bash
-# Quick install
-./scripts/install-from-catalog.sh --list        # See all skills
-./scripts/install-from-catalog.sh code-documenter  # Install one
-./scripts/install-from-catalog.sh --all         # Install all
+./scripts/install-from-catalog.sh --list           # Browse with quality scores
+./scripts/install-from-catalog.sh code-documenter   # Install one skill
+./scripts/install-from-catalog.sh --all             # Install all (topologically ordered)
 ```
 
-See the full **[Skills Catalog](catalog/README.md)** for details and contribution guidelines.
+See the full **[Skills Catalog](catalog/README.md)** for details.
 
 ---
 
@@ -54,16 +65,11 @@ See the full **[Skills Catalog](catalog/README.md)** for details and contributio
 
 Platxa Skill Generator creates production-ready Claude Code skills by orchestrating specialized subagents through a multi-phase workflow:
 
-1. **Discovery** - Research domain knowledge via web search and existing skill analysis
-2. **Architecture** - Design skill structure based on type (Builder/Guide/Automation/Analyzer/Validator)
-3. **Generation** - Create SKILL.md, scripts, and reference documentation
-4. **Validation** - Verify against Anthropic's spec with quality scoring
-
-### Who Is This For?
-
-- **Developers** who want to extend Claude Code with custom capabilities
-- **Teams** building specialized AI workflows for their domains
-- **Organizations** creating reusable skill libraries
+1. **Discovery** -- Research domain knowledge via web search and existing skill analysis
+2. **Architecture** -- Design skill structure based on type (Builder/Guide/Automation/Analyzer/Validator)
+3. **Generation** -- Create SKILL.md, scripts, and reference documentation
+4. **Validation** -- Verify against Anthropic's spec with 5-dimension quality scoring
+5. **Installation** -- Deploy to user or project skills directory
 
 ---
 
@@ -72,308 +78,134 @@ Platxa Skill Generator creates production-ready Claude Code skills by orchestrat
 | Feature | Description |
 |---------|-------------|
 | **Autonomous Creation** | Minimal user input, maximum automation |
-| **Multi-Phase Workflow** | Specialized subagents for each phase |
+| **Multi-Phase Workflow** | 7 specialized subagents for each phase |
 | **Five Skill Types** | Builder, Guide, Automation, Analyzer, Validator |
-| **Quality Gates** | Validation against Anthropic's Agent Skills specification |
+| **Quality Scoring** | 5-dimension scorer: spec compliance, content depth, examples, structure, efficiency |
+| **Dependency System** | `depends-on` and `suggests` fields with cycle detection |
 | **Token Budget Management** | SKILL.md optimized for context efficiency |
-| **Script Security** | Executable helpers with security checks |
+| **Script Security** | ShellCheck + security pattern scanning |
 | **Web Research** | Automatic domain knowledge discovery |
-| **Template System** | Pre-built templates for each skill type |
+| **14 Scripts** | Validation, installation, scoring, dependency checking, graph visualization |
+| **90 Tests** | Comprehensive test suite across 7 test files |
 
 ---
 
 ## Prerequisites
 
-Before installing, ensure you have:
-
 | Requirement | Version | Purpose |
 |-------------|---------|---------|
 | **Claude Code CLI** | Latest | Required runtime environment |
+| **Bash** | 4.0+ | Run validation and installation scripts |
+| **Python** | 3.10+ | Token counting, quality scoring |
 | **Git** | 2.0+ | Clone the repository |
-| **Bash** | 4.0+ | Run validation scripts |
-| **Python** | 3.10+ | Token counting utility (optional) |
 
-### Verify Prerequisites
-
-```bash
-# Check Claude Code is installed
-claude --version
-
-# Check Git
-git --version
-
-# Check Bash
-bash --version
-
-# Check Python (optional)
-python3 --version
-```
+Optional: `tiktoken` (pip install) for precise token counting, `shellcheck` for script linting.
 
 ---
 
-## Quick Start (5 Minutes)
+## Quick Start
 
-Get your first skill generated in 5 minutes:
-
-### Step 1: Install the Skill (1 minute)
+### 1. Install
 
 ```bash
-# Clone and install as user skill
 git clone https://github.com/platxa/platxa-skill-generator.git
-cp -r platxa-skill-generator ~/.claude/skills/
+cd platxa-skill-generator
+./scripts/install-skill.sh . --user
 ```
 
-### Step 2: Verify Installation (30 seconds)
+### 2. Verify
 
 ```bash
-# Check the skill is installed
-ls ~/.claude/skills/platxa-skill-generator/SKILL.md
+./scripts/validate-all.sh .
 ```
 
-Expected output:
-```
-/home/user/.claude/skills/platxa-skill-generator/SKILL.md
-```
+### 3. Generate a skill
 
-### Step 3: Generate Your First Skill (3 minutes)
-
-In Claude Code, run:
-
+In Claude Code:
 ```
-User: /skill-generator
-Assistant: What skill would you like to create?
-User: A skill that formats JSON files
+/platxa-skill-generator
+> A skill that formats JSON files
 ```
 
-The generator will:
-1. Research JSON formatting best practices
-2. Design a "Builder" type skill
-3. Generate the skill files
-4. Validate quality (>= 7.0/10)
-5. Offer to install the new skill
-
-### Step 4: Use Your New Skill
-
-```
-User: /json-formatter
-```
-
-**Congratulations!** You've created your first Claude Code skill.
+The generator researches, designs, generates, validates (score >= 7.0/10), and installs.
 
 ---
 
 ## Installation
 
-### Option 1: User Skill (Recommended)
-
-Available across all your projects:
+### Option 1: Using install script (recommended)
 
 ```bash
-# Clone the repository
 git clone https://github.com/platxa/platxa-skill-generator.git
-
-# Install to user skills directory
-cp -r platxa-skill-generator ~/.claude/skills/
-
-# Verify installation
-ls ~/.claude/skills/platxa-skill-generator/
+cd platxa-skill-generator
+./scripts/install-skill.sh . --user    # User-wide (~/.claude/skills/)
+./scripts/install-skill.sh . --project # Project-only (.claude/skills/)
 ```
 
-### Option 2: Project Skill
-
-Available only in a specific project:
+### Option 2: Manual copy
 
 ```bash
-# Navigate to your project
-cd /path/to/your/project
-
-# Create skills directory if needed
-mkdir -p .claude/skills
-
-# Clone and install
-git clone https://github.com/platxa/platxa-skill-generator.git .claude/skills/platxa-skill-generator
+git clone https://github.com/platxa/platxa-skill-generator.git
+cp -r platxa-skill-generator ~/.claude/skills/platxa-skill-generator
 ```
 
-### Option 3: Direct Download
+### Install catalog skills
 
 ```bash
-# Download latest release
-curl -L https://github.com/platxa/platxa-skill-generator/archive/main.zip -o skill-generator.zip
-unzip skill-generator.zip
-mv platxa-skill-generator-main ~/.claude/skills/platxa-skill-generator
-```
-
-### Verify Installation
-
-Run the validation script:
-
-```bash
-cd ~/.claude/skills/platxa-skill-generator
-./scripts/validate-all.sh
-```
-
-Expected output:
-```
-[OK] SKILL.md exists
-[OK] Frontmatter valid
-[OK] Structure valid
-[OK] All validations passed
+cd platxa-skill-generator
+./scripts/install-from-catalog.sh --list    # Browse available skills
+./scripts/install-from-catalog.sh --all     # Install all (respects dependency order)
 ```
 
 ---
 
-## Usage
+## Scripts Reference
 
-### Basic Usage
+### Validation
 
-```
-User: /skill-generator
-Assistant: What skill would you like to create?
-User: [Describe the skill you want]
-```
+| Script | Purpose |
+|--------|---------|
+| `validate-all.sh <dir>` | Run all validators (structure, frontmatter, tokens, shellcheck, quality) |
+| `validate-structure.sh <dir>` | Check directory structure and file presence |
+| `validate-frontmatter.sh <dir>` | Validate YAML frontmatter fields and formats |
+| `validate-skill.sh <dir>` | Field validation with 0-10 scoring |
+| `count-tokens.py <dir>` | Token counting with budget enforcement |
+| `score-skill.py <dir>` | 5-dimension quality scorer (--json, --verbose) |
+| `security-check.sh <dir>` | Scan scripts for dangerous patterns |
 
-### With Specific Requirements
+### Installation
 
-```
-User: /skill-generator
-User: Create a skill that:
-- Analyzes Python code for security issues
-- Uses OWASP Top 10 as reference
-- Outputs a detailed report
-```
+| Script | Purpose |
+|--------|---------|
+| `install-skill.sh <dir> [--user\|--project]` | Install a skill with validation and dependency check |
+| `install-from-catalog.sh <name>` | Install from catalog with auto-dependency resolution |
 
-### Workflow Phases
+### Dependency Management
 
-The generator progresses through these phases automatically:
+| Script | Purpose |
+|--------|---------|
+| `check-dependencies.sh <dir>` | Check if depends-on requirements are installed |
+| `detect-circular-deps.sh [--dir <path>]` | Find cycles in dependency graph (DFS) |
+| `skill-graph.sh [--dir <path>]` | Output dependency graph in DOT format |
+| `list-installed.sh [--user\|--project]` | List installed skills with dependency info |
 
-| Phase | Duration | What Happens |
-|-------|----------|--------------|
-| **Discovery** | 30-60s | Web research, existing skill analysis |
-| **Architecture** | 10-20s | Skill type selection, structure design |
-| **Generation** | 20-40s | SKILL.md, scripts, references creation |
-| **Validation** | 5-10s | Quality scoring, spec compliance check |
-| **Installation** | 5s | Copy to skills directory |
+### Testing
 
-### Command Options
-
-| Command | Description |
-|---------|-------------|
-| `/skill-generator` | Interactive skill creation |
-| `/skill-generator "description"` | Start with initial description |
+| Script | Purpose |
+|--------|---------|
+| `test-scripts.sh` | Test runner for script validation |
 
 ---
 
 ## Skill Types
 
-Choose the right type for your use case:
-
-| Type | Purpose | Best For | Key Sections |
-|------|---------|----------|--------------|
-| **Builder** | Create new things | Code generators, scaffolders | Workflow, Templates, Output Checklist |
-| **Guide** | Teach/explain | Tutorials, how-tos | Steps, Examples, Best Practices |
-| **Automation** | Automate tasks | CI/CD, batch processing | Triggers, Scripts, Verification |
-| **Analyzer** | Inspect/audit | Code review, security | Checklist, Metrics, Reports |
-| **Validator** | Verify quality | Testing, compliance | Rules, Thresholds, Pass/Fail Criteria |
-
-### Choosing a Skill Type
-
-```
-Is the primary goal to CREATE something new?
-  └─ Yes → Builder
-
-Is the primary goal to TEACH or EXPLAIN?
-  └─ Yes → Guide
-
-Is the primary goal to AUTOMATE a process?
-  └─ Yes → Automation
-
-Is the primary goal to INSPECT or AUDIT?
-  └─ Yes → Analyzer
-
-Is the primary goal to VERIFY or VALIDATE?
-  └─ Yes → Validator
-```
-
----
-
-## Examples
-
-### Example 1: Code Documenter (Automation)
-
-```
-User: /skill-generator
-Assistant: What skill would you like to create?
-User: A skill that generates documentation for Python code
-
-[Discovery] Researching Python docstring standards...
-  - Found: NumPy style, Google style, Sphinx format
-  - Analyzing existing documentation tools
-
-[Architecture] Designing skill structure...
-  - Type: Automation
-  - Scripts: generate-docs.sh, validate-docs.sh
-  - References: docstring-styles.md, examples.md
-
-[Generation] Creating skill files...
-  - py-documenter/SKILL.md (142 lines)
-  - py-documenter/scripts/generate-docs.sh
-  - py-documenter/references/docstring-styles.md
-
-[Validation] Quality check...
-  - Frontmatter: OK
-  - Structure: OK
-  - Token budget: OK (2,847 tokens)
-  - Quality score: 8.2/10
-
-Install to ~/.claude/skills/py-documenter? (y/n)
-```
-
-### Example 2: Security Analyzer (Analyzer)
-
-```
-User: /skill-generator
-Assistant: What skill would you like to create?
-User: A skill that scans code for security vulnerabilities
-
-[Discovery] Researching security analysis...
-  - Found: OWASP Top 10, CWE database, SAST patterns
-  - Analyzing: semgrep rules, bandit patterns
-
-[Architecture] Designing skill structure...
-  - Type: Analyzer
-  - References: owasp-checklist.md, vulnerability-patterns.md
-  - Scripts: scan.sh, report.sh
-
-[Generation] Creating skill files...
-  - security-analyzer/SKILL.md (198 lines)
-  - security-analyzer/references/owasp-checklist.md
-  - security-analyzer/scripts/scan.sh
-
-[Validation] Quality score: 7.8/10
-
-Install to ~/.claude/skills/security-analyzer? (y/n)
-```
-
-### Example 3: API Generator (Builder)
-
-```
-User: /skill-generator
-Assistant: What skill would you like to create?
-User: A skill that generates REST API endpoints from OpenAPI specs
-
-[Discovery] Researching OpenAPI and API generation...
-  - Found: OpenAPI 3.0 spec, code generation patterns
-  - Analyzing: FastAPI, Express.js patterns
-
-[Architecture] Designing skill structure...
-  - Type: Builder
-  - Templates: endpoint-template.py, router-template.py
-  - Scripts: generate.sh, validate-openapi.sh
-
-[Validation] Quality score: 8.5/10
-
-Install to ~/.claude/skills/api-generator? (y/n)
-```
+| Type | Purpose | Key Sections |
+|------|---------|--------------|
+| **Builder** | Create new things | Workflow, Templates, Output Checklist |
+| **Guide** | Teach/explain | Steps, Examples, Best Practices |
+| **Automation** | Automate tasks | Triggers, Scripts, Verification |
+| **Analyzer** | Inspect/audit | Checklist, Metrics, Reports |
+| **Validator** | Verify quality | Rules, Thresholds, Pass/Fail Criteria |
 
 ---
 
@@ -381,190 +213,173 @@ Install to ~/.claude/skills/api-generator? (y/n)
 
 ```
 platxa-skill-generator/
-├── SKILL.md                 # Main skill definition (entry point)
-├── README.md                # This file
-├── LICENSE                  # MIT License
-├── CONTRIBUTING.md          # Contribution guidelines
+├── SKILL.md                    # Main skill definition (entry point)
+├── README.md                   # This file
+├── pyproject.toml              # Python project config
+├── LICENSE                     # MIT License
 │
-├── scripts/                 # Executable helpers
-│   ├── validate-all.sh      # Run all validations
-│   ├── validate-structure.sh
-│   ├── validate-frontmatter.sh
-│   ├── install-skill.sh     # Installation helper
-│   ├── security-check.sh    # Security validation
-│   └── count-tokens.py      # Token counting utility
+├── scripts/                    # 14 executable scripts
+│   ├── validate-all.sh         # Master validation orchestrator
+│   ├── validate-structure.sh   # Directory structure checks
+│   ├── validate-frontmatter.sh # YAML frontmatter validation
+│   ├── validate-skill.sh       # Field validation with scoring
+│   ├── count-tokens.py         # Token counting (tiktoken)
+│   ├── score-skill.py          # 5-dimension quality scorer
+│   ├── security-check.sh       # Script security scanning
+│   ├── install-skill.sh        # Skill installer
+│   ├── install-from-catalog.sh # Catalog installer (batch, deps)
+│   ├── check-dependencies.sh   # Dependency checker
+│   ├── detect-circular-deps.sh # Cycle detection (DFS)
+│   ├── skill-graph.sh          # DOT graph output
+│   ├── list-installed.sh       # Installed skills lister
+│   └── test-scripts.sh         # Script test runner
 │
-├── references/              # Domain knowledge and patterns
-│   ├── agents/              # Subagent definitions (7 agents)
-│   │   ├── discovery-agent.md
-│   │   ├── architecture-agent.md
-│   │   ├── generation-agent.md
-│   │   ├── validation-agent.md
-│   │   ├── script-agent.md
-│   │   ├── reference-agent.md
-│   │   └── quality-agent.md
-│   │
-│   ├── patterns/            # Implementation patterns (40+ files)
-│   │   ├── skill-types.md
-│   │   ├── domain-discovery.md
-│   │   ├── quality-criteria.md
-│   │   ├── state-machine.md
-│   │   └── ...
-│   │
-│   ├── templates/           # Skill templates by type
-│   │   ├── builder-template.md
-│   │   ├── guide-template.md
-│   │   ├── automation-template.md
-│   │   ├── analyzer-template.md
-│   │   └── validator-template.md
-│   │
-│   └── state-schema.md      # State management schema
+├── catalog/                    # 16 production-ready skills
+│   ├── code-documenter/
+│   ├── commit-message/
+│   ├── test-generator/
+│   ├── pr-description/
+│   ├── platxa-frontend-builder/
+│   ├── platxa-sidecar-builder/
+│   ├── platxa-error-handling/
+│   ├── platxa-jwt-auth/
+│   ├── platxa-k8s-ops/
+│   ├── platxa-k8s-scaling/
+│   ├── platxa-logging/
+│   ├── platxa-monaco-config/
+│   ├── platxa-monitoring/
+│   ├── platxa-secrets-management/
+│   ├── platxa-testing/
+│   └── platxa-yjs-server/
 │
-└── assets/                  # Static resources
-    └── skill-template/      # Empty skill template
-        ├── SKILL.md
-        ├── scripts/.gitkeep
-        └── references/.gitkeep
+├── references/                 # 129 domain knowledge files
+│   ├── agents/                 # 7 subagent definitions
+│   ├── patterns/               # 48 implementation patterns
+│   ├── templates/              # 9 skill type templates
+│   ├── orchestration/          # Workflow patterns
+│   ├── discovery/              # Research patterns
+│   ├── generation/             # Content generation patterns
+│   ├── validation/             # Quality validation patterns
+│   ├── installation/           # Install/export patterns
+│   └── interaction/            # User interaction patterns
+│
+├── tests/                      # 90 tests across 7 files
+│   ├── test_validate_frontmatter.py  # 23 frontmatter tests
+│   ├── test_validate_structure.py    # 12 structure tests
+│   ├── test_count_tokens.py          # 10 token tests
+│   ├── test_score_skill.py           # 17 quality scorer tests
+│   ├── test_check_dependencies.py    # 8 dependency tests
+│   ├── test_circular_deps.py         # 9 cycle detection tests
+│   ├── test_integration.py           # 11 integration tests
+│   ├── conftest.py                   # Fixtures
+│   └── helpers.py                    # Test utilities
+│
+└── .github/workflows/          # CI/CD
+    ├── ci.yml                  # Tests, validation, shellcheck
+    └── validate-catalog.yml    # Catalog PR validation
 ```
 
 ---
 
 ## Quality Standards
 
-Generated skills must meet these criteria to pass validation:
+### Quality Scorer (score-skill.py)
 
-### Required Checks
+Every generated skill is scored across 5 dimensions:
 
-| Check | Requirement | Validation |
-|-------|-------------|------------|
-| **SKILL.md** | Exists with valid YAML frontmatter | `validate-frontmatter.sh` |
-| **Name** | Hyphen-case, <= 64 characters | Automated |
-| **Description** | <= 1024 characters | Automated |
-| **Token Budget** | < 500 lines in SKILL.md | `count-tokens.py` |
-| **Tools** | Only required tools listed | Manual review |
-| **Scripts** | Executable and secure | `security-check.sh` |
-| **References** | Real domain expertise | Quality scoring |
-| **Quality Score** | >= 7.0/10 | Quality agent |
+| Dimension | Weight | What It Checks |
+|-----------|--------|----------------|
+| **Spec Compliance** | 25% | Frontmatter validity, name format, description, tools |
+| **Content Depth** | 25% | Placeholders, generic filler, LLM-favorite words, vocabulary diversity |
+| **Example Quality** | 20% | Code blocks, language labels, substance, YAML/JSON validity |
+| **Structure** | 15% | Required sections, heading count, hierarchy |
+| **Token Efficiency** | 15% | Line count, word count, sentence length, references |
 
-### Quality Score Breakdown
+| Score | Level | Decision |
+|-------|-------|----------|
+| 9.0-10.0 | Excellent | APPROVE |
+| 8.0-8.9 | Good | APPROVE |
+| 7.0-7.9 | Acceptable | APPROVE with suggestions |
+| 5.0-6.9 | Needs Work | REVISE |
+| < 5.0 | Poor | REJECT |
 
-| Component | Weight | Criteria |
-|-----------|--------|----------|
-| **Structure** | 20% | Valid frontmatter, correct directories |
-| **Content** | 30% | Clear instructions, useful examples |
-| **Expertise** | 25% | Real domain knowledge in references |
-| **Security** | 15% | Safe scripts, no vulnerabilities |
-| **Efficiency** | 10% | Token budget, concise content |
+```bash
+python3 scripts/score-skill.py catalog/code-documenter --json     # JSON output
+python3 scripts/score-skill.py catalog/code-documenter --verbose   # Detailed signals
+```
+
+### Skill Composition
+
+Skills can declare relationships via frontmatter:
+
+```yaml
+depends-on:          # Required skills (checked at install time)
+  - platxa-logging
+suggests:            # Recommended companions (shown after install)
+  - platxa-testing
+```
+
+---
+
+## Testing
+
+```bash
+# Run all 90 tests
+pytest tests/ -v
+
+# Run specific test file
+pytest tests/test_score_skill.py -v
+
+# Run by marker
+pytest tests/ -m frontmatter
+pytest tests/ -m integration
+```
 
 ---
 
 ## Troubleshooting
 
-### Common Issues
+### Skill not recognized after installation
 
-#### Skill not recognized after installation
-
-**Symptom**: `/skill-generator` doesn't work
-
-**Solution**:
 ```bash
-# Verify the skill is in the correct location
-ls ~/.claude/skills/platxa-skill-generator/SKILL.md
-
-# Check frontmatter is valid
-head -20 ~/.claude/skills/platxa-skill-generator/SKILL.md
-
-# Restart Claude Code to reload skills
+ls ~/.claude/skills/platxa-skill-generator/SKILL.md   # Verify location
+head -5 ~/.claude/skills/platxa-skill-generator/SKILL.md  # Check frontmatter
 ```
 
-#### Quality score too low
+### Quality score too low
 
-**Symptom**: Generated skill fails validation with score < 7.0
+Provide more specific descriptions. Check `score-skill.py --verbose` for actionable suggestions.
 
-**Solution**:
-- Provide more specific description of what the skill should do
-- Include target users and use cases
-- Let the generator complete all phases before interrupting
+### Scripts not executable
 
-#### Scripts not executable
-
-**Symptom**: `Permission denied` when running scripts
-
-**Solution**:
 ```bash
-# Make all scripts executable
-chmod +x ~/.claude/skills/platxa-skill-generator/scripts/*.sh
+chmod +x scripts/*.sh
 ```
 
-#### Web research fails
+### ShellCheck fails in CI
 
-**Symptom**: Discovery phase times out or returns empty
-
-**Solution**:
-- Check internet connectivity
-- Try with a more specific or different topic
-- The generator will proceed with reduced quality if research fails
-
-### Getting Help
-
-1. **Check existing issues**: [GitHub Issues](https://github.com/platxa/platxa-skill-generator/issues)
-2. **Read the patterns**: `references/patterns/` contains detailed documentation
-3. **Run diagnostics**: `./scripts/validate-all.sh`
+Avoid comments starting with `# shellcheck` (parsed as directives). Remove unused color variables.
 
 ---
 
 ## Contributing
 
-We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for:
-
-- Reporting issues
-- Submitting pull requests
-- Adding new skill types
-- Improving patterns and templates
-- Writing documentation
-
-### Quick Contribution Guide
+See [CONTRIBUTING.md](CONTRIBUTING.md). Run before submitting:
 
 ```bash
-# Fork the repository
-# Clone your fork
-git clone https://github.com/YOUR-USERNAME/platxa-skill-generator.git
-
-# Create a feature branch
-git checkout -b feature/your-feature
-
-# Make changes and test
-./scripts/validate-all.sh
-
-# Commit and push
-git add .
-git commit -m "feat: add your feature"
-git push origin feature/your-feature
-
-# Open a Pull Request
+./scripts/validate-all.sh .    # All validators pass
+pytest tests/ -v               # All 90 tests pass
+shellcheck scripts/*.sh        # No warnings
 ```
 
 ---
 
 ## License
 
-MIT License - See [LICENSE](LICENSE) for details.
+MIT License -- See [LICENSE](LICENSE) for details.
 
 ---
 
-## Acknowledgments
-
-- **[Anthropic](https://anthropic.com)** - For Claude Code and the Agent Skills specification
-
----
-
-## Additional Resources
-
-- [Claude Code](https://claude.com/product/claude-code)
-- [Agent Skills Engineering Blog](https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills)
-
----
-
-**Version**: 1.0.0
-**Created by**: DJ Patel — Founder & CEO, Platxa | https://platxa.com
-**Based on**: Anthropic's Agent Skills Specification
+**Version**: 2.0.0
+**Created by**: DJ Patel -- Founder & CEO, Platxa | https://platxa.com
+**Based on**: Anthropic's [Agent Skills](https://agentskills.io) Open Standard

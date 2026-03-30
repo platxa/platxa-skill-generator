@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "platxa-skill-generator"
-version = "1.0.0"
-description = "Autonomous skill creator for Claude Code CLI using multi-phase orchestrated workflows"
+version = "2.0.0"
+description = "Autonomous skill creator for Claude Code CLI with quality scoring, dependency management, and 16-skill catalog"
 readme = "README.md"
 license = {text = "MIT"}
 authors = [
@@ -18,12 +18,13 @@ keywords = [
     "claude",
     "claude-code",
     "skill-generator",
+    "agent-skills",
+    "quality-scoring",
     "automation",
-    "ai",
     "anthropic"
 ]
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     "Environment :: Console",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
@@ -47,6 +48,7 @@ dev = [
     "pytest>=7.0",
     "pytest-timeout>=2.0",
     "tiktoken>=0.5.0",
+    "ruff>=0.4.0",
 ]
 all = [
     "platxa-skill-generator[tokens,dev]",
