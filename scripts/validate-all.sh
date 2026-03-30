@@ -178,10 +178,10 @@ if [[ -d "$SCRIPTS_DIR" ]]; then
             # Test with the first script file to see if shellcheck can actually read it.
             FIRST_SCRIPT="${SHELL_SCRIPTS%% *}"
             if shellcheck --severity=error "$FIRST_SCRIPT" >/dev/null 2>&1 || [[ $? -eq 1 ]]; then
-                # shellcheck can read the file (exit 0 = clean, exit 1 = warnings found)
+                # Probe succeeded: file is readable (exit 0 = clean, exit 1 = warnings found)
                 run_validator "Shellcheck" "shellcheck -S warning -s bash $SHELL_SCRIPTS" || OVERALL_PASS=false
             else
-                # shellcheck cannot read the file (exit 2 = file access error)
+                # Probe failed: file not accessible (exit 2 = file access error)
                 if ! $JSON_OUTPUT; then
                     echo -e "\n${YELLOW}[Shellcheck]${NC} Skipped - shellcheck cannot access $SCRIPTS_DIR (snap confinement)"
                 fi
