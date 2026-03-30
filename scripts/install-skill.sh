@@ -139,11 +139,16 @@ done
 # Create target directory
 mkdir -p "$TARGET_DIR"
 
-# Copy SKILL.md
+# Copy SKILL.md and .skillconfig
 echo ""
 echo "--- Copying files ---"
 cp "$SKILL_MD" "$TARGET_DIR/"
 echo "  SKILL.md"
+
+if [[ -f "$SKILL_DIR/.skillconfig" ]]; then
+    cp "$SKILL_DIR/.skillconfig" "$TARGET_DIR/"
+    echo "  .skillconfig"
+fi
 
 # Copy directories using rsync with exclusions
 for dir in references scripts assets; do
