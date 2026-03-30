@@ -85,7 +85,16 @@ list_skills() {
                 description="${description:0:57}..."
             fi
 
-            echo -e "  ${GREEN}${skill_name}${NC}"
+            # Get quality score if scorer available
+            score_label=""
+            if [[ -f "$SCRIPT_DIR/score-skill.py" ]] && command -v python3 &>/dev/null; then
+                q_score=$(python3 "$SCRIPT_DIR/score-skill.py" "$skill_dir" --json 2>/dev/null | python3 -c "import sys,json; print(json.load(sys.stdin)['overall_score'])" 2>/dev/null || echo "")
+                if [[ -n "$q_score" ]]; then
+                    score_label=" [${q_score}/10]"
+                fi
+            fi
+
+            echo -e "  ${GREEN}${skill_name}${NC}${score_label}"
             echo -e "    ${description}"
             echo ""
             count=$((count + 1))

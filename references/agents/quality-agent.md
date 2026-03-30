@@ -174,6 +174,17 @@ If REJECT:
 - Update discovery if needed
 ```
 
+## Automated Scoring
+
+Before or instead of invoking this agent, run the automated quality scorer:
+
+```bash
+python3 scripts/score-skill.py <skill-directory> --json
+python3 scripts/score-skill.py <skill-directory> --verbose
+```
+
+The scorer checks 5 dimensions (spec compliance, content depth, example quality, structure, token efficiency) and produces a 0-10 score with actionable suggestions. Use the agent for deeper qualitative review when the automated score is borderline (6.0-7.5).
+
 ## Usage
 
 ```

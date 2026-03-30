@@ -202,6 +202,22 @@ if $CHECK_DEPS && [[ -x "$SCRIPT_DIR/check-dependencies.sh" ]]; then
     run_validator "Dependencies" "$SCRIPT_DIR/check-dependencies.sh '$SKILL_DIR'" || OVERALL_PASS=false
 fi
 
+# 7. Quality score (advisory — shows score but does not block)
+if [[ -f "$SCRIPT_DIR/score-skill.py" ]] && command -v python3 &>/dev/null; then
+    if ! $JSON_OUTPUT; then
+        SCORE_OUTPUT=$(python3 "$SCRIPT_DIR/score-skill.py" "$SKILL_DIR" --json 2>/dev/null || echo "")
+        if [[ -n "$SCORE_OUTPUT" ]]; then
+            QUALITY_SCORE=$(echo "$SCORE_OUTPUT" | python3 -c "import sys,json; print(json.load(sys.stdin)['overall_score'])" 2>/dev/null || echo "")
+            QUALITY_REC=$(echo "$SCORE_OUTPUT" | python3 -c "import sys,json; print(json.load(sys.stdin)['recommendation'])" 2>/dev/null || echo "")
+            if [[ -n "$QUALITY_SCORE" ]]; then
+                echo -e "\n${BLUE}[Quality]${NC}"
+                echo -e "  Score: ${QUALITY_SCORE}/10 (${QUALITY_REC})"
+                RESULTS["Quality"]="$QUALITY_REC"
+            fi
+        fi
+    fi
+fi
+
 # Output results
 if $JSON_OUTPUT; then
     # JSON output

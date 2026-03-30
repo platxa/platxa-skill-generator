@@ -85,6 +85,20 @@ if [[ -x "$SCRIPT_DIR/check-dependencies.sh" ]]; then
     fi
 fi
 
+# Show quality score (advisory)
+if [[ -f "$SCRIPT_DIR/score-skill.py" ]] && command -v python3 &>/dev/null; then
+    SCORE_JSON=$(python3 "$SCRIPT_DIR/score-skill.py" "$SKILL_DIR" --json 2>/dev/null || echo "")
+    if [[ -n "$SCORE_JSON" ]]; then
+        Q_SCORE=$(echo "$SCORE_JSON" | python3 -c "import sys,json; print(json.load(sys.stdin)['overall_score'])" 2>/dev/null || echo "")
+        Q_REC=$(echo "$SCORE_JSON" | python3 -c "import sys,json; print(json.load(sys.stdin)['recommendation'])" 2>/dev/null || echo "")
+        if [[ -n "$Q_SCORE" ]]; then
+            echo ""
+            echo "--- Quality score ---"
+            echo "  Score: $Q_SCORE/10 ($Q_REC)"
+        fi
+    fi
+fi
+
 # Check if already installed
 if [[ -d "$TARGET_DIR" ]]; then
     if [[ "$FORCE" == true ]]; then

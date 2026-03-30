@@ -97,8 +97,9 @@ Run quality checks:
 - [ ] Token budget within limits
 - [ ] Scripts are executable and secure
 - [ ] References provide real domain expertise
+- [ ] Quality score ≥7.0/10 (`python3 scripts/score-skill.py <dir> --json`)
 
-**Quality Score**: Must be ≥7.0/10 to pass.
+**Quality Score**: Run `score-skill.py` for 5-dimension assessment (spec compliance, content depth, example quality, structure, token efficiency). Must be ≥7.0/10 to pass.
 
 ### Phase 6: Installation
 
