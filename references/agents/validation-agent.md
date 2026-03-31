@@ -104,6 +104,19 @@ Skill directory: {skill_directory}
 - Zero errors in required fields
 - No placeholder content
 
+## Cross-Model Testing Recommendation
+
+Include in the validation report a cross-model testing note:
+
+- **Haiku** (fast, economical): Does the skill provide enough guidance? Terse instructions may fail
+- **Sonnet** (balanced): Is the skill clear and efficient? Standard target
+- **Opus** (powerful reasoning): Does the skill avoid over-explaining? Verbose instructions waste tokens
+
+Flag potential issues:
+- Instructions under 3 lines per step → may be too terse for Haiku
+- Explanations of basic concepts → unnecessary for Opus
+- If skill sets `effort: max` → note this requires Opus 4.6
+
 ## Evaluation Scaffold (Post-Validation)
 
 After the skill passes validation (score ≥ 7.0), generate 3 evaluation scenarios to test
