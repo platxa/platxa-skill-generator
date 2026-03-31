@@ -70,6 +70,12 @@ Create the {artifact} using:
 - {Template or pattern}
 - {Customization rules}
 
+**For batch operations (multiple files/changes):** Use plan-validate-execute:
+1. Generate a plan file (e.g., `changes.json`) listing all intended changes
+2. Validate the plan: check targets exist, no conflicts, values are valid
+3. Only apply changes after plan validation passes
+4. This catches errors before modifications — the plan is reversible, applied changes may not be
+
 ### Step 4: Validate
 
 Verify the output:
