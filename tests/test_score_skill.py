@@ -263,6 +263,30 @@ class TestContentDepth:
         depth = data["dimensions"]["content_depth"]
         assert not any("over-explain" in s.lower() for s in depth["negative"])
 
+    def test_time_sensitive_content_penalized(self, temp_skill_dir: Path) -> None:
+        """References to specific dates or versions that will become stale are penalized."""
+        content = (
+            "---\nname: dated-skill\n"
+            "description: A skill with time-sensitive content.\n---\n\n"
+            "# Dated Skill\n\n## Overview\n\n"
+            "As of January 2025, the API uses v2 endpoints.\n"
+            "Before March 2024, use the legacy format.\n"
+            "Currently in version 3.2, the default behavior changed.\n\n"
+            "## Workflow\n\n1. Check the version.\n\n"
+            "## Examples\n\n```bash\necho done\n```\n"
+        )
+        (temp_skill_dir / "SKILL.md").write_text(content)
+        data = get_score(temp_skill_dir)
+        depth = data["dimensions"]["content_depth"]
+        assert any("time-sensitive" in s.lower() for s in depth["negative"])
+
+    def test_content_without_dates_not_penalized(self, temp_skill_dir: Path) -> None:
+        """Content without temporal references is not flagged."""
+        (temp_skill_dir / "SKILL.md").write_text(VALID_SKILL)
+        data = get_score(temp_skill_dir)
+        depth = data["dimensions"]["content_depth"]
+        assert not any("time-sensitive" in s.lower() for s in depth["negative"])
+
 
 class TestExampleQuality:
     def test_no_code_blocks_scores_low(self, temp_skill_dir: Path) -> None:

@@ -146,6 +146,16 @@ OVER_EXPLANATION_PATTERNS = [
     r"(?:in this skill|this skill will|the purpose of this skill is to)",
 ]
 
+TIME_SENSITIVE_PATTERNS = [
+    r"\b(?:before|after)\s+(?:january|february|march|april|may|june|july|august|september|october|november|december)\s+\d{4}\b",
+    r"\bas\s+of\s+(?:january|february|march|april|may|june|july|august|september|october|november|december)\s+\d{4}\b",
+    r"\bas\s+of\s+\d{4}\b",
+    r"\bcurrently\s+in\s+(?:version|v)\s*\d",
+    r"\bsince\s+(?:version|v)\s*\d+\.\d+",
+    r"\bdeprecated\s+(?:in|since|after)\s+\d{4}\b",
+    r"\buntil\s+(?:january|february|march|april|may|june|july|august|september|october|november|december)\s+\d{4}\b",
+]
+
 KNOWN_CODE_LANGUAGES = {
     "bash",
     "sh",
@@ -529,6 +539,20 @@ def score_content_depth(body: str) -> DimensionScore:
         dim.score -= 0.5
         dim.signals_negative.append(
             f"Some over-explanation of basic concepts ({overexplain_count} instance(s))"
+        )
+
+    # Check for time-sensitive content that will become stale
+    time_sensitive_count = 0
+    for pattern in TIME_SENSITIVE_PATTERNS:
+        time_sensitive_count += len(re.findall(pattern, prose, re.IGNORECASE))
+
+    if time_sensitive_count > 0:
+        dim.score -= min(time_sensitive_count * 0.5, 1.5)
+        dim.signals_negative.append(
+            f"Time-sensitive content ({time_sensitive_count} instance(s)) will become stale"
+        )
+        dim.suggestions.append(
+            "Avoid dates and version-specific references that will become outdated"
         )
 
     dim.score = max(0.0, dim.score)
