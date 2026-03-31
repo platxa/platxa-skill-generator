@@ -55,21 +55,22 @@ echo "━━━━━━━━━━━━━━━━━━━━━━━━�
 
 # Find all scripts
 SCRIPTS_DIR="$SKILL_DIR/scripts"
-if [[ ! -d "$SCRIPTS_DIR" ]]; then
-    info "No scripts directory - nothing to check"
-    exit 0
+HAS_SCRIPTS=false
+
+if [[ -d "$SCRIPTS_DIR" ]]; then
+    SCRIPTS=$(find "$SCRIPTS_DIR" \( -name "*.sh" -o -name "*.py" \) -type f 2>/dev/null || echo "")
+    if [[ -n "$SCRIPTS" ]]; then
+        HAS_SCRIPTS=true
+        SCRIPT_COUNT=$(echo "$SCRIPTS" | wc -l)
+        echo "Scanning $SCRIPT_COUNT script(s)..."
+        echo ""
+    fi
 fi
 
-SCRIPTS=$(find "$SCRIPTS_DIR" \( -name "*.sh" -o -name "*.py" \) -type f 2>/dev/null || echo "")
-
-if [[ -z "$SCRIPTS" ]]; then
-    info "No scripts found"
-    exit 0
+if [[ "$HAS_SCRIPTS" == "false" ]]; then
+    info "No scripts directory — scanning SKILL.md only"
+    SCRIPTS=""
 fi
-
-SCRIPT_COUNT=$(echo "$SCRIPTS" | wc -l)
-echo "Scanning $SCRIPT_COUNT script(s)..."
-echo ""
 
 # Dangerous patterns for bash
 # shellcheck disable=SC2016  # Intentionally literal strings for pattern matching
@@ -127,6 +128,7 @@ CREDENTIAL_PATTERNS=(
 
 # Check each script
 for script in $SCRIPTS; do
+    [[ -z "$script" ]] && continue
     script_name=$(basename "$script")
     echo "Checking: $script_name"
 
@@ -195,6 +197,30 @@ for script in $SCRIPTS; do
     fi
 
 done
+
+# Check SKILL.md for external URL references (supply chain risk)
+echo ""
+echo "Checking SKILL.md for external URL references..."
+
+SKILL_MD="$SKILL_DIR/SKILL.md"
+if [[ -f "$SKILL_MD" ]]; then
+    # Find external URLs in SKILL.md content (excluding code block examples)
+    EXT_URLS=$(grep -oE 'https?://[^ )">]+' "$SKILL_MD" 2>/dev/null || echo "")
+    if [[ -n "$EXT_URLS" ]]; then
+        URL_COUNT=$(echo "$EXT_URLS" | wc -l)
+        warn "SKILL.md references $URL_COUNT external URL(s) — fetched content could change or be compromised"
+        echo "$EXT_URLS" | while read -r url; do
+            echo "  - $url"
+        done
+    else
+        info "No external URLs in SKILL.md"
+    fi
+
+    # Check for dynamic context injection fetching external URLs
+    if grep -qE '!\`.*curl|!\`.*wget|!\`.*fetch' "$SKILL_MD" 2>/dev/null; then
+        warn "SKILL.md uses dynamic context injection with network commands — verify URLs are trusted"
+    fi
+fi
 
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
