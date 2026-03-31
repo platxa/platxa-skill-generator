@@ -236,6 +236,18 @@ def extract_headings(body: str) -> list[tuple[int, str]]:
     return headings
 
 
+def extract_markdown_links(body: str) -> list[str]:
+    """Extract relative file paths from markdown links like [text](path.md)."""
+    links = []
+    for match in re.finditer(r"\[([^\]]*)\]\(([^)]+)\)", body):
+        path = match.group(2).strip()
+        # Skip URLs and anchors
+        if path.startswith(("http://", "https://", "#", "mailto:")):
+            continue
+        links.append(path)
+    return links
+
+
 def strip_code_blocks(body: str) -> str:
     """Remove fenced code blocks from content for prose analysis."""
     return re.sub(r"^```\w*\s*\n.*?^```", "", body, flags=re.MULTILINE | re.DOTALL)
@@ -555,7 +567,7 @@ def score_example_quality(body: str) -> DimensionScore:
     return dim
 
 
-def score_structure(body: str) -> DimensionScore:
+def score_structure(body: str, skill_dir: Path) -> DimensionScore:
     """Score document structure: sections, headings, organization."""
     dim = DimensionScore(name="structure", score=10.0, weight=DIMENSION_WEIGHTS["structure"])
 
@@ -611,8 +623,76 @@ def score_structure(body: str) -> DimensionScore:
         dim.signals_negative.append(f"Heading hierarchy skips {skips} level(s)")
         dim.suggestions.append("Don't skip heading levels (e.g., ## to #### without ###)")
 
+    # Progressive disclosure: check reference depth and TOC
+    _check_progressive_disclosure(body, skill_dir, dim)
+
     dim.score = max(0.0, dim.score)
     return dim
+
+
+def _check_progressive_disclosure(body: str, skill_dir: Path, dim: DimensionScore) -> None:
+    """Check progressive disclosure patterns: reference depth and TOC in long files."""
+    skill_links = extract_markdown_links(body)
+    if not skill_links:
+        return
+
+    # Check for nested references (files that SKILL.md links to should not link to more files)
+    nested_count = 0
+    nested_files: list[str] = []
+    for link in skill_links:
+        ref_path = skill_dir / link
+        if not ref_path.is_file():
+            continue
+        try:
+            ref_content = ref_path.read_text()
+        except (OSError, UnicodeDecodeError):
+            continue
+        ref_links = extract_markdown_links(ref_content)
+        # Filter to relative file links that exist in the skill directory
+        nested_refs = [rl for rl in ref_links if (skill_dir / rl).is_file()]
+        if nested_refs:
+            nested_count += len(nested_refs)
+            nested_files.append(link)
+
+    if nested_count > 0:
+        dim.score -= min(nested_count * 0.5, 1.5)
+        dim.signals_negative.append(
+            f"Nested references found: {', '.join(nested_files)} link to other files"
+        )
+        dim.suggestions.append(
+            "Keep references one level deep from SKILL.md — Claude partially reads nested references"
+        )
+    elif skill_links:
+        dim.signals_positive.append("References are one level deep (good progressive disclosure)")
+
+    # Check that reference files >100 lines have a table of contents
+    missing_toc: list[str] = []
+    for link in skill_links:
+        ref_path = skill_dir / link
+        if not ref_path.is_file() or ref_path.suffix != ".md":
+            continue
+        try:
+            ref_content = ref_path.read_text()
+        except (OSError, UnicodeDecodeError):
+            continue
+        ref_lines = ref_content.count("\n") + 1
+        if ref_lines <= 100:
+            continue
+        # Check for TOC indicators: "Contents", "Table of Contents", or 3+ internal links
+        ref_lower = ref_content.lower()
+        has_toc = (
+            "## contents" in ref_lower
+            or "## table of contents" in ref_lower
+            or "# contents" in ref_lower
+            or ref_lower.count("](#") >= 3
+        )
+        if not has_toc:
+            missing_toc.append(f"{link} ({ref_lines} lines)")
+
+    if missing_toc:
+        dim.score -= min(len(missing_toc) * 0.5, 1.0)
+        dim.signals_negative.append(f"Long reference files without TOC: {', '.join(missing_toc)}")
+        dim.suggestions.append("Add ## Contents section to reference files over 100 lines")
 
 
 def score_token_efficiency(content: str, body: str, skill_dir: Path) -> DimensionScore:
@@ -818,7 +898,7 @@ def score_skill(skill_dir: Path) -> QualityReport:
         score_spec_compliance(frontmatter),
         score_content_depth(body),
         score_example_quality(body),
-        score_structure(body),
+        score_structure(body, skill_dir),
         score_token_efficiency(content, body, skill_dir),
     ]
 

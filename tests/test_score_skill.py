@@ -271,6 +271,67 @@ class TestStructure:
         data = get_score(temp_skill_dir)
         assert data["dimensions"]["structure"]["score"] >= 8.0
 
+    def test_nested_references_penalized(self, temp_skill_dir: Path) -> None:
+        """SKILL.md -> a.md -> b.md is a nested reference chain."""
+        (temp_skill_dir / "SKILL.md").write_text(
+            "---\nname: nested-refs\n"
+            "description: Skill with nested references. Use when testing progressive disclosure.\n"
+            "---\n\n# Skill\n\n## Overview\n\nSee [a.md](a.md) for details.\n\n"
+            "## Workflow\n\n1. Read a.md.\n\n## Examples\n\nSee docs.\n"
+        )
+        (temp_skill_dir / "a.md").write_text("# A\n\nSee [b.md](b.md) for more.\n")
+        (temp_skill_dir / "b.md").write_text("# B\n\nDeep content.\n")
+        data = get_score(temp_skill_dir)
+        struct = data["dimensions"]["structure"]
+        assert any("nested" in s.lower() for s in struct["negative"])
+
+    def test_one_level_references_not_penalized(self, temp_skill_dir: Path) -> None:
+        """SKILL.md -> a.md (no further links) is fine."""
+        (temp_skill_dir / "SKILL.md").write_text(
+            "---\nname: flat-refs\n"
+            "description: Skill with flat references. Use when testing progressive disclosure.\n"
+            "---\n\n# Skill\n\n## Overview\n\nSee [ref.md](ref.md) for API details.\n\n"
+            "## Workflow\n\n1. Read ref.md.\n\n## Examples\n\nSee docs.\n"
+        )
+        (temp_skill_dir / "ref.md").write_text("# Reference\n\nNo further links here.\n")
+        data = get_score(temp_skill_dir)
+        struct = data["dimensions"]["structure"]
+        assert not any("nested" in s.lower() for s in struct["negative"])
+        assert any("one level deep" in s.lower() for s in struct["positive"])
+
+    def test_long_reference_without_toc_penalized(self, temp_skill_dir: Path) -> None:
+        """Reference files >100 lines should have a TOC."""
+        long_content = "# Long Reference\n\n" + "\n".join(
+            f"Line {i}: Some content here." for i in range(120)
+        )
+        (temp_skill_dir / "SKILL.md").write_text(
+            "---\nname: long-ref\n"
+            "description: Skill with long reference. Use when testing TOC detection.\n"
+            "---\n\n# Skill\n\n## Overview\n\nSee [long.md](long.md).\n\n"
+            "## Workflow\n\n1. Read long.md.\n\n## Examples\n\nSee docs.\n"
+        )
+        (temp_skill_dir / "long.md").write_text(long_content)
+        data = get_score(temp_skill_dir)
+        struct = data["dimensions"]["structure"]
+        assert any("toc" in s.lower() for s in struct["negative"])
+
+    def test_long_reference_with_toc_not_penalized(self, temp_skill_dir: Path) -> None:
+        """Reference files >100 lines with TOC are fine."""
+        long_content = (
+            "# Long Reference\n\n## Contents\n\n- Section A\n- Section B\n\n"
+            + "\n".join(f"Line {i}: Some content here." for i in range(120))
+        )
+        (temp_skill_dir / "SKILL.md").write_text(
+            "---\nname: long-ref-toc\n"
+            "description: Skill with long reference with TOC. Use when testing TOC detection.\n"
+            "---\n\n# Skill\n\n## Overview\n\nSee [long.md](long.md).\n\n"
+            "## Workflow\n\n1. Read long.md.\n\n## Examples\n\nSee docs.\n"
+        )
+        (temp_skill_dir / "long.md").write_text(long_content)
+        data = get_score(temp_skill_dir)
+        struct = data["dimensions"]["structure"]
+        assert not any("toc" in s.lower() for s in struct["negative"])
+
 
 class TestTokenEfficiency:
     def test_too_short_scores_low(self, temp_skill_dir: Path) -> None:
