@@ -21,6 +21,10 @@ Skill directory: {skill_directory}
 
 1. **Generate SKILL.md**
    - Valid YAML frontmatter (name, description, allowed-tools, metadata)
+   - If blueprint includes `invocation_mode`, add the corresponding frontmatter:
+     - `disable-model-invocation: true` for user-only skills (side effects)
+     - `user-invocable: false` for Claude-only skills (background knowledge)
+     - Omit both for default (both user and Claude can invoke)
    - If discovery found related existing skills, add `depends-on` (required) and/or `suggests` (optional companions)
    - All sections from architecture blueprint
    - Examples with realistic usage scenarios
@@ -43,6 +47,8 @@ Skill directory: {skill_directory}
 ---
 name: {skill_name}
 description: {description_under_1024_chars}
+disable-model-invocation: true  # Only if skill has side effects (omit for default)
+user-invocable: false           # Only if background knowledge (omit for default)
 allowed-tools:
   - Tool1
   - Tool2

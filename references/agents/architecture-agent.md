@@ -41,7 +41,17 @@ Target users: {target_users}
    - If the new skill works better alongside another skill → `suggests`
    - Only declare real relationships, not speculative ones
 
-5. **Token Budget**: Ensure efficiency
+5. **Determine Invocation Control**: Decide how the skill should be triggered
+   - **default** (both user and Claude can invoke): Use for reference knowledge, coding patterns, conventions
+   - **disable-model-invocation: true** (user-only): Use when the skill has side effects — deploys, sends messages, commits, modifies external systems, runs destructive commands
+   - **user-invocable: false** (Claude-only): Use for background knowledge that isn't actionable as a command — legacy system context, domain conventions, project-specific patterns
+   
+   Decision criteria:
+   - Does the skill trigger actions with side effects? → disable-model-invocation
+   - Is the skill reference knowledge without an actionable command? → user-invocable: false
+   - Is the skill safe for both user and Claude to trigger? → default
+
+6. **Token Budget**: Ensure efficiency
    - SKILL.md: < 500 lines
    - Metadata: ~100 tokens
    - References: Load on demand
@@ -65,6 +75,10 @@ Target users: {target_users}
   "references": [
     {"name": "reference-name.md", "purpose": "What knowledge it contains"}
   ],
+  "invocation_mode": {
+    "mode": "default|disable-model-invocation|user-invocable-false",
+    "rationale": "Why this mode was chosen"
+  },
   "depends_on": ["skill-name"],
   "suggests": ["companion-skill"],
   "allowed_tools": ["Read", "Write", "Edit", "Bash", "Task"],
