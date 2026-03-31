@@ -582,6 +582,17 @@ def score_content_depth(body: str) -> DimensionScore:
         dim.score -= 0.5
         dim.signals_negative.append(f"Mixed terminology: {a}/{b}")
 
+    # Check for unqualified MCP tool references (should be ServerName:tool_name)
+    # Look for patterns like "use the bigquery_schema tool" without "ServerName:" prefix
+    mcp_mentions = re.findall(r"\buse\s+(?:the\s+)?(\w+_\w+)\s+tool\b", prose)
+    unqualified = [m for m in mcp_mentions if ":" not in m]
+    if unqualified:
+        dim.score -= 0.5
+        dim.signals_negative.append(f"Unqualified MCP tool reference(s): {', '.join(unqualified)}")
+        dim.suggestions.append(
+            "Use fully qualified MCP tool names: ServerName:tool_name (e.g., BigQuery:bigquery_schema)"
+        )
+
     dim.score = max(0.0, dim.score)
     return dim
 

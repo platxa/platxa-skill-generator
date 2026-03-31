@@ -312,6 +312,21 @@ class TestContentDepth:
             "terminology" in s.lower() or "mixed" in s.lower() for s in depth["negative"]
         )
 
+    def test_unqualified_mcp_tool_penalized(self, temp_skill_dir: Path) -> None:
+        """MCP tool references without ServerName: prefix are penalized."""
+        content = (
+            "---\nname: mcp-skill\n"
+            "description: A skill using MCP tools.\n---\n\n"
+            "# MCP Skill\n\n## Overview\n\n"
+            "Use the bigquery_schema tool to get table info.\n\n"
+            "## Workflow\n\n1. Query schema.\n\n"
+            "## Examples\n\n```bash\necho done\n```\n"
+        )
+        (temp_skill_dir / "SKILL.md").write_text(content)
+        data = get_score(temp_skill_dir)
+        depth = data["dimensions"]["content_depth"]
+        assert any("mcp" in s.lower() or "unqualified" in s.lower() for s in depth["negative"])
+
 
 class TestExampleQuality:
     def test_no_code_blocks_scores_low(self, temp_skill_dir: Path) -> None:
