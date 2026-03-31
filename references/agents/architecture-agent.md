@@ -81,7 +81,15 @@ Target users: {target_users}
    
    Only include `effort` in frontmatter when non-default (i.e., not medium).
 
-8. **Token Budget**: Ensure efficiency
+8. **Determine Activation Scope**: Should the skill activate only for specific file types?
+   - If the skill is general-purpose → omit `paths` field (activates for any context)
+   - If the skill is tied to specific file types → add `paths` glob patterns:
+     - Dockerfile skill: `paths: "Dockerfile,*.dockerfile"`
+     - React component skill: `paths: "**/*.tsx,**/*.jsx"`
+     - Python testing skill: `paths: "tests/**/*.py,test_*.py"`
+   - When paths is set, Claude loads the skill automatically only when working with matching files
+
+9. **Token Budget**: Ensure efficiency
    - SKILL.md: < 500 lines
    - Metadata: ~100 tokens
    - References: Load on demand
