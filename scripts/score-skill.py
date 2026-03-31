@@ -533,6 +533,10 @@ def score_content_depth(body: str) -> DimensionScore:
         if re.search(pattern, body, re.IGNORECASE):
             dim.signals_positive.append(f"Contains {label}")
 
+    # Positive: ultrathink keyword enables extended thinking for complex skills
+    if re.search(r"\bultrathink\b", body, re.IGNORECASE):
+        dim.signals_positive.append("Contains 'ultrathink' for extended thinking")
+
     # Check for over-explanation of concepts Claude already knows
     overexplain_count = 0
     for pattern in OVER_EXPLANATION_PATTERNS:
