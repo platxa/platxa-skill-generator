@@ -14,7 +14,7 @@ SCRIPT = Path(__file__).parent.parent / "scripts" / "score-skill.py"
 VALID_SKILL = """\
 ---
 name: test-scorer-skill
-description: A well-written skill for testing the quality scorer with real content.
+description: A well-written skill for testing the quality scorer with real content. Use when validating skill quality or when the user asks for a quality check.
 allowed-tools:
   - Read
   - Write
@@ -138,6 +138,71 @@ class TestSpecCompliance:
         (temp_skill_dir / "SKILL.md").write_text("---\nname: no-desc\n---\n\n# Test\n")
         data = get_score(temp_skill_dir)
         assert data["dimensions"]["spec_compliance"]["score"] <= 7.0
+
+    def test_first_person_description_penalized(self, temp_skill_dir: Path) -> None:
+        content = (
+            "---\nname: bad-desc\n"
+            "description: I can help you process PDF files and extract text from them.\n"
+            "---\n\n# Test\n"
+        )
+        (temp_skill_dir / "SKILL.md").write_text(content)
+        data = get_score(temp_skill_dir)
+        spec = data["dimensions"]["spec_compliance"]
+        assert spec["score"] < 10.0
+        assert any("first person" in s.lower() for s in spec["negative"])
+
+    def test_second_person_description_penalized(self, temp_skill_dir: Path) -> None:
+        content = (
+            "---\nname: bad-desc\n"
+            "description: You can use this to process PDF files and extract text.\n"
+            "---\n\n# Test\n"
+        )
+        (temp_skill_dir / "SKILL.md").write_text(content)
+        data = get_score(temp_skill_dir)
+        spec = data["dimensions"]["spec_compliance"]
+        assert spec["score"] < 10.0
+        assert any("second person" in s.lower() for s in spec["negative"])
+
+    def test_third_person_description_not_penalized(self, temp_skill_dir: Path) -> None:
+        content = (
+            "---\nname: good-desc\n"
+            "description: Processes PDF files and extracts text. Use when working with PDF documents.\n"
+            "---\n\n# Test\n"
+        )
+        (temp_skill_dir / "SKILL.md").write_text(content)
+        data = get_score(temp_skill_dir)
+        spec = data["dimensions"]["spec_compliance"]
+        assert not any("person" in s.lower() for s in spec["negative"])
+
+    def test_description_with_trigger_context_gets_positive(self, temp_skill_dir: Path) -> None:
+        content = (
+            "---\nname: trigger-desc\n"
+            "description: Extracts text from PDFs. Use when working with PDF files or documents.\n"
+            "---\n\n# Test\n"
+        )
+        (temp_skill_dir / "SKILL.md").write_text(content)
+        data = get_score(temp_skill_dir)
+        spec = data["dimensions"]["spec_compliance"]
+        assert any("trigger context" in s.lower() for s in spec["positive"])
+
+    def test_description_missing_trigger_context_flagged(self, temp_skill_dir: Path) -> None:
+        content = (
+            "---\nname: no-trigger\n"
+            "description: Extracts text from PDF files and converts them to markdown format.\n"
+            "---\n\n# Test\n"
+        )
+        (temp_skill_dir / "SKILL.md").write_text(content)
+        data = get_score(temp_skill_dir)
+        spec = data["dimensions"]["spec_compliance"]
+        assert any("trigger context" in s.lower() for s in spec["negative"])
+
+    def test_vague_description_penalized(self, temp_skill_dir: Path) -> None:
+        content = "---\nname: vague-desc\ndescription: Helps with documents\n---\n\n# Test\n"
+        (temp_skill_dir / "SKILL.md").write_text(content)
+        data = get_score(temp_skill_dir)
+        spec = data["dimensions"]["spec_compliance"]
+        assert spec["score"] < 9.0
+        assert any("vague" in s.lower() for s in spec["negative"])
 
 
 class TestContentDepth:

@@ -336,6 +336,60 @@ def score_spec_compliance(frontmatter: dict) -> DimensionScore:
         else:
             dim.signals_positive.append(f"Description length: {len(desc)} chars")
 
+        # Check third-person form (Anthropic best practice: always write in third person)
+        desc_lower = desc.strip().lower()
+        first_person = re.match(r"^(i can|i will|i help|i am|i\'m)\b", desc_lower)
+        second_person = re.match(r"^(you can|you will|you should|your)\b", desc_lower)
+        if first_person:
+            dim.score -= 1.5
+            dim.signals_negative.append("Description uses first person (starts with 'I ...')")
+            dim.suggestions.append(
+                "Write description in third person: 'Processes files...' not 'I can help you...'"
+            )
+        elif second_person:
+            dim.score -= 1.0
+            dim.signals_negative.append("Description uses second person (starts with 'You ...')")
+            dim.suggestions.append(
+                "Write description in third person: 'Generates reports...' not 'You can use this...'"
+            )
+
+        # Check for trigger context (description should say WHEN to use, not just WHAT)
+        trigger_patterns = [
+            r"\buse\s+when\b",
+            r"\buse\s+this\b",
+            r"\bwhen\s+(?:the\s+)?user\b",
+            r"\bwhen\s+working\b",
+            r"\bwhen\s+you\b",
+            r"\btrigger\b",
+            r"\binvoke\b",
+            r"\bactivate\b",
+        ]
+        has_trigger = any(re.search(p, desc, re.IGNORECASE) for p in trigger_patterns)
+        if has_trigger:
+            dim.signals_positive.append("Description includes trigger context (when to use)")
+        elif len(desc) >= 20:
+            dim.score -= 0.5
+            dim.signals_negative.append("Description lacks trigger context")
+            dim.suggestions.append(
+                "Add when to use the skill: 'Use when working with PDFs' or 'Use when the user mentions...'"
+            )
+
+        # Check for vague descriptions
+        vague_patterns = [
+            r"^helps?\s+with\s+\w+$",
+            r"^does?\s+stuff\b",
+            r"^processes?\s+data$",
+            r"^handles?\s+things\b",
+            r"^a?\s*(?:simple|basic|general)\s+(?:tool|helper|utility)\b",
+        ]
+        is_vague = any(re.search(p, desc_lower) for p in vague_patterns)
+        if is_vague:
+            dim.score -= 1.0
+            dim.signals_negative.append("Description is too vague")
+            dim.suggestions.append(
+                "Be specific: include what the skill does AND specific contexts/triggers"
+            )
+
     # Check tools
     tools = frontmatter.get("allowed-tools", frontmatter.get("tools", []))
     if tools:
