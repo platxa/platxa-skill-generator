@@ -95,7 +95,14 @@ Target users: {target_users}
      - Python testing skill: `paths: "tests/**/*.py,test_*.py"`
    - When paths is set, Claude loads the skill automatically only when working with matching files
 
-9. **Token Budget**: Ensure efficiency
+9. **Consider Hooks Integration**: Should the skill validate tool operations?
+   - Most skills don't need hooks — only recommend when the skill enforces constraints
+   - **PreToolUse hooks**: Validate tool input before execution (e.g., block destructive commands)
+   - **PostToolUse hooks**: Run checks after tool execution (e.g., lint after file edits)
+   - Example: A database query skill might use PreToolUse to block write operations
+   - Only include `hooks` in frontmatter when there's a concrete validation need
+
+10. **Token Budget**: Ensure efficiency
    - SKILL.md: < 500 lines
    - Metadata: ~100 tokens
    - References: Load on demand
