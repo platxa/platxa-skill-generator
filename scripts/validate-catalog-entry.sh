@@ -88,8 +88,7 @@ if [[ -f "$SKILL_MD" ]]; then
             # Warning, not error — but catalog should strive for this
         fi
 
-        # Check first 250 chars have the key info
-        FIRST_250="${DESC:0:250}"
+        # Check description length vs effective display limit
         if [[ ${#DESC} -gt 250 ]]; then
             echo -e "${YELLOW}⚠${NC} Description is ${#DESC} chars — only first 250 shown in skill listing"
         fi
