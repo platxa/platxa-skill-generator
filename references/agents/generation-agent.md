@@ -75,7 +75,7 @@ metadata:
 ## Workflow
 
 ### Step 1: {First Step}
-{Description}
+{Description — use $ARGUMENTS for user input, ${CLAUDE_SKILL_DIR} for script paths}
 
 ### Step 2: {Second Step}
 {Description}
@@ -93,6 +93,21 @@ Assistant: {example response}
 - [ ] {Verification item 1}
 - [ ] {Verification item 2}
 ```
+
+## String Substitutions
+
+Use Claude Code's built-in string substitutions for portable, dynamic skills:
+
+- `$ARGUMENTS` — All arguments passed when invoking the skill (e.g., `/skill-name arg1 arg2`)
+- `$ARGUMENTS[0]`, `$0` — First argument by index
+- `${CLAUDE_SKILL_DIR}` — Directory containing this skill's SKILL.md (use for script paths)
+- `${CLAUDE_SESSION_ID}` — Current session ID (use for logs or session-specific files)
+
+**Rules:**
+- Use `${CLAUDE_SKILL_DIR}` when referencing bundled scripts: `bash ${CLAUDE_SKILL_DIR}/scripts/helper.sh`
+- Use `$ARGUMENTS` when the skill accepts user input: `Analyze $ARGUMENTS following the checklist`
+- Never hardcode absolute paths to the skill directory
+- If `$ARGUMENTS` is not present in the content, arguments are appended as `ARGUMENTS: <value>` automatically
 
 ## Quality Requirements
 
