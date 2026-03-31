@@ -85,10 +85,23 @@ metadata:
 
 ## Examples
 
-### Example 1: {Use Case}
+Include at least 2 concrete input/output pairs. Examples help Claude understand
+the desired style and detail level more clearly than descriptions alone.
+
+### Example 1: {Common Use Case}
+
+**Input:** {Realistic user prompt or command}
+**Output:**
 ```
-User: {example input}
-Assistant: {example response}
+{Exact expected output format}
+```
+
+### Example 2: {Edge Case or Variation}
+
+**Input:** {Different input showing another use case}
+**Output:**
+```
+{Expected output for this variation}
 ```
 
 ## Output Checklist
