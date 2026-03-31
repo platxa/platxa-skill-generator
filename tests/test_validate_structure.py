@@ -330,3 +330,53 @@ class TestGitkeepAllowed:
         # .gitkeep should not trigger hidden file warning
         output = result.stdout + result.stderr
         assert ".gitkeep" not in output or "OK" in output
+
+
+class TestReferenceLinkValidation:
+    """Tests for reference cross-link validation."""
+
+    @pytest.mark.structure
+    def test_broken_reference_link_fails(
+        self,
+        temp_skill_dir: Path,
+        run_validate_structure,
+    ) -> None:
+        """SKILL.md linking to non-existent file triggers error."""
+        skill_md = temp_skill_dir / "SKILL.md"
+        skill_md.write_text(
+            "---\nname: broken-links\n"
+            "description: A skill with broken reference links.\n"
+            "---\n\n# Skill\n\n"
+            "See [guide.md](guide.md) for details.\n"
+            "See [missing.md](missing.md) for more.\n"
+        )
+        # Only create guide.md, not missing.md
+        (temp_skill_dir / "guide.md").write_text("# Guide\n\nContent.\n")
+
+        result = run_validate_structure(temp_skill_dir)
+
+        assert result.returncode == 1, f"Expected exit 1. stderr: {result.stderr}"
+        assert "broken" in result.stderr.lower() or "missing.md" in result.stderr
+
+    @pytest.mark.structure
+    def test_valid_reference_links_pass(
+        self,
+        temp_skill_dir: Path,
+        run_validate_structure,
+    ) -> None:
+        """SKILL.md with all links pointing to existing files passes."""
+        skill_md = temp_skill_dir / "SKILL.md"
+        skill_md.write_text(
+            "---\nname: valid-links\n"
+            "description: A skill with valid reference links.\n"
+            "---\n\n# Skill\n\n"
+            "See [guide.md](guide.md) for details.\n"
+            "See [ref.md](ref.md) for more.\n"
+        )
+        (temp_skill_dir / "guide.md").write_text("# Guide\n\nContent.\n")
+        (temp_skill_dir / "ref.md").write_text("# Ref\n\nContent.\n")
+
+        result = run_validate_structure(temp_skill_dir)
+
+        assert result.returncode == 0, f"Expected exit 0. stderr: {result.stderr}"
+        assert "valid" in result.stdout.lower() or "reference links" in result.stdout.lower()

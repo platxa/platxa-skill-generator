@@ -234,6 +234,36 @@ else
     info "All files under 100KB"
 fi
 
+# Check 8: Verify markdown links in SKILL.md point to existing files
+echo ""
+echo "Checking reference links..."
+
+if [[ -f "$SKILL_MD" ]]; then
+    BROKEN_LINKS=0
+    # Extract relative file links from markdown: [text](path) — skip URLs and anchors
+    while IFS= read -r link; do
+        [[ -z "$link" ]] && continue
+        # Resolve relative to skill directory
+        TARGET="$SKILL_DIR/$link"
+        if [[ ! -e "$TARGET" ]]; then
+            error "Broken reference: [$link] — file does not exist"
+            ((BROKEN_LINKS++)) || true
+        fi
+    done < <(grep -oP '\[([^\]]*)\]\((?!https?://|#|mailto:)([^)]+)\)' "$SKILL_MD" | grep -oP '\(([^)]+)\)' | tr -d '()')
+
+    if [[ $BROKEN_LINKS -eq 0 ]]; then
+        # Count valid links
+        LINK_COUNT=$(grep -coP '\[([^\]]*)\]\((?!https?://|#|mailto:)([^)]+)\)' "$SKILL_MD" 2>/dev/null || echo "0")
+        if [[ "$LINK_COUNT" -gt 0 ]]; then
+            info "All $LINK_COUNT reference links are valid"
+        else
+            if $VERBOSE; then
+                info "No reference links in SKILL.md"
+            fi
+        fi
+    fi
+fi
+
 # Summary
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
