@@ -55,6 +55,7 @@ Skill directory: {skill_directory}
 ---
 name: {skill_name}
 description: {description_under_1024_chars}
+argument-hint: "[filename] [format]"  # Only if skill accepts arguments (omit otherwise)
 disable-model-invocation: true  # Only if skill has side effects (omit for default)
 user-invocable: false           # Only if background knowledge (omit for default)
 allowed-tools:
