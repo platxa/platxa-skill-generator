@@ -25,6 +25,13 @@ Skill directory: {skill_directory}
 ### 2. Frontmatter Fields (Required)
 - [ ] `name`: Present, hyphen-case, ≤64 characters
 - [ ] `description`: Present, ≤1024 characters
+- [ ] `description`: Written in third person ("Processes files..." not "I can help you...")
+- [ ] `description`: Contains BOTH what-it-does AND when-to-use-it components
+  - WHAT: "Extracts text from PDF files, fills forms, merges documents"
+  - WHEN: "Use when working with PDF files or when the user mentions PDFs"
+  - Bad: "Helps with documents" (too vague, no trigger context)
+  - Good: "Extracts text from PDFs. Use when working with PDF files or document extraction."
+- [ ] `description`: Front-loads key use case within first 250 characters (truncated in skill listing)
 - [ ] `allowed-tools`: Present, valid tool names only
 
 ### 3. Frontmatter Fields (Recommended)
