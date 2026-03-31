@@ -96,6 +96,50 @@ Skill directory: {skill_directory}
 - Score ≥ 7.0/10
 - Zero errors in required fields
 - No placeholder content
+
+## Evaluation Scaffold (Post-Validation)
+
+After the skill passes validation (score ≥ 7.0), generate 3 evaluation scenarios to test
+the skill's real-world behavior. Save to `{skill_directory}/evals/evals.json`.
+
+### Eval Format
+
+```json
+{
+  "skill_name": "the-skill-name",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "A realistic user prompt that should trigger this skill",
+      "expected_behavior": [
+        "Specific observable behavior 1",
+        "Specific observable behavior 2"
+      ],
+      "category": "happy-path|edge-case|error-handling"
+    },
+    {
+      "id": 2,
+      "prompt": "An edge case or unusual input",
+      "expected_behavior": ["Expected handling of edge case"],
+      "category": "edge-case"
+    },
+    {
+      "id": 3,
+      "prompt": "An error scenario or invalid input",
+      "expected_behavior": ["Expected error message or graceful fallback"],
+      "category": "error-handling"
+    }
+  ]
+}
+```
+
+### Eval Generation Rules
+
+1. Include at least one of each category: happy-path, edge-case, error-handling
+2. Prompts should be realistic — how a real user would phrase the request
+3. Expected behaviors must be specific and verifiable (not "works correctly")
+4. Reference actual files, commands, or outputs the skill produces
+5. Create the `evals/` directory and write `evals.json` only when the skill passes
 ```
 
 ## Usage

@@ -101,6 +101,8 @@ Run quality checks:
 
 **Quality Score**: Run `score-skill.py` for 5-dimension assessment (spec compliance, content depth, example quality, structure, token efficiency). Must be ≥7.0/10 to pass.
 
+**Evaluation Scaffold**: After passing validation, generate 3 eval scenarios (happy-path, edge-case, error-handling) in `evals/evals.json` for testing the skill's real-world behavior.
+
 ### Phase 6: Installation
 
 Ask user for installation location:
