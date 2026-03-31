@@ -132,6 +132,18 @@ LLM_FAVORITE_WORDS = [
     "world-class",
 ]
 
+OVER_EXPLANATION_PATTERNS = [
+    # Explaining basic file format concepts Claude already knows
+    r"\b(?:pdf|json|yaml|xml|csv|html|css)\b.{0,30}\b(?:is a|are a|stands for|which is|format that)\b",
+    # Explaining basic programming concepts
+    r"\b(?:function|variable|class|loop|array|string|integer)\b.{0,30}\b(?:is a|are a|which is|refers to)\b",
+    # Explaining what common tools do
+    r"\b(?:git|docker|npm|pip|bash)\b.{0,30}\b(?:is a|are a|tool that|which is)\b",
+    # Verbose introductory filler
+    r"(?:before we begin|before getting started|first and foremost|it is worth noting that)",
+    r"(?:in this skill|this skill will|the purpose of this skill is to)",
+]
+
 KNOWN_CODE_LANGUAGES = {
     "bash",
     "sh",
@@ -499,6 +511,23 @@ def score_content_depth(body: str) -> DimensionScore:
     for pattern, label in specific_patterns:
         if re.search(pattern, body, re.IGNORECASE):
             dim.signals_positive.append(f"Contains {label}")
+
+    # Check for over-explanation of concepts Claude already knows
+    overexplain_count = 0
+    for pattern in OVER_EXPLANATION_PATTERNS:
+        overexplain_count += len(re.findall(pattern, prose, re.IGNORECASE))
+
+    if overexplain_count >= 3:
+        dim.score -= 1.5
+        dim.signals_negative.append(f"Over-explains basic concepts ({overexplain_count} instances)")
+        dim.suggestions.append(
+            "Remove explanations of concepts Claude already knows (e.g., what PDFs or git are)"
+        )
+    elif overexplain_count >= 1:
+        dim.score -= 0.5
+        dim.signals_negative.append(
+            f"Some over-explanation of basic concepts ({overexplain_count} instance(s))"
+        )
 
     dim.score = max(0.0, dim.score)
     return dim

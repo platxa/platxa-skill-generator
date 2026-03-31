@@ -238,6 +238,31 @@ class TestContentDepth:
         # Should not be heavily penalized — these are instructions, not placeholders
         assert data["dimensions"]["content_depth"]["score"] >= 6.0
 
+    def test_over_explanation_penalized(self, temp_skill_dir: Path) -> None:
+        """Explaining basic concepts Claude knows (e.g., what PDFs are) is penalized."""
+        content = (
+            "---\nname: verbose-skill\n"
+            "description: A verbose skill that over-explains basic concepts.\n---\n\n"
+            "# Verbose Skill\n\n## Overview\n\n"
+            "PDF is a format that stores documents in a portable way.\n"
+            "JSON is a format that represents structured data.\n"
+            "Git is a tool that tracks version history.\n"
+            "Before we begin, let us understand the basics.\n\n"
+            "## Workflow\n\n1. Process the file.\n2. Output results.\n\n"
+            "## Examples\n\n```bash\necho done\n```\n"
+        )
+        (temp_skill_dir / "SKILL.md").write_text(content)
+        data = get_score(temp_skill_dir)
+        depth = data["dimensions"]["content_depth"]
+        assert any("over-explain" in s.lower() for s in depth["negative"])
+
+    def test_concise_content_not_penalized(self, temp_skill_dir: Path) -> None:
+        """Direct, actionable content without over-explanation scores well."""
+        (temp_skill_dir / "SKILL.md").write_text(VALID_SKILL)
+        data = get_score(temp_skill_dir)
+        depth = data["dimensions"]["content_depth"]
+        assert not any("over-explain" in s.lower() for s in depth["negative"])
+
 
 class TestExampleQuality:
     def test_no_code_blocks_scores_low(self, temp_skill_dir: Path) -> None:
