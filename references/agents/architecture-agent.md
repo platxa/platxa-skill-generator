@@ -30,10 +30,17 @@ Target users: {target_users}
    - references/ - Domain documentation (if expertise heavy)
    - assets/ - Static files (if templates needed)
 
-3. **Plan Sections**: Design SKILL.md structure
+3. **Plan Sections**: Design SKILL.md structure with freedom levels
    - Required: Overview, Workflow
    - Recommended: Examples, Output Checklist
    - Type-specific: Templates (Builder), Steps (Guide), etc.
+   
+   For each section, assign a **freedom level** based on task fragility:
+   - **high**: Multiple valid approaches, context-dependent (e.g., code review guidelines)
+   - **medium**: Preferred pattern exists, some variation OK (e.g., pseudocode templates)
+   - **low**: Exact steps required, consistency critical (e.g., database migrations, deploy scripts)
+   
+   Analogy: narrow bridge (low freedom, exact steps) vs open field (high freedom, general direction)
 
 4. **Analyze Dependencies**: Check if this skill relates to existing skills
    - Search ~/.claude/skills/ and .claude/skills/ for installed skills
@@ -64,10 +71,10 @@ Target users: {target_users}
   "skill_name": "hyphen-case-name",
   "directories": ["scripts", "references"],
   "skill_md_sections": [
-    {"name": "Overview", "purpose": "Brief description"},
-    {"name": "Workflow", "purpose": "Step-by-step process"},
-    {"name": "Examples", "purpose": "Usage demonstrations"},
-    {"name": "Output Checklist", "purpose": "Quality verification"}
+    {"name": "Overview", "purpose": "Brief description", "freedom": "high"},
+    {"name": "Workflow", "purpose": "Step-by-step process", "freedom": "low|medium|high"},
+    {"name": "Examples", "purpose": "Usage demonstrations", "freedom": "medium"},
+    {"name": "Output Checklist", "purpose": "Quality verification", "freedom": "low"}
   ],
   "scripts": [
     {"name": "script-name.sh", "purpose": "What it does"}

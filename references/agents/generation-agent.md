@@ -26,7 +26,10 @@ Skill directory: {skill_directory}
      - `user-invocable: false` for Claude-only skills (background knowledge)
      - Omit both for default (both user and Claude can invoke)
    - If discovery found related existing skills, add `depends-on` (required) and/or `suggests` (optional companions)
-   - All sections from architecture blueprint
+   - All sections from architecture blueprint, respecting freedom levels:
+     - **low freedom**: Use exact scripts, specific commands, strict templates
+     - **medium freedom**: Use pseudocode or parameterized scripts
+     - **high freedom**: Use text instructions, let Claude adapt to context
    - Examples with realistic usage scenarios
    - Output checklist with verification items
 
