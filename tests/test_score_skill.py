@@ -327,6 +327,21 @@ class TestContentDepth:
         depth = data["dimensions"]["content_depth"]
         assert any("mcp" in s.lower() or "unqualified" in s.lower() for s in depth["negative"])
 
+    def test_multiple_alternatives_penalized(self, temp_skill_dir: Path) -> None:
+        """Offering too many alternatives without a default is penalized."""
+        content = (
+            "---\nname: many-options\n"
+            "description: A skill offering too many choices.\n---\n\n"
+            "# Many Options\n\n## Overview\n\n"
+            "You can use pypdf, or pdfplumber, or PyMuPDF, or pdf2image for extraction.\n\n"
+            "## Workflow\n\n1. Pick a library.\n\n"
+            "## Examples\n\n```bash\necho done\n```\n"
+        )
+        (temp_skill_dir / "SKILL.md").write_text(content)
+        data = get_score(temp_skill_dir)
+        depth = data["dimensions"]["content_depth"]
+        assert any("alternative" in s.lower() for s in depth["negative"])
+
 
 class TestExampleQuality:
     def test_no_code_blocks_scores_low(self, temp_skill_dir: Path) -> None:

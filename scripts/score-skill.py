@@ -597,6 +597,20 @@ def score_content_depth(body: str) -> DimensionScore:
             "Use fully qualified MCP tool names: ServerName:tool_name (e.g., BigQuery:bigquery_schema)"
         )
 
+    # Check for too many alternatives without a clear default
+    alternatives_pattern = (
+        r"\b(?:you can use|use either|choose between|options include)\b.*\bor\b.*\bor\b"
+    )
+    alt_matches = re.findall(alternatives_pattern, prose, re.IGNORECASE)
+    if alt_matches:
+        dim.score -= 0.5
+        dim.signals_negative.append(
+            f"Too many alternatives without clear default ({len(alt_matches)} instance(s))"
+        )
+        dim.suggestions.append(
+            "Provide one default approach with an escape hatch, not multiple equal options"
+        )
+
     dim.score = max(0.0, dim.score)
     return dim
 
