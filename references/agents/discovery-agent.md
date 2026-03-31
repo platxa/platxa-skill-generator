@@ -33,9 +33,27 @@ Provide findings as structured JSON:
   "project_variations": ["things that vary by project"],
   "constants": ["things that stay the same"],
   "sources": ["URLs and references used"],
-  "gaps": ["information gaps that need user clarification"]
+  "gaps": ["information gaps that need user clarification"],
+  "description_draft": {
+    "full": "Complete description under 1024 chars with what-it-does AND when-to-use-it",
+    "first_250_chars": "Front-loaded key use case (this is what shows in the skill listing)"
+  }
 }
 ```
+
+## Description Budget
+
+Draft a skill description during discovery. The description is the **primary trigger mechanism**
+— Claude uses it to decide when to invoke the skill from 100+ available skills.
+
+**Budget constraints:**
+- Max 1024 characters total
+- Effective display limit: **250 characters** (truncated in skill listing)
+- Must include WHAT it does AND WHEN to use it
+- Must be third person ("Processes files..." not "I can help...")
+
+**Strategy:** Front-load the key use case in the first 250 characters. Put trigger context
+("Use when...") immediately after the what-it-does summary.
 
 ## Sufficiency Criteria
 
