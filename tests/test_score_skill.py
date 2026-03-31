@@ -287,6 +287,31 @@ class TestContentDepth:
         depth = data["dimensions"]["content_depth"]
         assert not any("time-sensitive" in s.lower() for s in depth["negative"])
 
+    def test_inconsistent_terminology_penalized(self, temp_skill_dir: Path) -> None:
+        """Using multiple terms for same concept (endpoint/route, function/method) is penalized."""
+        content = (
+            "---\nname: mixed-terms\n"
+            "description: A skill mixing terminology for the same concepts.\n---\n\n"
+            "# Mixed Terms\n\n## Overview\n\n"
+            "Call the endpoint to get data. The route accepts JSON.\n"
+            "The function parses input. The method returns output.\n\n"
+            "## Workflow\n\n1. Hit the API route.\n\n"
+            "## Examples\n\n```bash\ncurl /endpoint\n```\n"
+        )
+        (temp_skill_dir / "SKILL.md").write_text(content)
+        data = get_score(temp_skill_dir)
+        depth = data["dimensions"]["content_depth"]
+        assert any("terminology" in s.lower() or "mixed" in s.lower() for s in depth["negative"])
+
+    def test_consistent_terminology_not_penalized(self, temp_skill_dir: Path) -> None:
+        """Using one term consistently is not flagged."""
+        (temp_skill_dir / "SKILL.md").write_text(VALID_SKILL)
+        data = get_score(temp_skill_dir)
+        depth = data["dimensions"]["content_depth"]
+        assert not any(
+            "terminology" in s.lower() or "mixed" in s.lower() for s in depth["negative"]
+        )
+
 
 class TestExampleQuality:
     def test_no_code_blocks_scores_low(self, temp_skill_dir: Path) -> None:

@@ -146,6 +146,15 @@ OVER_EXPLANATION_PATTERNS = [
     r"(?:in this skill|this skill will|the purpose of this skill is to)",
 ]
 
+SYNONYM_GROUPS = [
+    {"endpoint", "url", "route", "path"},
+    {"function", "method", "procedure", "subroutine"},
+    {"directory", "folder", "dir"},
+    {"repository", "repo", "codebase"},
+    {"parameter", "argument", "arg", "param"},
+    {"error", "exception", "fault", "failure"},
+]
+
 TIME_SENSITIVE_PATTERNS = [
     r"\b(?:before|after)\s+(?:january|february|march|april|may|june|july|august|september|october|november|december)\s+\d{4}\b",
     r"\bas\s+of\s+(?:january|february|march|april|may|june|july|august|september|october|november|december)\s+\d{4}\b",
@@ -554,6 +563,24 @@ def score_content_depth(body: str) -> DimensionScore:
         dim.suggestions.append(
             "Avoid dates and version-specific references that will become outdated"
         )
+
+    # Check terminology consistency (multiple synonyms from the same group)
+    inconsistent_groups: list[tuple[str, str]] = []
+    words_in_prose = set(re.findall(r"\b[a-z]+\b", prose))
+    for group in SYNONYM_GROUPS:
+        found = [term for term in group if term in words_in_prose]
+        if len(found) >= 2:
+            inconsistent_groups.append((found[0], found[1]))
+
+    if len(inconsistent_groups) >= 2:
+        examples = [f"{a}/{b}" for a, b in inconsistent_groups[:2]]
+        dim.score -= 1.0
+        dim.signals_negative.append(f"Inconsistent terminology: {', '.join(examples)}")
+        dim.suggestions.append("Pick one term per concept and use it consistently")
+    elif len(inconsistent_groups) == 1:
+        a, b = inconsistent_groups[0]
+        dim.score -= 0.5
+        dim.signals_negative.append(f"Mixed terminology: {a}/{b}")
 
     dim.score = max(0.0, dim.score)
     return dim
