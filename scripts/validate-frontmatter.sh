@@ -233,6 +233,33 @@ if [[ -n "$SUGGESTS" ]]; then
     done <<< "$SUGGESTS"
 fi
 
+# Check disable-model-invocation field (must be boolean if present)
+DMI=$(echo "$FRONTMATTER" | grep -E '^disable-model-invocation:' | sed 's/^disable-model-invocation:\s*//' | tr -d '"' | tr -d "'" || echo "")
+
+if [[ -n "$DMI" ]]; then
+    if [[ "$DMI" =~ ^(true|false)$ ]]; then
+        info "disable-model-invocation field valid: $DMI"
+    else
+        error "Invalid disable-model-invocation: $DMI (must be true or false)"
+    fi
+fi
+
+# Check user-invocable field (must be boolean if present)
+UI=$(echo "$FRONTMATTER" | grep -E '^user-invocable:' | sed 's/^user-invocable:\s*//' | tr -d '"' | tr -d "'" || echo "")
+
+if [[ -n "$UI" ]]; then
+    if [[ "$UI" =~ ^(true|false)$ ]]; then
+        info "user-invocable field valid: $UI"
+    else
+        error "Invalid user-invocable: $UI (must be true or false)"
+    fi
+fi
+
+# Warn on conflicting invocation control
+if [[ "$DMI" == "true" && "$UI" == "false" ]]; then
+    warn "Conflicting: disable-model-invocation=true AND user-invocable=false means nobody can invoke this skill"
+fi
+
 # Check context field (must be "fork" if present)
 CONTEXT=$(echo "$FRONTMATTER" | grep -E '^context:' | sed 's/^context:\s*//' | tr -d '"' | tr -d "'" || echo "")
 

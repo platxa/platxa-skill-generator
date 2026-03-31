@@ -542,6 +542,64 @@ class TestSuggestsValidation:
         assert "Invalid suggestion name" in result.stderr
 
 
+class TestInvocationControlValidation:
+    """Tests for disable-model-invocation and user-invocable validation."""
+
+    @pytest.mark.frontmatter
+    def test_valid_disable_model_invocation_passes(
+        self,
+        temp_skill_dir: Path,
+        run_validate_frontmatter,
+    ) -> None:
+        """Boolean true/false accepted for disable-model-invocation."""
+        skill_md = temp_skill_dir / "SKILL.md"
+        skill_md.write_text(
+            "---\nname: dmi-skill\n"
+            "description: A skill that only users can invoke.\n"
+            "disable-model-invocation: true\n"
+            "---\n\n# Content\n"
+        )
+        result = run_validate_frontmatter(temp_skill_dir)
+        assert result.returncode == 0
+
+    @pytest.mark.frontmatter
+    def test_invalid_disable_model_invocation_fails(
+        self,
+        temp_skill_dir: Path,
+        run_validate_frontmatter,
+    ) -> None:
+        """Non-boolean values for disable-model-invocation are rejected."""
+        skill_md = temp_skill_dir / "SKILL.md"
+        skill_md.write_text(
+            "---\nname: bad-dmi\n"
+            "description: A skill with invalid invocation control.\n"
+            "disable-model-invocation: yes\n"
+            "---\n\n# Content\n"
+        )
+        result = run_validate_frontmatter(temp_skill_dir)
+        assert result.returncode == 1
+        assert "Invalid disable-model-invocation" in result.stderr
+
+    @pytest.mark.frontmatter
+    def test_conflicting_invocation_warns(
+        self,
+        temp_skill_dir: Path,
+        run_validate_frontmatter,
+    ) -> None:
+        """disable-model-invocation=true + user-invocable=false warns about conflict."""
+        skill_md = temp_skill_dir / "SKILL.md"
+        skill_md.write_text(
+            "---\nname: conflict-skill\n"
+            "description: A skill with conflicting invocation settings.\n"
+            "disable-model-invocation: true\n"
+            "user-invocable: false\n"
+            "---\n\n# Content\n"
+        )
+        result = run_validate_frontmatter(temp_skill_dir)
+        assert result.returncode == 0  # Warning, not error
+        assert "conflicting" in result.stderr.lower() or "nobody" in result.stderr.lower()
+
+
 class TestContextFieldValidation:
     """Tests for context field validation."""
 
