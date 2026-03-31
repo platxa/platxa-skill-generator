@@ -152,6 +152,22 @@ VALIDATION: ⚠ PASSED WITH WARNINGS
 ═══════════════════════
 ```
 
+## Fix-and-Retry Loop
+
+When validation fails, follow this feedback loop:
+
+```
+1. Run validation → collect errors
+2. For each error:
+   a. Read the failing rule and fix instruction
+   b. Apply the fix
+   c. Re-run validation for that rule
+3. Repeat until all rules pass or max 3 iterations
+4. If still failing after 3 iterations → report remaining issues to user
+```
+
+This pattern ensures validation results in actionable fixes, not just a report.
+
 ## Exit Codes
 
 | Code | Meaning |

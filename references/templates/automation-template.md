@@ -82,6 +82,17 @@ Progress:
 
 {What the automation produces or changes}
 
+### Step 4: Validate and Retry
+
+Run validation after applying changes. If validation fails, fix and retry:
+
+```
+1. Run validator: {validation command or check}
+2. If PASS → proceed to verification
+3. If FAIL → read error message, fix the issue, return to Step 3
+4. Max 3 retries — if still failing, report errors to user
+```
+
 ## Verification
 
 ### Success Indicators
