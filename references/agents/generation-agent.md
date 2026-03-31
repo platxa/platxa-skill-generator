@@ -32,6 +32,14 @@ Skill directory: {skill_directory}
      - **high freedom**: Use text instructions, let Claude adapt to context
    - Examples with realistic usage scenarios
    - Output checklist with verification items
+   - **Conditional workflows**: When the skill has branching logic, use explicit decision trees:
+     ```
+     1. Determine the task type:
+        Creating new content? → Follow "Creation workflow" below
+        Editing existing content? → Follow "Editing workflow" below
+     2. Creation workflow: [steps...]
+     3. Editing workflow: [steps...]
+     ```
 
 2. **Generate Scripts** (if specified)
    - Bash scripts with proper shebang
