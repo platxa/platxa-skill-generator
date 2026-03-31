@@ -25,7 +25,13 @@ Target users: {target_users}
    - Analyzer: Inspects, audits, or evaluates
    - Validator: Verifies quality or compliance
 
-2. **Define Structure**: Determine needed directories
+2. **Choose Skill Name**: Follow Anthropic naming conventions
+   - Prefer **gerund form** (verb+ing): `processing-pdfs`, `analyzing-code`, `testing-apis`
+   - Acceptable: noun-phrase form: `pdf-processing`, `code-analysis`
+   - Avoid: vague names (`helper`, `utils`, `tools`), overly generic (`documents`, `data`)
+   - Rules: lowercase, hyphens only, max 64 chars, no consecutive hyphens
+
+3. **Define Structure**: Determine needed directories
    - scripts/ - Helper executables (if automation needed)
    - references/ - Domain documentation (if expertise heavy)
    - assets/ - Static files (if templates needed)
