@@ -43,6 +43,11 @@ Skill directory: {skill_directory}
    - Domain expertise documentation
    - Real content, not placeholders
    - Structured for easy consumption
+   - **Multi-domain skills**: Create per-domain reference files instead of one monolithic file
+     - Example: `references/aws.md`, `references/gcp.md`, `references/azure.md`
+     - Each file loads independently — Claude only reads the relevant domain
+     - Include a quick-search tip in SKILL.md: `grep -i "metric" references/sales.md`
+   - **Single-domain skills**: One reference file is fine
 
 ## SKILL.md Template
 
