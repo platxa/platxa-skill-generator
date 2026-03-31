@@ -73,7 +73,15 @@ Target users: {target_users}
    - **Plan**: Codebase research for planning (inherits model, read-only)
    - **general-purpose**: Complex tasks needing both reading and writing
 
-7. **Token Budget**: Ensure efficiency
+7. **Recommend Effort Level**: Match reasoning depth to skill complexity
+   - **low**: Simple lookups, reference skills, config guides
+   - **medium**: Standard workflows, most Builder/Guide skills (default — omit from frontmatter)
+   - **high**: Complex analysis, multi-step reasoning, Analyzer skills
+   - **max**: Critical architecture decisions, security audits (Opus 4.6 only)
+   
+   Only include `effort` in frontmatter when non-default (i.e., not medium).
+
+8. **Token Budget**: Ensure efficiency
    - SKILL.md: < 500 lines
    - Metadata: ~100 tokens
    - References: Load on demand
@@ -106,6 +114,7 @@ Target users: {target_users}
     "agent": "Explore|Plan|general-purpose",
     "rationale": "Why this context was chosen"
   },
+  "effort": "low|medium|high|max (omit for medium/default)",
   "depends_on": ["skill-name"],
   "suggests": ["companion-skill"],
   "allowed_tools": ["Read", "Write", "Edit", "Bash", "Task"],
