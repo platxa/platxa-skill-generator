@@ -209,6 +209,29 @@ main() {
 main "$@"
 ```
 
+## Package Dependencies
+
+When scripts require external packages:
+
+**Python scripts:**
+```bash
+# Check and install if missing
+command -v pip3 &>/dev/null || die "pip3 required"
+pip3 install --quiet pdfplumber 2>/dev/null || die "Failed to install pdfplumber"
+```
+
+**Or document in SKILL.md:**
+```markdown
+## Prerequisites
+Install required packages: `pip install pdfplumber tiktoken`
+```
+
+**Rules:**
+- Never assume packages are available
+- Include install commands or document prerequisites
+- Check for tools before using them (`command -v jq` before using jq)
+- Prefer stdlib-only scripts when possible (zero dependencies)
+
 ## Quality Requirements
 
 - [ ] Scripts use `#!/usr/bin/env bash`
@@ -219,6 +242,7 @@ main "$@"
 - [ ] Scripts are portable (no bash-specific features without fallback)
 - [ ] Variables are quoted properly
 - [ ] Scripts handle missing arguments gracefully
+- [ ] Package dependencies are documented or auto-installed
 ```
 
 ## Usage
