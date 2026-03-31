@@ -78,14 +78,22 @@ Verify the output:
 
 ## Templates
 
-### {Template Name 1}
+Choose strictness based on how critical consistency is:
+
+### Strict Template (for output formats that must be exact)
+
+ALWAYS use this exact template structure:
+
 ```
-{Template content}
+{Exact template with required sections, field names, and format}
 ```
 
-### {Template Name 2}
+### Flexible Template (for output where adaptation is useful)
+
+Use this as a sensible default, but adapt based on context:
+
 ```
-{Template content}
+{Template with sections that can be reordered or customized}
 ```
 
 ## Examples
