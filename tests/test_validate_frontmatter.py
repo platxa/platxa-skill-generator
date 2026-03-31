@@ -540,3 +540,152 @@ class TestSuggestsValidation:
         result = run_validate_frontmatter(temp_skill_dir)
         assert result.returncode == 1
         assert "Invalid suggestion name" in result.stderr
+
+
+class TestContextFieldValidation:
+    """Tests for context field validation."""
+
+    @pytest.mark.frontmatter
+    def test_valid_context_fork_passes(
+        self,
+        temp_skill_dir: Path,
+        run_validate_frontmatter,
+    ) -> None:
+        """context: fork is accepted."""
+        skill_md = temp_skill_dir / "SKILL.md"
+        skill_md.write_text(
+            "---\n"
+            "name: fork-skill\n"
+            "description: A skill that runs in a forked subagent context.\n"
+            "context: fork\n"
+            "---\n\n# Content\n"
+        )
+        result = run_validate_frontmatter(temp_skill_dir)
+        assert result.returncode == 0
+        assert "context field valid" in result.stdout
+
+    @pytest.mark.frontmatter
+    def test_invalid_context_fails(
+        self,
+        temp_skill_dir: Path,
+        run_validate_frontmatter,
+    ) -> None:
+        """Invalid context values are rejected."""
+        skill_md = temp_skill_dir / "SKILL.md"
+        skill_md.write_text(
+            "---\n"
+            "name: bad-context-skill\n"
+            "description: A skill with invalid context value.\n"
+            "context: isolated\n"
+            "---\n\n# Content\n"
+        )
+        result = run_validate_frontmatter(temp_skill_dir)
+        assert result.returncode == 1
+        assert "Invalid context" in result.stderr
+
+    @pytest.mark.frontmatter
+    def test_agent_without_context_warns(
+        self,
+        temp_skill_dir: Path,
+        run_validate_frontmatter,
+    ) -> None:
+        """agent field without context: fork triggers a warning."""
+        skill_md = temp_skill_dir / "SKILL.md"
+        skill_md.write_text(
+            "---\n"
+            "name: orphan-agent-skill\n"
+            "description: A skill with agent but no context fork.\n"
+            "agent: Explore\n"
+            "---\n\n# Content\n"
+        )
+        result = run_validate_frontmatter(temp_skill_dir)
+        assert result.returncode == 0  # Warning, not error
+        assert "agent" in result.stderr.lower() and "ignored" in result.stderr.lower()
+
+
+class TestEffortFieldValidation:
+    """Tests for effort field validation."""
+
+    @pytest.mark.frontmatter
+    def test_valid_effort_values_pass(
+        self,
+        temp_skill_dir: Path,
+        run_validate_frontmatter,
+    ) -> None:
+        """All valid effort values (low, medium, high, max) are accepted."""
+        for effort in ["low", "medium", "high", "max"]:
+            skill_dir = temp_skill_dir / effort
+            skill_dir.mkdir(exist_ok=True)
+            (skill_dir / "SKILL.md").write_text(
+                f"---\nname: effort-{effort}\n"
+                f"description: A skill testing effort level {effort}.\n"
+                f"effort: {effort}\n"
+                "---\n\n# Content\n"
+            )
+            result = run_validate_frontmatter(skill_dir)
+            assert result.returncode == 0, (
+                f"Expected exit 0 for effort={effort}. stderr: {result.stderr}"
+            )
+
+    @pytest.mark.frontmatter
+    def test_invalid_effort_fails(
+        self,
+        temp_skill_dir: Path,
+        run_validate_frontmatter,
+    ) -> None:
+        """Invalid effort values are rejected."""
+        skill_md = temp_skill_dir / "SKILL.md"
+        skill_md.write_text(
+            "---\n"
+            "name: bad-effort-skill\n"
+            "description: A skill with invalid effort level.\n"
+            "effort: extreme\n"
+            "---\n\n# Content\n"
+        )
+        result = run_validate_frontmatter(temp_skill_dir)
+        assert result.returncode == 1
+        assert "Invalid effort" in result.stderr
+
+
+class TestShellFieldValidation:
+    """Tests for shell field validation."""
+
+    @pytest.mark.frontmatter
+    def test_valid_shell_values_pass(
+        self,
+        temp_skill_dir: Path,
+        run_validate_frontmatter,
+    ) -> None:
+        """bash and powershell are accepted."""
+        for shell in ["bash", "powershell"]:
+            skill_dir = temp_skill_dir / shell
+            skill_dir.mkdir(exist_ok=True)
+            (skill_dir / "SKILL.md").write_text(
+                f"---\nname: shell-{shell}\n"
+                f"description: A skill testing shell value {shell}.\n"
+                f"shell: {shell}\n"
+                "---\n\n# Content\n"
+            )
+            result = run_validate_frontmatter(skill_dir)
+            assert result.returncode == 0, (
+                f"Expected exit 0 for shell={shell}. stderr: {result.stderr}"
+            )
+
+    @pytest.mark.frontmatter
+    def test_invalid_shell_fails(
+        self,
+        temp_skill_dir: Path,
+        run_validate_frontmatter,
+    ) -> None:
+        """Invalid shell values are rejected."""
+        skill_md = temp_skill_dir / "SKILL.md"
+        skill_md.write_text(
+            "---\n"
+            "name: bad-shell-skill\n"
+            "description: A skill with invalid shell value.\n"
+            "shell: zsh\n"
+            "---\n\n# Content\n"
+        )
+        result = run_validate_frontmatter(temp_skill_dir)
+        assert result.returncode == 1
+        assert "Invalid shell" in result.stderr

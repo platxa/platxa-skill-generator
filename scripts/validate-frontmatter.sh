@@ -233,6 +233,71 @@ if [[ -n "$SUGGESTS" ]]; then
     done <<< "$SUGGESTS"
 fi
 
+# Check context field (must be "fork" if present)
+CONTEXT=$(echo "$FRONTMATTER" | grep -E '^context:' | sed 's/^context:\s*//' | tr -d '"' | tr -d "'" || echo "")
+
+if [[ -n "$CONTEXT" ]]; then
+    if [[ "$CONTEXT" == "fork" ]]; then
+        info "context field valid: fork"
+    else
+        error "Invalid context: $CONTEXT (must be 'fork')"
+    fi
+fi
+
+# Check agent field (only valid with context: fork)
+AGENT=$(echo "$FRONTMATTER" | grep -E '^agent:' | sed 's/^agent:\s*//' | tr -d '"' | tr -d "'" || echo "")
+
+if [[ -n "$AGENT" ]]; then
+    if [[ -z "$CONTEXT" ]]; then
+        warn "agent field set but context is not 'fork' — agent will be ignored"
+    else
+        info "agent field present: $AGENT"
+    fi
+fi
+
+# Check effort field (must be low/medium/high/max if present)
+EFFORT=$(echo "$FRONTMATTER" | grep -E '^effort:' | sed 's/^effort:\s*//' | tr -d '"' | tr -d "'" || echo "")
+
+if [[ -n "$EFFORT" ]]; then
+    if [[ "$EFFORT" =~ ^(low|medium|high|max)$ ]]; then
+        info "effort field valid: $EFFORT"
+    else
+        error "Invalid effort: $EFFORT (must be low, medium, high, or max)"
+    fi
+fi
+
+# Check argument-hint field (just validate it's a non-empty string)
+ARG_HINT=$(echo "$FRONTMATTER" | grep -E '^argument-hint:' | sed 's/^argument-hint:\s*//' || echo "")
+
+if [[ -n "$ARG_HINT" ]]; then
+    info "argument-hint field present: $ARG_HINT"
+fi
+
+# Check shell field (must be bash or powershell if present)
+SHELL_VAL=$(echo "$FRONTMATTER" | grep -E '^shell:' | sed 's/^shell:\s*//' | tr -d '"' | tr -d "'" || echo "")
+
+if [[ -n "$SHELL_VAL" ]]; then
+    if [[ "$SHELL_VAL" =~ ^(bash|powershell)$ ]]; then
+        info "shell field valid: $SHELL_VAL"
+    else
+        error "Invalid shell: $SHELL_VAL (must be bash or powershell)"
+    fi
+fi
+
+# Check paths field (just validate presence, glob patterns are free-form)
+HAS_PATHS=$(echo "$FRONTMATTER" | grep -E '^paths:' || echo "")
+
+if [[ -n "$HAS_PATHS" ]]; then
+    info "paths field present (glob patterns for activation scope)"
+fi
+
+# Check hooks field (just validate presence — structure is complex YAML)
+HAS_HOOKS=$(echo "$FRONTMATTER" | grep -E '^hooks:' || echo "")
+
+if [[ -n "$HAS_HOOKS" ]]; then
+    info "hooks field present (lifecycle hooks)"
+fi
+
 # Check for unknown fields
 echo ""
 echo "Checking for unknown fields..."
