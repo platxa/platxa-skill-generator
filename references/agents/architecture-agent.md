@@ -58,7 +58,19 @@ Target users: {target_users}
    - Is the skill reference knowledge without an actionable command? → user-invocable: false
    - Is the skill safe for both user and Claude to trigger? → default
 
-6. **Token Budget**: Ensure efficiency
+6. **Determine Execution Context**: Should the skill run in isolation?
+   - **default** (inline): Skill runs in main conversation context. Use for reference knowledge, conventions, lightweight tasks
+   - **context: fork** (isolated subagent): Skill runs in its own context window. Use when:
+     - The task produces verbose output that would pollute main context
+     - The task is self-contained and returns a summary
+     - The task needs specific tool restrictions or model selection
+   
+   If `context: fork`, also recommend an agent type:
+   - **Explore**: Read-only research and analysis (fastest, uses Haiku)
+   - **Plan**: Codebase research for planning (inherits model, read-only)
+   - **general-purpose**: Complex tasks needing both reading and writing
+
+7. **Token Budget**: Ensure efficiency
    - SKILL.md: < 500 lines
    - Metadata: ~100 tokens
    - References: Load on demand
@@ -85,6 +97,11 @@ Target users: {target_users}
   "invocation_mode": {
     "mode": "default|disable-model-invocation|user-invocable-false",
     "rationale": "Why this mode was chosen"
+  },
+  "execution_context": {
+    "context": "inline|fork",
+    "agent": "Explore|Plan|general-purpose",
+    "rationale": "Why this context was chosen"
   },
   "depends_on": ["skill-name"],
   "suggests": ["companion-skill"],
