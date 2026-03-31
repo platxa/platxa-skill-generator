@@ -253,7 +253,7 @@ if [[ -f "$SKILL_MD" ]]; then
 
     if [[ $BROKEN_LINKS -eq 0 ]]; then
         # Count valid links
-        LINK_COUNT=$(grep -coP '\[([^\]]*)\]\((?!https?://|#|mailto:)([^)]+)\)' "$SKILL_MD" 2>/dev/null || echo "0")
+        LINK_COUNT=$(grep -cP '\[([^\]]*)\]\((?!https?://|#|mailto:)([^)]+)\)' "$SKILL_MD" 2>/dev/null || echo "0")
         if [[ "$LINK_COUNT" -gt 0 ]]; then
             info "All $LINK_COUNT reference links are valid"
         else
@@ -262,6 +262,28 @@ if [[ -f "$SKILL_MD" ]]; then
             fi
         fi
     fi
+fi
+
+# Check 9: Detect Windows-style backslash paths in markdown files
+echo ""
+echo "Checking for Windows-style paths..."
+
+BACKSLASH_FILES=0
+shopt -s nullglob
+for md_file in "$SKILL_DIR"/*.md "$SKILL_DIR"/references/*.md; do
+    [[ -f "$md_file" ]] || continue
+    # Look for backslash paths like scripts\helper.py or references\guide.md
+    # Skip URLs (https:\\ is not a path) and escape sequences in code blocks
+    if grep -qE '(scripts|references|assets|src|lib)\\[a-zA-Z]' "$md_file" 2>/dev/null; then
+        fname=$(basename "$md_file")
+        warn "$fname: Contains Windows-style backslash paths (use forward slashes)"
+        ((BACKSLASH_FILES++)) || true
+    fi
+done
+shopt -u nullglob
+
+if [[ $BACKSLASH_FILES -eq 0 ]]; then
+    info "No Windows-style paths detected"
 fi
 
 # Summary

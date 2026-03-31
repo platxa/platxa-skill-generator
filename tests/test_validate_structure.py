@@ -380,3 +380,41 @@ class TestReferenceLinkValidation:
 
         assert result.returncode == 0, f"Expected exit 0. stderr: {result.stderr}"
         assert "valid" in result.stdout.lower() or "reference links" in result.stdout.lower()
+
+
+class TestWindowsPathValidation:
+    """Tests for Windows-style backslash path detection."""
+
+    @pytest.mark.structure
+    def test_backslash_paths_warns(
+        self,
+        temp_skill_dir: Path,
+        run_validate_structure,
+    ) -> None:
+        """Windows-style backslash paths trigger a warning."""
+        skill_md = temp_skill_dir / "SKILL.md"
+        skill_md.write_text(
+            "---\nname: win-paths\n"
+            "description: A skill with Windows paths.\n"
+            "---\n\n# Skill\n\n"
+            "See scripts\\helper.py for the implementation.\n"
+        )
+        result = run_validate_structure(temp_skill_dir)
+        assert result.returncode == 0  # Warning, not error
+        assert "backslash" in result.stderr.lower() or "windows" in result.stderr.lower()
+
+    @pytest.mark.structure
+    def test_forward_slash_paths_not_warned(
+        self,
+        temp_skill_dir: Path,
+        run_validate_structure,
+    ) -> None:
+        """Forward slash paths are fine."""
+        create_skill_md(
+            temp_skill_dir,
+            name="unix-paths",
+            description="A skill with Unix-style forward slash paths.",
+        )
+        result = run_validate_structure(temp_skill_dir)
+        assert "backslash" not in result.stderr.lower()
+        assert "windows" not in result.stderr.lower()
