@@ -209,6 +209,29 @@ main() {
 main "$@"
 ```
 
+## Verifiable Intermediate Outputs
+
+For multi-step scripts, save intermediate results to files so they can be
+inspected before proceeding to the next step:
+
+```bash
+# Step 1: Analyze → save intermediate result
+analyze_input "$INPUT" > "$TMPDIR/analysis.json"
+echo "Analysis saved to $TMPDIR/analysis.json — inspect before proceeding"
+
+# Step 2: Validate intermediate result
+validate_plan "$TMPDIR/analysis.json" || die "Validation failed — fix analysis.json"
+
+# Step 3: Apply (only after validation passes)
+apply_changes "$TMPDIR/analysis.json" "$OUTPUT"
+```
+
+**Rules:**
+- Name intermediate files descriptively: `analysis.json`, `plan.json`, `changes.json`
+- Print the path so users can inspect: "Saved to X — inspect before proceeding"
+- Validate intermediate files before using them in the next step
+- Use for: batch operations, destructive changes, complex transformations
+
 ## Package Dependencies
 
 When scripts require external packages:
