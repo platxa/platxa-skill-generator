@@ -60,6 +60,16 @@ This automation should run when:
 
 ## Process
 
+Copy this checklist and track progress:
+
+```
+Progress:
+- [ ] Step 1: Detect/validate input
+- [ ] Step 2: Process/transform
+- [ ] Step 3: Apply output
+- [ ] Step 4: Verify results
+```
+
 ### Step 1: {Detection/Input}
 
 {What the automation detects or accepts as input}

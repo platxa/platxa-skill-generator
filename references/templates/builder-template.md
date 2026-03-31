@@ -42,6 +42,16 @@ This skill creates {artifact type} by {method}. It's designed for {target users}
 
 ## Workflow
 
+Copy this checklist and track progress:
+
+```
+Progress:
+- [ ] Step 1: Gather requirements
+- [ ] Step 2: Analyze context
+- [ ] Step 3: Generate output
+- [ ] Step 4: Validate output
+```
+
 ### Step 1: Gather Requirements
 
 Ask the user for:
