@@ -167,6 +167,13 @@ Review the changes above...
 - Only use when the skill genuinely needs live runtime data
 - For static data, use regular markdown instead
 
+## Skill-to-Skill Invocation
+
+When a skill invokes other skills (e.g., a workflow skill that calls `/lint` then `/test`):
+- Include `Skill` in the `allowed-tools` list
+- Reference other skills by name: "Invoke the `/lint` skill to check code quality"
+- If the skill requires specific other skills, add them to `depends-on`
+
 ## Quality Requirements
 
 - [ ] Name is hyphen-case, ≤64 characters
@@ -175,6 +182,7 @@ Review the changes above...
 - [ ] All sections have real content
 - [ ] Examples are realistic and helpful
 - [ ] Scripts are executable and tested
+- [ ] Skills that invoke other skills include `Skill` in allowed-tools
 - [ ] References contain actual domain expertise
 ```
 
