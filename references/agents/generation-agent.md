@@ -112,6 +112,34 @@ Use Claude Code's built-in string substitutions for portable, dynamic skills:
 - Never hardcode absolute paths to the skill directory
 - If `$ARGUMENTS` is not present in the content, arguments are appended as `ARGUMENTS: <value>` automatically
 
+## Dynamic Context Injection
+
+When a skill needs live data at invocation time, use the `` !`command` `` syntax.
+These shell commands run **before** the skill content reaches Claude — the output
+replaces the placeholder inline.
+
+**When to use:**
+- Skill needs current git state: `` !`git status --short` ``
+- Skill needs environment info: `` !`node --version` ``
+- Skill needs file listings: `` !`ls src/` ``
+- Skill needs PR context: `` !`gh pr diff` ``
+
+**Example in a PR review skill:**
+```markdown
+## Current PR context
+- Changed files: !`gh pr diff --name-only`
+- PR description: !`gh pr view --json body -q .body`
+
+## Your task
+Review the changes above...
+```
+
+**Rules:**
+- Commands run as preprocessing — Claude only sees the output
+- Keep commands fast and deterministic (no interactive commands)
+- Only use when the skill genuinely needs live runtime data
+- For static data, use regular markdown instead
+
 ## Quality Requirements
 
 - [ ] Name is hyphen-case, ≤64 characters
