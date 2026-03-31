@@ -42,11 +42,14 @@ Target users: {target_users}
    
    Analogy: narrow bridge (low freedom, exact steps) vs open field (high freedom, general direction)
 
-4. **Analyze Dependencies**: Check if this skill relates to existing skills
-   - Search ~/.claude/skills/ and .claude/skills/ for installed skills
-   - If the new skill requires functionality from another skill → `depends-on`
-   - If the new skill works better alongside another skill → `suggests`
-   - Only declare real relationships, not speculative ones
+4. **Analyze Skill Composition**: Proactively scan for composition opportunities
+   - List installed skills: `ls ~/.claude/skills/ .claude/skills/ 2>/dev/null`
+   - Read each installed skill's description to understand capabilities
+   - **depends-on**: New skill requires functionality from an installed skill
+   - **suggests**: New skill works better alongside an installed skill
+   - Proactively recommend relationships even if user didn't mention them
+   - Only declare real relationships — verify the installed skill actually provides what's needed
+   - Example: A "deploy" skill might `suggests: ["test-runner"]` even if user didn't mention testing
 
 5. **Determine Invocation Control**: Decide how the skill should be triggered
    - **default** (both user and Claude can invoke): Use for reference knowledge, coding patterns, conventions
