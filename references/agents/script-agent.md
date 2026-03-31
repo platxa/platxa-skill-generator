@@ -49,6 +49,53 @@ info() {
 }
 ```
 
+### Solve, Don't Punt (Error Recovery)
+
+Scripts must handle errors explicitly instead of failing and letting Claude figure it out.
+
+**Bash — trap and recover:**
+```bash
+# Clean up on exit (trap pattern)
+cleanup() {
+    rm -f "$TMPFILE" 2>/dev/null
+}
+trap cleanup EXIT
+
+# File operations with fallback
+read_config() {
+    local config="$1"
+    if [[ -f "$config" ]]; then
+        cat "$config"
+    else
+        warn "Config not found: $config — using defaults"
+        echo "{}"  # Return sensible default instead of failing
+    fi
+}
+```
+
+**Python — try/except with recovery:**
+```python
+def process_file(path: str) -> str:
+    """Process file, creating it with defaults if missing."""
+    try:
+        with open(path) as f:
+            return f.read()
+    except FileNotFoundError:
+        print(f"File {path} not found, creating default", file=sys.stderr)
+        with open(path, "w") as f:
+            f.write("")
+        return ""
+    except PermissionError:
+        print(f"Cannot access {path}, using default", file=sys.stderr)
+        return ""
+```
+
+**Rules:**
+- Never let scripts fail silently — always print what went wrong to stderr
+- Provide sensible defaults instead of crashing on missing inputs
+- Use trap for cleanup of temporary files
+- Document all magic numbers: `TIMEOUT = 30  # HTTP requests typically complete within 30s`
+
 ### Argument Parsing
 
 ```bash
