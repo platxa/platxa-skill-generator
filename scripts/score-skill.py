@@ -76,6 +76,8 @@ VALID_TOOLS = {
     "LS",
     "Bash",
     "Task",
+    "Agent",
+    "Skill",
     "WebFetch",
     "WebSearch",
     "AskUserQuestion",

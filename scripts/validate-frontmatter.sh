@@ -166,7 +166,7 @@ if [[ -n "$HAS_TOOLS" ]]; then
         info "tools field present with $TOOL_COUNT tools"
 
         # Validate tool names
-        VALID_TOOLS="Read Write Edit MultiEdit Glob Grep LS Bash Task WebFetch WebSearch AskUserQuestion TodoWrite KillShell BashOutput NotebookEdit"
+        VALID_TOOLS="Read Write Edit MultiEdit Glob Grep LS Bash Task Agent Skill WebFetch WebSearch AskUserQuestion TodoWrite KillShell BashOutput NotebookEdit"
 
         while IFS= read -r TOOL; do
             [[ -z "$TOOL" ]] && continue
