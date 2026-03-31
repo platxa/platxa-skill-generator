@@ -393,6 +393,20 @@ class TestStructure:
         data = get_score(temp_skill_dir)
         assert data["dimensions"]["structure"]["score"] >= 8.0
 
+    def test_heading_level_skip_penalized(self, temp_skill_dir: Path) -> None:
+        """Jumping from ## to #### without ### is penalized."""
+        content = (
+            "---\nname: skip-headings\n"
+            "description: Skill with heading level skips. Use when testing structure.\n"
+            "---\n\n# Skill\n\n## Overview\n\nContent.\n\n"
+            "#### Deep heading without ###\n\nMore content.\n\n"
+            "## Workflow\n\n1. Do thing.\n\n## Examples\n\nSee docs.\n"
+        )
+        (temp_skill_dir / "SKILL.md").write_text(content)
+        data = get_score(temp_skill_dir)
+        struct = data["dimensions"]["structure"]
+        assert any("heading" in s.lower() and "skip" in s.lower() for s in struct["negative"])
+
     def test_nested_references_penalized(self, temp_skill_dir: Path) -> None:
         """SKILL.md -> a.md -> b.md is a nested reference chain."""
         (temp_skill_dir / "SKILL.md").write_text(
