@@ -645,6 +645,37 @@ def score_example_quality(body: str) -> DimensionScore:
                 dim.signals_negative.append(f"Invalid {block['language']} syntax in code block")
                 dim.suggestions.append(f"Fix {block['language']} syntax error in code example")
 
+    # Check for magic numbers in code blocks (unexplained constants)
+    magic_count = 0
+    for block in blocks:
+        if block["language"] in (
+            "python",
+            "py",
+            "bash",
+            "sh",
+            "javascript",
+            "js",
+            "typescript",
+            "ts",
+        ):
+            # Find assignments like TIMEOUT=47, RETRIES=5, MAX_ITEMS = 100
+            assignments = re.findall(r"[A-Z_]{2,}\s*=\s*\d{2,}", block["content"])
+            for assignment in assignments:
+                # Check if the line has a comment explaining the value
+                for line in block["content"].splitlines():
+                    if assignment in line and "#" not in line and "//" not in line:
+                        magic_count += 1
+
+    if magic_count >= 2:
+        dim.score -= 1.0
+        dim.signals_negative.append(f"Undocumented magic numbers in code ({magic_count})")
+        dim.suggestions.append(
+            "Add comments explaining numeric constants: TIMEOUT = 30  # HTTP requests typically complete within 30s"
+        )
+    elif magic_count == 1:
+        dim.score -= 0.5
+        dim.signals_negative.append("Undocumented magic number in code")
+
     dim.score = max(0.0, dim.score)
     return dim
 

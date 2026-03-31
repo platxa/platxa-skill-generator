@@ -329,6 +329,39 @@ class TestExampleQuality:
         data = get_score(temp_skill_dir)
         assert data["dimensions"]["example_quality"]["score"] >= 7.0
 
+    def test_magic_numbers_penalized(self, temp_skill_dir: Path) -> None:
+        """Undocumented numeric constants in code blocks are penalized."""
+        content = (
+            "---\nname: magic-nums\n"
+            "description: A skill with undocumented magic numbers.\n---\n\n"
+            "# Magic Nums\n\n## Overview\n\nConfig skill.\n\n"
+            "## Workflow\n\n```python\n"
+            "TIMEOUT = 47\n"
+            "MAX_RETRIES = 99\n"
+            "BATCH_SIZE = 256\n"
+            "```\n\n## Examples\n\n```bash\necho done\n```\n"
+        )
+        (temp_skill_dir / "SKILL.md").write_text(content)
+        data = get_score(temp_skill_dir)
+        examples = data["dimensions"]["example_quality"]
+        assert any("magic" in s.lower() for s in examples["negative"])
+
+    def test_documented_constants_not_penalized(self, temp_skill_dir: Path) -> None:
+        """Constants with comments explaining the value are not flagged."""
+        content = (
+            "---\nname: doc-nums\n"
+            "description: A skill with documented constants.\n---\n\n"
+            "# Doc Nums\n\n## Overview\n\nConfig skill.\n\n"
+            "## Workflow\n\n```python\n"
+            "TIMEOUT = 30  # HTTP requests typically complete within 30s\n"
+            "MAX_RETRIES = 3  # Most failures resolve by second retry\n"
+            "```\n\n## Examples\n\n```bash\necho done\n```\n"
+        )
+        (temp_skill_dir / "SKILL.md").write_text(content)
+        data = get_score(temp_skill_dir)
+        examples = data["dimensions"]["example_quality"]
+        assert not any("magic" in s.lower() for s in examples["negative"])
+
 
 class TestStructure:
     def test_missing_overview_scores_low(self, temp_skill_dir: Path) -> None:
