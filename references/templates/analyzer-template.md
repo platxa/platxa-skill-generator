@@ -151,9 +151,36 @@ Assistant: Focused analysis on {category}:
 - 🟢 **Low**: Nice to have
 ```
 
+## Visual Output (Optional)
+
+For data-rich analyzer skills, consider bundling a Python script that generates an
+interactive HTML report:
+
+```python
+# scripts/visualize.py — generates self-contained HTML report
+# Usage: python scripts/visualize.py <analysis-output.json>
+# Opens in browser automatically
+
+import json, webbrowser
+from pathlib import Path
+
+def generate_html(data: dict, output: Path) -> None:
+    # Build self-contained HTML with embedded CSS/JS
+    # Include: summary sidebar, bar charts, collapsible sections
+    html = f"<!DOCTYPE html>..."  # Full HTML with data embedded
+    output.write_text(html)
+
+if __name__ == "__main__":
+    # Load analysis data, generate HTML, open in browser
+    webbrowser.open(f"file://{output.absolute()}")
+```
+
+This pattern works for: dependency graphs, coverage reports, metric dashboards, schema visualizations.
+
 ## Key Sections for Analyzers
 
 1. **Checklist**: What to inspect
 2. **Metrics**: Quantitative measures
 3. **Report Format**: Output structure
 4. **Interpretation**: Help users understand results
+5. **Visual Output**: Optional HTML visualization script
