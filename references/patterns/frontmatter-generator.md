@@ -4,10 +4,18 @@ Generate spec-compliant YAML frontmatter for SKILL.md files.
 
 ## Specification Requirements
 
-From Agent Skills Spec v1.0:
+From Agent Skills Spec v1.0 + Claude Code extensions:
 - `name`: Required, hyphen-case, ≤64 characters
-- `description`: Required, ≤1024 characters
+- `description`: Required, ≤1024 characters, front-load key use case in first 250 chars
+- `argument-hint`: Optional, shown during autocomplete (e.g., `[filename]`, `[focus area]`)
 - `allowed-tools`: Optional, list of valid tool names
+- `disable-model-invocation`: Optional, `true` for user-only skills with side effects
+- `user-invocable`: Optional, `false` for Claude-only background knowledge
+- `context`: Optional, `fork` to run in isolated subagent
+- `agent`: Optional, subagent type when `context: fork` (Explore, Plan, general-purpose)
+- `effort`: Optional, thinking depth (low, medium, high, max) — omit for default (medium)
+- `paths`: Optional, glob patterns for file-type activation scope
+- `hooks`: Optional, lifecycle hooks for tool validation
 - `metadata`: Optional, additional key-value pairs
 
 ## Valid Tool Names
@@ -50,7 +58,15 @@ FUNCTION generate_frontmatter(blueprint, discovery):
     tools = determine_tools(blueprint.skill_type, discovery)
     frontmatter.allowed_tools = tools
 
-    # Step 4: Add metadata
+    # Step 4: Generate argument-hint (if skill accepts arguments)
+    IF blueprint.accepts_arguments:
+        frontmatter.argument_hint = generate_argument_hint(blueprint)
+
+    # Step 5: Apply execution sophistication
+    IF blueprint.execution_sophistication:
+        apply_sophistication(frontmatter, blueprint.execution_sophistication)
+
+    # Step 6: Add metadata
     frontmatter.metadata = {
         version: "1.0.0",
         author: discovery.author or "Generated",
@@ -195,6 +211,48 @@ FUNCTION generate_metadata(discovery, blueprint):
         metadata.repository = discovery.repository
 
     RETURN metadata
+```
+
+## Argument Hint Generation
+
+```markdown
+FUNCTION generate_argument_hint(blueprint):
+    # Format: [required-arg] [optional-arg]
+    # Use square brackets for all args, describe content not type
+    hints = []
+    FOR arg IN blueprint.arguments:
+        IF arg.required:
+            hints.append(f"<{arg.name}>")
+        ELSE:
+            hints.append(f"[{arg.name}]")
+    RETURN " ".join(hints)
+```
+
+Common argument-hint patterns:
+
+| Skill Type | Hint | Example Invocation |
+|-----------|------|-------------------|
+| Analyzer | `[focus area]` | `/review focus on security` |
+| Builder | `<target>` | `/generate-api users` |
+| Automation | `[options]` | `/deploy --staging` |
+| Validator | `[path]` | `/check-style src/` |
+
+## Execution Sophistication Tool Adjustment
+
+```markdown
+FUNCTION apply_sophistication(frontmatter, sophistication):
+    SWITCH sophistication.level:
+        CASE "intermediate":
+            ensure_tool(frontmatter, "Task")
+            IF sophistication.auto_fix:
+                ensure_tool(frontmatter, "Edit")
+
+        CASE "advanced":
+            ensure_tool(frontmatter, "Task")
+            ensure_tool(frontmatter, "Edit")
+            IF sophistication.claude_md_integration:
+                # No extra tool needed — CLAUDE.md is auto-loaded
+                pass
 ```
 
 ## Output Format
