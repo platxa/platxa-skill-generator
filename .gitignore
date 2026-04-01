@@ -97,7 +97,6 @@ mao_state.db
 
 # Project specific
 .claude/
-CLAUDE.md
 references/.claude/
 **/__pycache__/
 *.log

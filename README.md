@@ -30,7 +30,7 @@
 
 ## Skills Catalog
 
-**16 ready-to-use skills** for the community. Browse and install production-ready skills:
+**17 ready-to-use skills** for the community. Browse and install production-ready skills:
 
 | Skill | Type | Description |
 |-------|------|-------------|
@@ -38,6 +38,7 @@
 | **[commit-message](catalog/commit-message/)** | Automation | Generate conventional commit messages |
 | **[test-generator](catalog/test-generator/)** | Builder | Generate comprehensive unit tests |
 | **[pr-description](catalog/pr-description/)** | Automation | Generate PR descriptions from git history |
+| **[platxa-code-review](catalog/platxa-code-review/)** | Analyzer | Code quality, security, and efficiency analysis |
 | **[platxa-frontend-builder](catalog/platxa-frontend-builder/)** | Builder | React/Next.js component generation |
 | **[platxa-sidecar-builder](catalog/platxa-sidecar-builder/)** | Builder | Node.js sidecar service builder |
 | **[platxa-error-handling](catalog/platxa-error-handling/)** | Guide | Error handling patterns across Platxa stack |
@@ -85,8 +86,8 @@ Platxa Skill Generator creates production-ready Claude Code skills by orchestrat
 | **Token Budget Management** | SKILL.md optimized for context efficiency |
 | **Script Security** | ShellCheck + security pattern scanning |
 | **Web Research** | Automatic domain knowledge discovery |
-| **14 Scripts** | Validation, installation, scoring, dependency checking, graph visualization |
-| **90 Tests** | Comprehensive test suite across 7 test files |
+| **15 Scripts** | Validation, installation, scoring, dependency checking, graph visualization |
+| **125 Tests** | Comprehensive test suite across 7 test files |
 
 ---
 
@@ -169,6 +170,7 @@ cd platxa-skill-generator
 | `validate-structure.sh <dir>` | Check directory structure and file presence |
 | `validate-frontmatter.sh <dir>` | Validate YAML frontmatter fields and formats |
 | `validate-skill.sh <dir>` | Field validation with 0-10 scoring |
+| `validate-catalog-entry.sh <dir>` | Validate a catalog entry for PR submission |
 | `count-tokens.py <dir>` | Token counting with budget enforcement |
 | `score-skill.py <dir>` | 5-dimension quality scorer (--json, --verbose) |
 | `security-check.sh <dir>` | Scan scripts for dangerous patterns |
@@ -218,11 +220,12 @@ platxa-skill-generator/
 ├── pyproject.toml              # Python project config
 ├── LICENSE                     # MIT License
 │
-├── scripts/                    # 14 executable scripts
+├── scripts/                    # 15 executable scripts
 │   ├── validate-all.sh         # Master validation orchestrator
 │   ├── validate-structure.sh   # Directory structure checks
 │   ├── validate-frontmatter.sh # YAML frontmatter validation
 │   ├── validate-skill.sh       # Field validation with scoring
+│   ├── validate-catalog-entry.sh # Catalog entry validator
 │   ├── count-tokens.py         # Token counting (tiktoken)
 │   ├── score-skill.py          # 5-dimension quality scorer
 │   ├── security-check.sh       # Script security scanning
@@ -234,11 +237,12 @@ platxa-skill-generator/
 │   ├── list-installed.sh       # Installed skills lister
 │   └── test-scripts.sh         # Script test runner
 │
-├── catalog/                    # 16 production-ready skills
+├── catalog/                    # 17 production-ready skills
 │   ├── code-documenter/
 │   ├── commit-message/
 │   ├── test-generator/
 │   ├── pr-description/
+│   ├── platxa-code-review/
 │   ├── platxa-frontend-builder/
 │   ├── platxa-sidecar-builder/
 │   ├── platxa-error-handling/
@@ -263,11 +267,11 @@ platxa-skill-generator/
 │   ├── installation/           # Install/export patterns
 │   └── interaction/            # User interaction patterns
 │
-├── tests/                      # 90 tests across 7 files
-│   ├── test_validate_frontmatter.py  # 23 frontmatter tests
-│   ├── test_validate_structure.py    # 12 structure tests
+├── tests/                      # 125 tests across 7 files
+│   ├── test_validate_frontmatter.py  # 33 frontmatter tests
+│   ├── test_validate_structure.py    # 16 structure tests
 │   ├── test_count_tokens.py          # 10 token tests
-│   ├── test_score_skill.py           # 17 quality scorer tests
+│   ├── test_score_skill.py           # 38 quality scorer tests
 │   ├── test_check_dependencies.py    # 8 dependency tests
 │   ├── test_circular_deps.py         # 9 cycle detection tests
 │   ├── test_integration.py           # 11 integration tests
@@ -324,7 +328,7 @@ suggests:            # Recommended companions (shown after install)
 ## Testing
 
 ```bash
-# Run all 90 tests
+# Run all 125 tests
 pytest tests/ -v
 
 # Run specific test file
@@ -368,7 +372,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md). Run before submitting:
 
 ```bash
 ./scripts/validate-all.sh .    # All validators pass
-pytest tests/ -v               # All 90 tests pass
+pytest tests/ -v               # All 125 tests pass
 shellcheck scripts/*.sh        # No warnings
 ```
 
@@ -380,6 +384,6 @@ MIT License -- See [LICENSE](LICENSE) for details.
 
 ---
 
-**Version**: 2.0.0
+**Version**: 2.1.0
 **Created by**: DJ Patel -- Founder & CEO, Platxa | https://platxa.com
 **Based on**: Anthropic's [Agent Skills](https://agentskills.io) Open Standard
