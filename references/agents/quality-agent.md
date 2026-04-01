@@ -106,6 +106,35 @@ Search for these indicators of generic content:
 - Repeated phrases across sections
 ```
 
+### Freedom Level Consistency
+```
+For each section in the architecture blueprint, verify the generated content
+matches the assigned freedom level:
+
+- **low freedom** sections MUST have:
+  - Exact commands or scripts (not "run appropriate command")
+  - Specific file paths or patterns (not "the relevant files")
+  - Step-by-step instructions with no ambiguity
+  - Example: "Run: python scripts/migrate.py --verify --backup"
+
+- **medium freedom** sections MUST have:
+  - A preferred pattern or template with parameters
+  - Clear structure with some room for adaptation
+  - Pseudocode or parameterized scripts
+  - Example: "Use this template and customize as needed: ..."
+
+- **high freedom** sections MUST have:
+  - General direction without prescriptive steps
+  - Multiple valid approaches acknowledged
+  - Context-dependent decision guidance
+  - Example: "Analyze the code structure and suggest improvements"
+
+Flag as issue if:
+  - A low-freedom section says "use your judgment" or "as appropriate"
+  - A high-freedom section has rigid step-by-step commands
+  - A medium-freedom section has neither template nor flexibility
+```
+
 ### Domain Expertise Validation
 ```
 Compare content against discovery findings:
