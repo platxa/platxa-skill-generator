@@ -495,3 +495,111 @@ class TestTokenEfficiency:
         (temp_skill_dir / "SKILL.md").write_text(VALID_SKILL)
         data = get_score(temp_skill_dir)
         assert data["dimensions"]["token_efficiency"]["score"] >= 7.0
+
+
+class TestAdvancedPatternBonuses:
+    """Tests for bonus signals rewarding advanced skill patterns."""
+
+    def _make_skill(self, temp_skill_dir: Path, frontmatter: str, body: str) -> dict:
+        (temp_skill_dir / "SKILL.md").write_text(frontmatter + body)
+        return get_score(temp_skill_dir)
+
+    def _base_body(self) -> str:
+        """Substantial body that scores well on other dimensions."""
+        return (
+            "\n# Analyzer Skill\n\n"
+            "## Overview\n\n"
+            "Analyzes code for quality and performance issues across Python and "
+            "TypeScript codebases. Produces structured reports with severity levels.\n\n"
+            "## Workflow\n\n"
+            "### Step 1: Scope Detection\n\n"
+            "Determine analysis target from git diff or user arguments.\n\n"
+            "### Step 2: Analysis\n\n"
+            "Evaluate code against quality and efficiency checklists.\n\n"
+            "### Step 3: Report\n\n"
+            "Generate structured findings with file:line references.\n\n"
+            "## Examples\n\n"
+            "### Example 1: Standard Review\n\n"
+            "```bash\n/review src/auth/\n```\n\n"
+            "### Example 2: Focused Review\n\n"
+            "```python\ndef validate(data: dict) -> bool:\n    return bool(data.get('id'))\n```\n\n"
+            "## Metrics\n\n"
+            "| Metric | Good | Warning | Bad |\n"
+            "|--------|------|---------|-----|\n"
+            "| Cyclomatic complexity | 1-5 | 6-10 | >10 |\n"
+            "| Function length | 1-25 | 26-50 | >50 |\n"
+        )
+
+    def test_parallel_agents_bonus(self, temp_skill_dir: Path) -> None:
+        """Skills with Task tool and parallel workflow get bonus."""
+        fm = (
+            "---\nname: parallel-analyzer\n"
+            "description: Analyzes code with parallel agents. Use when reviewing code quality.\n"
+            "allowed-tools:\n  - Read\n  - Task\n---\n"
+        )
+        body = self._base_body().replace(
+            "### Step 2: Analysis",
+            "### Step 2: Parallel Analysis\n\n"
+            "Launch all agents in a single message for concurrent execution.\n\n"
+            "### Step 2b: Quality",
+        )
+        data = self._make_skill(temp_skill_dir, fm, body)
+        positives = data["dimensions"]["content_depth"]["positive"]
+        assert any("parallel" in s.lower() for s in positives)
+
+    def test_auto_fix_bonus(self, temp_skill_dir: Path) -> None:
+        """Skills with Edit tool and fix workflow get bonus."""
+        fm = (
+            "---\nname: fixing-analyzer\n"
+            "description: Analyzes and fixes code issues. Use when cleaning up code.\n"
+            "allowed-tools:\n  - Read\n  - Edit\n---\n"
+        )
+        body = self._base_body() + (
+            "\n## Fix Phase\n\nApply fixes for critical issues. Auto-fix unambiguous problems.\n"
+        )
+        data = self._make_skill(temp_skill_dir, fm, body)
+        positives = data["dimensions"]["content_depth"]["positive"]
+        assert any("auto-fix" in s.lower() or "fix" in s.lower() for s in positives)
+
+    def test_claude_md_integration_bonus(self, temp_skill_dir: Path) -> None:
+        """Skills referencing CLAUDE.md conventions get bonus."""
+        fm = (
+            "---\nname: convention-analyzer\n"
+            "description: Analyzes code respecting project conventions. Use when reviewing.\n"
+            "allowed-tools:\n  - Read\n---\n"
+        )
+        body = self._base_body().replace(
+            "### Step 1: Scope Detection",
+            "### Step 0: Read Project Conventions\n\n"
+            "Read the project's CLAUDE.md for coding standards and patterns.\n\n"
+            "### Step 1: Scope Detection",
+        )
+        data = self._make_skill(temp_skill_dir, fm, body)
+        positives = data["dimensions"]["content_depth"]["positive"]
+        assert any("claude.md" in s.lower() for s in positives)
+
+    def test_argument_hint_bonus(self, temp_skill_dir: Path) -> None:
+        """Skills with argument-hint get bonus."""
+        fm = (
+            "---\nname: hinted-analyzer\n"
+            "description: Analyzes code with focus area support. Use when reviewing.\n"
+            'argument-hint: "[focus area]"\n'
+            "allowed-tools:\n  - Read\n---\n"
+        )
+        data = self._make_skill(temp_skill_dir, fm, self._base_body())
+        positives = data["dimensions"]["content_depth"]["positive"]
+        assert any("argument-hint" in s.lower() for s in positives)
+
+    def test_no_bonus_without_patterns(self, temp_skill_dir: Path) -> None:
+        """Skills without advanced patterns don't get false bonuses."""
+        fm = (
+            "---\nname: basic-analyzer\n"
+            "description: Basic analysis skill. Use when reviewing code.\n"
+            "allowed-tools:\n  - Read\n---\n"
+        )
+        data = self._make_skill(temp_skill_dir, fm, self._base_body())
+        positives = data["dimensions"]["content_depth"]["positive"]
+        assert not any("parallel" in s.lower() for s in positives)
+        assert not any("auto-fix" in s.lower() for s in positives)
+        assert not any("claude.md" in s.lower() for s in positives)
+        assert not any("argument-hint" in s.lower() for s in positives)

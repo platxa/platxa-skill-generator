@@ -615,6 +615,55 @@ def score_content_depth(body: str) -> DimensionScore:
     return dim
 
 
+def apply_advanced_pattern_bonuses(dim: DimensionScore, frontmatter: dict, body: str) -> None:
+    """Award bonuses for advanced skill patterns (parallel agents, auto-fix, etc.).
+
+    Applied to the content_depth dimension since it evaluates skill sophistication.
+    """
+    tools = frontmatter.get("allowed-tools", frontmatter.get("tools", []))
+    if not isinstance(tools, list):
+        tools = []
+    tool_set = {t.strip() for t in tools}
+    body_lower = body.lower()
+
+    # Bonus: Parallel sub-agents (Task tool + parallel/concurrent workflow language)
+    parallel_keywords = {"parallel", "concurrent", "simultaneously", "single message"}
+    if ("Task" in tool_set or "Agent" in tool_set) and any(
+        kw in body_lower for kw in parallel_keywords
+    ):
+        dim.score = min(dim.score + 0.5, 10.0)
+        dim.signals_positive.append("Uses parallel sub-agent pattern (Task + parallel workflow)")
+
+    # Bonus: Auto-fix capability (Edit tool + fix/apply workflow language)
+    fix_keywords = {"auto-fix", "apply fix", "fix phase", "apply fixes"}
+    if "Edit" in tool_set and any(kw in body_lower for kw in fix_keywords):
+        dim.score = min(dim.score + 0.5, 10.0)
+        dim.signals_positive.append("Includes auto-fix capability (Edit + fix workflow)")
+
+    # Bonus: CLAUDE.md integration (references project conventions)
+    claude_md_keywords = {"claude.md", "project conventions", "project standards"}
+    if any(kw in body_lower for kw in claude_md_keywords):
+        dim.score = min(dim.score + 0.3, 10.0)
+        dim.signals_positive.append("Integrates with CLAUDE.md project conventions")
+
+    # Bonus: argument-hint declared (better discoverability)
+    if frontmatter.get("argument-hint"):
+        dim.score = min(dim.score + 0.3, 10.0)
+        dim.signals_positive.append("Declares argument-hint for autocomplete UX")
+
+    # Bonus: Smart scope detection (git diff or dynamic context injection)
+    scope_keywords = {"git diff", "!`git", "scope detection", "determine scope"}
+    if any(kw in body_lower for kw in scope_keywords):
+        dim.score = min(dim.score + 0.2, 10.0)
+        dim.signals_positive.append("Uses smart scope detection (git diff or dynamic context)")
+
+    # Bonus: Finding deduplication/filtering
+    filter_keywords = {"deduplic", "false positive", "filter findings", "skip findings"}
+    if any(kw in body_lower for kw in filter_keywords):
+        dim.score = min(dim.score + 0.2, 10.0)
+        dim.signals_positive.append("Includes finding deduplication/filtering")
+
+
 def score_example_quality(body: str) -> DimensionScore:
     """Score example quality: code blocks, language labels, substance."""
     dim = DimensionScore(
@@ -1036,9 +1085,12 @@ def score_skill(skill_dir: Path) -> QualityReport:
     frontmatter_str, body = extract_frontmatter(content)
     frontmatter = parse_frontmatter(frontmatter_str)
 
+    content_depth_dim = score_content_depth(body)
+    apply_advanced_pattern_bonuses(content_depth_dim, frontmatter, body)
+
     dimensions = [
         score_spec_compliance(frontmatter),
-        score_content_depth(body),
+        content_depth_dim,
         score_example_quality(body),
         score_structure(body, skill_dir),
         score_token_efficiency(content, body, skill_dir),
