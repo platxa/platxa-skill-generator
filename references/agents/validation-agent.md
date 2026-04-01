@@ -122,35 +122,39 @@ Flag potential issues:
 After the skill passes validation (score ≥ 7.0), generate 3 evaluation scenarios to test
 the skill's real-world behavior. Save to `{skill_directory}/evals/evals.json`.
 
-### Eval Format
+### Eval Format (Anthropic-compatible)
+
+Each eval is a standalone JSON object. Generate 3 evals in a JSON array:
 
 ```json
-{
-  "skill_name": "the-skill-name",
-  "evals": [
-    {
-      "id": 1,
-      "prompt": "A realistic user prompt that should trigger this skill",
-      "expected_behavior": [
-        "Specific observable behavior 1",
-        "Specific observable behavior 2"
-      ],
-      "category": "happy-path|edge-case|error-handling"
-    },
-    {
-      "id": 2,
-      "prompt": "An edge case or unusual input",
-      "expected_behavior": ["Expected handling of edge case"],
-      "category": "edge-case"
-    },
-    {
-      "id": 3,
-      "prompt": "An error scenario or invalid input",
-      "expected_behavior": ["Expected error message or graceful fallback"],
-      "category": "error-handling"
-    }
-  ]
-}
+[
+  {
+    "skills": ["the-skill-name"],
+    "query": "A realistic user prompt that should trigger this skill",
+    "files": ["test-files/sample.py"],
+    "expected_behavior": [
+      "Specific observable behavior 1 — what the skill should do",
+      "Specific observable behavior 2 — what output to expect"
+    ],
+    "category": "happy-path"
+  },
+  {
+    "skills": ["the-skill-name"],
+    "query": "An edge case or unusual input",
+    "expected_behavior": [
+      "Expected handling of edge case with specific detail"
+    ],
+    "category": "edge-case"
+  },
+  {
+    "skills": ["the-skill-name"],
+    "query": "An error scenario or invalid input",
+    "expected_behavior": [
+      "Expected error message or graceful fallback behavior"
+    ],
+    "category": "error-handling"
+  }
+]
 ```
 
 ### Eval Generation Rules
