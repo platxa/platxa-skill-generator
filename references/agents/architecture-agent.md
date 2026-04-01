@@ -107,6 +107,43 @@ Target users: {target_users}
    - Metadata: ~100 tokens
    - References: Load on demand
 
+11. **Determine Execution Sophistication**: Match skill capabilities to task demands
+   
+   Evaluate the skill against three tiers:
+   
+   **Simple** (default for most skills):
+   - Single-pass analysis or generation
+   - No sub-agent spawning needed
+   - Tools: Read, Grep, Glob, Bash (no Task)
+   - Criteria: 1-2 analysis dimensions, small scope, no code modification
+   
+   **Intermediate** (for multi-faceted skills):
+   - Multiple analysis dimensions (2-3) that could benefit from focused passes
+   - Sequential sub-agents possible but not required
+   - Add Task to allowed-tools
+   - May include auto-fix for clear, mechanical issues (add Edit)
+   - Criteria: 2-3 dimensions, moderate scope, optional code fixes
+   
+   **Advanced** (for /simplify-quality skills):
+   - 3+ independent analysis dimensions that should run in parallel
+   - Parallel sub-agents via Task tool (see skill-parallelism.md pattern)
+   - Auto-fix for unambiguous issues via Edit tool (see auto-fix.md pattern)
+   - CLAUDE.md integration for project conventions (see project-conventions.md)
+   - Argument parsing for focus areas
+   - Finding deduplication and false-positive filtering
+   - Add Task, Edit, Write to allowed-tools
+   - Criteria: 3+ dimensions, broad scope, code modification expected
+   
+   Decision matrix:
+   
+   | Factor | Simple | Intermediate | Advanced |
+   |--------|--------|-------------|----------|
+   | Analysis dimensions | 1-2 | 2-3 | 3+ |
+   | Code modification | No | Maybe (mechanical) | Yes (unambiguous) |
+   | Context pressure | Low | Medium | High (parallel agents) |
+   | User customization | None | Basic args | Focus areas + flags |
+   | Skill types | Guide, reference | Automation, Builder | Analyzer, Validator |
+
 ## Output Format
 
 ```json
@@ -139,6 +176,13 @@ Target users: {target_users}
   "depends_on": ["skill-name"],
   "suggests": ["companion-skill"],
   "allowed_tools": ["Read", "Write", "Edit", "Bash", "Task"],
+  "execution_sophistication": {
+    "level": "simple|intermediate|advanced",
+    "parallel_dimensions": ["dim1", "dim2", "dim3"],
+    "auto_fix": false,
+    "claude_md_integration": false,
+    "rationale": "Why this level was chosen"
+  },
   "estimated_tokens": {
     "skill_md": 400,
     "metadata": 80,
