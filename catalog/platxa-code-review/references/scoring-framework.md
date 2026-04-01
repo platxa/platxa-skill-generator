@@ -4,7 +4,7 @@ Weighted scoring system for code review across four dimensions.
 
 ## Formula
 
-```
+```text
 Overall = (Quality x 0.30) + (Security x 0.25) + (Efficiency x 0.25) + (Maintainability x 0.20)
 ```
 
@@ -18,7 +18,7 @@ Each dimension scores 0-10. Overall maps to letter grades.
 |-----------|--------|---------|
 | Complexity | 0.35 | 10 if avg CC<5, 8 if <8, 6 if <10, 4 if <15, 2 if >15 |
 | Duplication | 0.25 | 10 if <3%, 8 if <5%, 6 if <8%, 4 if <10%, 2 if >10% |
-| Naming | 0.20 | 10 if all clear, -1 per vague/single-char name (floor 2) |
+| Naming | 0.20 | 10 if all clear, -1 per vague name (floor 2) |
 | SOLID | 0.20 | 10 if followed, -2 per major violation (floor 2) |
 
 ### Security (0.25)
@@ -109,38 +109,38 @@ These override the calculated score:
 
 ## Scoring Example
 
-```
+```text
 File: api/handler.py (150 lines, 8 functions)
 
 Code Quality:
-  Complexity: avg CC=6.2 → 8/10
-  Duplication: 2% → 10/10
-  Naming: 1 vague name → 9/10
-  SOLID: no violations → 10/10
+  Complexity: avg CC=6.2 -> 8/10
+  Duplication: 2% -> 10/10
+  Naming: 1 vague name -> 9/10
+  SOLID: no violations -> 10/10
   Dimension: (8*0.35)+(10*0.25)+(9*0.20)+(10*0.20) = 9.1
 
 Security:
-  Secrets: none → 10/10
-  Injection: 1 SQL concat → 7/10
-  Auth: proper → 10/10
-  Input: 1 gap → 9/10
+  Secrets: none -> 10/10
+  Injection: 1 SQL concat -> 7/10
+  Auth: proper -> 10/10
+  Input: 1 gap -> 9/10
   Dimension: (10*0.40)+(7*0.30)+(10*0.15)+(9*0.15) = 8.95
 
 Efficiency:
-  Algorithm: optimal → 10/10
-  Anti-patterns: 1 N+1 → 8/10
-  Memory: clean → 10/10
-  I/O: correct → 10/10
+  Algorithm: optimal -> 10/10
+  Anti-patterns: 1 N+1 -> 8/10
+  Memory: clean -> 10/10
+  I/O: correct -> 10/10
   Dimension: (10*0.40)+(8*0.30)+(10*0.15)+(10*0.15) = 9.4
 
 Maintainability:
-  Types: 80% → 8/10
-  Errors: 1 bare except → 8/10
-  Docs: 60% public → 6/10
-  Testability: good → 9/10
+  Types: 80% -> 8/10
+  Errors: 1 bare except -> 8/10
+  Docs: 60% public -> 6/10
+  Testability: good -> 9/10
   Dimension: (8*0.30)+(8*0.30)+(6*0.20)+(9*0.20) = 7.8
 
 Overall = (9.1*0.30)+(8.95*0.25)+(9.4*0.25)+(7.8*0.20)
         = 2.73 + 2.24 + 2.35 + 1.56
-        = 8.88 → Grade B → APPROVE
+        = 8.88 -> Grade B -> APPROVE
 ```

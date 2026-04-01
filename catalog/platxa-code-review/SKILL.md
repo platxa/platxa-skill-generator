@@ -1,13 +1,17 @@
 ---
 name: platxa-code-review
-description: Analyzes code for quality, security, and efficiency across any language. Reviews files or git diffs, produces structured reports with weighted scores, metrics, and actionable recommendations.
+description: >-
+  Analyzes code for quality, security, and efficiency across any language.
+  Reviews files or git diffs, produces structured reports with weighted scores,
+  metrics, and actionable recommendations. Use when reviewing code changes,
+  pull requests, or auditing codebases for technical debt.
 allowed-tools:
   - Read
   - Grep
   - Glob
   - Bash
 metadata:
-  version: "1.0.0"
+  version: "2.0.0"
   author: "Platxa"
   tags:
     - analyzer
@@ -19,11 +23,11 @@ metadata:
 
 # Platxa Code Review
 
-Language-agnostic code review producing structured reports with scores and actionable recommendations.
+Language-agnostic code review with structured reports, weighted scores, and actionable recommendations.
 
 ## Overview
 
-This skill analyzes code for quality, security, and efficiency. It works on entire files or git diffs and produces a weighted score across four dimensions.
+This skill analyzes code across four dimensions: quality, security, efficiency, and maintainability. It works on individual files, git diffs, or entire codebases.
 
 **What it analyzes:**
 - Code quality (complexity, duplication, naming, SOLID principles)
@@ -34,57 +38,52 @@ This skill analyzes code for quality, security, and efficiency. It works on enti
 **What it produces:**
 - Overall score (0-10) with letter grade (A-F)
 - Per-dimension breakdown with specific findings
-- Prioritized issues with severity levels
-- Actionable recommendations
+- Prioritized issues by severity level
+- Actionable fix recommendations
 
-**Supported languages:** Python, TypeScript/JavaScript, Go, Java, Rust, C/C++, and any language with readable source.
+**Supported languages:** Python, TypeScript/JavaScript, Go, Java, Rust, C/C++, and any readable source.
 
 ## Workflow
 
 ### Step 1: Determine Scope
 
-Ask the user or detect from context:
-- **Files**: Analyze specific files or directories
-- **Diff**: Analyze git diff (staged, unstaged, or PR)
-- **Codebase**: Systematic full-codebase review (see Codebase Review Mode below)
-- **Focus**: Optional dimension focus (quality, security, efficiency, maintainability)
+Ask the user or detect from context. Three modes are supported.
 
-For file review:
+**File review** -- analyze specific files or directories:
 ```bash
-# Identify target files
 glob "src/**/*.{py,ts,js,go,rs,java}"
 ```
 
-For diff review:
+**Diff review** -- analyze git changes:
 ```bash
-# Get changed files
 git diff --name-only HEAD~1
-# Or for PRs
 git diff main...HEAD --name-only
 ```
 
-For codebase review:
+**Codebase review** -- systematic full-project scan (see Codebase Review Mode below):
 ```bash
-# Discover all source files grouped by module
-find . -type f \( -name "*.py" -o -name "*.ts" -o -name "*.js" -o -name "*.go" \) \
-  ! -path "*/node_modules/*" ! -path "*/.git/*" ! -path "*/dist/*" | sort
+glob "**/*.{py,ts,js,go}" --exclude "node_modules,dist,.git"
 ```
+
+Optionally accept a dimension focus: quality, security, efficiency, or maintainability.
 
 ### Step 2: Run Automated Checks
 
 Execute helper scripts on target files:
 
+Detect hardcoded secrets:
 ```bash
-# Detect hardcoded secrets
 bash scripts/detect-secrets.sh <file-or-directory>
+```
 
-# Analyze complexity metrics
+Analyze complexity metrics:
+```bash
 bash scripts/analyze-complexity.sh <file-or-directory>
 ```
 
 ### Step 3: Deep Analysis
 
-Read each file and evaluate against the four dimensions:
+Read each file and evaluate against four weighted dimensions.
 
 **Code Quality (weight: 0.30)**
 - Cyclomatic complexity per function (target: <10)
@@ -118,7 +117,7 @@ Read each file and evaluate against the four dimensions:
 
 ### Step 4: Score and Report
 
-Calculate weighted score and generate structured report (see Report Format below).
+Calculate weighted score. Generate structured report (see Report Format below).
 
 Apply hard-fail rules:
 - Hardcoded secrets detected: cap at 4.0
@@ -135,21 +134,21 @@ Provide prioritized, actionable fixes:
 
 ## Codebase Review Mode
 
-For systematic full-codebase reviews, follow the 5-phase approach in `references/codebase-review-guide.md`:
+For full-codebase reviews, follow the 5-phase approach in `references/codebase-review-guide.md`.
 
-1. **Discovery** — Map modules, count files by language, identify review order
-2. **Automated Sweep** — Run `detect-secrets.sh` and `analyze-complexity.sh` on entire codebase
-3. **Module-by-Module Review** — Score each module independently across all 4 dimensions
-4. **Cross-Cutting Analysis** — Check consistency, duplication, and dependency flow across modules
-5. **Consolidated Report** — Module scores table, hotspots, top priority fixes, health summary
+**Phases:**
+1. **Discovery** -- Map modules, count files by language, identify review order
+2. **Automated Sweep** -- Run `detect-secrets.sh` and `analyze-complexity.sh` on the entire codebase
+3. **Module-by-Module** -- Score each module independently across all 4 dimensions
+4. **Cross-Cutting** -- Check consistency, duplication, and dependency flow across modules
+5. **Consolidated Report** -- Module scores table, hotspots, top priority fixes, health summary
 
-**Review order** (highest risk first): auth → API → data access → business logic → utilities → config → tests
-
-The consolidated report includes a module scores table, hotspot identification, cross-cutting issues, and a codebase health summary.
+**Review order** (highest risk first): auth > API > data access > business logic > utilities > config > tests
 
 ## Analysis Checklist
 
 ### Code Quality
+
 - [ ] Functions have single responsibility
 - [ ] Cyclomatic complexity < 10 per function
 - [ ] No functions > 50 lines
@@ -159,6 +158,7 @@ The consolidated report includes a module scores table, hotspot identification, 
 - [ ] No dead code or unused imports
 
 ### Security
+
 - [ ] No hardcoded secrets, API keys, or tokens
 - [ ] No SQL string concatenation (use parameterized queries)
 - [ ] No shell command injection (no unescaped user input in commands)
@@ -168,6 +168,7 @@ The consolidated report includes a module scores table, hotspot identification, 
 - [ ] Dependencies are up to date
 
 ### Efficiency
+
 - [ ] No N+1 query patterns
 - [ ] No unnecessary object creation in loops
 - [ ] No string concatenation in loops (use builder/join)
@@ -177,6 +178,7 @@ The consolidated report includes a module scores table, hotspot identification, 
 - [ ] Early returns prevent unnecessary work
 
 ### Maintainability
+
 - [ ] Type annotations on public APIs
 - [ ] Errors handled with specific types (no bare catch-all)
 - [ ] No silent failures (no empty catch blocks)
@@ -219,7 +221,7 @@ The consolidated report includes a module scores table, hotspot identification, 
 
 Generate this structured report:
 
-```
+```markdown
 ## Code Review Report
 
 **Target:** {files or diff description}
@@ -239,27 +241,27 @@ Generate this structured report:
 
 ### Issues Found
 
-#### Critical
+**Critical**
 - [{id}] {file}:{line} - {description}
 
-#### High
+**High**
 - [{id}] {file}:{line} - {description}
 
-#### Medium
+**Medium**
 - [{id}] {file}:{line} - {description}
 
 ### Dimension Details
 
-#### Code Quality ({score}/10)
+**Code Quality ({score}/10)**
 {specific findings with file:line references}
 
-#### Security ({score}/10)
+**Security ({score}/10)**
 {specific findings with file:line references}
 
-#### Efficiency ({score}/10)
+**Efficiency ({score}/10)**
 {specific findings with file:line references}
 
-#### Maintainability ({score}/10)
+**Maintainability ({score}/10)**
 {specific findings with file:line references}
 
 ### Recommendations
@@ -272,7 +274,7 @@ Generate this structured report:
 
 ### Example 1: Review a Python Module
 
-```
+```text
 User: Review src/auth/handler.py for code quality
 Assistant: Analyzing src/auth/handler.py...
 
@@ -295,14 +297,14 @@ Assistant: Analyzing src/auth/handler.py...
 
 ### Issues Found
 
-#### Critical
+**Critical**
 - [SEC-1] handler.py:42 - Hardcoded JWT secret `SECRET_KEY = "mysecret123"`
 
-#### High
+**High**
 - [CQ-1] handler.py:67 - `process_login()` has cyclomatic complexity 14
 - [CQ-2] handler.py:120 - Duplicated validation block (also at line 180)
 
-#### Medium
+**Medium**
 - [EFF-1] handler.py:95 - N+1: Querying user roles inside loop
 - [MT-1] handler.py:1-245 - No type hints on 8/12 public functions
 
@@ -316,7 +318,7 @@ Assistant: Analyzing src/auth/handler.py...
 
 ### Example 2: Review a Git Diff
 
-```
+```text
 User: Review the changes in my current branch
 Assistant: Analyzing diff against main...
 
@@ -338,7 +340,7 @@ Assistant: Analyzing diff against main...
 
 ### Issues Found
 
-#### Medium
+**Medium**
 - [CQ-1] api/routes.ts:45 - Function `handleRequest` has 4 nesting levels
 - [MT-1] api/routes.ts:30 - Missing return type annotation
 
@@ -349,7 +351,7 @@ Assistant: Analyzing diff against main...
 
 ### Example 3: Focused Security Review
 
-```
+```text
 User: Security review on src/payments/
 Assistant: Running security-focused analysis on src/payments/...
 
@@ -377,9 +379,9 @@ Assistant: Running security-focused analysis on src/payments/...
 
 ### Example 4: Systematic Codebase Review
 
-```
+```text
 User: Review the entire codebase
-Assistant: Starting systematic codebase review (see references/codebase-review-guide.md)...
+Assistant: Starting systematic codebase review...
 
 ## Codebase Review Report
 

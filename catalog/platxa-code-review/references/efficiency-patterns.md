@@ -4,13 +4,13 @@ Common performance issues across languages with detection patterns and fixes.
 
 ## N+1 Queries
 
-**Detection:** Loop body contains database query fetching single item.
+**Detection:** Loop body contains database query fetching a single item.
 
 **Python (SQLAlchemy/Django):**
 ```python
 # BAD: N+1
 for order in orders:
-    customer = db.query(Customer).get(order.customer_id)  # 1 query per order
+    customer = db.query(Customer).get(order.customer_id)
 
 # GOOD: Eager load
 orders = db.query(Order).options(joinedload(Order.customer)).all()
@@ -44,9 +44,8 @@ rows, _ := db.Query("SELECT name FROM users WHERE id = ANY($1)", pq.Array(userID
 
 ## String Concatenation in Loops
 
-**Detection:** String variable reassigned with `+` or `+=` inside loop.
+**Detection:** String variable reassigned with `+` or `+=` inside a loop.
 
-**Python:**
 ```python
 # BAD: O(n^2) - creates new string each iteration
 result = ""
@@ -57,7 +56,6 @@ for item in items:
 result = ",".join(str(item) for item in items)
 ```
 
-**Java:**
 ```java
 // BAD: O(n^2)
 String result = "";
@@ -68,7 +66,6 @@ StringBuilder sb = new StringBuilder();
 for (String s : items) { sb.append(s); }
 ```
 
-**Go:**
 ```go
 // BAD
 result := ""
@@ -85,7 +82,7 @@ for _, s := range items { b.WriteString(s) }
 
 ## Unnecessary Object Creation in Loops
 
-**Detection:** Object/collection instantiated inside loop when it could be outside.
+**Detection:** Object or collection instantiated inside loop when it could be outside.
 
 ```python
 # BAD: Compiles regex every iteration
@@ -154,8 +151,8 @@ results := make([]Result, 0, maxBatchSize)
 ```python
 # BAD: Blocks event loop
 async def handle():
-    data = open("file.txt").read()         # Sync file I/O
-    result = requests.get("https://...")    # Sync HTTP
+    data = open("file.txt").read()
+    result = requests.get("https://...")
 
 # GOOD
 async def handle():
@@ -166,9 +163,9 @@ async def handle():
 ```
 
 ```typescript
-// BAD: fs.readFileSync in async handler
+// BAD: readFileSync in async handler
 app.get('/data', async (req, res) => {
-  const data = fs.readFileSync('data.json')  // Blocks
+  const data = fs.readFileSync('data.json')
 })
 
 // GOOD
@@ -214,7 +211,7 @@ const recent = await prisma.order.findMany({ where: { date: { gt: cutoff } } })
 ```python
 # BAD: Computes len() twice per iteration
 for i in range(len(items)):
-    if i < len(items) - 1:  # Redundant len() call
+    if i < len(items) - 1:
         ...
 
 # GOOD
@@ -224,28 +221,13 @@ for i in range(count):
         ...
 ```
 
-```typescript
-// BAD: Calls getBoundingRect() on every scroll event
-window.addEventListener('scroll', () => {
-  const rect = element.getBoundingClientRect()  // Expensive
-  if (rect.top < window.innerHeight) { ... }
-})
-
-// GOOD: Throttle + cache
-let cachedRect = element.getBoundingClientRect()
-const throttledCheck = throttle(() => {
-  cachedRect = element.getBoundingClientRect()
-  if (cachedRect.top < window.innerHeight) { ... }
-}, 100)
-```
-
 **Score impact:** -0.5 per occurrence
 
 ---
 
 ## Missing Early Return
 
-**Detection:** Entire function body wrapped in condition, or processing continues after determination.
+**Detection:** Entire function body wrapped in condition, or deep nesting.
 
 ```python
 # BAD: Deep nesting
@@ -254,8 +236,7 @@ def process(items):
         if len(items) > 0:
             for item in items:
                 if item.is_valid():
-                    # actual work here at 4 levels deep
-                    ...
+                    ...  # 4 levels deep
 
 # GOOD: Guard clauses
 def process(items):
@@ -264,8 +245,7 @@ def process(items):
     for item in items:
         if not item.is_valid():
             continue
-        # actual work at 2 levels
-        ...
+        ...  # 2 levels
 ```
 
 **Score impact:** -0.5 per occurrence (compounds with nesting depth)
@@ -276,11 +256,11 @@ def process(items):
 
 | Anti-Pattern | Impact | Frequency | Detection Difficulty |
 |-------------|--------|-----------|---------------------|
-| N+1 queries | Very High | Common | Medium (look for DB calls in loops) |
-| Unbounded growth | Very High | Common | Medium (check collections in handlers) |
-| Blocking I/O | High | Common | Easy (sync calls in async functions) |
-| String concat in loops | Medium | Very Common | Easy (+= in loop) |
-| Object creation in loops | Medium | Common | Easy (new/constructor in loop) |
-| Fetch-all-then-filter | Medium | Common | Medium (query then filter) |
-| Redundant computation | Low-Medium | Very Common | Medium (repeated expressions) |
-| Missing early return | Low | Very Common | Easy (nesting depth >3) |
+| N+1 queries | Very High | Common | Medium |
+| Unbounded growth | Very High | Common | Medium |
+| Blocking I/O | High | Common | Easy |
+| String concat in loops | Medium | Very Common | Easy |
+| Object creation in loops | Medium | Common | Easy |
+| Fetch-all-then-filter | Medium | Common | Medium |
+| Redundant computation | Low-Medium | Very Common | Medium |
+| Missing early return | Low | Very Common | Easy |
