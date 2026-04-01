@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Install a Claude Code skill to user or project location
-# Usage: install-skill.sh <skill-directory> [--project|--user] [--force]
+# Usage: install-skill.sh <skill-directory> [--project|--user] [--force] [--dry-run]
 #
 # Copies only skill-relevant files (SKILL.md, references/, scripts/, assets/)
 # and excludes session state, build artifacts, and other junk.
@@ -10,19 +10,22 @@ set -euo pipefail
 SKILL_DIR="${1:-.}"
 LOCATION=""
 FORCE=false
+DRY_RUN=false
 
 # Parse arguments
 shift || true
 while [[ $# -gt 0 ]]; do
     case "$1" in
-        --user|-u)   LOCATION="user" ;;
+        --user|-u)    LOCATION="user" ;;
         --project|-p) LOCATION="project" ;;
-        --force|-f)  FORCE=true ;;
+        --force|-f)   FORCE=true ;;
+        --dry-run|-n) DRY_RUN=true ;;
         *)
-            echo "Usage: install-skill.sh <skill-directory> [--project|--user] [--force]"
-            echo "  --user, -u    Install to ~/.claude/skills/ (default)"
-            echo "  --project, -p Install to .claude/skills/"
-            echo "  --force, -f   Overwrite without prompting"
+            echo "Usage: install-skill.sh <skill-directory> [--project|--user] [--force] [--dry-run]"
+            echo "  --user, -u      Install to ~/.claude/skills/ (default)"
+            echo "  --project, -p   Install to .claude/skills/"
+            echo "  --force, -f     Overwrite without prompting"
+            echo "  --dry-run, -n   Preview what would be installed without copying"
             exit 1
             ;;
     esac
@@ -31,6 +34,11 @@ done
 LOCATION="${LOCATION:-user}"
 
 # Resolve absolute path for skill directory
+if [[ ! -d "$SKILL_DIR" ]]; then
+    echo "ERROR: Directory not found: $SKILL_DIR"
+    echo "  Provide the path to a skill directory containing SKILL.md"
+    exit 1
+fi
 SKILL_DIR="$(cd "$SKILL_DIR" && pwd)"
 
 # Resolve skill name from SKILL.md
@@ -40,9 +48,11 @@ if [[ ! -f "$SKILL_MD" ]]; then
     exit 1
 fi
 
-SKILL_NAME=$(grep "^name:" "$SKILL_MD" | head -1 | sed 's/name: *//' | tr -d '"' | tr -d "'")
+# Extract name from YAML frontmatter (handles indentation and quoting)
+SKILL_NAME=$(sed -n '/^---$/,/^---$/p' "$SKILL_MD" | grep -E '^\s*name\s*:' | head -1 | sed 's/^[[:space:]]*name[[:space:]]*:[[:space:]]*//' | tr -d '"' | tr -d "'" | tr -d '[:space:]')
 if [[ -z "$SKILL_NAME" ]]; then
-    echo "ERROR: Could not extract skill name from SKILL.md"
+    echo "ERROR: Could not extract skill name from SKILL.md frontmatter"
+    echo "  Ensure SKILL.md has YAML frontmatter with a 'name:' field between --- delimiters"
     exit 1
 fi
 
@@ -60,6 +70,9 @@ echo "=== Installing skill: $SKILL_NAME ==="
 echo "  Source:   $SKILL_DIR"
 echo "  Target:   $TARGET_DIR"
 echo "  Location: $LOCATION"
+if [[ "$DRY_RUN" == true ]]; then
+    echo "  Mode:     DRY RUN (no changes will be made)"
+fi
 
 # Validate first
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -99,11 +112,30 @@ if [[ -f "$SCRIPT_DIR/score-skill.py" ]] && command -v python3 &>/dev/null; then
     fi
 fi
 
+# Dry run: show what would be installed and exit
+if [[ "$DRY_RUN" == true ]]; then
+    echo ""
+    echo "--- Files that would be installed ---"
+    echo "  SKILL.md"
+    [[ -f "$SKILL_DIR/.skillconfig" ]] && echo "  .skillconfig"
+    for dir in references scripts assets; do
+        if [[ -d "$SKILL_DIR/$dir" ]]; then
+            file_count=$(find "$SKILL_DIR/$dir" -type f | wc -l)
+            echo "  $dir/ ($file_count files)"
+        fi
+    done
+    echo ""
+    echo "=== Dry run complete. No files were copied. ==="
+    echo "  Run without --dry-run to install."
+    exit 0
+fi
+
 # Check if already installed
 if [[ -d "$TARGET_DIR" ]]; then
     if [[ "$FORCE" == true ]]; then
         rm -rf "$TARGET_DIR"
-    else
+    elif [[ -t 0 ]]; then
+        # Interactive terminal: prompt user
         echo ""
         echo "Skill already installed at $TARGET_DIR"
         read -p "Overwrite? (y/N) " -n 1 -r
@@ -113,28 +145,42 @@ if [[ -d "$TARGET_DIR" ]]; then
             exit 0
         fi
         rm -rf "$TARGET_DIR"
+    else
+        # Non-interactive (CI/pipe): fail with clear message
+        echo ""
+        echo "ERROR: Skill already installed at $TARGET_DIR"
+        echo "  Use --force to overwrite in non-interactive mode."
+        exit 1
     fi
 fi
 
-# Exclusion patterns for rsync
-# Session state, build artifacts, version control, OS files
-EXCLUDE_PATTERNS=(
-    ".claude/"
-    "__pycache__/"
-    "*.pyc"
-    "*.pyo"
-    ".gitkeep"
-    ".DS_Store"
-    "Thumbs.db"
-    ".git/"
-    "node_modules/"
-)
+# Copy function: use rsync if available, fall back to cp
+copy_dir() {
+    local src="$1" dst="$2"
 
-# Build rsync exclude args
-RSYNC_EXCLUDES=()
-for pattern in "${EXCLUDE_PATTERNS[@]}"; do
-    RSYNC_EXCLUDES+=(--exclude "$pattern")
-done
+    if command -v rsync &>/dev/null; then
+        rsync -a \
+            --exclude=".claude/" \
+            --exclude="__pycache__/" \
+            --exclude="*.pyc" \
+            --exclude="*.pyo" \
+            --exclude=".gitkeep" \
+            --exclude=".DS_Store" \
+            --exclude="Thumbs.db" \
+            --exclude=".git/" \
+            --exclude="node_modules/" \
+            "$src/" "$dst/"
+    else
+        # Fallback: cp -r then clean up excluded patterns
+        cp -r "$src/" "$dst/"
+        # Remove excluded files/dirs from the copy
+        find "$dst" -name "__pycache__" -type d -exec rm -rf {} + 2>/dev/null || true
+        find "$dst" \( -name "*.pyc" -o -name "*.pyo" -o -name ".DS_Store" -o -name "Thumbs.db" -o -name ".gitkeep" \) -delete 2>/dev/null || true
+        find "$dst" -name ".git" -type d -exec rm -rf {} + 2>/dev/null || true
+        find "$dst" -name "node_modules" -type d -exec rm -rf {} + 2>/dev/null || true
+        find "$dst" -name ".claude" -type d -exec rm -rf {} + 2>/dev/null || true
+    fi
+}
 
 # Create target directory
 mkdir -p "$TARGET_DIR"
@@ -150,18 +196,20 @@ if [[ -f "$SKILL_DIR/.skillconfig" ]]; then
     echo "  .skillconfig"
 fi
 
-# Copy directories using rsync with exclusions
+# Copy directories
 for dir in references scripts assets; do
     if [[ -d "$SKILL_DIR/$dir" ]]; then
-        rsync -a "${RSYNC_EXCLUDES[@]}" "$SKILL_DIR/$dir/" "$TARGET_DIR/$dir/"
+        mkdir -p "$TARGET_DIR/$dir"
+        copy_dir "$SKILL_DIR/$dir" "$TARGET_DIR/$dir"
         file_count=$(find "$TARGET_DIR/$dir" -type f | wc -l)
         echo "  $dir/ ($file_count files)"
     fi
 done
 
-# Make scripts executable
+# Make scripts executable (both .sh and .py)
 if [[ -d "$TARGET_DIR/scripts" ]]; then
     chmod +x "$TARGET_DIR/scripts"/*.sh 2>/dev/null || true
+    chmod +x "$TARGET_DIR/scripts"/*.py 2>/dev/null || true
 fi
 
 # Post-install summary

@@ -253,7 +253,9 @@ if [[ -f "$SKILL_MD" ]]; then
 
     if [[ $BROKEN_LINKS -eq 0 ]]; then
         # Count valid links
-        LINK_COUNT=$(grep -cP '\[([^\]]*)\]\((?!https?://|#|mailto:)([^)]+)\)' "$SKILL_MD" 2>/dev/null || echo "0")
+        LINK_COUNT=$(grep -cP '\[([^\]]*)\]\((?!https?://|#|mailto:)([^)]+)\)' "$SKILL_MD" 2>/dev/null | head -1 || echo "0")
+        LINK_COUNT="${LINK_COUNT//[^0-9]/}"  # Strip non-numeric chars
+        LINK_COUNT="${LINK_COUNT:-0}"
         if [[ "$LINK_COUNT" -gt 0 ]]; then
             info "All $LINK_COUNT reference links are valid"
         else
