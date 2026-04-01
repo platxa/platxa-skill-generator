@@ -419,6 +419,25 @@ def score_spec_compliance(frontmatter: dict) -> DimensionScore:
                 "Add when to use the skill: 'Use when working with PDFs' or 'Use when the user mentions...'"
             )
 
+        # Check front-loading: first 250 chars should contain the key use case
+        # Official docs truncate descriptions to 250 chars in skill listings
+        if len(desc) > 250:
+            first_250 = desc[:250].lower()
+            # Check if the trigger context is in the first 250 chars
+            has_trigger_early = any(
+                re.search(p, first_250, re.IGNORECASE) for p in trigger_patterns
+            )
+            if has_trigger_early:
+                dim.signals_positive.append("Key use case front-loaded in first 250 chars")
+            else:
+                dim.score -= 0.3
+                dim.signals_negative.append(
+                    "Trigger context not in first 250 chars (truncated in skill listings)"
+                )
+                dim.suggestions.append(
+                    "Move the 'Use when...' trigger closer to the start of description"
+                )
+
         # Check for vague descriptions
         vague_patterns = [
             r"^helps?\s+with\s+\w+$",

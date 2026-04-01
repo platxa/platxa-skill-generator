@@ -87,11 +87,26 @@ Progress:
 Run validation after applying changes. If validation fails, fix and retry:
 
 ```
-1. Run validator: {validation command or check}
-2. If PASS → proceed to verification
-3. If FAIL → read error message, fix the issue, return to Step 3
-4. Max 3 retries — if still failing, report errors to user
+iteration = 0
+MAX_RETRIES = 3
+
+LOOP:
+  1. Run validator: {validation command or check}
+  2. If PASS → proceed to verification
+  3. If FAIL:
+     a. Parse error message for specific issue
+     b. Apply targeted fix (don't regenerate everything)
+     c. iteration += 1
+     d. If iteration >= MAX_RETRIES → escalate to user with remaining errors
+     e. If same error repeats → stop (fix isn't working, needs different approach)
+     f. Return to step 1
 ```
+
+**Escape conditions** (stop retrying):
+- Max iterations reached (3)
+- Validation passed
+- Same error appears twice (fix isn't addressing root cause)
+- Score regresses (fix made things worse)
 
 ## Verification
 
