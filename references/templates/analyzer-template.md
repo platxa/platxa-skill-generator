@@ -177,6 +177,103 @@ if __name__ == "__main__":
 
 This pattern works for: dependency graphs, coverage reports, metric dashboards, schema visualizations.
 
+## Advanced Workflow Variants
+
+### Variant A: Parallel Analysis (3+ dimensions)
+
+When the architecture blueprint specifies `execution_sophistication: advanced` with
+`parallel_dimensions`, replace the single-pass analysis with parallel sub-agents.
+See `references/patterns/skill-parallelism.md` for the full pattern.
+
+Add Task to allowed-tools in frontmatter:
+```yaml
+allowed-tools:
+  - Read
+  - Grep
+  - Glob
+  - Bash
+  - Task    # For parallel sub-agents
+```
+
+Replace the standard analysis workflow with:
+
+```markdown
+## Workflow
+
+### Step 1: Determine Scope
+Detect analysis target: git diff, specific files, or full codebase.
+
+### Step 2: Parallel Analysis
+Launch one agent per dimension in a SINGLE message block:
+
+**Agent 1: {Dimension A}** — Use Task tool with focused prompt
+**Agent 2: {Dimension B}** — Use Task tool with focused prompt
+**Agent 3: {Dimension C}** — Use Task tool with focused prompt
+
+Each agent receives the full scope and analyzes ONLY its dimension.
+
+### Step 3: Aggregate
+Merge findings, deduplicate (same file:line → keep highest severity),
+filter false positives, calculate weighted score.
+
+### Step 4: Report
+Generate structured report with per-dimension breakdown.
+```
+
+### Variant B: Auto-Fix (opt-in)
+
+When the architecture blueprint specifies `execution_sophistication.auto_fix: true`,
+add a fix phase after analysis. See `references/patterns/auto-fix.md` for the full pattern.
+
+Add Edit to allowed-tools in frontmatter:
+```yaml
+allowed-tools:
+  - Read
+  - Grep
+  - Glob
+  - Bash
+  - Edit    # For auto-fixing issues
+```
+
+Add after the Report step:
+
+```markdown
+### Step 5: Apply Fixes (when invoked with --fix)
+
+1. Filter to CRITICAL and HIGH severity, unambiguous fixes only
+2. Apply each fix using Edit tool (one fix per call)
+3. Re-run checks to verify fixes
+4. Report: what was fixed, what needs manual attention
+```
+
+### Variant C: Convention-Aware (CLAUDE.md integration)
+
+When the architecture blueprint specifies `execution_sophistication.claude_md_integration: true`,
+add convention reading as Step 0. See `references/patterns/project-conventions.md`.
+
+Add before the analysis:
+
+```markdown
+### Step 0: Read Project Conventions
+Extract coding standards, prohibited patterns, and required patterns from CLAUDE.md.
+Suppress findings that match project conventions. Elevate findings that violate them.
+```
+
+### Combining Variants
+
+All three variants can be combined for maximum sophistication:
+
+```
+Step 0: Read CLAUDE.md conventions
+Step 1: Determine scope (git diff default)
+Step 2: Parallel analysis (3+ dimension agents)
+Step 3: Aggregate + deduplicate + filter
+Step 4: Report with per-dimension breakdown
+Step 5: Auto-fix critical/high issues (if --fix)
+```
+
+This produces skills comparable to Anthropic's /simplify command.
+
 ## Key Sections for Analyzers
 
 1. **Checklist**: What to inspect
