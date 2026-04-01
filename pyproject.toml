@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "platxa-skill-generator"
-version = "2.1.0"
-description = "Autonomous skill creator for Claude Code CLI with quality scoring, dependency management, and 17-skill catalog"
+version = "2.2.0"
+description = "Autonomous skill creator for Claude Code CLI with multi-agent patterns, quality scoring, dependency management, and 17-skill catalog"
 readme = "README.md"
 license = {text = "MIT"}
 authors = [

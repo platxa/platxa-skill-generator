@@ -81,13 +81,15 @@ Platxa Skill Generator creates production-ready Claude Code skills by orchestrat
 | **Autonomous Creation** | Minimal user input, maximum automation |
 | **Multi-Phase Workflow** | 7 specialized subagents for each phase |
 | **Five Skill Types** | Builder, Guide, Automation, Analyzer, Validator |
-| **Quality Scoring** | 5-dimension scorer: spec compliance, content depth, examples, structure, efficiency |
+| **Advanced Patterns** | Parallel sub-agents, auto-fix, CLAUDE.md integration, smart scoping |
+| **Quality Scoring** | 5-dimension scorer with advanced pattern bonuses |
 | **Dependency System** | `depends-on` and `suggests` fields with cycle detection |
 | **Token Budget Management** | SKILL.md optimized for context efficiency |
 | **Script Security** | ShellCheck + security pattern scanning |
 | **Web Research** | Automatic domain knowledge discovery |
+| **137 Reference Files** | Domain knowledge across 56 patterns, 9 templates, 7 agents |
 | **15 Scripts** | Validation, installation, scoring, dependency checking, graph visualization |
-| **125 Tests** | Comprehensive test suite across 7 test files |
+| **130 Tests** | Comprehensive test suite across 7 test files |
 
 ---
 
@@ -256,22 +258,26 @@ platxa-skill-generator/
 │   ├── platxa-testing/
 │   └── platxa-yjs-server/
 │
-├── references/                 # 129 domain knowledge files
+├── references/                 # 137 domain knowledge files
 │   ├── agents/                 # 7 subagent definitions
-│   ├── patterns/               # 48 implementation patterns
+│   ├── patterns/               # 56 implementation patterns
 │   ├── templates/              # 9 skill type templates
-│   ├── orchestration/          # Workflow patterns
-│   ├── discovery/              # Research patterns
-│   ├── generation/             # Content generation patterns
-│   ├── validation/             # Quality validation patterns
-│   ├── installation/           # Install/export patterns
-│   └── interaction/            # User interaction patterns
+│   ├── orchestration/          # 7 workflow patterns
+│   ├── discovery/              # 3 research patterns
+│   ├── generation/             # 13 content generation patterns
+│   ├── validation/             # 5 quality validation patterns
+│   ├── installation/           # 10 install/export patterns
+│   ├── interaction/            # 9 user interaction patterns
+│   ├── architecture/           # 2 architecture patterns
+│   ├── scripts/                # 11 script generation patterns
+│   ├── spec/                   # 2 specification references
+│   └── examples/               # 2 example skills
 │
-├── tests/                      # 125 tests across 7 files
+├── tests/                      # 130 tests across 7 files
 │   ├── test_validate_frontmatter.py  # 33 frontmatter tests
 │   ├── test_validate_structure.py    # 16 structure tests
 │   ├── test_count_tokens.py          # 10 token tests
-│   ├── test_score_skill.py           # 38 quality scorer tests
+│   ├── test_score_skill.py           # 43 quality scorer tests (incl. advanced pattern bonuses)
 │   ├── test_check_dependencies.py    # 8 dependency tests
 │   ├── test_circular_deps.py         # 9 cycle detection tests
 │   ├── test_integration.py           # 11 integration tests
@@ -294,7 +300,7 @@ Every generated skill is scored across 5 dimensions:
 | Dimension | Weight | What It Checks |
 |-----------|--------|----------------|
 | **Spec Compliance** | 25% | Frontmatter validity, name format, description, tools |
-| **Content Depth** | 25% | Placeholders, generic filler, LLM-favorite words, vocabulary diversity |
+| **Content Depth** | 25% | Placeholders, generic filler, LLM-favorite words, vocabulary diversity, advanced pattern bonuses |
 | **Example Quality** | 20% | Code blocks, language labels, substance, YAML/JSON validity |
 | **Structure** | 15% | Required sections, heading count, hierarchy |
 | **Token Efficiency** | 15% | Line count, word count, sentence length, references |
@@ -323,12 +329,35 @@ suggests:            # Recommended companions (shown after install)
   - platxa-testing
 ```
 
+### Advanced Patterns (v2.2.0)
+
+The generator now supports advanced skill patterns matching Anthropic's bundled skills like `/simplify`:
+
+| Pattern | File | What It Enables |
+|---------|------|-----------------|
+| **Parallel Sub-Agents** | `references/patterns/skill-parallelism.md` | 3+ dimension analysis via concurrent Task agents |
+| **Auto-Fix** | `references/patterns/auto-fix.md` | Analyzer skills apply fixes directly via Edit tool |
+| **CLAUDE.md Integration** | `references/patterns/project-conventions.md` | Skills adapt to project conventions |
+| **Smart Scoping** | `references/patterns/smart-scope.md` | Git-diff-first scope detection, zero config |
+| **Finding Filtering** | `references/patterns/finding-filtering.md` | False positive filtering and deduplication |
+| **Skill Composition** | `references/patterns/skill-composition.md` | Skills invoking other skills (like /batch + /simplify) |
+| **Worktree Isolation** | `references/patterns/worktree-isolation.md` | Parallel file modifications in isolated worktrees |
+| **Persistent Memory** | `references/patterns/skill-memory.md` | Cross-session learning for repeated analysis |
+
+The architecture agent classifies skills into three execution sophistication tiers:
+
+| Tier | Criteria | Capabilities |
+|------|----------|-------------|
+| **Simple** | 1-2 dimensions, no code modification | Read, Grep, Glob, Bash |
+| **Intermediate** | 2-3 dimensions, optional mechanical fixes | + Task, Edit |
+| **Advanced** | 3+ dimensions, parallel agents, auto-fix | + Task, Edit, Write + CLAUDE.md + filtering |
+
 ---
 
 ## Testing
 
 ```bash
-# Run all 125 tests
+# Run all 130 tests
 pytest tests/ -v
 
 # Run specific test file
@@ -372,7 +401,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md). Run before submitting:
 
 ```bash
 ./scripts/validate-all.sh .    # All validators pass
-pytest tests/ -v               # All 125 tests pass
+pytest tests/ -v               # All 130 tests pass
 shellcheck scripts/*.sh        # No warnings
 ```
 
@@ -384,6 +413,6 @@ MIT License -- See [LICENSE](LICENSE) for details.
 
 ---
 
-**Version**: 2.1.0
+**Version**: 2.2.0
 **Created by**: DJ Patel -- Founder & CEO, Platxa | https://platxa.com
 **Based on**: Anthropic's [Agent Skills](https://agentskills.io) Open Standard

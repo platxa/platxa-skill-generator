@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Platxa Skill Generator creates production-ready Claude Code skills by orchestrating specialized subagents through a multi-phase workflow: Discovery → Architecture → Generation → Validation → Installation. It follows Anthropic's Agent Skills specification.
+Platxa Skill Generator creates production-ready Claude Code skills by orchestrating specialized subagents through a multi-phase workflow: Discovery → Architecture → Generation → Validation → Installation. It follows Anthropic's Agent Skills specification and supports advanced patterns (parallel sub-agents, auto-fix, CLAUDE.md integration) matching Anthropic's bundled skills like /simplify.
 
 ## Commands
 
@@ -22,7 +22,7 @@ python3 scripts/score-skill.py <skill-directory>   # 5-dimension quality scorer 
 
 ### Testing
 ```bash
-pytest tests/ -v                    # Run all 125 tests
+pytest tests/ -v                    # Run all 130 tests
 pytest tests/test_validate_frontmatter.py -v  # Run specific test file
 pytest -k "test_valid_name"         # Run tests matching pattern
 ```
@@ -54,9 +54,9 @@ The skill generator progresses through phases: IDLE → INIT → DISCOVERY → A
 
 Each phase uses Task tool with specialized agents defined in `references/agents/`:
 - **discovery-agent.md**: Researches domain via web search, analyzes existing skills
-- **architecture-agent.md**: Determines skill type and structure
-- **generation-agent.md**: Creates SKILL.md and supporting files
-- **validation-agent.md**: Runs quality checks (score ≥7.0 required)
+- **architecture-agent.md**: Determines skill type, structure, and execution sophistication (simple/intermediate/advanced)
+- **generation-agent.md**: Creates SKILL.md and supporting files with dynamic context injection
+- **validation-agent.md**: Runs quality checks (score ≥7.0 required), generates Anthropic-compatible evals
 - **script-agent.md**: Generates executable helpers
 - **reference-agent.md**: Creates domain documentation
 - **quality-agent.md**: Scores content quality
@@ -83,23 +83,23 @@ Defined in `scripts/count-tokens.py`:
 ## Key Directories
 
 ```
-references/             # 129 domain knowledge files
+references/             # 137 domain knowledge files
 ├── agents/             # 7 subagent prompt definitions
-├── patterns/           # 48 implementation patterns
-├── templates/          # 9 skill type templates
-├── orchestration/      # Workflow patterns
-├── discovery/          # Research patterns
-├── generation/         # Content generation patterns
-├── validation/         # Quality validation patterns
-├── installation/       # Install/export patterns
-├── interaction/        # User interaction patterns
-├── architecture/       # Architecture patterns
-├── scripts/            # Script generation patterns
-├── spec/               # Specification references
-└── examples/           # Example skills
+├── patterns/           # 56 implementation patterns (includes parallel, auto-fix, CLAUDE.md, filtering)
+├── templates/          # 9 skill type templates (with advanced workflow variants)
+├── orchestration/      # 7 workflow patterns
+├── discovery/          # 3 research patterns
+├── generation/         # 13 content generation patterns
+├── validation/         # 5 quality validation patterns
+├── installation/       # 10 install/export patterns
+├── interaction/        # 9 user interaction patterns
+├── architecture/       # 2 architecture patterns
+├── scripts/            # 11 script generation patterns
+├── spec/               # 2 specification references
+└── examples/           # 2 example skills
 scripts/                # 15 Bash/Python scripts
 catalog/                # 17 production-ready skills
-tests/                  # 125 tests across 7 files (uses real file operations, no mocks)
+tests/                  # 130 tests across 7 files (uses real file operations, no mocks)
 ```
 
 ## SKILL.md Frontmatter Requirements
