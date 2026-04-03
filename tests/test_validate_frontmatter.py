@@ -563,6 +563,27 @@ class TestInvocationControlValidation:
         assert result.returncode == 0
 
     @pytest.mark.frontmatter
+    def test_yes_no_disable_model_invocation_passes(
+        self,
+        temp_skill_dir: Path,
+        run_validate_frontmatter,
+    ) -> None:
+        """yes/no values for disable-model-invocation are accepted (Claude Code compat)."""
+        for val in ["yes", "no"]:
+            skill_dir = temp_skill_dir / f"dmi-{val}"
+            skill_dir.mkdir(exist_ok=True)
+            (skill_dir / "SKILL.md").write_text(
+                f"---\nname: dmi-{val}-skill\n"
+                "description: A skill testing yes/no boolean values.\n"
+                f"disable-model-invocation: {val}\n"
+                "---\n\n# Content\n"
+            )
+            result = run_validate_frontmatter(skill_dir)
+            assert result.returncode == 0, (
+                f"Expected exit 0 for disable-model-invocation={val}. stderr: {result.stderr}"
+            )
+
+    @pytest.mark.frontmatter
     def test_invalid_disable_model_invocation_fails(
         self,
         temp_skill_dir: Path,
@@ -573,7 +594,7 @@ class TestInvocationControlValidation:
         skill_md.write_text(
             "---\nname: bad-dmi\n"
             "description: A skill with invalid invocation control.\n"
-            "disable-model-invocation: yes\n"
+            "disable-model-invocation: maybe\n"
             "---\n\n# Content\n"
         )
         result = run_validate_frontmatter(temp_skill_dir)
@@ -703,6 +724,125 @@ class TestEffortFieldValidation:
         result = run_validate_frontmatter(temp_skill_dir)
         assert result.returncode == 1
         assert "Invalid effort" in result.stderr
+
+
+class TestVersionFieldValidation:
+    """Tests for version field validation."""
+
+    @pytest.mark.frontmatter
+    def test_valid_semver_passes(
+        self,
+        temp_skill_dir: Path,
+        run_validate_frontmatter,
+    ) -> None:
+        """Semantic version strings are accepted."""
+        skill_md = temp_skill_dir / "SKILL.md"
+        skill_md.write_text(
+            "---\nname: versioned-skill\n"
+            "description: A skill with valid semantic version.\n"
+            "version: 1.2.3\n"
+            "---\n\n# Content\n"
+        )
+        result = run_validate_frontmatter(temp_skill_dir)
+        assert result.returncode == 0
+        assert "version field valid" in result.stdout
+
+    @pytest.mark.frontmatter
+    def test_semver_with_prerelease_passes(
+        self,
+        temp_skill_dir: Path,
+        run_validate_frontmatter,
+    ) -> None:
+        """Semantic version with prerelease tag is accepted."""
+        skill_md = temp_skill_dir / "SKILL.md"
+        skill_md.write_text(
+            "---\nname: prerelease-skill\n"
+            "description: A skill with prerelease version tag.\n"
+            "version: 0.1.0-beta.1\n"
+            "---\n\n# Content\n"
+        )
+        result = run_validate_frontmatter(temp_skill_dir)
+        assert result.returncode == 0
+
+    @pytest.mark.frontmatter
+    def test_non_semver_warns(
+        self,
+        temp_skill_dir: Path,
+        run_validate_frontmatter,
+    ) -> None:
+        """Non-semver version strings produce a warning but pass."""
+        skill_md = temp_skill_dir / "SKILL.md"
+        skill_md.write_text(
+            "---\nname: odd-version-skill\n"
+            "description: A skill with non-standard version string.\n"
+            "version: v2\n"
+            "---\n\n# Content\n"
+        )
+        result = run_validate_frontmatter(temp_skill_dir)
+        assert result.returncode == 0  # Warning, not error
+        assert "not semver" in result.stderr.lower() or "WARN" in result.stderr
+
+
+class TestWhenToUseFieldValidation:
+    """Tests for when_to_use field validation."""
+
+    @pytest.mark.frontmatter
+    def test_when_to_use_accepted(
+        self,
+        temp_skill_dir: Path,
+        run_validate_frontmatter,
+    ) -> None:
+        """when_to_use field is recognized and accepted."""
+        skill_md = temp_skill_dir / "SKILL.md"
+        skill_md.write_text(
+            "---\nname: wtu-skill\n"
+            "description: A skill with when_to_use guidance.\n"
+            'when_to_use: "When the user asks to review code"\n'
+            "---\n\n# Content\n"
+        )
+        result = run_validate_frontmatter(temp_skill_dir)
+        assert result.returncode == 0
+        assert "Unknown field" not in result.stderr
+
+    @pytest.mark.frontmatter
+    def test_when_to_use_hyphenated_accepted(
+        self,
+        temp_skill_dir: Path,
+        run_validate_frontmatter,
+    ) -> None:
+        """when-to-use (hyphenated) field is also recognized."""
+        skill_md = temp_skill_dir / "SKILL.md"
+        skill_md.write_text(
+            "---\nname: wtu-hyphen-skill\n"
+            "description: A skill with hyphenated when-to-use field.\n"
+            'when-to-use: "When the user asks to lint code"\n'
+            "---\n\n# Content\n"
+        )
+        result = run_validate_frontmatter(temp_skill_dir)
+        assert result.returncode == 0
+        assert "Unknown field" not in result.stderr
+
+
+class TestNumericEffortValidation:
+    """Tests for numeric effort values."""
+
+    @pytest.mark.frontmatter
+    def test_numeric_effort_passes(
+        self,
+        temp_skill_dir: Path,
+        run_validate_frontmatter,
+    ) -> None:
+        """Integer effort values are accepted (Claude Code compat)."""
+        skill_md = temp_skill_dir / "SKILL.md"
+        skill_md.write_text(
+            "---\nname: numeric-effort-skill\n"
+            "description: A skill with numeric effort value.\n"
+            "effort: 5\n"
+            "---\n\n# Content\n"
+        )
+        result = run_validate_frontmatter(temp_skill_dir)
+        assert result.returncode == 0
+        assert "effort field valid" in result.stdout
 
 
 class TestShellFieldValidation:

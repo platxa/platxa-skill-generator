@@ -237,10 +237,10 @@ fi
 DMI=$(echo "$FRONTMATTER" | grep -E '^disable-model-invocation:' | sed 's/^disable-model-invocation:\s*//' | tr -d '"' | tr -d "'" || echo "")
 
 if [[ -n "$DMI" ]]; then
-    if [[ "$DMI" =~ ^(true|false)$ ]]; then
+    if [[ "$DMI" =~ ^(true|false|yes|no)$ ]]; then
         info "disable-model-invocation field valid: $DMI"
     else
-        error "Invalid disable-model-invocation: $DMI (must be true or false)"
+        error "Invalid disable-model-invocation: $DMI (must be true, false, yes, or no)"
     fi
 fi
 
@@ -248,10 +248,10 @@ fi
 UI=$(echo "$FRONTMATTER" | grep -E '^user-invocable:' | sed 's/^user-invocable:\s*//' | tr -d '"' | tr -d "'" || echo "")
 
 if [[ -n "$UI" ]]; then
-    if [[ "$UI" =~ ^(true|false)$ ]]; then
+    if [[ "$UI" =~ ^(true|false|yes|no)$ ]]; then
         info "user-invocable field valid: $UI"
     else
-        error "Invalid user-invocable: $UI (must be true or false)"
+        error "Invalid user-invocable: $UI (must be true, false, yes, or no)"
     fi
 fi
 
@@ -286,10 +286,10 @@ fi
 EFFORT=$(echo "$FRONTMATTER" | grep -E '^effort:' | sed 's/^effort:\s*//' | tr -d '"' | tr -d "'" || echo "")
 
 if [[ -n "$EFFORT" ]]; then
-    if [[ "$EFFORT" =~ ^(low|medium|high|max)$ ]]; then
+    if [[ "$EFFORT" =~ ^(low|medium|high|max)$ ]] || [[ "$EFFORT" =~ ^[0-9]+$ ]]; then
         info "effort field valid: $EFFORT"
     else
-        error "Invalid effort: $EFFORT (must be low, medium, high, or max)"
+        error "Invalid effort: $EFFORT (must be low, medium, high, max, or a positive integer)"
     fi
 fi
 
@@ -311,6 +311,24 @@ if [[ -n "$SHELL_VAL" ]]; then
     fi
 fi
 
+# Check version field (semantic versioning if present)
+VERSION=$(echo "$FRONTMATTER" | grep -E '^version:' | sed 's/^version:\s*//' | tr -d '"' | tr -d "'" || echo "")
+
+if [[ -n "$VERSION" ]]; then
+    if [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9.]+)?$ ]]; then
+        info "version field valid: $VERSION"
+    else
+        warn "version field not semver: $VERSION (recommended format: X.Y.Z)"
+    fi
+fi
+
+# Check when_to_use / when-to-use field (non-empty string)
+WHEN_TO_USE=$(echo "$FRONTMATTER" | grep -E '^when[_-]to[_-]use:' | sed 's/^when[_-]to[_-]use:\s*//' || echo "")
+
+if [[ -n "$WHEN_TO_USE" ]]; then
+    info "when_to_use field present"
+fi
+
 # Check paths field (just validate presence, glob patterns are free-form)
 HAS_PATHS=$(echo "$FRONTMATTER" | grep -E '^paths:' || echo "")
 
@@ -330,7 +348,7 @@ echo ""
 echo "Checking for unknown fields..."
 
 # All fields recognized by Claude Code skills spec + our extensions
-KNOWN_FIELDS="name description allowed-tools tools model agent context disable-model-invocation user-invocable argument-hint effort hooks paths shell metadata depends-on suggests subagent_type run_in_background"
+KNOWN_FIELDS="name description allowed-tools tools model agent context disable-model-invocation user-invocable argument-hint effort hooks paths shell metadata depends-on suggests subagent_type run_in_background version when_to_use when-to-use"
 FIELD_NAMES=$(echo "$FRONTMATTER" | grep -E '^[a-z][a-z0-9_-]*:' | sed 's/:.*$//' || echo "")
 
 while IFS= read -r field; do
