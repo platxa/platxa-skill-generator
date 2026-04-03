@@ -14,6 +14,7 @@ metadata:
     - encryption
     - kubernetes
     - secrets
+user-invocable: true
 ---
 
 # Platxa Secrets Management

@@ -34,13 +34,36 @@ info() {
 }
 
 usage() {
-    echo "Usage: $0 <skill-directory>"
+    echo "Usage: $0 [--claude-ai] <skill-directory>"
     echo ""
     echo "Validates SKILL.md frontmatter against spec."
+    echo ""
+    echo "Options:"
+    echo "  --claude-ai   Strict mode: only Agent Skills open standard fields"
+    echo "                (name, description, license, compatibility, metadata, allowed-tools)"
+    echo "                Fields outside this set are errors, not warnings."
     exit 1
 }
 
 # Parse arguments
+CLAUDE_AI_MODE=false
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --claude-ai)
+            CLAUDE_AI_MODE=true
+            shift
+            ;;
+        -*)
+            error "Unknown option: $1"
+            usage
+            ;;
+        *)
+            break
+            ;;
+    esac
+done
+
 SKILL_DIR="${1:-}"
 
 if [[ -z "$SKILL_DIR" ]]; then
@@ -207,12 +230,12 @@ if [[ -n "$SUBAGENT" ]]; then
     info "subagent_type field present: $SUBAGENT"
 fi
 
-# Check depends-on field - validate each entry is a valid skill name
+# Check depends-on field — EXPERIMENTAL (open proposal, not yet in Agent Skills spec)
 DEPENDS_ON=$(echo "$FRONTMATTER" | sed -n '/^depends-on:/,/^[a-z][a-z0-9_-]*:/p' | grep -E '^\s*-' | sed 's/^\s*-\s*//' || echo "")
 
 if [[ -n "$DEPENDS_ON" ]]; then
     DEP_COUNT=$(echo "$DEPENDS_ON" | wc -l)
-    info "depends-on field present with $DEP_COUNT dependencies"
+    warn "depends-on is EXPERIMENTAL (not yet in Agent Skills open standard). $DEP_COUNT dependencies declared"
 
     while IFS= read -r dep; do
         [[ -z "$dep" ]] && continue
@@ -226,12 +249,12 @@ if [[ -n "$DEPENDS_ON" ]]; then
     done <<< "$DEPENDS_ON"
 fi
 
-# Check suggests field - validate each entry is a valid skill name
+# Check suggests field — EXPERIMENTAL (open proposal, not yet in Agent Skills spec)
 SUGGESTS=$(echo "$FRONTMATTER" | sed -n '/^suggests:/,/^[a-z][a-z0-9_-]*:/p' | grep -E '^\s*-' | sed 's/^\s*-\s*//' || echo "")
 
 if [[ -n "$SUGGESTS" ]]; then
     SUG_COUNT=$(echo "$SUGGESTS" | wc -l)
-    info "suggests field present with $SUG_COUNT suggestions"
+    warn "suggests is EXPERIMENTAL (not yet in Agent Skills open standard). $SUG_COUNT suggestions declared"
 
     while IFS= read -r sug; do
         [[ -z "$sug" ]] && continue
@@ -319,22 +342,25 @@ if [[ -n "$SHELL_VAL" ]]; then
     fi
 fi
 
-# Check version field (semantic versioning if present)
+# Check version field — DEPRECATED as top-level per Agent Skills open standard
+# Version should go under metadata.version per agentskills.io/specification
 VERSION=$(echo "$FRONTMATTER" | grep -E '^version:' | sed 's/^version:\s*//' | tr -d '"' | tr -d "'" || echo "")
 
 if [[ -n "$VERSION" ]]; then
+    warn "Top-level 'version' is not in the Agent Skills open standard. Move to metadata.version for claude.ai compatibility. See: agentskills.io/specification"
     if [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9.]+)?$ ]]; then
-        info "version field valid: $VERSION"
+        info "version value is valid semver: $VERSION"
     else
         warn "version field not semver: $VERSION (recommended format: X.Y.Z)"
     fi
 fi
 
-# Check when_to_use / when-to-use field (non-empty string)
+# Check when_to_use / when-to-use field — DEPRECATED per Anthropic spec
+# Trigger phrases should go in the description field (first 250 chars)
 WHEN_TO_USE=$(echo "$FRONTMATTER" | grep -E '^when[_-]to[_-]use:' | sed 's/^when[_-]to[_-]use:\s*//' || echo "")
 
 if [[ -n "$WHEN_TO_USE" ]]; then
-    info "when_to_use field present"
+    warn "when_to_use is not in the official Agent Skills spec. Move trigger phrases into the description field (first 250 chars). See: agentskills.io/specification"
 fi
 
 # Check paths field (just validate presence, glob patterns are free-form)
@@ -355,16 +381,44 @@ fi
 echo ""
 echo "Checking for unknown fields..."
 
-# All fields recognized by Claude Code skills spec + our extensions
-KNOWN_FIELDS="name description allowed-tools tools model agent context disable-model-invocation user-invocable argument-hint effort hooks paths shell metadata depends-on suggests subagent_type run_in_background version when_to_use when-to-use"
-FIELD_NAMES=$(echo "$FRONTMATTER" | grep -E '^[a-z][a-z0-9_-]*:' | sed 's/:.*$//' || echo "")
+# Agent Skills open standard fields (agentskills.io/specification)
+OPEN_STANDARD_FIELDS="name description license compatibility metadata allowed-tools"
 
-while IFS= read -r field; do
-    [[ -z "$field" ]] && continue
-    if ! echo "$KNOWN_FIELDS" | grep -qw "$field"; then
-        warn "Unknown field will be ignored: $field"
-    fi
-done <<< "$FIELD_NAMES"
+# Claude Code extension fields (code.claude.com/docs/en/skills)
+CLAUDE_CODE_FIELDS="model agent context disable-model-invocation user-invocable argument-hint effort hooks paths shell"
+
+# Deprecated/non-standard fields (recognized but warned)
+DEPRECATED_FIELDS="version when_to_use when-to-use depends-on suggests tools subagent_type run_in_background"
+
+if [[ "$CLAUDE_AI_MODE" == true ]]; then
+    # Strict mode: only open standard fields are accepted
+    KNOWN_FIELDS="$OPEN_STANDARD_FIELDS"
+    FIELD_NAMES=$(echo "$FRONTMATTER" | grep -E '^[a-z][a-z0-9_-]*:' | sed 's/:.*$//' || echo "")
+
+    while IFS= read -r field; do
+        [[ -z "$field" ]] && continue
+        if ! echo "$KNOWN_FIELDS" | grep -qw "$field"; then
+            if echo "$CLAUDE_CODE_FIELDS" | grep -qw "$field"; then
+                error "claude.ai incompatible: '$field' is a Claude Code extension, not in the open standard"
+            elif echo "$DEPRECATED_FIELDS" | grep -qw "$field"; then
+                error "claude.ai incompatible: '$field' is not in the Agent Skills open standard"
+            else
+                error "claude.ai incompatible: unknown field '$field'"
+            fi
+        fi
+    done <<< "$FIELD_NAMES"
+else
+    # Default mode: accept all Claude Code fields, warn on unknown
+    ALL_KNOWN="$OPEN_STANDARD_FIELDS $CLAUDE_CODE_FIELDS $DEPRECATED_FIELDS"
+    FIELD_NAMES=$(echo "$FRONTMATTER" | grep -E '^[a-z][a-z0-9_-]*:' | sed 's/:.*$//' || echo "")
+
+    while IFS= read -r field; do
+        [[ -z "$field" ]] && continue
+        if ! echo "$ALL_KNOWN" | grep -qw "$field"; then
+            warn "Unknown field will be ignored: $field"
+        fi
+    done <<< "$FIELD_NAMES"
+fi
 
 # Summary
 echo ""

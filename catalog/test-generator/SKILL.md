@@ -15,6 +15,8 @@ metadata:
     - builder
     - testing
     - developer-tools
+argument-hint: "[file|directory]"
+user-invocable: true
 ---
 
 # Test Generator

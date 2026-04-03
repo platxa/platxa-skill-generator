@@ -16,6 +16,7 @@ metadata:
     - pytest
     - vitest
     - e2e
+user-invocable: true
 ---
 
 # Platxa Testing

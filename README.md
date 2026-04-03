@@ -4,7 +4,7 @@
 >
 > **Created by**: DJ Patel -- Founder & CEO, Platxa | https://platxa.com
 >
-> **Based on**: Anthropic's [Agent Skills](https://github.com/anthropics/skills) specification
+> **Based on**: Anthropic's [Agent Skills](https://agentskills.io) Open Standard + [Claude Code Extensions](https://code.claude.com/docs/en/skills)
 
 ---
 
@@ -20,6 +20,7 @@
 - [Scripts Reference](#scripts-reference)
 - [Skill Types](#skill-types)
 - [Frontmatter Reference](#frontmatter-reference)
+- [Eval Infrastructure](#eval-infrastructure)
 - [Project Structure](#project-structure)
 - [Quality Standards](#quality-standards)
 - [Testing](#testing)
@@ -71,7 +72,19 @@ Platxa Skill Generator creates production-ready Claude Code skills by orchestrat
 2. **Architecture** -- Design skill structure based on type (Builder/Guide/Automation/Analyzer/Validator)
 3. **Generation** -- Create SKILL.md, scripts, and reference documentation
 4. **Validation** -- Verify against Anthropic's spec with 5-dimension quality scoring
-5. **Installation** -- Deploy to user or project skills directory
+5. **Eval Loop** (optional) -- Test with real prompts, grade, iterate, optimize description
+6. **Installation** -- Deploy to user or project skills directory
+
+### Two-Layer Spec Compliance
+
+The generator supports both specification layers:
+
+| Layer | Fields | Compatibility |
+|-------|--------|--------------|
+| **Agent Skills Open Standard** ([agentskills.io](https://agentskills.io)) | name, description, license, compatibility, metadata, allowed-tools | claude.ai, Cursor, Gemini CLI, Codex CLI, VS Code Copilot |
+| **Claude Code Extensions** ([code.claude.com](https://code.claude.com/docs/en/skills)) | model, effort, context, agent, paths, hooks, argument-hint, user-invocable, disable-model-invocation, shell | Claude Code CLI only |
+
+Use `--claude-ai` flag on validation scripts to check open-standard-only compliance.
 
 ---
 
@@ -80,19 +93,20 @@ Platxa Skill Generator creates production-ready Claude Code skills by orchestrat
 | Feature | Description |
 |---------|-------------|
 | **Autonomous Creation** | Minimal user input, maximum automation |
-| **Multi-Phase Workflow** | 7 specialized subagents for each phase |
+| **Multi-Phase Workflow** | 9 specialized subagents for each phase |
 | **Five Skill Types** | Builder, Guide, Automation, Analyzer, Validator |
 | **Advanced Patterns** | Parallel sub-agents, auto-fix, CLAUDE.md integration, smart scoping |
-| **Quality Scoring** | 5-dimension scorer with advanced pattern bonuses |
-| **Full Frontmatter Validation** | 23 known fields, constraint patterns, Claude Code spec compliance |
-| **Dependency System** | `depends-on` and `suggests` fields with cycle detection |
+| **Eval Infrastructure** | Test prompts, grading, benchmarking, description optimization, A/B comparison |
+| **Quality Scoring** | 5-dimension scorer with advanced pattern bonuses and spec compliance checks |
+| **Full Frontmatter Validation** | 30 valid tools, constraint patterns, claude.ai compatibility mode |
+| **Dependency System** | `depends-on` and `suggests` fields (experimental) with cycle detection |
 | **Token Budget Management** | SKILL.md optimized for context efficiency |
 | **Script Security** | ShellCheck + security pattern scanning |
+| **Skill Packaging** | .skill archive creation for distribution |
 | **Web Research** | Automatic domain knowledge discovery |
-| **137 Reference Files** | Domain knowledge across 56 patterns, 9 templates, 7 agents |
-| **15 Scripts** | Validation, installation, scoring, dependency checking, graph visualization |
-| **150 Tests** | Comprehensive test suite across 7 test files |
-| **Catalog Regression** | Automated validation of all 17 catalog skills on every change |
+| **140 Reference Files** | Domain knowledge across 56 patterns, 9 templates, 9 agents |
+| **19 Scripts** | Validation, installation, scoring, eval, dependency, packaging |
+| **155 Tests** | Comprehensive test suite across 9 test files with catalog regression |
 
 ---
 
@@ -102,10 +116,10 @@ Platxa Skill Generator creates production-ready Claude Code skills by orchestrat
 |-------------|---------|---------|
 | **Claude Code CLI** | Latest | Required runtime environment |
 | **Bash** | 4.0+ | Run validation and installation scripts |
-| **Python** | 3.10+ | Token counting, quality scoring |
+| **Python** | 3.10+ | Token counting, quality scoring, eval infrastructure |
 | **Git** | 2.0+ | Clone the repository |
 
-Optional: `tiktoken` (pip install) for precise token counting, `shellcheck` for script linting.
+Optional: `tiktoken` (pip install) for precise token counting, `shellcheck` for script linting, `jq` for eval runner.
 
 ---
 
@@ -173,19 +187,28 @@ cd platxa-skill-generator
 |--------|---------|
 | `validate-all.sh <dir>` | Run all validators (structure, frontmatter, tokens, shellcheck, quality) |
 | `validate-structure.sh <dir>` | Check directory structure and file presence |
-| `validate-frontmatter.sh <dir>` | Validate 23 YAML frontmatter fields with constraint patterns |
+| `validate-frontmatter.sh [--claude-ai] <dir>` | Validate YAML frontmatter (30 tools, constraint patterns, open-standard mode) |
 | `validate-skill.sh <dir>` | Field validation with 0-10 scoring |
 | `validate-catalog-entry.sh <dir>` | Validate a catalog entry for PR submission |
 | `count-tokens.py <dir>` | Token counting with budget enforcement |
 | `score-skill.py <dir>` | 5-dimension quality scorer (--json, --verbose) |
 | `security-check.sh <dir>` | Scan scripts for dangerous patterns |
 
-### Installation
+### Evaluation
+
+| Script | Purpose |
+|--------|---------|
+| `run-eval.sh <dir> [--baseline] [--iteration N]` | Run eval prompts against a skill via `claude -p` |
+| `aggregate-benchmark.py <iter-dir> --skill-name <name>` | Aggregate grading/timing into benchmark.json (mean/stddev) |
+| `optimize-description.py <dir> [--json] [--verbose]` | Optimize description trigger accuracy (train/test split) |
+
+### Installation & Distribution
 
 | Script | Purpose |
 |--------|---------|
 | `install-skill.sh <dir> [--user\|--project]` | Install a skill with validation and dependency check |
 | `install-from-catalog.sh <name>` | Install from catalog with auto-dependency resolution |
+| `package-skill.py <dir> [--output <path>]` | Package skill into .skill archive for distribution |
 
 ### Dependency Management
 
@@ -223,29 +246,52 @@ cd platxa-skill-generator
 ```yaml
 ---
 name: hyphen-case-name  # ≤64 chars, no consecutive hyphens
-description: ...        # ≤1024 chars, no placeholders, include trigger phrases
+description: >-         # ≤1024 chars, trigger context in first 250 chars
+  Analyzes X for Y. Use when the user asks to "do X", "check Y",
+  or "review Z". Produces structured reports with actionable findings.
 ---
 ```
 
-### Optional Fields
+The description field is the **primary trigger mechanism**. Front-load the first 250 chars with what the skill does AND when to use it. Include quoted trigger phrases. Write in third person.
+
+### Agent Skills Open Standard Fields
+
+These fields work on claude.ai, Cursor, Gemini CLI, and all Agent Skills-compatible tools:
+
+| Field | Type | Purpose |
+|-------|------|---------|
+| `name` | string | Skill identifier (required) |
+| `description` | string | What it does + when to use (required) |
+| `license` | string | License name |
+| `compatibility` | string | Environment requirements |
+| `metadata` | object | Arbitrary key-value pairs (e.g., `version: "1.0.0"`) |
+| `allowed-tools` | list | Pre-approved tool permissions |
+
+### Claude Code Extension Fields
+
+These fields work in Claude Code CLI only:
 
 | Field | Type | Values | Purpose |
 |-------|------|--------|---------|
-| `allowed-tools` | list | 27 valid tools + constraint patterns | Tool permissions |
-| `version` | string | Semver (X.Y.Z) | Skill versioning |
 | `model` | string | opus, sonnet, haiku | Override conversation model |
 | `effort` | string/int | low, medium, high, max, or integer | Token budget control |
 | `context` | string | fork | Run as isolated sub-agent |
 | `agent` | string | Explore, Plan, general-purpose | Agent type (with context: fork) |
 | `paths` | string/list | Glob patterns | Conditional activation by file type |
-| `when_to_use` | string | Trigger description | Auto-invocation guidance |
 | `argument-hint` | string | Argument format | Help text for /skill arguments |
-| `user-invocable` | bool | true/false/yes/no | Allow user slash-command |
-| `disable-model-invocation` | bool | true/false/yes/no | Prevent auto-invocation |
+| `user-invocable` | bool | true/false | Allow user slash-command |
+| `disable-model-invocation` | bool | true/false | Prevent auto-invocation |
 | `shell` | string | bash, powershell | Shell for inline code blocks |
-| `hooks` | object | Hook configuration | Lifecycle hooks |
-| `depends-on` | list | Skill names | Required dependencies |
-| `suggests` | list | Skill names | Recommended companions |
+| `hooks` | object | Hook configuration | Lifecycle hooks (PreToolUse, PostToolUse, TaskCreated, etc.) |
+
+### Deprecated / Experimental Fields
+
+| Field | Status | Migration |
+|-------|--------|-----------|
+| `when_to_use` | Deprecated | Fold trigger phrases into `description` (first 250 chars) |
+| `version` (top-level) | Deprecated | Move to `metadata.version` |
+| `depends-on` | Experimental | Open proposal only, not yet in spec |
+| `suggests` | Experimental | Open proposal only, not yet in spec |
 
 ### Tool Constraint Patterns
 
@@ -268,6 +314,72 @@ allowed-tools:
 
 ---
 
+## Eval Infrastructure
+
+Inspired by Anthropic's [skill-creator](https://github.com/anthropics/skills/tree/main/skills/skill-creator), the eval system enables iterative skill improvement:
+
+### Workflow
+
+```
+Draft skill → Write eval prompts → Run evals → Grade → Review → Improve → Repeat
+```
+
+### evals.json
+
+Create `evals/evals.json` in your skill directory:
+
+```json
+{
+  "skill_name": "my-skill",
+  "evals": [
+    {
+      "id": 1,
+      "name": "realistic-test-case",
+      "prompt": "Detailed, realistic user prompt...",
+      "expected_output": "What success looks like",
+      "expectations": [
+        "Output includes file:line references",
+        "Score uses weighted formula"
+      ]
+    }
+  ]
+}
+```
+
+### Running Evals
+
+```bash
+# Run all evals against skill
+./scripts/run-eval.sh my-skill/
+
+# Run baseline (without skill) for comparison
+./scripts/run-eval.sh my-skill/ --baseline
+
+# Grade results with grader agent (via Task tool)
+# See references/agents/grader-agent.md
+
+# Aggregate into benchmark
+python3 scripts/aggregate-benchmark.py my-skill/eval-workspace/iteration-1 --skill-name my-skill
+```
+
+### Description Optimization
+
+```bash
+# Optimize description for trigger accuracy (train/test split)
+python3 scripts/optimize-description.py my-skill/ --json --verbose
+```
+
+### Agents
+
+| Agent | Purpose |
+|-------|---------|
+| `grader-agent.md` | Evaluate expectations against outputs with evidence |
+| `comparator-agent.md` | Blind A/B comparison between skill versions |
+
+See `references/validation/eval-schema.md` for full JSON schemas.
+
+---
+
 ## Project Structure
 
 ```
@@ -278,10 +390,10 @@ platxa-skill-generator/
 ├── pyproject.toml              # Python project config
 ├── LICENSE                     # MIT License
 │
-├── scripts/                    # 15 executable scripts
+├── scripts/                    # 19 executable scripts
 │   ├── validate-all.sh         # Master validation orchestrator
 │   ├── validate-structure.sh   # Directory structure checks
-│   ├── validate-frontmatter.sh # YAML frontmatter validation (23 fields)
+│   ├── validate-frontmatter.sh # YAML frontmatter validation (--claude-ai mode)
 │   ├── validate-skill.sh       # Field validation with scoring
 │   ├── validate-catalog-entry.sh # Catalog entry validator
 │   ├── count-tokens.py         # Token counting (tiktoken)
@@ -293,7 +405,11 @@ platxa-skill-generator/
 │   ├── detect-circular-deps.sh # Cycle detection (DFS)
 │   ├── skill-graph.sh          # DOT graph output
 │   ├── list-installed.sh       # Installed skills lister
-│   └── test-scripts.sh         # Script test runner
+│   ├── test-scripts.sh         # Script test runner
+│   ├── run-eval.sh             # Eval prompt runner (claude -p)
+│   ├── aggregate-benchmark.py  # Benchmark aggregation (mean/stddev)
+│   ├── optimize-description.py # Description trigger optimizer
+│   └── package-skill.py        # .skill archive packager
 │
 ├── catalog/                    # 17 production-ready skills
 │   ├── code-documenter/
@@ -314,14 +430,14 @@ platxa-skill-generator/
 │   ├── platxa-testing/
 │   └── platxa-yjs-server/
 │
-├── references/                 # 137 domain knowledge files
-│   ├── agents/                 # 7 subagent definitions
+├── references/                 # 140 domain knowledge files
+│   ├── agents/                 # 9 subagent definitions (incl. grader, comparator)
 │   ├── patterns/               # 56 implementation patterns
 │   ├── templates/              # 9 skill type templates
 │   ├── orchestration/          # 7 workflow patterns
 │   ├── discovery/              # 3 research patterns
 │   ├── generation/             # 13 content generation patterns
-│   ├── validation/             # 5 quality validation patterns
+│   ├── validation/             # 6 quality validation patterns (incl. eval-schema)
 │   ├── installation/           # 10 install/export patterns
 │   ├── interaction/            # 9 user interaction patterns
 │   ├── architecture/           # 2 architecture patterns
@@ -329,8 +445,8 @@ platxa-skill-generator/
 │   ├── spec/                   # 2 specification references
 │   └── examples/               # 2 example skills
 │
-├── tests/                      # 150 tests across 7 files
-│   ├── test_validate_frontmatter.py  # 44 frontmatter tests
+├── tests/                      # 155 tests across 9 files
+│   ├── test_validate_frontmatter.py  # 49 frontmatter tests (incl. claude-ai mode)
 │   ├── test_validate_structure.py    # 16 structure tests
 │   ├── test_count_tokens.py          # 10 token tests
 │   ├── test_score_skill.py           # 50 quality scorer tests
@@ -355,11 +471,11 @@ Every generated skill is scored across 5 dimensions:
 
 | Dimension | Weight | What It Checks |
 |-----------|--------|----------------|
-| **Spec Compliance** | 25% | Frontmatter validity, name format, description quality, quoted trigger phrases, front-loading |
-| **Content Depth** | 25% | Placeholders, generic filler, LLM-favorite words, vocabulary diversity, advanced pattern bonuses |
+| **Spec Compliance** | 25% | Frontmatter validity, name format, description trigger context in first 250 chars, deprecated field penalties (`when_to_use` -0.5, top-level `version` -0.3) |
+| **Content Depth** | 25% | Placeholders, generic filler, vocabulary diversity, advanced pattern bonuses |
 | **Example Quality** | 20% | Code blocks, language labels, substance, YAML/JSON validity |
 | **Structure** | 15% | Required sections, heading count, hierarchy, progressive disclosure |
-| **Token Efficiency** | 15% | Line count, word count, sentence length, references, progressive disclosure |
+| **Token Efficiency** | 15% | Line count, word count, sentence length, references |
 
 | Score | Level | Decision |
 |-------|-------|----------|
@@ -375,8 +491,6 @@ python3 scripts/score-skill.py catalog/code-documenter --verbose   # Detailed si
 ```
 
 ### Advanced Pattern Bonuses
-
-The scorer awards bonuses for production-quality patterns:
 
 | Pattern | Bonus | Detection |
 |---------|-------|-----------|
@@ -394,21 +508,9 @@ The scorer awards bonuses for production-quality patterns:
 - `$ARGUMENTS` without `argument-hint` suggests adding it
 - SKILL.md > 3000 tokens without `references/` triggers progressive disclosure penalty
 - Quoted trigger phrases in description beyond first 250 chars get penalized
-
-### Skill Composition
-
-Skills can declare relationships via frontmatter:
-
-```yaml
-depends-on:          # Required skills (checked at install time)
-  - platxa-logging
-suggests:            # Recommended companions (shown after install)
-  - platxa-testing
-```
+- Non-string metadata values warned for claude.ai compatibility
 
 ### Execution Tiers
-
-The architecture agent classifies skills into three execution sophistication tiers:
 
 | Tier | Criteria | Capabilities |
 |------|----------|-------------|
@@ -421,7 +523,7 @@ The architecture agent classifies skills into three execution sophistication tie
 ## Testing
 
 ```bash
-# Run all 150 tests
+# Run all 155 tests
 pytest tests/ -v
 
 # Run specific test file
@@ -433,6 +535,9 @@ pytest tests/ -m integration
 
 # Run catalog regression only
 pytest tests/test_integration.py -k catalog -v
+
+# Run claude-ai compatibility tests
+pytest tests/test_validate_frontmatter.py -k claude_ai -v
 ```
 
 All tests use **real file system operations** -- no mocks or simulations.
@@ -450,17 +555,26 @@ head -5 ~/.claude/skills/platxa-skill-generator/SKILL.md  # Check frontmatter
 
 ### Quality score too low
 
-Provide more specific descriptions. Check `score-skill.py --verbose` for actionable suggestions.
+Run `score-skill.py --verbose` for actionable suggestions. Common fixes:
+- Add trigger phrases to description (first 250 chars)
+- Move `version` to `metadata.version`
+- Remove `when_to_use` field (fold into description)
+- Add code block language labels
+
+### validate-frontmatter.sh shows deprecation warnings
+
+Fields not in the Agent Skills open standard trigger warnings:
+- `when_to_use` -- fold trigger phrases into description
+- `version` (top-level) -- move to `metadata.version`
+- `depends-on` / `suggests` -- experimental, open proposal only
+
+Use `--claude-ai` flag for strict open-standard-only validation.
 
 ### Scripts not executable
 
 ```bash
 chmod +x scripts/*.sh
 ```
-
-### ShellCheck fails in CI
-
-Avoid comments starting with `# shellcheck` (parsed as directives). Remove unused color variables.
 
 ---
 
@@ -470,8 +584,9 @@ See [CONTRIBUTING.md](CONTRIBUTING.md). Run before submitting:
 
 ```bash
 ./scripts/validate-all.sh .    # All validators pass
-pytest tests/ -v               # All 150 tests pass
+pytest tests/ -v               # All 155 tests pass
 shellcheck scripts/*.sh        # No warnings
+ruff check scripts/            # Python linting
 ```
 
 ---
@@ -482,6 +597,6 @@ MIT License -- See [LICENSE](LICENSE) for details.
 
 ---
 
-**Version**: 2.3.0
+**Version**: 3.0.0
 **Created by**: DJ Patel -- Founder & CEO, Platxa | https://platxa.com
-**Based on**: Anthropic's [Agent Skills](https://agentskills.io) Open Standard
+**Based on**: Anthropic's [Agent Skills](https://agentskills.io) Open Standard + [skill-creator](https://github.com/anthropics/skills/tree/main/skills/skill-creator)

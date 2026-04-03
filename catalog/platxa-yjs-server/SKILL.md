@@ -15,6 +15,7 @@ metadata:
     - websocket
     - collaboration
     - crdt
+user-invocable: true
 ---
 
 # Platxa Yjs Server

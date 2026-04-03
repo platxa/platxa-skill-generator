@@ -23,6 +23,7 @@ metadata:
     - yjs
     - websocket
     - kubernetes
+user-invocable: true
 ---
 
 # Platxa Sidecar Builder

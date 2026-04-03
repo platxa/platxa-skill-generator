@@ -22,12 +22,15 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 # Try yaml, fall back to regex parsing
-try:
-    import yaml
+from types import ModuleType
 
-    HAS_YAML = True
+yaml: ModuleType | None
+try:
+    import yaml as _yaml
+
+    yaml = _yaml
 except ImportError:
-    HAS_YAML = False
+    yaml = None
 
 
 # ---------------------------------------------------------------------------
@@ -85,6 +88,18 @@ VALID_TOOLS = {
     "KillShell",
     "BashOutput",
     "NotebookEdit",
+    "Brief",
+    "ToolSearch",
+    "EnterPlanMode",
+    "ExitPlanMode",
+    "EnterWorktree",
+    "ExitWorktree",
+    "LSP",
+    "RemoteTrigger",
+    "CronCreate",
+    "CronDelete",
+    "CronList",
+    "SendMessage",
 }
 
 PLACEHOLDER_PATTERNS = [
@@ -225,7 +240,7 @@ def parse_frontmatter(frontmatter_str: str) -> dict:
     if not frontmatter_str:
         return {}
 
-    if HAS_YAML:
+    if yaml is not None:
         try:
             return yaml.safe_load(frontmatter_str) or {}
         except yaml.YAMLError:
@@ -473,6 +488,43 @@ def score_spec_compliance(frontmatter: dict) -> DimensionScore:
             dim.signals_negative.append("Description is too vague")
             dim.suggestions.append(
                 "Be specific: include what the skill does AND specific contexts/triggers"
+            )
+
+    # Check for deprecated when_to_use field (not in Agent Skills open standard)
+    when_to_use = frontmatter.get("when_to_use", frontmatter.get("when-to-use", ""))
+    if when_to_use:
+        dim.score -= 0.5
+        dim.signals_negative.append(
+            "Uses deprecated 'when_to_use' field (not in Agent Skills open standard)"
+        )
+        dim.suggestions.append(
+            "Remove when_to_use — fold trigger phrases into description (first 250 chars)"
+        )
+
+    # Check for top-level version (should be metadata.version per open standard)
+    if "version" in frontmatter and not isinstance(frontmatter.get("metadata"), dict):
+        dim.score -= 0.3
+        dim.signals_negative.append("Top-level 'version' is not in the Agent Skills open standard")
+        dim.suggestions.append("Move version to metadata.version for claude.ai compatibility")
+    elif "version" in frontmatter and isinstance(frontmatter.get("metadata"), dict):
+        # version at top level AND metadata exists — still non-standard
+        if "version" not in frontmatter.get("metadata", {}):
+            dim.score -= 0.3
+            dim.signals_negative.append(
+                "Top-level 'version' is not in the Agent Skills open standard"
+            )
+            dim.suggestions.append("Move version to metadata.version for claude.ai compatibility")
+
+    # Check for non-standard metadata keys (claude.ai accepts string-to-string only)
+    metadata = frontmatter.get("metadata")
+    if isinstance(metadata, dict):
+        # Per Agent Skills spec, metadata is arbitrary key-value string mapping
+        # Complex nested values (lists, dicts) may cause issues on claude.ai
+        non_string_keys = [k for k, v in metadata.items() if isinstance(v, (dict, list))]
+        if non_string_keys:
+            dim.suggestions.append(
+                f"metadata keys {non_string_keys} have non-string values — "
+                "claude.ai expects flat string-to-string mapping"
             )
 
     # Check tools
@@ -778,7 +830,7 @@ def score_example_quality(body: str) -> DimensionScore:
             try:
                 if block["language"] == "json":
                     json.loads(block["content"])
-                elif HAS_YAML and yaml is not None:
+                elif yaml is not None:
                     yaml.safe_load(block["content"])
                 dim.signals_positive.append(f"Valid {block['language']} example")
             except Exception:

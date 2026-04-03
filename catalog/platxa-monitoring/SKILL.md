@@ -16,6 +16,7 @@ metadata:
     - prometheus
     - loki
     - observability
+user-invocable: true
 ---
 
 # Platxa Monitoring

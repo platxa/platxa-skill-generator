@@ -1,6 +1,12 @@
 ---
 name: platxa-skill-generator
-description: Autonomous skill creator for Claude Code CLI. Uses multi-phase orchestrated workflow with Task tool subagents to research domains, design architecture, generate content, and validate quality. Creates production-ready skills following Anthropic's Agent Skills specification.
+description: >-
+  Autonomous skill creator for Claude Code CLI. Use when the user asks to
+  "create a skill", "generate a skill", or "build a new slash command".
+  Uses multi-phase orchestrated workflow with Task tool subagents to research
+  domains, design architecture, generate content, validate quality, and
+  iteratively improve via eval infrastructure. Creates production-ready skills
+  following the Agent Skills open standard and Claude Code extensions.
 allowed-tools:
   - Read
   - Write
@@ -14,7 +20,7 @@ allowed-tools:
   - AskUserQuestion
   - TodoWrite
 metadata:
-  version: "2.3.0"
+  version: "3.0.0"
   author: "DJ Patel — Founder & CEO, Platxa | https://platxa.com"
   tags:
     - skill-creation

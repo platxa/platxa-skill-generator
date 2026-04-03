@@ -13,6 +13,7 @@ metadata:
     - error-handling
     - retry
     - logging
+user-invocable: true
 ---
 
 # Platxa Error Handling

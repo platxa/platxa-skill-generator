@@ -7,8 +7,7 @@ Template for skills that teach or explain concepts.
 ```yaml
 ---
 name: {skill-name}
-description: {Guides users through X. Explains Y step by step.}
-when_to_use: 'Use when the user asks "how do I X", "explain Y", or "help me with Z"'
+description: {Guides users through X. Use when the user asks "how do I X", "explain Y", or "help me with Z". Explains Y step by step.}
 allowed-tools:
   - Read
   - WebSearch

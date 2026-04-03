@@ -7,8 +7,7 @@ Template for skills that inspect or audit code/data.
 ```yaml
 ---
 name: {skill-name}
-description: {Analyzes X for Y. Reports on Z metrics.}
-when_to_use: 'Use when the user asks to "analyze X", "review Y", or "check Z for issues"'
+description: {Analyzes X for Y. Use when the user asks to "analyze X", "review Y", or "check Z for issues". Reports on Z metrics.}
 allowed-tools:
   - Read
   - Grep

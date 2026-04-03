@@ -202,6 +202,23 @@ Target users: {target_users}
 | Validator | Rules, Thresholds | validate.sh | standards/*.md |
 ```
 
+## Description Strategy
+
+The description field is the primary trigger mechanism for skill invocation. The architecture
+blueprint should include guidance for the generation agent:
+
+- **Front-load the first 250 chars** with what the skill does AND when to use it
+- **Include quoted trigger phrases** that users would actually say
+- **Do NOT use `when_to_use` field** — it is not in the Agent Skills open standard
+- **Write in third person** ("Analyzes code..." not "I can help...")
+- **Be specific** — vague descriptions ("helps with things") cause poor triggering
+
+Example description structure:
+```
+{What it does}. Use when the user asks to "{trigger1}", "{trigger2}",
+or "{trigger3}". {Additional capabilities and output format}.
+```
+
 ## Usage
 
 ```

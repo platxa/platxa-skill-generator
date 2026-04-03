@@ -7,8 +7,7 @@ Template for skills that automate repetitive tasks.
 ```yaml
 ---
 name: {skill-name}
-description: {Automates X. Runs Y automatically when Z.}
-when_to_use: 'Use when the user asks to "run X", "automate Y", or "set up Z workflow"'
+description: {Automates X. Use when the user asks to "run X", "automate Y", or "set up Z workflow". Runs Y automatically when Z.}
 allowed-tools:
   - Read
   - Write

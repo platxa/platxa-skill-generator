@@ -68,9 +68,12 @@ def run_validate_frontmatter(scripts_dir: Path) -> Callable[[Path], subprocess.C
     """
     script_path = scripts_dir / "validate-frontmatter.sh"
 
-    def _run(skill_dir: Path) -> subprocess.CompletedProcess:
+    def _run(skill_dir: Path, *extra_args: str) -> subprocess.CompletedProcess:
+        cmd = [str(script_path)]
+        cmd.extend(extra_args)
+        cmd.append(str(skill_dir))
         return subprocess.run(
-            [str(script_path), str(skill_dir)],
+            cmd,
             capture_output=True,
             text=True,
             env={**os.environ, "TERM": "dumb"},  # Disable colors for easier parsing

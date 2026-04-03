@@ -7,8 +7,7 @@ Template for skills that verify quality or compliance.
 ```yaml
 ---
 name: {skill-name}
-description: {Validates X against Y rules. Ensures Z compliance.}
-when_to_use: 'Use when the user asks to "validate X", "check Y compliance", or "verify Z"'
+description: {Validates X against Y rules. Use when the user asks to "validate X", "check Y compliance", or "verify Z". Ensures Z compliance.}
 allowed-tools:
   - Read
   - Grep

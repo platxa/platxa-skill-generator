@@ -17,8 +17,8 @@ Schema for `.claude/skill_creation_state.json` - tracks workflow progress.
     },
     "phase": {
       "type": "string",
-      "enum": ["init", "discovery", "architecture", "generation", "validation", "installation", "complete"],
-      "description": "Current workflow phase"
+      "enum": ["init", "discovery", "architecture", "generation", "validation", "eval_loop", "installation", "complete"],
+      "description": "Current workflow phase. eval_loop is optional but recommended for production skills."
     },
     "created_at": {
       "type": "string",

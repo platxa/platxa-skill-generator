@@ -519,15 +519,15 @@ class TestClaudeCodeSpecFields:
 
 
 class TestDependsOnValidation:
-    """Tests for depends-on field validation."""
+    """Tests for depends-on field validation (experimental)."""
 
     @pytest.mark.frontmatter
-    def test_valid_depends_on_passes(
+    def test_valid_depends_on_shows_experimental_warning(
         self,
         temp_skill_dir: Path,
         run_validate_frontmatter,
     ) -> None:
-        """Valid depends-on entries are accepted."""
+        """Valid depends-on entries pass but show experimental warning."""
         skill_md = temp_skill_dir / "SKILL.md"
         skill_md.write_text(
             "---\n"
@@ -540,7 +540,9 @@ class TestDependsOnValidation:
         )
         result = run_validate_frontmatter(temp_skill_dir)
         assert result.returncode == 0
-        assert "depends-on field present with 2" in result.stdout
+        # warn() writes to stderr
+        assert "EXPERIMENTAL" in result.stderr
+        assert "2 dependencies" in result.stderr
 
     @pytest.mark.frontmatter
     def test_invalid_depends_on_name_fails(
@@ -584,15 +586,15 @@ class TestDependsOnValidation:
 
 
 class TestSuggestsValidation:
-    """Tests for suggests field validation."""
+    """Tests for suggests field validation (experimental)."""
 
     @pytest.mark.frontmatter
-    def test_valid_suggests_passes(
+    def test_valid_suggests_shows_experimental_warning(
         self,
         temp_skill_dir: Path,
         run_validate_frontmatter,
     ) -> None:
-        """Valid suggests entries are accepted."""
+        """Valid suggests entries pass but show experimental warning."""
         skill_md = temp_skill_dir / "SKILL.md"
         skill_md.write_text(
             "---\n"
@@ -604,7 +606,9 @@ class TestSuggestsValidation:
         )
         result = run_validate_frontmatter(temp_skill_dir)
         assert result.returncode == 0
-        assert "suggests field present with 1" in result.stdout
+        # warn() writes to stderr
+        assert "EXPERIMENTAL" in result.stderr
+        assert "1 suggestions" in result.stderr
 
     @pytest.mark.frontmatter
     def test_invalid_suggests_name_fails(
@@ -812,15 +816,15 @@ class TestEffortFieldValidation:
 
 
 class TestVersionFieldValidation:
-    """Tests for version field validation."""
+    """Tests for version field validation — top-level version is deprecated."""
 
     @pytest.mark.frontmatter
-    def test_valid_semver_passes(
+    def test_top_level_version_triggers_deprecation_warning(
         self,
         temp_skill_dir: Path,
         run_validate_frontmatter,
     ) -> None:
-        """Semantic version strings are accepted."""
+        """Top-level version triggers deprecation warning per Agent Skills spec."""
         skill_md = temp_skill_dir / "SKILL.md"
         skill_md.write_text(
             "---\nname: versioned-skill\n"
@@ -830,15 +834,19 @@ class TestVersionFieldValidation:
         )
         result = run_validate_frontmatter(temp_skill_dir)
         assert result.returncode == 0
-        assert "version field valid" in result.stdout
+        # warn() writes to stderr
+        assert "not in the Agent Skills open standard" in result.stderr
+        assert "metadata.version" in result.stderr
+        # Still validates the semver value
+        assert "valid semver" in result.stdout
 
     @pytest.mark.frontmatter
-    def test_semver_with_prerelease_passes(
+    def test_semver_with_prerelease_passes_with_deprecation(
         self,
         temp_skill_dir: Path,
         run_validate_frontmatter,
     ) -> None:
-        """Semantic version with prerelease tag is accepted."""
+        """Semver with prerelease tag validates value but warns about top-level."""
         skill_md = temp_skill_dir / "SKILL.md"
         skill_md.write_text(
             "---\nname: prerelease-skill\n"
@@ -848,14 +856,15 @@ class TestVersionFieldValidation:
         )
         result = run_validate_frontmatter(temp_skill_dir)
         assert result.returncode == 0
+        assert "not in the Agent Skills open standard" in result.stderr
 
     @pytest.mark.frontmatter
-    def test_non_semver_warns(
+    def test_non_semver_warns_twice(
         self,
         temp_skill_dir: Path,
         run_validate_frontmatter,
     ) -> None:
-        """Non-semver version strings produce a warning but pass."""
+        """Non-semver top-level version produces both deprecation and format warnings."""
         skill_md = temp_skill_dir / "SKILL.md"
         skill_md.write_text(
             "---\nname: odd-version-skill\n"
@@ -864,20 +873,23 @@ class TestVersionFieldValidation:
             "---\n\n# Content\n"
         )
         result = run_validate_frontmatter(temp_skill_dir)
-        assert result.returncode == 0  # Warning, not error
+        assert result.returncode == 0  # Warnings, not errors
+        # Both deprecation and format warnings on stderr
+        assert "not in the Agent Skills open standard" in result.stderr
+        assert "not semver" in result.stderr
         assert "not semver" in result.stderr.lower() or "WARN" in result.stderr
 
 
 class TestWhenToUseFieldValidation:
-    """Tests for when_to_use field validation."""
+    """Tests for when_to_use field deprecation warning."""
 
     @pytest.mark.frontmatter
-    def test_when_to_use_accepted(
+    def test_when_to_use_triggers_deprecation_warning(
         self,
         temp_skill_dir: Path,
         run_validate_frontmatter,
     ) -> None:
-        """when_to_use field is recognized and accepted."""
+        """when_to_use field triggers deprecation warning per Anthropic spec."""
         skill_md = temp_skill_dir / "SKILL.md"
         skill_md.write_text(
             "---\nname: wtu-skill\n"
@@ -888,14 +900,16 @@ class TestWhenToUseFieldValidation:
         result = run_validate_frontmatter(temp_skill_dir)
         assert result.returncode == 0
         assert "Unknown field" not in result.stderr
+        # warn() writes to stderr (validate-frontmatter.sh line 28)
+        assert "not in the official Agent Skills spec" in result.stderr
 
     @pytest.mark.frontmatter
-    def test_when_to_use_hyphenated_accepted(
+    def test_when_to_use_hyphenated_triggers_deprecation_warning(
         self,
         temp_skill_dir: Path,
         run_validate_frontmatter,
     ) -> None:
-        """when-to-use (hyphenated) field is also recognized."""
+        """when-to-use (hyphenated) field also triggers deprecation warning."""
         skill_md = temp_skill_dir / "SKILL.md"
         skill_md.write_text(
             "---\nname: wtu-hyphen-skill\n"
@@ -906,6 +920,106 @@ class TestWhenToUseFieldValidation:
         result = run_validate_frontmatter(temp_skill_dir)
         assert result.returncode == 0
         assert "Unknown field" not in result.stderr
+        # warn() writes to stderr (validate-frontmatter.sh line 28)
+        assert "not in the official Agent Skills spec" in result.stderr
+
+
+class TestClaudeAiCompatibilityMode:
+    """Tests for --claude-ai strict validation mode."""
+
+    @pytest.mark.frontmatter
+    def test_open_standard_only_passes(
+        self,
+        temp_skill_dir: Path,
+        run_validate_frontmatter,
+    ) -> None:
+        """Skill with only open standard fields passes --claude-ai mode."""
+        skill_md = temp_skill_dir / "SKILL.md"
+        skill_md.write_text(
+            "---\nname: compliant-skill\n"
+            "description: A fully compliant open standard skill.\n"
+            "allowed-tools:\n  - Read\n  - Write\n"
+            "metadata:\n  version: 1.0.0\n"
+            "---\n\n# Content\n"
+        )
+        result = run_validate_frontmatter(temp_skill_dir, "--claude-ai")
+        assert result.returncode == 0
+        assert "incompatible" not in result.stderr
+
+    @pytest.mark.frontmatter
+    def test_claude_code_extension_fields_are_errors(
+        self,
+        temp_skill_dir: Path,
+        run_validate_frontmatter,
+    ) -> None:
+        """Claude Code extension fields are errors in --claude-ai mode."""
+        skill_md = temp_skill_dir / "SKILL.md"
+        skill_md.write_text(
+            "---\nname: extended-skill\n"
+            "description: A skill with Claude Code extension fields.\n"
+            "model: sonnet\n"
+            "effort: high\n"
+            "context: fork\n"
+            "---\n\n# Content\n"
+        )
+        result = run_validate_frontmatter(temp_skill_dir, "--claude-ai")
+        assert result.returncode == 1
+        assert "Claude Code extension" in result.stderr
+
+    @pytest.mark.frontmatter
+    def test_top_level_version_is_error(
+        self,
+        temp_skill_dir: Path,
+        run_validate_frontmatter,
+    ) -> None:
+        """Top-level version is an error in --claude-ai mode."""
+        skill_md = temp_skill_dir / "SKILL.md"
+        skill_md.write_text(
+            "---\nname: versioned-skill\n"
+            "description: A skill with top-level version.\n"
+            "version: 1.0.0\n"
+            "---\n\n# Content\n"
+        )
+        result = run_validate_frontmatter(temp_skill_dir, "--claude-ai")
+        assert result.returncode == 1
+        assert "incompatible" in result.stderr
+
+    @pytest.mark.frontmatter
+    def test_when_to_use_is_error(
+        self,
+        temp_skill_dir: Path,
+        run_validate_frontmatter,
+    ) -> None:
+        """when_to_use is an error in --claude-ai mode."""
+        skill_md = temp_skill_dir / "SKILL.md"
+        skill_md.write_text(
+            "---\nname: wtu-claude-skill\n"
+            "description: A skill with when_to_use field.\n"
+            'when_to_use: "When the user asks to do X"\n'
+            "---\n\n# Content\n"
+        )
+        result = run_validate_frontmatter(temp_skill_dir, "--claude-ai")
+        assert result.returncode == 1
+        assert "incompatible" in result.stderr
+
+    @pytest.mark.frontmatter
+    def test_default_mode_accepts_extension_fields(
+        self,
+        temp_skill_dir: Path,
+        run_validate_frontmatter,
+    ) -> None:
+        """Without --claude-ai, extension fields are accepted (not errors)."""
+        skill_md = temp_skill_dir / "SKILL.md"
+        skill_md.write_text(
+            "---\nname: extended-skill\n"
+            "description: A skill with Claude Code extension fields.\n"
+            "model: sonnet\n"
+            "effort: high\n"
+            "---\n\n# Content\n"
+        )
+        result = run_validate_frontmatter(temp_skill_dir)
+        assert result.returncode == 0
+        assert "incompatible" not in result.stderr
 
 
 class TestNumericEffortValidation:

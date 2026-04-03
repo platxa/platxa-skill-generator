@@ -16,6 +16,7 @@ metadata:
     - scaling
     - hpa
     - scale-to-zero
+user-invocable: true
 ---
 
 # Platxa Kubernetes Scaling

@@ -13,6 +13,8 @@ metadata:
     - kubernetes
     - devops
     - infrastructure
+argument-hint: "[command]"
+user-invocable: true
 ---
 
 # Platxa K8s Operations

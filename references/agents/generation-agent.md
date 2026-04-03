@@ -21,11 +21,17 @@ Skill directory: {skill_directory}
 
 1. **Generate SKILL.md**
    - Valid YAML frontmatter (name, description, allowed-tools, metadata)
+   - **Description is the primary trigger mechanism.** Front-load the first 250 chars with:
+     - What the skill does (one sentence)
+     - When to use it: `Use when the user asks to "create X", "review Y", or "check Z".`
+     - Include quoted trigger phrases that users would actually say
+     - Descriptions over 250 chars are truncated in skill listings — the trigger context must come first
+   - Write descriptions in **third person** ("Analyzes code...") not first ("I can help...")
+   - Do NOT use `when_to_use` field — it is not in the Agent Skills open standard
    - If blueprint includes `invocation_mode`, add the corresponding frontmatter:
      - `disable-model-invocation: true` for user-only skills (side effects)
      - `user-invocable: false` for Claude-only skills (background knowledge)
      - Omit both for default (both user and Claude can invoke)
-   - If discovery found related existing skills, add `depends-on` (required) and/or `suggests` (optional companions)
    - All sections from architecture blueprint, respecting freedom levels:
      - **low freedom**: Use exact scripts, specific commands, strict templates
      - **medium freedom**: Use pseudocode or parameterized scripts
@@ -40,6 +46,12 @@ Skill directory: {skill_directory}
      2. Creation workflow: [steps...]
      3. Editing workflow: [steps...]
      ```
+
+   - **Writing style**: Explain the WHY behind instructions, not just the WHAT. Modern LLMs
+     have strong theory of mind — when given reasoning, they go beyond rote instructions and
+     adapt intelligently. If you find yourself writing ALWAYS, NEVER, or MUST in all caps,
+     reframe as reasoning: explain the constraint and why it matters. This produces skills
+     that generalize across diverse prompts rather than overfitting to narrow examples.
 
 2. **Generate Scripts** (if specified)
    - Bash scripts with proper shebang
@@ -62,23 +74,17 @@ Skill directory: {skill_directory}
 ```yaml
 ---
 name: {skill_name}
-description: {description_under_1024_chars}
+description: >-
+  {What it does}. Use when the user asks to "{trigger1}", "{trigger2}",
+  or "{trigger3}". {Additional detail about capabilities and output}.
 argument-hint: "[filename] [format]"  # Only if skill accepts arguments (omit otherwise)
 disable-model-invocation: true  # Only if skill has side effects (omit for default)
 user-invocable: false           # Only if background knowledge (omit for default)
 allowed-tools:
   - Tool1
   - Tool2
-depends-on:               # Only if discovery found required skills
-  - required-skill-name
-suggests:                 # Only if discovery found beneficial companions
-  - companion-skill-name
 metadata:
   version: "1.0.0"
-  author: "{author}"
-  tags:
-    - tag1
-    - tag2
 ---
 
 # {Skill Title}
@@ -177,13 +183,16 @@ When a skill invokes other skills (e.g., a workflow skill that calls `/lint` the
 ## Quality Requirements
 
 - [ ] Name is hyphen-case, ≤64 characters
-- [ ] Description is ≤1024 characters
+- [ ] Description is ≤1024 characters with trigger context in first 250 chars
+- [ ] Description in third person, no when_to_use field
+- [ ] Description includes quoted trigger phrases users would actually say
 - [ ] SKILL.md is < 500 lines
-- [ ] All sections have real content
+- [ ] All sections have real content (explain WHY, not rigid MUSTs)
 - [ ] Examples are realistic and helpful
 - [ ] Scripts are executable and tested
 - [ ] Skills that invoke other skills include `Skill` in allowed-tools
 - [ ] References contain actual domain expertise
+- [ ] Version under metadata.version (not top-level)
 ```
 
 ## Usage

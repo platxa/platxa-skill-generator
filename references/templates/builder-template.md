@@ -7,8 +7,7 @@ Template for skills that create new artifacts.
 ```yaml
 ---
 name: {skill-name}
-description: {Creates X for Y. Generates Z based on input.}
-when_to_use: 'Use when the user asks to "create X", "generate Y", or "scaffold Z"'
+description: {Creates X for Y. Use when the user asks to "create X", "generate Y", or "scaffold Z". Generates Z based on input.}
 allowed-tools:
   - Read
   - Write

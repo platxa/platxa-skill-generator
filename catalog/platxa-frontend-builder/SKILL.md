@@ -20,6 +20,8 @@ metadata:
     - nextjs
     - frontend
     - typescript
+argument-hint: "[component-type]"
+user-invocable: true
 ---
 
 # Platxa Frontend Builder

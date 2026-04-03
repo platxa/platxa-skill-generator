@@ -18,6 +18,7 @@ metadata:
     - jwt
     - security
     - rs256
+user-invocable: true
 ---
 
 # Platxa JWT Authentication

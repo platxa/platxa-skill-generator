@@ -12,6 +12,7 @@ metadata:
     - monaco
     - editor
     - configuration
+user-invocable: true
 ---
 
 # Platxa Monaco Configuration

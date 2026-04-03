@@ -13,6 +13,7 @@ metadata:
     - builder
     - git
     - workflow
+user-invocable: true
 ---
 
 # PR Description Generator

@@ -13,6 +13,7 @@ metadata:
     - logging
     - correlation-ids
     - observability
+user-invocable: true
 ---
 
 # Platxa Logging

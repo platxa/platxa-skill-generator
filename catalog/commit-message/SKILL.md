@@ -12,6 +12,7 @@ metadata:
     - automation
     - git
     - workflow
+user-invocable: true
 ---
 
 # Commit Message Generator

@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "platxa-skill-generator"
-version = "2.3.0"
-description = "Autonomous skill creator for Claude Code CLI with multi-agent patterns, quality scoring, dependency management, and 17-skill catalog"
+version = "3.0.0"
+description = "Autonomous skill creator for Claude Code CLI with multi-agent patterns, quality scoring, eval infrastructure, dependency management, and 17-skill catalog"
 readme = "README.md"
 license = {text = "MIT"}
 authors = [
@@ -62,6 +62,9 @@ Issues = "https://github.com/platxa/platxa-skill-generator/issues"
 
 [project.scripts]
 count-tokens = "scripts.count_tokens:main"
+optimize-description = "scripts.optimize_description:main"
+aggregate-benchmark = "scripts.aggregate_benchmark:main"
+package-skill = "scripts.package_skill:main"
 
 [tool.setuptools]
 packages = ["scripts"]

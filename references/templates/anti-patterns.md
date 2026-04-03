@@ -132,6 +132,36 @@ Handle errors appropriately.
 
 ---
 
+### Rigid Constraints Without Reasoning
+
+```markdown
+<!-- ❌ BAD: Heavy-handed constraints without explanation -->
+You MUST ALWAYS use exactly 4 spaces for indentation.
+NEVER use single-line if statements.
+You MUST NEVER skip the validation step.
+ALWAYS include a type annotation on EVERY variable.
+```
+
+```markdown
+<!-- ✓ GOOD: Explain the reasoning so the model can generalize -->
+Use 4-space indentation to match the project's existing style — mixed
+indentation causes merge conflicts and confuses auto-formatters.
+
+Prefer multi-line if statements because single-line forms hide
+branches from coverage tools, making untested paths invisible.
+
+Run validation before deployment because the staging environment
+shares a database with production — invalid data causes downtime.
+```
+
+**Why it matters:** Modern LLMs have strong theory of mind. When you explain
+WHY a constraint exists, the model adapts intelligently to edge cases rather
+than following the rule rigidly when it doesn't apply. Excessive MUST/NEVER/ALWAYS
+in all caps signals that the skill author couldn't articulate the reasoning — and
+produces skills that overfit to narrow examples instead of generalizing.
+
+---
+
 ### Contradictory Rules
 
 ```markdown

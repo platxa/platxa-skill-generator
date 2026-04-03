@@ -15,6 +15,8 @@ metadata:
     - automation
     - documentation
     - developer-tools
+argument-hint: "[file|directory]"
+user-invocable: true
 ---
 
 # Code Documenter
