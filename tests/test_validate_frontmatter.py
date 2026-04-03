@@ -326,6 +326,91 @@ tools:
         assert "invalid" in result.stderr.lower() or "tool" in result.stderr.lower()
 
 
+class TestToolConstraintPatterns:
+    """Tests for tool constraint pattern validation (e.g., Bash(git:*))."""
+
+    @pytest.mark.frontmatter
+    def test_bash_constraint_pattern_passes(
+        self,
+        temp_skill_dir: Path,
+        run_validate_frontmatter,
+    ) -> None:
+        """Bash(git:*) constraint pattern is accepted."""
+        skill_md = temp_skill_dir / "SKILL.md"
+        skill_md.write_text(
+            "---\n"
+            "name: constrained-bash-skill\n"
+            "description: A skill with Bash constraint pattern.\n"
+            "allowed-tools:\n"
+            "  - Read\n"
+            "  - Bash(git:*)\n"
+            "---\n\n# Content\n"
+        )
+        result = run_validate_frontmatter(temp_skill_dir)
+        assert result.returncode == 0, f"stderr: {result.stderr}"
+        assert "tool with constraint" in result.stdout
+
+    @pytest.mark.frontmatter
+    def test_skill_dir_constraint_passes(
+        self,
+        temp_skill_dir: Path,
+        run_validate_frontmatter,
+    ) -> None:
+        """Bash(${CLAUDE_SKILL_DIR}/scripts/*) constraint is accepted."""
+        skill_md = temp_skill_dir / "SKILL.md"
+        skill_md.write_text(
+            "---\n"
+            "name: skilldir-constraint\n"
+            "description: A skill with CLAUDE_SKILL_DIR constraint.\n"
+            "allowed-tools:\n"
+            "  - Read\n"
+            '  - "Bash(${CLAUDE_SKILL_DIR}/scripts/run.sh:*)"\n'
+            "---\n\n# Content\n"
+        )
+        result = run_validate_frontmatter(temp_skill_dir)
+        assert result.returncode == 0, f"stderr: {result.stderr}"
+
+    @pytest.mark.frontmatter
+    def test_invalid_base_tool_in_constraint_fails(
+        self,
+        temp_skill_dir: Path,
+        run_validate_frontmatter,
+    ) -> None:
+        """Constraint with invalid base tool name is rejected."""
+        skill_md = temp_skill_dir / "SKILL.md"
+        skill_md.write_text(
+            "---\n"
+            "name: bad-constraint-skill\n"
+            "description: A skill with invalid constraint base tool.\n"
+            "allowed-tools:\n"
+            "  - FakeCommand(git:*)\n"
+            "---\n\n# Content\n"
+        )
+        result = run_validate_frontmatter(temp_skill_dir)
+        assert result.returncode == 1
+        assert "not recognized" in result.stderr.lower() or "Invalid tool" in result.stderr
+
+    @pytest.mark.frontmatter
+    def test_write_constraint_pattern_passes(
+        self,
+        temp_skill_dir: Path,
+        run_validate_frontmatter,
+    ) -> None:
+        """Write(src/*) constraint pattern is accepted."""
+        skill_md = temp_skill_dir / "SKILL.md"
+        skill_md.write_text(
+            "---\n"
+            "name: write-constrained-skill\n"
+            "description: A skill with Write constraint pattern.\n"
+            "allowed-tools:\n"
+            "  - Read\n"
+            "  - Write(src/*)\n"
+            "---\n\n# Content\n"
+        )
+        result = run_validate_frontmatter(temp_skill_dir)
+        assert result.returncode == 0, f"stderr: {result.stderr}"
+
+
 class TestModelFieldValidation:
     """Tests for model field validation."""
 

@@ -165,13 +165,21 @@ if [[ -n "$HAS_TOOLS" ]]; then
         TOOL_COUNT=$(echo "$TOOLS" | wc -l)
         info "tools field present with $TOOL_COUNT tools"
 
-        # Validate tool names
-        VALID_TOOLS="Read Write Edit MultiEdit Glob Grep LS Bash Task Agent Skill WebFetch WebSearch AskUserQuestion TodoWrite KillShell BashOutput NotebookEdit"
+        # Validate tool names — supports constraint patterns like Bash(git:*), Write(src/*)
+        VALID_TOOLS="Read Write Edit MultiEdit Glob Grep LS Bash Task Agent Skill WebFetch WebSearch AskUserQuestion TodoWrite KillShell BashOutput NotebookEdit Brief ToolSearch EnterPlanMode ExitPlanMode EnterWorktree ExitWorktree LSP RemoteTrigger CronCreate CronDelete CronList SendMessage"
 
         while IFS= read -r TOOL; do
             [[ -z "$TOOL" ]] && continue
-            if ! echo "$VALID_TOOLS" | grep -qw "$TOOL"; then
-                error "Invalid tool: $TOOL"
+            # Strip quotes
+            TOOL=$(echo "$TOOL" | tr -d '"' | tr -d "'")
+            # Extract base tool name from constraint pattern: Bash(git:*) → Bash
+            TOOL_NAME="$TOOL"
+            if [[ "$TOOL" =~ ^([A-Za-z]+)\(.*\)$ ]]; then
+                TOOL_NAME="${BASH_REMATCH[1]}"
+                info "  tool with constraint: $TOOL"
+            fi
+            if ! echo "$VALID_TOOLS" | grep -qw "$TOOL_NAME"; then
+                error "Invalid tool: $TOOL (base tool '$TOOL_NAME' not recognized)"
             fi
         done <<< "$TOOLS"
     else
