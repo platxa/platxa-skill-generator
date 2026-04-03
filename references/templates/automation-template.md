@@ -172,6 +172,19 @@ Before running, ensure:
 ```
 ```
 
+## Script References
+
+When the skill bundles helper scripts in `scripts/`, always reference them using
+the portable `${CLAUDE_SKILL_DIR}` variable:
+
+```bash
+bash ${CLAUDE_SKILL_DIR}/scripts/validate.sh $ARGUMENTS
+```
+
+Never hardcode absolute paths. `${CLAUDE_SKILL_DIR}` resolves to the skill's
+installation directory at runtime, making the skill portable across user and
+project installations.
+
 ## Key Sections for Automation
 
 1. **Triggers**: When to run
