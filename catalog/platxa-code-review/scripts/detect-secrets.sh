@@ -27,7 +27,8 @@ if [[ -d "$TARGET" ]]; then
         -o -name "*.php" -o -name "*.yaml" -o -name "*.yml" -o -name "*.json" \
         -o -name "*.toml" -o -name "*.cfg" -o -name "*.ini" -o -name "*.env" \
     \) ! -path "*/node_modules/*" ! -path "*/.git/*" ! -path "*/vendor/*" \
-       ! -path "*/__pycache__/*" ! -path "*/dist/*" ! -path "*/build/*")
+       ! -path "*/__pycache__/*" ! -path "*/dist/*" ! -path "*/build/*" \
+       ! -path "*/fixtures/*" ! -path "*/testdata/*" ! -path "*/__mocks__/*")
 else
     FILES="$TARGET"
 fi
@@ -42,6 +43,7 @@ echo "================================="
 
 # Pattern 1: Generic API keys and tokens
 while IFS= read -r file; do
+    [[ -f "$file" ]] || continue
     while IFS= read -r match; do
         echo "[SECRET] $file: $match"
         FOUND=$((FOUND + 1))
@@ -50,6 +52,7 @@ done <<< "$FILES"
 
 # Pattern 2: AWS keys
 while IFS= read -r file; do
+    [[ -f "$file" ]] || continue
     while IFS= read -r match; do
         echo "[AWS] $file: $match"
         FOUND=$((FOUND + 1))
@@ -58,6 +61,7 @@ done <<< "$FILES"
 
 # Pattern 3: Private keys
 while IFS= read -r file; do
+    [[ -f "$file" ]] || continue
     while IFS= read -r match; do
         echo "[KEY] $file: $match"
         FOUND=$((FOUND + 1))
@@ -66,6 +70,7 @@ done <<< "$FILES"
 
 # Pattern 4: Connection strings with passwords
 while IFS= read -r file; do
+    [[ -f "$file" ]] || continue
     while IFS= read -r match; do
         echo "[CONN] $file: $match"
         FOUND=$((FOUND + 1))
@@ -74,18 +79,29 @@ done <<< "$FILES"
 
 # Pattern 5: JWT tokens (eyJ prefix)
 while IFS= read -r file; do
+    [[ -f "$file" ]] || continue
     while IFS= read -r match; do
         echo "[JWT] $file: $match"
         FOUND=$((FOUND + 1))
     done < <(grep -nE 'eyJ[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{20,}\.' "$file" 2>/dev/null || true)
 done <<< "$FILES"
 
-# Pattern 6: Password assignments
+# Pattern 6: Password assignments (exclude env lookups and placeholders)
 while IFS= read -r file; do
+    [[ -f "$file" ]] || continue
     while IFS= read -r match; do
         echo "[PASS] $file: $match"
         FOUND=$((FOUND + 1))
     done < <(grep -nEi 'password\s*[=:]\s*["\x27][^"\x27]{4,}' "$file" 2>/dev/null | grep -vi '(env|environ|getenv|os\.get|process\.env|config\.|placeholder|example|changeme|xxx)' || true)
+done <<< "$FILES"
+
+# Pattern 7: GitHub/GitLab tokens
+while IFS= read -r file; do
+    [[ -f "$file" ]] || continue
+    while IFS= read -r match; do
+        echo "[TOKEN] $file: $match"
+        FOUND=$((FOUND + 1))
+    done < <(grep -nE '(ghp_[A-Za-z0-9]{36}|gho_[A-Za-z0-9]{36}|glpat-[A-Za-z0-9_-]{20,})' "$file" 2>/dev/null || true)
 done <<< "$FILES"
 
 echo "================================="

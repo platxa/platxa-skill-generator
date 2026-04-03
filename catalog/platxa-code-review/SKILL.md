@@ -1,154 +1,183 @@
 ---
 name: platxa-code-review
 description: >-
-  Analyzes code for quality, security, and efficiency across any language.
-  Reviews files or git diffs, produces structured reports with weighted scores,
-  metrics, and actionable recommendations. Use when reviewing code changes,
-  pull requests, or auditing codebases for technical debt.
+  Analyzes code for quality, security, efficiency, and maintainability across any language.
+  Use when the user asks to "review code", "review my changes", "check code quality",
+  "security review", "audit this code", "review the diff", or "code review".
+  Reviews files or git diffs using parallel sub-agents per dimension, produces structured
+  reports with weighted scores and actionable recommendations. Supports auto-fix for
+  unambiguous issues and respects project conventions from CLAUDE.md.
+metadata:
+  version: "4.0.0"
 allowed-tools:
   - Read
   - Grep
   - Glob
   - Bash
-metadata:
-  version: "2.0.0"
-  author: "Platxa"
-  tags:
-    - analyzer
-    - code-review
-    - quality
-    - security
-    - efficiency
+  - Edit
+  - Task
+user-invocable: true
+argument-hint: "[file|directory|--fix|--minimum SEVERITY|--focus DIMENSION|--codebase]"
 ---
 
 # Platxa Code Review
 
-Language-agnostic code review with structured reports, weighted scores, and actionable recommendations.
+Language-agnostic code review with parallel analysis, weighted scoring, and optional auto-fix.
 
 ## Overview
 
-This skill analyzes code across four dimensions: quality, security, efficiency, and maintainability. It works on individual files, git diffs, or entire codebases.
+Analyzes code across four dimensions using parallel sub-agents:
 
-**What it analyzes:**
-- Code quality (complexity, duplication, naming, SOLID principles)
-- Security (hardcoded secrets, injection patterns, OWASP Top 10)
-- Efficiency (algorithmic complexity, performance anti-patterns, memory)
-- Maintainability (type safety, error handling, documentation, testability)
+| Dimension | Weight | What It Catches |
+|-----------|--------|-----------------|
+| Code Quality | 0.30 | Complexity, duplication, naming, SOLID violations |
+| Security | 0.25 | Hardcoded secrets, injection, auth gaps, data exposure |
+| Efficiency | 0.25 | N+1 queries, loop allocations, blocking I/O, unbounded growth |
+| Maintainability | 0.20 | Type safety, error handling, documentation, testability |
 
-**What it produces:**
-- Overall score (0-10) with letter grade (A-F)
-- Per-dimension breakdown with specific findings
-- Prioritized issues by severity level
-- Actionable fix recommendations
-
-**Supported languages:** Python, TypeScript/JavaScript, Go, Java, Rust, C/C++, and any readable source.
+**Modes:** File review, diff review (default), or systematic codebase review.
+**Languages:** Python, TypeScript/JavaScript, Go, Java, Rust, C/C++, and any readable source.
 
 ## Workflow
 
+### Step 0: Read Project Conventions
+
+Check the project's CLAUDE.md files (loaded automatically by Claude Code):
+
+- **Coding standards**: Style preferences, naming conventions, patterns
+- **Prohibited patterns**: Things the project explicitly bans
+- **Required patterns**: Mandatory conventions (test frameworks, linters)
+- **Tech stack**: Frameworks, languages, libraries in use
+
+Convention rules:
+- If CLAUDE.md permits a pattern, suppress findings about it
+- If CLAUDE.md prohibits a pattern, elevate findings to HIGH severity
+- If no CLAUDE.md exists, use built-in defaults without warning
+
 ### Step 1: Determine Scope
 
-Ask the user or detect from context. Three modes are supported.
+Parse `$ARGUMENTS` for mode and options:
 
-**File review** -- analyze specific files or directories:
+| Argument | Effect |
+|----------|--------|
+| `<path>` | Analyze specific file or directory |
+| `--fix` | Enable auto-fix for unambiguous CRITICAL/HIGH issues |
+| `--minimum <SEVERITY>` | Only report findings at or above this severity (default: MEDIUM) |
+| `--focus <DIMENSION>` | Run single-dimension analysis inline (skip parallelism) |
+| `--codebase` | Systematic full-project review (see `references/codebase-review-guide.md`) |
+
+**Scope detection cascade** (first match wins):
+
+1. User provided explicit path in `$ARGUMENTS` -- use it
+2. Git has changes -- analyze changed files:
+
+**Changed files in this repository:**
+!`git diff --name-only 2>/dev/null | head -30`
+!`git diff --cached --name-only 2>/dev/null | head -30`
+
+3. Nothing found -- ask the user what to analyze
+
+### Step 2: Automated Checks
+
+Run helper scripts on target files:
+
 ```bash
-glob "src/**/*.{py,ts,js,go,rs,java}"
+bash ${CLAUDE_SKILL_DIR}/scripts/detect-secrets.sh <file-or-directory>
+bash ${CLAUDE_SKILL_DIR}/scripts/analyze-complexity.sh <file-or-directory>
 ```
 
-**Diff review** -- analyze git changes:
-```bash
-git diff --name-only HEAD~1
-git diff main...HEAD --name-only
-```
+### Step 3: Parallel Deep Analysis
 
-**Codebase review** -- systematic full-project scan (see Codebase Review Mode below):
-```bash
-glob "**/*.{py,ts,js,go}" --exclude "node_modules,dist,.git"
-```
+Launch four dimension agents in a SINGLE Task tool message for concurrent execution.
+Each agent receives the file list and analyzes ONLY its assigned dimension.
+Each agent outputs findings as: `file:line -- SEVERITY -- description (confidence: HIGH)`.
 
-Optionally accept a dimension focus: quality, security, efficiency, or maintainability.
-
-### Step 2: Run Automated Checks
-
-Execute helper scripts on target files:
-
-Detect hardcoded secrets:
-```bash
-bash scripts/detect-secrets.sh <file-or-directory>
-```
-
-Analyze complexity metrics:
-```bash
-bash scripts/analyze-complexity.sh <file-or-directory>
-```
-
-### Step 3: Deep Analysis
-
-Read each file and evaluate against four weighted dimensions.
-
-**Code Quality (weight: 0.30)**
+**Agent 1: Code Quality** (weight 0.30)
 - Cyclomatic complexity per function (target: <10)
-- Function length (target: <50 lines)
-- Nesting depth (target: <4 levels)
-- Code duplication (target: <5%)
-- Naming clarity and consistency
+- Function length (target: <50 lines), nesting depth (target: <4)
+- Code duplication (target: <5%), naming clarity
 - SOLID principle adherence
+- Dead code, unused imports
 
-**Security (weight: 0.25)**
+**Agent 2: Security** (weight 0.25)
 - Hardcoded secrets (auto-fail if found)
-- SQL/command injection patterns
-- Input validation at boundaries
-- Authentication/authorization checks
-- Sensitive data handling
+- SQL/command injection, eval with dynamic input
+- Input validation at boundaries, auth/access checks
+- Sensitive data in logs or error messages
+- Path traversal, SSRF vectors
 
-**Efficiency (weight: 0.25)**
-- Algorithm complexity (Big-O)
-- N+1 query patterns
-- Unnecessary allocations in loops
-- String concatenation in loops
-- Unbounded collection growth
-- Blocking I/O in async contexts
+**Agent 3: Efficiency** (weight 0.25)
+- N+1 query patterns, fetch-all-then-filter
+- String concatenation in loops, unnecessary allocations
+- Unbounded collection growth, blocking I/O in async
+- Missing early returns, redundant computation
+- See `references/efficiency-patterns.md` for language-specific detection
 
-**Maintainability (weight: 0.20)**
-- Type coverage (hints, strict mode, generics)
-- Error handling completeness
-- Function documentation for public APIs
-- Testability (dependency injection, pure functions)
-- Consistent coding style
+**Agent 4: Maintainability** (weight 0.20)
+- Type annotations on public APIs, no `any` types
+- Specific exception handling (no bare catch-all, no empty catch)
+- Public API documentation, inline comments for non-obvious logic
+- Dependency injection, testability, consistent formatting
 
-### Step 4: Score and Report
+For focused reviews (`--focus <dimension>`), skip parallelism and analyze inline.
 
-Calculate weighted score. Generate structured report (see Report Format below).
+### Step 4: Aggregate and Filter
+
+Merge findings from all agents. Apply filters before reporting:
+
+1. **Auto-skip**: Remove findings in auto-generated, vendor, build output, and lock files
+2. **Context filter**: Remove pattern matches in comments, strings, and documentation
+3. **Confidence filter**: Only report HIGH confidence findings -- when uncertain, omit
+4. **Deduplicate same location**: Same file:line across agents -- keep highest severity
+5. **Deduplicate same pattern**: Same issue in multiple files -- group with count
+6. **Root cause**: Multiple symptoms from one cause -- report cause once, list symptoms
+7. **Actionability**: Skip if developer cannot act on it or fix cost exceeds value
+8. **Minimum severity**: Apply `--minimum` threshold (default: MEDIUM)
+
+Calculate weighted score per `references/scoring-framework.md`.
 
 Apply hard-fail rules:
-- Hardcoded secrets detected: cap at 4.0
-- Critical security vulnerability: cap at 5.0
-- Syntax errors present: cap at 3.0
+- Hardcoded secrets detected -- cap at 4.0
+- Critical security vulnerability -- cap at 5.0
+- Syntax errors present -- cap at 3.0
 
-### Step 5: Recommendations
+### Step 5: Report
 
-Provide prioritized, actionable fixes:
+Generate structured report (see Report Format below).
+
+Prioritize recommendations:
 - **Critical**: Must fix before merge
 - **High**: Should fix before merge
 - **Medium**: Plan to address
 - **Low**: Consider improving
 
+### Step 6: Auto-Fix (when invoked with --fix)
+
+Only applies when the user passes `--fix` or explicitly requests fixes.
+
+1. **Filter fixable issues**: CRITICAL and HIGH severity only, unambiguous single-solution
+2. **Apply fixes**: Use Edit tool, one fix per call, preserve surrounding code
+3. **Verify**: Re-run automated checks on modified files
+4. **Report**: What was fixed vs what needs manual attention
+
+Fixable: unused imports, hardcoded secrets to env var, missing type hints, string concat to join, missing null checks.
+Not fixable: N+1 queries (architectural), SOLID violations (multiple approaches), auth flow issues (security decisions).
+
 ## Codebase Review Mode
 
-For full-codebase reviews, follow the 5-phase approach in `references/codebase-review-guide.md`.
+For full-codebase reviews (`--codebase`), follow `references/codebase-review-guide.md`:
 
-**Phases:**
 1. **Discovery** -- Map modules, count files by language, identify review order
-2. **Automated Sweep** -- Run `detect-secrets.sh` and `analyze-complexity.sh` on the entire codebase
+2. **Automated Sweep** -- Run detect-secrets and analyze-complexity on entire codebase
 3. **Module-by-Module** -- Score each module independently across all 4 dimensions
 4. **Cross-Cutting** -- Check consistency, duplication, and dependency flow across modules
-5. **Consolidated Report** -- Module scores table, hotspots, top priority fixes, health summary
+5. **Consolidated Report** -- Module scores table, hotspots, top priority fixes
 
-**Review order** (highest risk first): auth > API > data access > business logic > utilities > config > tests
+Review order (highest risk first): auth > API > data access > business logic > utilities > config > tests.
 
 ## Analysis Checklist
 
 ### Code Quality
-
 - [ ] Functions have single responsibility
 - [ ] Cyclomatic complexity < 10 per function
 - [ ] No functions > 50 lines
@@ -158,27 +187,22 @@ For full-codebase reviews, follow the 5-phase approach in `references/codebase-r
 - [ ] No dead code or unused imports
 
 ### Security
-
 - [ ] No hardcoded secrets, API keys, or tokens
 - [ ] No SQL string concatenation (use parameterized queries)
-- [ ] No shell command injection (no unescaped user input in commands)
+- [ ] No shell command injection (no unescaped user input)
 - [ ] User input validated at system boundaries
 - [ ] No eval() with dynamic input
 - [ ] Sensitive data not logged or exposed in errors
-- [ ] Dependencies are up to date
 
 ### Efficiency
-
 - [ ] No N+1 query patterns
 - [ ] No unnecessary object creation in loops
 - [ ] No string concatenation in loops (use builder/join)
 - [ ] Collections have bounded growth
 - [ ] Async operations not blocking event loop
-- [ ] Expensive computations cached when reused
 - [ ] Early returns prevent unnecessary work
 
 ### Maintainability
-
 - [ ] Type annotations on public APIs
 - [ ] Errors handled with specific types (no bare catch-all)
 - [ ] No silent failures (no empty catch blocks)
@@ -188,38 +212,17 @@ For full-codebase reviews, follow the 5-phase approach in `references/codebase-r
 
 ## Metrics
 
-### Complexity Thresholds
-
 | Metric | Good | Warning | Bad |
 |--------|------|---------|-----|
 | Cyclomatic complexity | 1-5 | 6-10 | >10 |
 | Cognitive complexity | 1-9 | 10-19 | >19 |
-| Function length (lines) | 1-25 | 26-50 | >50 |
+| Function length | 1-25 | 26-50 | >50 |
 | Nesting depth | 1-2 | 3 | >3 |
-| File length (lines) | 1-300 | 301-500 | >500 |
-
-### Quality Thresholds
-
-| Metric | Good | Warning | Bad |
-|--------|------|---------|-----|
+| File length | 1-300 | 301-500 | >500 |
 | Duplication ratio | <5% | 5-10% | >10% |
 | Type coverage | >90% | 70-90% | <70% |
-| Test coverage | >80% | 60-80% | <60% |
-| Doc coverage (public) | >80% | 50-80% | <50% |
-
-### Scoring Scale
-
-| Score | Grade | Verdict | Action |
-|-------|-------|---------|--------|
-| 9.0-10.0 | A | Excellent | APPROVE |
-| 8.0-8.9 | B | Good | APPROVE |
-| 7.0-7.9 | C | Acceptable | APPROVE with suggestions |
-| 5.0-6.9 | D | Needs work | REQUEST CHANGES |
-| <5.0 | F | Failing | REJECT |
 
 ## Report Format
-
-Generate this structured report:
 
 ```markdown
 ## Code Review Report
@@ -229,7 +232,7 @@ Generate this structured report:
 **Files analyzed:** {count}
 **Lines of code:** {total}
 
-### Overall: {score}/10 (Grade {letter}) - {verdict}
+### Overall: {score}/10 (Grade {letter}) -- {verdict}
 
 | Dimension | Score | Weight | Weighted |
 |-----------|-------|--------|----------|
@@ -242,27 +245,13 @@ Generate this structured report:
 ### Issues Found
 
 **Critical**
-- [{id}] {file}:{line} - {description}
+- [{id}] {file}:{line} -- {description}
 
 **High**
-- [{id}] {file}:{line} - {description}
+- [{id}] {file}:{line} -- {description}
 
 **Medium**
-- [{id}] {file}:{line} - {description}
-
-### Dimension Details
-
-**Code Quality ({score}/10)**
-{specific findings with file:line references}
-
-**Security ({score}/10)**
-{specific findings with file:line references}
-
-**Efficiency ({score}/10)**
-{specific findings with file:line references}
-
-**Maintainability ({score}/10)**
-{specific findings with file:line references}
+- [{id}] {file}:{line} -- {description}
 
 ### Recommendations
 1. [Critical] {actionable fix}
@@ -270,124 +259,123 @@ Generate this structured report:
 3. [Medium] {actionable fix}
 ```
 
+| Score | Grade | Verdict |
+|-------|-------|---------|
+| 9.0-10.0 | A | APPROVE |
+| 8.0-8.9 | B | APPROVE |
+| 7.0-7.9 | C | APPROVE with suggestions |
+| 5.0-6.9 | D | REQUEST CHANGES |
+| <5.0 | F | REJECT |
+
 ## Examples
 
-### Example 1: Review a Python Module
+### Example 1: Review Git Diff (Default)
 
-```text
-User: Review src/auth/handler.py for code quality
-Assistant: Analyzing src/auth/handler.py...
+```
+User: /platxa-code-review
+Assistant: [Reads CLAUDE.md conventions...]
+[Detects 3 changed files from git diff...]
+[Runs detect-secrets.sh and analyze-complexity.sh...]
+[Launches 4 parallel dimension agents...]
 
 ## Code Review Report
 
-**Target:** src/auth/handler.py
-**Date:** 2026-03-31
-**Files analyzed:** 1
-**Lines of code:** 245
+**Target:** 3 files changed (unstaged)
+**Files analyzed:** 3 | **Lines:** 380
 
-### Overall: 6.8/10 (Grade D) - REQUEST CHANGES
+### Overall: 7.2/10 (Grade C) -- APPROVE WITH SUGGESTIONS
 
 | Dimension | Score | Weight | Weighted |
 |-----------|-------|--------|----------|
-| Code Quality | 6.0 | 0.30 | 1.80 |
-| Security | 7.5 | 0.25 | 1.88 |
-| Efficiency | 7.0 | 0.25 | 1.75 |
+| Code Quality | 7.5 | 0.30 | 2.25 |
+| Security | 8.0 | 0.25 | 2.00 |
+| Efficiency | 6.5 | 0.25 | 1.63 |
 | Maintainability | 6.5 | 0.20 | 1.30 |
-| **Overall** | | | **6.73/10** |
+| **Overall** | | | **7.18/10** |
+
+### Issues Found
+
+**High**
+- [EFF-1] services/order.py:89 -- N+1 query: fetching customer inside order loop
+- [CQ-1] handlers/auth.py:45 -- process_login() cyclomatic complexity 12
+
+**Medium**
+- [MT-1] handlers/auth.py:1-180 -- No type hints on 6/10 public functions
+- [EFF-2] utils/format.py:23 -- String concatenation in loop (use join)
+
+### Recommendations
+1. [High] Batch customer queries with JOIN or prefetch_related
+2. [High] Extract process_login() into validate_credentials() + create_session()
+3. [Medium] Add type annotations to public functions in auth handler
+```
+
+### Example 2: Review with Auto-Fix
+
+```
+User: /platxa-code-review src/config.py --fix
+Assistant: [Analyzes src/config.py...]
+
+## Code Review Report
+
+**Target:** src/config.py
+**Files analyzed:** 1 | **Lines:** 85
+
+### Overall: 7.8/10 (Grade C) -- APPROVE WITH SUGGESTIONS
 
 ### Issues Found
 
 **Critical**
-- [SEC-1] handler.py:42 - Hardcoded JWT secret `SECRET_KEY = "mysecret123"`
-
-**High**
-- [CQ-1] handler.py:67 - `process_login()` has cyclomatic complexity 14
-- [CQ-2] handler.py:120 - Duplicated validation block (also at line 180)
+- [SEC-1] config.py:15 -- Hardcoded API key
 
 **Medium**
-- [EFF-1] handler.py:95 - N+1: Querying user roles inside loop
-- [MT-1] handler.py:1-245 - No type hints on 8/12 public functions
+- [CQ-1] config.py:42 -- Unused import: json
 
-### Recommendations
-1. [Critical] Move JWT secret to environment variable
-2. [High] Extract `process_login()` into smaller functions
-3. [High] Consolidate duplicated validation into shared function
-4. [Medium] Batch role queries with JOIN or prefetch
-5. [Medium] Add type hints to all public functions
-```
+### Fixes Applied (2)
+- [FIX-1] config.py:15 -- Replaced hardcoded key with os.environ.get("API_KEY")
+- [FIX-2] config.py:42 -- Removed unused import
 
-### Example 2: Review a Git Diff
-
-```text
-User: Review the changes in my current branch
-Assistant: Analyzing diff against main...
-
-## Code Review Report
-
-**Target:** 3 files changed (git diff main...HEAD)
-**Date:** 2026-03-31
-**Files analyzed:** 3 (+142 lines, -38 lines)
-
-### Overall: 8.2/10 (Grade B) - APPROVE
-
-| Dimension | Score | Weight | Weighted |
-|-----------|-------|--------|----------|
-| Code Quality | 8.5 | 0.30 | 2.55 |
-| Security | 8.0 | 0.25 | 2.00 |
-| Efficiency | 8.0 | 0.25 | 2.00 |
-| Maintainability | 8.0 | 0.20 | 1.60 |
-| **Overall** | | | **8.15/10** |
-
-### Issues Found
-
-**Medium**
-- [CQ-1] api/routes.ts:45 - Function `handleRequest` has 4 nesting levels
-- [MT-1] api/routes.ts:30 - Missing return type annotation
-
-### Recommendations
-1. [Medium] Extract inner conditions in `handleRequest` to helper
-2. [Medium] Add explicit return type to `handleRequest`
+### Requires Manual Fix (0)
+No issues requiring manual intervention.
 ```
 
 ### Example 3: Focused Security Review
 
-```text
-User: Security review on src/payments/
-Assistant: Running security-focused analysis on src/payments/...
+```
+User: /platxa-code-review --focus security src/api/
+Assistant: [Focused security analysis of src/api/...]
 
-## Code Review Report (Security Focus)
+## Code Review Report -- Security Focus
 
-**Target:** src/payments/ (8 files)
-**Security Score: 5.5/10 (Grade D) - REQUEST CHANGES**
+**Target:** src/api/ (8 files)
 
-### Critical Issues
-- [SEC-1] stripe.py:12 - API key in source: `sk_live_...`
-- [SEC-2] webhook.py:34 - No signature verification on webhook payload
-- [SEC-3] checkout.py:89 - User-supplied `amount` not validated server-side
+### Security: 6.0/10 (Grade D) -- REQUEST CHANGES
 
-### High Issues
-- [SEC-4] refund.py:56 - No authorization check on refund endpoint
-- [SEC-5] models.py:23 - Credit card last4 logged at DEBUG level
+**Critical**
+- [SEC-1] api/auth.py:42 -- Hardcoded JWT secret in source
+- [SEC-2] api/users.py:78 -- SQL concatenation with user input
+
+**High**
+- [SEC-3] api/upload.py:31 -- No path traversal check on filename
+- [SEC-4] api/auth.py:95 -- Failed login exposes whether email exists
 
 ### Recommendations
-1. [Critical] Remove API key, use STRIPE_SECRET_KEY env var
-2. [Critical] Verify Stripe webhook signatures before processing
-3. [Critical] Validate and sanitize amount server-side
-4. [High] Add permission check: only order owner can request refund
-5. [High] Remove PII from log statements
+1. [Critical] Move JWT secret to environment variable
+2. [Critical] Use parameterized query for user lookup
+3. [High] Sanitize upload filename with os.path.basename()
+4. [High] Use generic "invalid credentials" message
 ```
 
 ### Example 4: Systematic Codebase Review
 
-```text
-User: Review the entire codebase
+```
+User: /platxa-code-review --codebase
 Assistant: Starting systematic codebase review...
 
 ## Codebase Review Report
 
 **Project:** my-api | **Modules:** 4 | **Files:** 32 | **Lines:** 4,800
 
-### Overall: 7.4/10 (Grade C) - APPROVE WITH SUGGESTIONS
+### Overall: 7.4/10 (Grade C) -- APPROVE WITH SUGGESTIONS
 
 | Module | Quality | Security | Efficiency | Maint. | Overall |
 |--------|---------|----------|------------|--------|---------|
@@ -397,30 +385,28 @@ Assistant: Starting systematic codebase review...
 | models/   | 8.0  | 8.0  | 8.5  | 7.0  | 7.9  |
 
 ### Hotspots
-1. **auth/** (6.8) - Hardcoded token, no rate limiting
-2. **services/** (7.6) - N+1 queries in 2 handlers
+1. **auth/** (6.8) -- Hardcoded token, no rate limiting
+2. **services/** (7.6) -- N+1 queries in 2 handlers
 
 ### Top 3 Fixes
-1. [Critical] auth/config.py:15 - Hardcoded JWT secret
-2. [High] services/order.py:89 - N+1 query in loop
-3. [High] auth/login.py:45 - Bare except with pass
+1. [Critical] auth/config.py:15 -- Hardcoded JWT secret
+2. [High] services/order.py:89 -- N+1 query in loop
+3. [High] auth/login.py:45 -- Bare except with pass
 ```
 
 ## Output Checklist
 
 After completing a review, verify:
 
+- [ ] CLAUDE.md conventions were checked and applied
 - [ ] All target files were read and analyzed
 - [ ] Helper scripts were run (secrets, complexity)
 - [ ] Each dimension has a numeric score with justification
 - [ ] Overall score uses weighted formula
+- [ ] Findings filtered (auto-skip, deduplicate, confidence, root-cause)
 - [ ] All issues include file:line references
-- [ ] Issues are categorized by severity (Critical/High/Medium/Low)
+- [ ] Issues categorized by severity (Critical/High/Medium/Low)
 - [ ] Recommendations are actionable (what to do, not just what's wrong)
 - [ ] Hard-fail rules applied if triggered
-- [ ] Report follows the structured format above
-
-For codebase reviews, also verify per `references/codebase-review-guide.md`:
-- [ ] All modules discovered, scored independently, and ranked in table
-- [ ] Hotspots and cross-cutting issues identified
-- [ ] Top priority fixes ranked across entire codebase
+- [ ] Report follows the structured format
+- [ ] Auto-fix applied only if --fix was requested

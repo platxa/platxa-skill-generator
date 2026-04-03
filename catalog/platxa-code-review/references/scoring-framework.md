@@ -4,7 +4,7 @@ Weighted scoring system for code review across four dimensions.
 
 ## Formula
 
-```text
+```
 Overall = (Quality x 0.30) + (Security x 0.25) + (Efficiency x 0.25) + (Maintainability x 0.20)
 ```
 
@@ -54,49 +54,46 @@ Each dimension scores 0-10. Overall maps to letter grades.
 
 | Score | Grade | Verdict |
 |-------|-------|---------|
-| 9.0-10.0 | A | APPROVE - Excellent code |
-| 8.0-8.9 | B | APPROVE - Good code, minor suggestions |
-| 7.0-7.9 | C | APPROVE WITH SUGGESTIONS - Acceptable |
-| 5.0-6.9 | D | REQUEST CHANGES - Needs improvement |
-| <5.0 | F | REJECT - Major issues |
+| 9.0-10.0 | A | APPROVE |
+| 8.0-8.9 | B | APPROVE |
+| 7.0-7.9 | C | APPROVE WITH SUGGESTIONS |
+| 5.0-6.9 | D | REQUEST CHANGES |
+| <5.0 | F | REJECT |
 
 ## Hard-Fail Rules
-
-These override the calculated score:
 
 | Condition | Max Score |
 |-----------|-----------|
 | Hardcoded secrets | 4.0 |
 | Critical security vulnerability | 5.0 |
 | Syntax errors | 3.0 |
-| Failing tests (if test suite exists) | 5.0 |
+| Failing tests (if suite exists) | 5.0 |
+
+## Confidence Scoring
+
+Every finding must have a confidence level. Only HIGH confidence findings appear in reports.
+
+| Confidence | Criteria | Action |
+|------------|----------|--------|
+| HIGH | Clear evidence in code, unambiguous pattern match | Include in report |
+| MEDIUM | Likely issue but context could change interpretation | Omit from report |
+| LOW | Pattern match but probably benign (test data, comments, examples) | Omit from report |
+
+**Context-aware confidence adjustments:**
+- Pattern in test fixture or mock data: downgrade to LOW
+- Pattern in comment or docstring: downgrade to LOW
+- Pattern in string literal with "example", "placeholder", "changeme": downgrade to LOW
+- Pattern in environment variable lookup: downgrade to LOW (already handled)
 
 ## Language Adjustments
 
-### Python
-- +0.5 for full type hint coverage with strict mypy/pyright
-- -0.5 for no type hints on public functions
-- Check: f-strings with user input (injection risk)
-
-### TypeScript
-- +0.5 for `strict: true` with zero `any` types
-- -0.5 for pervasive `any` usage
-- Check: `as` type assertions hiding real issues
-
-### Go
-- +0.5 for all errors explicitly handled
-- -0.5 for `_ = err` patterns
-- Check: goroutine leaks, unclosed channels
-
-### Java
-- +0.5 for no raw types, proper generics
-- -0.5 for catch(Exception) with no rethrow
-- Check: resource leaks (missing try-with-resources)
-
-### Rust
-- +0.5 for minimal `unsafe` with documented invariants
-- -0.5 for excessive `.unwrap()` in library code
-- Check: panic in library functions
+| Language | Bonus (+0.5) | Penalty (-0.5) | Watch For |
+|----------|-------------|----------------|-----------|
+| Python | Full type hints with strict pyright | No type hints on public funcs | f-strings with user input |
+| TypeScript | `strict: true` with zero `any` | Pervasive `any` usage | `as` assertions hiding issues |
+| Go | All errors explicitly handled | `_ = err` patterns | Goroutine leaks, unclosed channels |
+| Java | Proper generics, no raw types | catch(Exception) no rethrow | Missing try-with-resources |
+| Rust | Minimal `unsafe` with docs | Excessive `.unwrap()` in libs | panic in library functions |
 
 ## Issue Severity Classification
 
@@ -109,7 +106,7 @@ These override the calculated score:
 
 ## Scoring Example
 
-```text
+```
 File: api/handler.py (150 lines, 8 functions)
 
 Code Quality:

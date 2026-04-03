@@ -47,7 +47,7 @@ rows, _ := db.Query("SELECT name FROM users WHERE id = ANY($1)", pq.Array(userID
 **Detection:** String variable reassigned with `+` or `+=` inside a loop.
 
 ```python
-# BAD: O(n^2) - creates new string each iteration
+# BAD: O(n^2)
 result = ""
 for item in items:
     result += str(item) + ","
@@ -64,16 +64,6 @@ for (String s : items) { result += s; }
 // GOOD: O(n)
 StringBuilder sb = new StringBuilder();
 for (String s : items) { sb.append(s); }
-```
-
-```go
-// BAD
-result := ""
-for _, s := range items { result += s }
-
-// GOOD
-var b strings.Builder
-for _, s := range items { b.WriteString(s) }
 ```
 
 **Score impact:** -1.0 per occurrence
@@ -95,20 +85,6 @@ for line in lines:
     match = pattern.search(line)
 ```
 
-```typescript
-// BAD: Creates new Date each iteration
-for (const event of events) {
-  const now = new Date()
-  if (event.date > now) { ... }
-}
-
-// GOOD
-const now = new Date()
-for (const event of events) {
-  if (event.date > now) { ... }
-}
-```
-
 **Score impact:** -1.0 per occurrence
 
 ---
@@ -127,17 +103,6 @@ def handle_request(key, value):
 from functools import lru_cache
 @lru_cache(maxsize=1000)
 def get_value(key): ...
-```
-
-```go
-// BAD
-var results []Result
-for item := range stream {
-    results = append(results, process(item))  // Unbounded
-}
-
-// GOOD
-results := make([]Result, 0, maxBatchSize)
 ```
 
 **Score impact:** -2.0 (critical in long-running services)
@@ -162,18 +127,6 @@ async def handle():
         result = await client.get("https://...")
 ```
 
-```typescript
-// BAD: readFileSync in async handler
-app.get('/data', async (req, res) => {
-  const data = fs.readFileSync('data.json')
-})
-
-// GOOD
-app.get('/data', async (req, res) => {
-  const data = await fs.promises.readFile('data.json')
-})
-```
-
 **Score impact:** -2.0 per occurrence
 
 ---
@@ -189,15 +142,6 @@ active = [u for u in all_users if u.is_active]
 
 # GOOD: Filter at database
 active = User.objects.filter(is_active=True)
-```
-
-```typescript
-// BAD
-const allOrders = await prisma.order.findMany()
-const recent = allOrders.filter(o => o.date > cutoff)
-
-// GOOD
-const recent = await prisma.order.findMany({ where: { date: { gt: cutoff } } })
 ```
 
 **Score impact:** -1.5 per occurrence
@@ -248,7 +192,7 @@ def process(items):
         ...  # 2 levels
 ```
 
-**Score impact:** -0.5 per occurrence (compounds with nesting depth)
+**Score impact:** -0.5 per occurrence
 
 ---
 

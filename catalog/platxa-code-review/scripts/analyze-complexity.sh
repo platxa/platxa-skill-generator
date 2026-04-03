@@ -65,8 +65,7 @@ while IFS= read -r file; do
         WARNINGS=$((WARNINGS + 1))
     fi
 
-    # Count functions and check length
-    # Python: def keyword
+    # Count functions and check length - Python
     if [[ "$file" == *.py ]]; then
         CURRENT_FUNC=""
         CURRENT_START=0
@@ -125,7 +124,7 @@ while IFS= read -r file; do
     LINE_NUM=0
     while IFS= read -r line; do
         LINE_NUM=$((LINE_NUM + 1))
-        # Count leading spaces/tabs
+        # Count leading spaces
         STRIPPED="${line#"${line%%[! ]*}"}"
         INDENT=$(( (${#line} - ${#STRIPPED}) / 4 ))
 

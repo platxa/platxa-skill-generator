@@ -7,7 +7,6 @@ Systematic workflow for reviewing an entire codebase module-by-module.
 Map the codebase structure. Count files by language and identify logical modules.
 
 ```bash
-# Count source files by language
 glob "**/*.py" --exclude "node_modules,dist,.git"
 glob "**/*.ts" --exclude "node_modules,dist,.git"
 ```
@@ -19,8 +18,8 @@ Group files into review batches by module. Prioritize entry points, API boundari
 Run scripts across the entire codebase to get a baseline:
 
 ```bash
-bash scripts/detect-secrets.sh .
-bash scripts/analyze-complexity.sh .
+bash ${CLAUDE_SKILL_DIR}/scripts/detect-secrets.sh .
+bash ${CLAUDE_SKILL_DIR}/scripts/analyze-complexity.sh .
 ```
 
 This surfaces critical issues before deep analysis begins.
@@ -31,7 +30,7 @@ Process each module independently to avoid context overflow.
 
 For each module:
 1. Read all files in the module
-2. Score across all 4 dimensions
+2. Score across all 4 dimensions (use parallel sub-agents per module)
 3. Record per-module scores and issues
 4. Move to next module
 
@@ -77,15 +76,15 @@ Aggregate into a codebase-level report:
 
 ### Hotspots (Worst Modules)
 
-1. **auth/** (7.1/10) - Hardcoded token expiry, missing rate limiting
-2. **db/** (7.3/10) - N+1 queries in 3 handlers, no connection pooling
+1. **auth/** (7.1/10) -- Hardcoded token expiry, missing rate limiting
+2. **db/** (7.3/10) -- N+1 queries in 3 handlers, no connection pooling
 
 ### Cross-Cutting Issues
 - {pattern found across multiple modules}
 
 ### Top 10 Priority Fixes
-1. [Critical] {file}:{line} - {issue}
-2. [Critical] {file}:{line} - {issue}
+1. [Critical] {file}:{line} -- {issue}
+2. [Critical] {file}:{line} -- {issue}
 
 ### Codebase Health Summary
 - Strongest dimension: {name} ({avg score})
