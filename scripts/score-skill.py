@@ -1002,14 +1002,24 @@ def score_token_efficiency(content: str, body: str, skill_dir: Path) -> Dimensio
                 f"Somewhat long sentences: avg {avg_sentence_len:.0f} words"
             )
 
-    # Check references exist for long skills
+    # Check references exist for long/heavy skills (progressive disclosure)
     refs_dir = skill_dir / "references"
-    if lines > 300 and not refs_dir.is_dir():
-        dim.score -= 1.0
-        dim.signals_negative.append("Long SKILL.md but no references/ directory")
-        dim.suggestions.append(
-            "Offload detailed content to references/ files for progressive disclosure"
-        )
+    estimated_tokens = int(words * 1.3)
+    if not refs_dir.is_dir():
+        if estimated_tokens > 3000:
+            dim.score -= 1.5
+            dim.signals_negative.append(
+                f"SKILL.md ~{estimated_tokens} tokens with no references/ directory"
+            )
+            dim.suggestions.append(
+                "Move detailed content to references/ — SKILL.md loads on every invocation"
+            )
+        elif lines > 300:
+            dim.score -= 1.0
+            dim.signals_negative.append("Long SKILL.md but no references/ directory")
+            dim.suggestions.append(
+                "Offload detailed content to references/ files for progressive disclosure"
+            )
     elif refs_dir.is_dir():
         ref_count = len(list(refs_dir.glob("**/*.md")))
         if ref_count > 0:

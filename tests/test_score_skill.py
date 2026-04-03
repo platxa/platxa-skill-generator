@@ -507,6 +507,49 @@ class TestTokenEfficiency:
         data = get_score(temp_skill_dir)
         assert data["dimensions"]["token_efficiency"]["score"] >= 7.0
 
+    def test_heavy_skill_without_refs_penalized(self, temp_skill_dir: Path) -> None:
+        """SKILL.md > 3000 tokens with no references/ gets progressive disclosure penalty."""
+        # Generate a large body (~3500 tokens ≈ ~2700 words)
+        big_body = (
+            "---\nname: heavy-skill\n"
+            "description: A heavy skill without references. Use when testing.\n"
+            "---\n\n# Heavy Skill\n\n## Overview\n\n"
+        )
+        # Add enough content to exceed 3000 tokens
+        for i in range(150):
+            big_body += (
+                f"### Section {i}\n\n"
+                f"This section provides detailed analysis of component {i} "
+                f"covering architecture patterns, implementation details, "
+                f"performance considerations, and testing strategies.\n\n"
+            )
+        (temp_skill_dir / "SKILL.md").write_text(big_body)
+        data = get_score(temp_skill_dir)
+        negatives = data["dimensions"]["token_efficiency"]["negative"]
+        assert any("no references" in s.lower() for s in negatives)
+
+    def test_heavy_skill_with_refs_not_penalized(self, temp_skill_dir: Path) -> None:
+        """SKILL.md > 3000 tokens WITH references/ does not get the penalty."""
+        big_body = (
+            "---\nname: heavy-with-refs\n"
+            "description: A heavy skill with references. Use when testing.\n"
+            "---\n\n# Heavy Skill\n\n## Overview\n\n"
+        )
+        for i in range(150):
+            big_body += (
+                f"### Section {i}\n\n"
+                f"This section provides detailed analysis of component {i} "
+                f"covering architecture patterns, implementation details, "
+                f"performance considerations, and testing strategies.\n\n"
+            )
+        (temp_skill_dir / "SKILL.md").write_text(big_body)
+        refs_dir = temp_skill_dir / "references"
+        refs_dir.mkdir()
+        (refs_dir / "details.md").write_text("# Detailed reference content\n\nExtra detail.\n")
+        data = get_score(temp_skill_dir)
+        negatives = data["dimensions"]["token_efficiency"]["negative"]
+        assert not any("no references" in s.lower() for s in negatives)
+
 
 class TestAdvancedPatternBonuses:
     """Tests for bonus signals rewarding advanced skill patterns."""
