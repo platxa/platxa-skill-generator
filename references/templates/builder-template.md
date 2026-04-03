@@ -8,6 +8,7 @@ Template for skills that create new artifacts.
 ---
 name: {skill-name}
 description: {Creates X for Y. Generates Z based on input.}
+when_to_use: 'Use when the user asks to "create X", "generate Y", or "scaffold Z"'
 allowed-tools:
   - Read
   - Write

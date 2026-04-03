@@ -8,6 +8,7 @@ Template for skills that inspect or audit code/data.
 ---
 name: {skill-name}
 description: {Analyzes X for Y. Reports on Z metrics.}
+when_to_use: 'Use when the user asks to "analyze X", "review Y", or "check Z for issues"'
 allowed-tools:
   - Read
   - Grep

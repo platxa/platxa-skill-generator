@@ -8,6 +8,7 @@ Template for skills that automate repetitive tasks.
 ---
 name: {skill-name}
 description: {Automates X. Runs Y automatically when Z.}
+when_to_use: 'Use when the user asks to "run X", "automate Y", or "set up Z workflow"'
 allowed-tools:
   - Read
   - Write

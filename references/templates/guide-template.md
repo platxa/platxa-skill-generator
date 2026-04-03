@@ -8,6 +8,7 @@ Template for skills that teach or explain concepts.
 ---
 name: {skill-name}
 description: {Guides users through X. Explains Y step by step.}
+when_to_use: 'Use when the user asks "how do I X", "explain Y", or "help me with Z"'
 allowed-tools:
   - Read
   - WebSearch
