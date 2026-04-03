@@ -619,3 +619,67 @@ class TestDependencyChainInstallation:
         data = json.loads(result.stdout)
         assert data["satisfied"] is True, f"Expected all deps satisfied: {data}"
         assert data["missing"] == []
+
+
+class TestCatalogRegression:
+    """Validate all catalog skills pass frontmatter validation and quality scoring."""
+
+    CATALOG_DIR = Path(__file__).parent.parent / "catalog"
+    VALIDATE_FRONTMATTER = Path(__file__).parent.parent / "scripts" / "validate-frontmatter.sh"
+    SCORE_SKILL = Path(__file__).parent.parent / "scripts" / "score-skill.py"
+
+    @pytest.fixture
+    def catalog_skills(self) -> list[Path]:
+        """Get all catalog skill directories."""
+        skills = [
+            d
+            for d in sorted(self.CATALOG_DIR.iterdir())
+            if d.is_dir() and (d / "SKILL.md").exists()
+        ]
+        assert len(skills) >= 15, f"Expected at least 15 catalog skills, found {len(skills)}"
+        return skills
+
+    @pytest.mark.integration
+    def test_all_catalog_skills_pass_frontmatter(self, catalog_skills: list[Path]) -> None:
+        """Every catalog skill passes frontmatter validation."""
+        failures = []
+        for skill_dir in catalog_skills:
+            result = subprocess.run(
+                ["bash", str(self.VALIDATE_FRONTMATTER), str(skill_dir)],
+                capture_output=True,
+                text=True,
+                timeout=10,
+            )
+            if result.returncode != 0:
+                failures.append(f"{skill_dir.name}: {result.stderr.strip()}")
+
+        assert not failures, (
+            f"{len(failures)} catalog skill(s) failed frontmatter validation:\n"
+            + "\n".join(failures)
+        )
+
+    @pytest.mark.integration
+    def test_all_catalog_skills_score_above_threshold(self, catalog_skills: list[Path]) -> None:
+        """Every catalog skill scores >= 7.0 on quality scoring."""
+        failures = []
+        for skill_dir in catalog_skills:
+            result = subprocess.run(
+                ["python3", str(self.SCORE_SKILL), str(skill_dir), "--json"],
+                capture_output=True,
+                text=True,
+                timeout=10,
+            )
+            if result.returncode != 0:
+                failures.append(f"{skill_dir.name}: scorer failed (exit {result.returncode})")
+                continue
+            try:
+                data = json.loads(result.stdout)
+                score = data.get("overall_score", 0)
+                if score < 7.0:
+                    failures.append(f"{skill_dir.name}: score {score:.1f} < 7.0")
+            except json.JSONDecodeError:
+                failures.append(f"{skill_dir.name}: invalid JSON output")
+
+        assert not failures, (
+            f"{len(failures)} catalog skill(s) below quality threshold:\n" + "\n".join(failures)
+        )
