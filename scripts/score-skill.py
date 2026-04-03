@@ -703,6 +703,16 @@ def apply_advanced_pattern_bonuses(dim: DimensionScore, frontmatter: dict, body:
         dim.score = min(dim.score + 0.2, 10.0)
         dim.signals_positive.append("Includes finding deduplication/filtering")
 
+    # Bonus: Portable script references using ${CLAUDE_SKILL_DIR}
+    if "${CLAUDE_SKILL_DIR}" in body:
+        dim.score = min(dim.score + 0.3, 10.0)
+        dim.signals_positive.append("Uses ${CLAUDE_SKILL_DIR} for portable script references")
+    elif "scripts/" in body and ("Bash" in tool_set or any("Bash(" in t for t in tools)):
+        # Has script references but not using the portable variable
+        dim.suggestions.append(
+            "Use ${CLAUDE_SKILL_DIR}/scripts/ instead of relative paths for portability"
+        )
+
 
 def score_example_quality(body: str) -> DimensionScore:
     """Score example quality: code blocks, language labels, substance."""

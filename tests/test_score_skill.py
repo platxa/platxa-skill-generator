@@ -601,6 +601,40 @@ class TestAdvancedPatternBonuses:
         positives = data["dimensions"]["content_depth"]["positive"]
         assert any("argument-hint" in s.lower() for s in positives)
 
+    def test_claude_skill_dir_bonus(self, temp_skill_dir: Path) -> None:
+        """Skills using ${CLAUDE_SKILL_DIR} for script refs get bonus."""
+        fm = (
+            "---\nname: portable-skill\n"
+            "description: A skill with portable script references. Use when running scripts.\n"
+            "allowed-tools:\n  - Read\n  - Bash\n---\n"
+        )
+        body = self._base_body().replace(
+            "### Step 2: Analysis",
+            "### Step 2: Run Script\n\n"
+            "```bash\nbash ${CLAUDE_SKILL_DIR}/scripts/analyze.sh\n```\n\n"
+            "### Step 2b: Analysis",
+        )
+        data = self._make_skill(temp_skill_dir, fm, body)
+        positives = data["dimensions"]["content_depth"]["positive"]
+        assert any("CLAUDE_SKILL_DIR" in s for s in positives)
+
+    def test_hardcoded_script_path_suggests_portable(self, temp_skill_dir: Path) -> None:
+        """Skills with hardcoded scripts/ paths get a suggestion to use ${CLAUDE_SKILL_DIR}."""
+        fm = (
+            "---\nname: hardcoded-skill\n"
+            "description: A skill with hardcoded script path. Use when running scripts.\n"
+            "allowed-tools:\n  - Read\n  - Bash\n---\n"
+        )
+        body = self._base_body().replace(
+            "### Step 2: Analysis",
+            "### Step 2: Run Script\n\n"
+            "```bash\nbash scripts/analyze.sh\n```\n\n"
+            "### Step 2b: Analysis",
+        )
+        data = self._make_skill(temp_skill_dir, fm, body)
+        suggestions = data["dimensions"]["content_depth"]["suggestions"]
+        assert any("CLAUDE_SKILL_DIR" in s for s in suggestions)
+
     def test_no_bonus_without_patterns(self, temp_skill_dir: Path) -> None:
         """Skills without advanced patterns don't get false bonuses."""
         fm = (
