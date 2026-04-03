@@ -635,6 +635,35 @@ class TestAdvancedPatternBonuses:
         suggestions = data["dimensions"]["content_depth"]["suggestions"]
         assert any("CLAUDE_SKILL_DIR" in s for s in suggestions)
 
+    def test_argument_hint_without_arguments_warns(self, temp_skill_dir: Path) -> None:
+        """argument-hint declared but no $ARGUMENTS in body flags a warning."""
+        fm = (
+            "---\nname: hint-no-args\n"
+            "description: A skill with argument hint but no placeholders. Use when testing.\n"
+            'argument-hint: "[target]"\n'
+            "allowed-tools:\n  - Read\n---\n"
+        )
+        data = self._make_skill(temp_skill_dir, fm, self._base_body())
+        negatives = data["dimensions"]["content_depth"]["negative"]
+        assert any("argument-hint" in s.lower() and "no $ARGUMENTS" in s for s in negatives)
+
+    def test_arguments_without_hint_suggests(self, temp_skill_dir: Path) -> None:
+        """$ARGUMENTS used but no argument-hint suggests adding it."""
+        fm = (
+            "---\nname: args-no-hint\n"
+            "description: A skill using arguments without hint. Use when testing.\n"
+            "allowed-tools:\n  - Read\n---\n"
+        )
+        body = self._base_body().replace(
+            "### Step 1: Scope Detection",
+            "### Step 1: Parse Arguments\n\n"
+            "Target path is provided via $ARGUMENTS.\n\n"
+            "### Step 1b: Scope Detection",
+        )
+        data = self._make_skill(temp_skill_dir, fm, body)
+        suggestions = data["dimensions"]["content_depth"]["suggestions"]
+        assert any("argument-hint" in s.lower() for s in suggestions)
+
     def test_no_bonus_without_patterns(self, temp_skill_dir: Path) -> None:
         """Skills without advanced patterns don't get false bonuses."""
         fm = (

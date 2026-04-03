@@ -687,9 +687,22 @@ def apply_advanced_pattern_bonuses(dim: DimensionScore, frontmatter: dict, body:
         dim.signals_positive.append("Integrates with CLAUDE.md project conventions")
 
     # Bonus: argument-hint declared (better discoverability)
-    if frontmatter.get("argument-hint"):
+    has_arg_hint = bool(frontmatter.get("argument-hint"))
+    if has_arg_hint:
         dim.score = min(dim.score + 0.3, 10.0)
         dim.signals_positive.append("Declares argument-hint for autocomplete UX")
+
+    # Consistency: argument-hint vs $ARGUMENTS usage
+    uses_arguments = bool(re.search(r"\$ARGUMENTS|\$ARG_|\$\d+|\$0", body))
+    if has_arg_hint and not uses_arguments:
+        dim.signals_negative.append(
+            "argument-hint declared but no $ARGUMENTS/$ARG_ placeholder in body"
+        )
+        dim.suggestions.append(
+            "Use $ARGUMENTS or $ARG_name in the skill body to reference the arguments"
+        )
+    elif uses_arguments and not has_arg_hint:
+        dim.suggestions.append("Add argument-hint to frontmatter to document expected arguments")
 
     # Bonus: Smart scope detection (git diff or dynamic context injection)
     scope_keywords = {"git diff", "!`git", "scope detection", "determine scope"}
