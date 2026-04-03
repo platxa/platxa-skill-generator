@@ -196,6 +196,17 @@ class TestSpecCompliance:
         spec = data["dimensions"]["spec_compliance"]
         assert any("trigger context" in s.lower() for s in spec["negative"])
 
+    def test_quoted_trigger_phrases_get_positive(self, temp_skill_dir: Path) -> None:
+        content = (
+            "---\nname: quoted-triggers\n"
+            'description: This skill should be used when the user asks to "review code", "check quality", or "audit changes".\n'
+            "---\n\n# Test\n"
+        )
+        (temp_skill_dir / "SKILL.md").write_text(content)
+        data = get_score(temp_skill_dir)
+        spec = data["dimensions"]["spec_compliance"]
+        assert any("quoted trigger" in s.lower() for s in spec["positive"])
+
     def test_vague_description_penalized(self, temp_skill_dir: Path) -> None:
         content = "---\nname: vague-desc\ndescription: Helps with documents\n---\n\n# Test\n"
         (temp_skill_dir / "SKILL.md").write_text(content)

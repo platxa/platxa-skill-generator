@@ -438,6 +438,27 @@ def score_spec_compliance(frontmatter: dict) -> DimensionScore:
                     "Move the 'Use when...' trigger closer to the start of description"
                 )
 
+        # Check for quoted trigger phrases (Claude Code best practice)
+        # e.g., 'when the user asks to "create a hook", "validate tool use"'
+        quoted_triggers = re.findall(r'"[^"]{3,}"', desc)
+        if quoted_triggers:
+            dim.signals_positive.append(
+                f"Description includes {len(quoted_triggers)} quoted trigger phrase(s)"
+            )
+            # Bonus: check if quoted triggers are in first 250 chars
+            if len(desc) > 250:
+                early_quoted = re.findall(r'"[^"]{3,}"', desc[:250])
+                if not early_quoted:
+                    dim.score -= 0.2
+                    dim.signals_negative.append("Quoted trigger phrases not in first 250 chars")
+                    dim.suggestions.append(
+                        'Move quoted trigger phrases (e.g., "create X") to the start of description'
+                    )
+        elif len(desc) >= 50:
+            dim.suggestions.append(
+                'Add quoted trigger phrases: \'Use when the user asks to "create X", "configure Y"\''
+            )
+
         # Check for vague descriptions
         vague_patterns = [
             r"^helps?\s+with\s+\w+$",
