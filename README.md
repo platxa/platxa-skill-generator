@@ -19,6 +19,7 @@
 - [Usage](#usage)
 - [Scripts Reference](#scripts-reference)
 - [Skill Types](#skill-types)
+- [Frontmatter Reference](#frontmatter-reference)
 - [Project Structure](#project-structure)
 - [Quality Standards](#quality-standards)
 - [Testing](#testing)
@@ -83,13 +84,15 @@ Platxa Skill Generator creates production-ready Claude Code skills by orchestrat
 | **Five Skill Types** | Builder, Guide, Automation, Analyzer, Validator |
 | **Advanced Patterns** | Parallel sub-agents, auto-fix, CLAUDE.md integration, smart scoping |
 | **Quality Scoring** | 5-dimension scorer with advanced pattern bonuses |
+| **Full Frontmatter Validation** | 23 known fields, constraint patterns, Claude Code spec compliance |
 | **Dependency System** | `depends-on` and `suggests` fields with cycle detection |
 | **Token Budget Management** | SKILL.md optimized for context efficiency |
 | **Script Security** | ShellCheck + security pattern scanning |
 | **Web Research** | Automatic domain knowledge discovery |
 | **137 Reference Files** | Domain knowledge across 56 patterns, 9 templates, 7 agents |
 | **15 Scripts** | Validation, installation, scoring, dependency checking, graph visualization |
-| **130 Tests** | Comprehensive test suite across 7 test files |
+| **150 Tests** | Comprehensive test suite across 7 test files |
+| **Catalog Regression** | Automated validation of all 17 catalog skills on every change |
 
 ---
 
@@ -170,7 +173,7 @@ cd platxa-skill-generator
 |--------|---------|
 | `validate-all.sh <dir>` | Run all validators (structure, frontmatter, tokens, shellcheck, quality) |
 | `validate-structure.sh <dir>` | Check directory structure and file presence |
-| `validate-frontmatter.sh <dir>` | Validate YAML frontmatter fields and formats |
+| `validate-frontmatter.sh <dir>` | Validate 23 YAML frontmatter fields with constraint patterns |
 | `validate-skill.sh <dir>` | Field validation with 0-10 scoring |
 | `validate-catalog-entry.sh <dir>` | Validate a catalog entry for PR submission |
 | `count-tokens.py <dir>` | Token counting with budget enforcement |
@@ -213,19 +216,72 @@ cd platxa-skill-generator
 
 ---
 
+## Frontmatter Reference
+
+### Required Fields
+
+```yaml
+---
+name: hyphen-case-name  # ≤64 chars, no consecutive hyphens
+description: ...        # ≤1024 chars, no placeholders, include trigger phrases
+---
+```
+
+### Optional Fields
+
+| Field | Type | Values | Purpose |
+|-------|------|--------|---------|
+| `allowed-tools` | list | 27 valid tools + constraint patterns | Tool permissions |
+| `version` | string | Semver (X.Y.Z) | Skill versioning |
+| `model` | string | opus, sonnet, haiku | Override conversation model |
+| `effort` | string/int | low, medium, high, max, or integer | Token budget control |
+| `context` | string | fork | Run as isolated sub-agent |
+| `agent` | string | Explore, Plan, general-purpose | Agent type (with context: fork) |
+| `paths` | string/list | Glob patterns | Conditional activation by file type |
+| `when_to_use` | string | Trigger description | Auto-invocation guidance |
+| `argument-hint` | string | Argument format | Help text for /skill arguments |
+| `user-invocable` | bool | true/false/yes/no | Allow user slash-command |
+| `disable-model-invocation` | bool | true/false/yes/no | Prevent auto-invocation |
+| `shell` | string | bash, powershell | Shell for inline code blocks |
+| `hooks` | object | Hook configuration | Lifecycle hooks |
+| `depends-on` | list | Skill names | Required dependencies |
+| `suggests` | list | Skill names | Recommended companions |
+
+### Tool Constraint Patterns
+
+```yaml
+allowed-tools:
+  - Read
+  - Bash(git:*)                              # Only git commands
+  - Write(src/*)                             # Only writes in src/
+  - Bash(${CLAUDE_SKILL_DIR}/scripts/run.sh:*)  # Only specific script
+```
+
+### Variable Substitution
+
+| Variable | Purpose |
+|----------|---------|
+| `$ARGUMENTS` | All arguments passed to the skill |
+| `$ARGUMENTS[0]`, `$0` | First argument by index |
+| `${CLAUDE_SKILL_DIR}` | Skill's installation directory (portable) |
+| `${CLAUDE_SESSION_ID}` | Current session ID |
+
+---
+
 ## Project Structure
 
 ```
 platxa-skill-generator/
 ├── SKILL.md                    # Main skill definition (entry point)
 ├── README.md                   # This file
+├── CLAUDE.md                   # Claude Code guidance
 ├── pyproject.toml              # Python project config
 ├── LICENSE                     # MIT License
 │
 ├── scripts/                    # 15 executable scripts
 │   ├── validate-all.sh         # Master validation orchestrator
 │   ├── validate-structure.sh   # Directory structure checks
-│   ├── validate-frontmatter.sh # YAML frontmatter validation
+│   ├── validate-frontmatter.sh # YAML frontmatter validation (23 fields)
 │   ├── validate-skill.sh       # Field validation with scoring
 │   ├── validate-catalog-entry.sh # Catalog entry validator
 │   ├── count-tokens.py         # Token counting (tiktoken)
@@ -273,14 +329,14 @@ platxa-skill-generator/
 │   ├── spec/                   # 2 specification references
 │   └── examples/               # 2 example skills
 │
-├── tests/                      # 130 tests across 7 files
-│   ├── test_validate_frontmatter.py  # 33 frontmatter tests
+├── tests/                      # 150 tests across 7 files
+│   ├── test_validate_frontmatter.py  # 44 frontmatter tests
 │   ├── test_validate_structure.py    # 16 structure tests
 │   ├── test_count_tokens.py          # 10 token tests
-│   ├── test_score_skill.py           # 43 quality scorer tests (incl. advanced pattern bonuses)
+│   ├── test_score_skill.py           # 50 quality scorer tests
 │   ├── test_check_dependencies.py    # 8 dependency tests
 │   ├── test_circular_deps.py         # 9 cycle detection tests
-│   ├── test_integration.py           # 11 integration tests
+│   ├── test_integration.py           # 13 integration tests (incl. catalog regression)
 │   ├── conftest.py                   # Fixtures
 │   └── helpers.py                    # Test utilities
 │
@@ -299,11 +355,11 @@ Every generated skill is scored across 5 dimensions:
 
 | Dimension | Weight | What It Checks |
 |-----------|--------|----------------|
-| **Spec Compliance** | 25% | Frontmatter validity, name format, description, tools |
+| **Spec Compliance** | 25% | Frontmatter validity, name format, description quality, quoted trigger phrases, front-loading |
 | **Content Depth** | 25% | Placeholders, generic filler, LLM-favorite words, vocabulary diversity, advanced pattern bonuses |
 | **Example Quality** | 20% | Code blocks, language labels, substance, YAML/JSON validity |
-| **Structure** | 15% | Required sections, heading count, hierarchy |
-| **Token Efficiency** | 15% | Line count, word count, sentence length, references |
+| **Structure** | 15% | Required sections, heading count, hierarchy, progressive disclosure |
+| **Token Efficiency** | 15% | Line count, word count, sentence length, references, progressive disclosure |
 
 | Score | Level | Decision |
 |-------|-------|----------|
@@ -318,6 +374,27 @@ python3 scripts/score-skill.py catalog/code-documenter --json     # JSON output
 python3 scripts/score-skill.py catalog/code-documenter --verbose   # Detailed signals
 ```
 
+### Advanced Pattern Bonuses
+
+The scorer awards bonuses for production-quality patterns:
+
+| Pattern | Bonus | Detection |
+|---------|-------|-----------|
+| Parallel sub-agents | +0.5 | Task/Agent tool + parallel/concurrent language |
+| Auto-fix capability | +0.5 | Edit tool + fix/apply workflow language |
+| CLAUDE.md integration | +0.3 | References project conventions |
+| `${CLAUDE_SKILL_DIR}` usage | +0.3 | Portable script references |
+| argument-hint declared | +0.3 | Better discoverability |
+| Smart scope detection | +0.2 | git diff or dynamic context |
+| Finding filtering | +0.2 | Deduplication and false-positive filtering |
+
+### Consistency Checks
+
+- `argument-hint` without `$ARGUMENTS` in body triggers a warning
+- `$ARGUMENTS` without `argument-hint` suggests adding it
+- SKILL.md > 3000 tokens without `references/` triggers progressive disclosure penalty
+- Quoted trigger phrases in description beyond first 250 chars get penalized
+
 ### Skill Composition
 
 Skills can declare relationships via frontmatter:
@@ -329,20 +406,7 @@ suggests:            # Recommended companions (shown after install)
   - platxa-testing
 ```
 
-### Advanced Patterns (v2.2.0)
-
-The generator now supports advanced skill patterns matching Anthropic's bundled skills like `/simplify`:
-
-| Pattern | File | What It Enables |
-|---------|------|-----------------|
-| **Parallel Sub-Agents** | `references/patterns/skill-parallelism.md` | 3+ dimension analysis via concurrent Task agents |
-| **Auto-Fix** | `references/patterns/auto-fix.md` | Analyzer skills apply fixes directly via Edit tool |
-| **CLAUDE.md Integration** | `references/patterns/project-conventions.md` | Skills adapt to project conventions |
-| **Smart Scoping** | `references/patterns/smart-scope.md` | Git-diff-first scope detection, zero config |
-| **Finding Filtering** | `references/patterns/finding-filtering.md` | False positive filtering and deduplication |
-| **Skill Composition** | `references/patterns/skill-composition.md` | Skills invoking other skills (like /batch + /simplify) |
-| **Worktree Isolation** | `references/patterns/worktree-isolation.md` | Parallel file modifications in isolated worktrees |
-| **Persistent Memory** | `references/patterns/skill-memory.md` | Cross-session learning for repeated analysis |
+### Execution Tiers
 
 The architecture agent classifies skills into three execution sophistication tiers:
 
@@ -357,7 +421,7 @@ The architecture agent classifies skills into three execution sophistication tie
 ## Testing
 
 ```bash
-# Run all 130 tests
+# Run all 150 tests
 pytest tests/ -v
 
 # Run specific test file
@@ -366,7 +430,12 @@ pytest tests/test_score_skill.py -v
 # Run by marker
 pytest tests/ -m frontmatter
 pytest tests/ -m integration
+
+# Run catalog regression only
+pytest tests/test_integration.py -k catalog -v
 ```
+
+All tests use **real file system operations** -- no mocks or simulations.
 
 ---
 
@@ -401,7 +470,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md). Run before submitting:
 
 ```bash
 ./scripts/validate-all.sh .    # All validators pass
-pytest tests/ -v               # All 130 tests pass
+pytest tests/ -v               # All 150 tests pass
 shellcheck scripts/*.sh        # No warnings
 ```
 
@@ -413,6 +482,6 @@ MIT License -- See [LICENSE](LICENSE) for details.
 
 ---
 
-**Version**: 2.2.0
+**Version**: 2.3.0
 **Created by**: DJ Patel -- Founder & CEO, Platxa | https://platxa.com
 **Based on**: Anthropic's [Agent Skills](https://agentskills.io) Open Standard

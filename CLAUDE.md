@@ -22,7 +22,7 @@ python3 scripts/score-skill.py <skill-directory>   # 5-dimension quality scorer 
 
 ### Testing
 ```bash
-pytest tests/ -v                    # Run all 130 tests
+pytest tests/ -v                    # Run all 150 tests
 pytest tests/test_validate_frontmatter.py -v  # Run specific test file
 pytest -k "test_valid_name"         # Run tests matching pattern
 ```
@@ -99,7 +99,7 @@ references/             # 137 domain knowledge files
 └── examples/           # 2 example skills
 scripts/                # 15 Bash/Python scripts
 catalog/                # 17 production-ready skills
-tests/                  # 130 tests across 7 files (uses real file operations, no mocks)
+tests/                  # 150 tests across 7 files (uses real file operations, no mocks)
 ```
 
 ## SKILL.md Frontmatter Requirements
@@ -108,11 +108,30 @@ tests/                  # 130 tests across 7 files (uses real file operations, n
 ---
 name: hyphen-case-name  # Required, ≤64 chars, no consecutive hyphens
 description: ...        # Required, ≤1024 chars, no placeholders
-allowed-tools:          # Optional, only valid Claude Code tools
+allowed-tools:          # Optional, supports constraint patterns like Bash(git:*)
   - Read
   - Write
-  - Task
+  - Bash(git:*)
+# Optional fields:
+version: "1.0.0"                  # Semantic versioning (X.Y.Z)
+model: sonnet                     # opus, sonnet, or haiku
+effort: medium                    # low, medium, high, max, or integer
+context: fork                     # fork (sub-agent) or inline (default)
+agent: Explore                    # Agent type when context: fork
+paths: "**/*.ts"                  # Glob patterns for conditional activation
+when_to_use: "..."                # Trigger phrases for auto-invocation
+argument-hint: "[target]"         # Help text for /skill arguments
+user-invocable: true              # true/false/yes/no
+disable-model-invocation: false   # true/false/yes/no
+shell: bash                       # bash or powershell
+hooks: {}                         # Lifecycle hook configuration
+depends-on:                       # Required skills
+  - other-skill
+suggests:                         # Recommended companions
+  - companion-skill
 ---
 ```
 
-Valid tools: Read, Write, Edit, MultiEdit, Glob, Grep, LS, Bash, Task, Agent, Skill, WebFetch, WebSearch, AskUserQuestion, TodoWrite, KillShell, BashOutput, NotebookEdit
+Valid tools (27): Read, Write, Edit, MultiEdit, Glob, Grep, LS, Bash, Task, Agent, Skill, WebFetch, WebSearch, AskUserQuestion, TodoWrite, KillShell, BashOutput, NotebookEdit, Brief, ToolSearch, EnterPlanMode, ExitPlanMode, EnterWorktree, ExitWorktree, LSP, RemoteTrigger, SendMessage
+
+Tool constraint patterns: `Bash(git:*)`, `Write(src/*)`, `Bash(${CLAUDE_SKILL_DIR}/scripts/*)`
