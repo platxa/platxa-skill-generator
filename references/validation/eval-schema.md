@@ -145,3 +145,25 @@ Aggregated results across multiple runs. Located at `<workspace>/benchmark.json`
   }
 }
 ```
+
+## Testing Strategy
+
+**Start with one hard task, not broad coverage.**
+
+The most effective skill creators iterate on a single challenging task until Claude
+succeeds, then extract the winning approach into a skill. This leverages Claude's
+in-context learning and provides faster signal than broad testing.
+
+### Recommended workflow
+
+1. **Pick the hardest eval** — the one most likely to fail
+2. **Run it repeatedly** — iterate on the skill until it passes consistently
+3. **Expand coverage** — once the hardest case works, add easier cases
+4. **Add edge cases** — boundary conditions and error scenarios last
+
+### Why single-task first?
+
+- Faster feedback loop (1 eval vs 10)
+- Forces you to fix the core skill logic before testing variations
+- If the hardest case passes, easier ones usually do too
+- Prevents premature optimization for cases that already work

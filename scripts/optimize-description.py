@@ -258,6 +258,7 @@ def improve_description(
         Improved description text
     """
     missed_triggers = [f for f in failures if f["should_trigger"]]
+    false_positives = [f for f in failures if not f["should_trigger"]]
 
     improved = current
 
@@ -282,6 +283,45 @@ def improve_description(
                     + f" Also handles {keyword_phrase}."
                     + improved[first_dot + 1 :]
                 )
+
+    # Add negative triggers for false positives (Anthropic best practice)
+    # "Do NOT use for..." exclusions prevent over-triggering
+    if false_positives and "do not use" not in improved.lower():
+        exclusion_topics = set()
+        for fp in false_positives:
+            # Extract the domain/topic from the false positive query
+            query_words = re.findall(r"\b\w{4,}\b", fp["query"].lower())
+            # Filter out common words to find domain-specific terms
+            common = {
+                "help",
+                "please",
+                "want",
+                "need",
+                "would",
+                "could",
+                "should",
+                "write",
+                "make",
+                "create",
+                "this",
+                "that",
+                "with",
+                "from",
+                "what",
+                "does",
+                "have",
+                "some",
+            }
+            domain_words = [w for w in query_words if w not in common]
+            if domain_words:
+                exclusion_topics.add(domain_words[0])
+
+        if exclusion_topics:
+            exclusion_list = ", ".join(sorted(exclusion_topics)[:3])
+            # Append negative trigger at end of description
+            negative_clause = f" Do NOT use for {exclusion_list}."
+            if len(improved) + len(negative_clause) <= 1024:
+                improved = improved.rstrip(".") + "." + negative_clause
 
     # Ensure description stays within 1024 chars
     if len(improved) > 1024:

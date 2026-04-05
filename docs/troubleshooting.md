@@ -270,6 +270,52 @@ ls -la ~/.claude/skills/platxa-skill-generator/scripts/
 
 ---
 
+### Skill doesn't trigger (never loads automatically)
+
+**Symptoms**:
+- Skill never activates for relevant queries
+- Users must manually invoke with `/skill-name`
+
+**Debugging approach** (from Anthropic's guide):
+Ask Claude directly: "When would you use the [skill-name] skill?"
+Claude will quote the description back. Compare what it says with what you expect.
+
+**Quick checklist**:
+- Is the description too generic? ("Helps with projects" won't trigger)
+- Does it include trigger phrases users would actually say?
+- Does it mention relevant file types if applicable?
+
+**Fix**: Add specific trigger context to description:
+```yaml
+# Bad
+description: Processes documents.
+
+# Good
+description: Processes PDF legal documents for contract review.
+  Use when user uploads .pdf files or asks to "review a contract",
+  "extract clauses", or "summarize agreement terms".
+```
+
+**Run trigger tests**:
+```bash
+./scripts/test-triggers.sh <skill-dir>
+```
+
+### Skill triggers too often (loads for unrelated queries)
+
+**Symptoms**:
+- Skill loads for queries it shouldn't handle
+- Users get confused about what skill is active
+
+**Fix**: Add negative triggers to description:
+```yaml
+description: Advanced data analysis for CSV files. Use for
+  statistical modeling, regression, clustering. Do NOT use for
+  simple data exploration (use data-viz skill instead).
+```
+
+---
+
 ## Script Issues
 
 ### Scripts fail with syntax errors

@@ -474,6 +474,82 @@ def score_spec_compliance(frontmatter: dict) -> DimensionScore:
                 'Add quoted trigger phrases: \'Use when the user asks to "create X", "configure Y"\''
             )
 
+        # Check Anthropic 3-part description structure: [What] + [When] + [Capabilities]
+        # Per "Complete Guide to Building Skills for Claude" — this is the most important field
+        has_what = False  # What the skill does (action verb or noun phrase at start)
+        has_when = has_trigger  # Already checked above
+        has_capabilities = False  # Key capabilities or scope indicators
+
+        # WHAT: description starts with an action verb or capability statement
+        what_patterns = [
+            r"^(?:generates?|creates?|builds?|analyzes?|reviews?|validates?|checks?|processes?|manages?|automates?|deploys?|configures?|monitors?|tests?|formats?|extracts?|transforms?|scans?|detects?|implements?|orchestrates?)\b",
+            r"^(?:autonomous|automated|comprehensive|interactive|production-ready|end-to-end|full|multi-step)\b",
+        ]
+        has_what = any(re.search(p, desc_lower) for p in what_patterns)
+
+        # CAPABILITIES: description mentions specific capabilities beyond the intro
+        capability_indicators = [
+            r"\bincluding\b",
+            r"\bsupports?\b",
+            r"\bhandles?\b",
+            r"\bcovers?\b",
+            r"\bfollowing\b",
+            r"\bacross\b",
+            r"\bwith\s+(?:proper|full|complete|comprehensive)\b",
+        ]
+        has_capabilities = any(re.search(p, desc, re.IGNORECASE) for p in capability_indicators)
+
+        # Score the 3-part structure
+        parts_present = sum([has_what, has_when, has_capabilities])
+        if parts_present == 3:
+            dim.signals_positive.append(
+                "Description follows Anthropic 3-part structure: [What] + [When] + [Capabilities]"
+            )
+        elif parts_present == 2:
+            dim.signals_positive.append("Description has 2/3 parts of Anthropic structure")
+            missing = []
+            if not has_what:
+                missing.append("start with an action verb (e.g., 'Generates...', 'Analyzes...')")
+            if not has_when:
+                missing.append("add trigger context (e.g., 'Use when...')")
+            if not has_capabilities:
+                missing.append("mention key capabilities (e.g., 'including X, Y, Z')")
+            dim.suggestions.append(f"Add missing description part: {', '.join(missing)}")
+        elif parts_present <= 1:
+            dim.score -= 0.5
+            dim.signals_negative.append(
+                f"Description missing Anthropic 3-part structure ({parts_present}/3 parts)"
+            )
+            dim.suggestions.append(
+                "Structure description as: [What it does] + [When to use it] + [Key capabilities]. "
+                "Example: 'Analyzes code for quality issues. Use when reviewing changes. "
+                "Covers security, performance, and maintainability.'"
+            )
+
+        # Check for XML angle brackets in description (security)
+        if re.search(r"[<>]", desc):
+            dim.score -= 1.0
+            dim.signals_negative.append(
+                "Description contains XML angle brackets (< or >) — forbidden for security"
+            )
+            dim.suggestions.append(
+                "Remove < and > from description. Frontmatter values appear in Claude's system prompt"
+            )
+
+        # Check for reserved name segments
+        if name and re.search(r"(?:^|-)claude(?:-|$)", name, re.IGNORECASE):
+            dim.score -= 1.0
+            dim.signals_negative.append("Name contains reserved word 'claude'")
+            dim.suggestions.append(
+                "Remove 'claude' from skill name — reserved for official Anthropic skills"
+            )
+        if name and re.search(r"(?:^|-)anthropic(?:-|$)", name, re.IGNORECASE):
+            dim.score -= 1.0
+            dim.signals_negative.append("Name contains reserved word 'anthropic'")
+            dim.suggestions.append(
+                "Remove 'anthropic' from skill name — reserved for official Anthropic skills"
+            )
+
         # Check for vague descriptions
         vague_patterns = [
             r"^helps?\s+with\s+\w+$",
@@ -702,6 +778,50 @@ def score_content_depth(body: str) -> DimensionScore:
         dim.suggestions.append(
             "Provide one default approach with an escape hatch, not multiple equal options"
         )
+
+    # Check instruction actionability (Anthropic: specific > vague)
+    # Vague: "Validate the data before proceeding" / "Make sure things are correct"
+    # Good: "Run `python scripts/validate.py --input {file}` to check data format"
+    vague_instruction_patterns = [
+        r"validate\s+(?:the\s+)?data\s+before\s+proceeding",
+        r"make\s+sure\s+(?:things|everything|it)\s+(?:is|are)\s+(?:correct|proper|good)",
+        r"check\s+(?:that|if)\s+(?:things|everything)\s+(?:is|are)\s+(?:ok|fine|correct)",
+        r"ensure\s+(?:proper|correct|good)\s+(?:handling|processing|behavior)",
+        r"handle\s+(?:errors?|exceptions?)\s+(?:properly|correctly|appropriately)",
+    ]
+    vague_count = 0
+    for pattern in vague_instruction_patterns:
+        vague_count += len(re.findall(pattern, prose, re.IGNORECASE))
+
+    if vague_count >= 3:
+        dim.score -= 1.5
+        dim.signals_negative.append(
+            f"Vague instructions ({vague_count} instances) — Claude needs specifics"
+        )
+        dim.suggestions.append(
+            "Replace vague instructions with specific commands, file paths, or criteria. "
+            "Example: 'Run `scripts/validate.py --input {file}`' instead of 'Validate the data'"
+        )
+    elif vague_count >= 1:
+        dim.score -= 0.5
+        dim.signals_negative.append(f"Some vague instructions ({vague_count} instance(s))")
+
+    # Positive: specific actionable instructions (commands, file paths, code)
+    actionable_patterns = [
+        (r"run\s+[`'\"]", "specific commands"),
+        (r"scripts/\w+\.\w+", "script references"),
+        (r"```\w+\n", "code blocks"),
+        (r"CRITICAL:", "priority markers"),
+    ]
+    actionable_count = 0
+    for pattern, _label in actionable_patterns:
+        if re.search(pattern, body, re.IGNORECASE):
+            actionable_count += 1
+
+    if actionable_count >= 3:
+        dim.signals_positive.append("Highly actionable instructions (commands, scripts, code)")
+    elif actionable_count >= 1:
+        dim.signals_positive.append("Contains actionable instructions")
 
     dim.score = max(0.0, dim.score)
     return dim
@@ -1029,13 +1149,23 @@ def score_token_efficiency(content: str, body: str, skill_dir: Path) -> Dimensio
     else:
         dim.signals_positive.append(f"Good length: {lines} lines")
 
-    # Word count check
+    # Word count check (Anthropic guide: keep SKILL.md under 5,000 words)
     if words < 100:
         dim.score -= 2.0
         dim.signals_negative.append(f"Very few prose words: {words}")
+    elif words > 5000:
+        dim.score -= 2.0
+        dim.signals_negative.append(
+            f"Exceeds Anthropic 5,000-word limit: {words} words — "
+            "causes slow responses and degraded quality"
+        )
+        dim.suggestions.append(
+            "Move detailed docs to references/ and link to them. "
+            "Keep SKILL.md under 5,000 words per Anthropic guidelines"
+        )
     elif words > 4000:
         dim.score -= 1.0
-        dim.signals_negative.append(f"High word count: {words}")
+        dim.signals_negative.append(f"High word count: {words} (limit: 5,000)")
         dim.suggestions.append("Consider being more concise or offloading to references")
     else:
         dim.signals_positive.append(f"Word count: {words}")

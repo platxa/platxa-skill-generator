@@ -268,6 +268,49 @@ class TestUnexpectedFilesValidation:
         assert "hidden" in result.stderr.lower() or "WARN" in result.stderr
 
 
+class TestReadmePresenceValidation:
+    """Tests for README.md presence warning per Anthropic guidelines."""
+
+    @pytest.mark.structure
+    def test_readme_in_skill_folder_warns(
+        self,
+        temp_skill_dir: Path,
+        run_validate_structure,
+    ) -> None:
+        """README.md inside skill folder should generate warning."""
+        create_skill_md(
+            temp_skill_dir,
+            name="skill-with-readme",
+            description="A skill that has a README.md file.",
+        )
+        (temp_skill_dir / "README.md").write_text("# This should warn")
+
+        result = run_validate_structure(temp_skill_dir)
+
+        assert result.returncode == 0, "README.md is a warning, not an error"
+        combined = result.stdout + result.stderr
+        assert "readme" in combined.lower(), "Should warn about README.md presence"
+
+    @pytest.mark.structure
+    def test_no_readme_no_warning(
+        self,
+        temp_skill_dir: Path,
+        run_validate_structure,
+    ) -> None:
+        """Skill without README.md should not warn about it."""
+        create_skill_md(
+            temp_skill_dir,
+            name="skill-no-readme",
+            description="A skill without README.md file.",
+        )
+
+        result = run_validate_structure(temp_skill_dir)
+
+        assert result.returncode == 0
+        combined = result.stdout + result.stderr
+        assert "readme" not in combined.lower(), "Should not mention README.md when absent"
+
+
 class TestFileSizeValidation:
     """Tests for file size validation."""
 

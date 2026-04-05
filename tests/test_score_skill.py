@@ -14,7 +14,7 @@ SCRIPT = Path(__file__).parent.parent / "scripts" / "score-skill.py"
 VALID_SKILL = """\
 ---
 name: test-scorer-skill
-description: A well-written skill for testing the quality scorer with real content. Use when validating skill quality or when the user asks for a quality check.
+description: Validates skill quality by checking frontmatter, content depth, and token budgets. Use when the user asks to "score a skill", "check quality", or "validate a skill". Supports scoring across all five quality dimensions including spec compliance and example quality.
 allowed-tools:
   - Read
   - Write

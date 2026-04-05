@@ -278,6 +278,98 @@ name: valid-name
         assert result.returncode == 1, "Expected exit 1 for incomplete marker in description"
 
 
+class TestXmlTagValidation:
+    """Tests for XML angle bracket security validation in field values."""
+
+    @pytest.mark.frontmatter
+    def test_xml_in_description_fails(self, temp_skill_dir: Path, run_validate_frontmatter) -> None:
+        create_skill_md(
+            temp_skill_dir,
+            name="xml-test",
+            description='Uses <script>alert("xss")</script> injection',
+        )
+        result = run_validate_frontmatter(temp_skill_dir)
+        assert result.returncode == 1, "XML angle brackets in description should fail"
+        assert "angle bracket" in result.stderr.lower() or "angle bracket" in result.stdout.lower()
+
+    @pytest.mark.frontmatter
+    def test_yaml_block_scalar_does_not_false_positive(
+        self, temp_skill_dir: Path, run_validate_frontmatter
+    ) -> None:
+        # YAML >- is a block scalar indicator, not XML content
+        (temp_skill_dir / "SKILL.md").write_text(
+            "---\nname: yaml-test\ndescription: >-\n"
+            "  A multiline description using YAML folding syntax.\n"
+            "  Should not be flagged for XML angle brackets.\n---\n"
+        )
+        result = run_validate_frontmatter(temp_skill_dir)
+        assert result.returncode == 0, "YAML >- block scalar should not trigger XML check"
+
+    @pytest.mark.frontmatter
+    def test_clean_description_passes(self, temp_skill_dir: Path, run_validate_frontmatter) -> None:
+        create_skill_md(
+            temp_skill_dir,
+            name="clean-test",
+            description="No XML here. Use when user asks for help.",
+        )
+        result = run_validate_frontmatter(temp_skill_dir)
+        assert result.returncode == 0, "Clean description should pass"
+
+
+class TestReservedNameValidation:
+    """Tests for reserved name (claude/anthropic) validation."""
+
+    @pytest.mark.frontmatter
+    def test_name_with_claude_segment_fails(
+        self, temp_skill_dir: Path, run_validate_frontmatter
+    ) -> None:
+        create_skill_md(
+            temp_skill_dir,
+            name="my-claude-skill",
+            description="A skill with reserved name segment.",
+        )
+        result = run_validate_frontmatter(temp_skill_dir)
+        assert result.returncode == 1, "Name containing 'claude' segment should fail"
+        assert "reserved" in result.stderr.lower() or "reserved" in result.stdout.lower()
+
+    @pytest.mark.frontmatter
+    def test_name_with_anthropic_segment_fails(
+        self, temp_skill_dir: Path, run_validate_frontmatter
+    ) -> None:
+        create_skill_md(
+            temp_skill_dir,
+            name="anthropic-helper",
+            description="A skill with reserved name segment.",
+        )
+        result = run_validate_frontmatter(temp_skill_dir)
+        assert result.returncode == 1, "Name containing 'anthropic' segment should fail"
+
+    @pytest.mark.frontmatter
+    def test_name_without_reserved_words_passes(
+        self, temp_skill_dir: Path, run_validate_frontmatter
+    ) -> None:
+        create_skill_md(
+            temp_skill_dir,
+            name="clean-skill",
+            description="No reserved words. Use when user asks for help.",
+        )
+        result = run_validate_frontmatter(temp_skill_dir)
+        assert result.returncode == 0, "Clean name should pass"
+
+    @pytest.mark.frontmatter
+    def test_claude_substring_not_segment_passes(
+        self, temp_skill_dir: Path, run_validate_frontmatter
+    ) -> None:
+        # 'excluded' contains 'clude' but 'claude' is not a segment
+        create_skill_md(
+            temp_skill_dir,
+            name="excluded-thing",
+            description="Name has substring overlap but not segment match.",
+        )
+        result = run_validate_frontmatter(temp_skill_dir)
+        assert result.returncode == 0, "Substring overlap should not trigger reserved check"
+
+
 class TestToolsFieldValidation:
     """Tests for tools field validation."""
 

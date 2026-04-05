@@ -47,6 +47,17 @@ Skill directory: {skill_directory}
      3. Editing workflow: [steps...]
      ```
 
+   - **Rollback instructions**: For sequential workflow skills (problem-first), include
+     failure recovery at each step:
+     ```
+     ### Step 2: Create database
+     Run: `scripts/create-db.sh`
+     If this fails:
+     - Check connection string in .env
+     - Verify database server is running
+     - Rollback: `scripts/cleanup-db.sh` to remove partial state
+     ```
+
    - **Writing style**: Explain the WHY behind instructions, not just the WHAT. Modern LLMs
      have strong theory of mind — when given reasoning, they go beyond rote instructions and
      adapt intelligently. If you find yourself writing ALWAYS, NEVER, or MUST in all caps,
@@ -77,6 +88,7 @@ name: {skill_name}
 description: >-
   {What it does}. Use when the user asks to "{trigger1}", "{trigger2}",
   or "{trigger3}". {Additional detail about capabilities and output}.
+compatibility: "claude-code"  # Only if platform-specific. Omit for cross-platform skills
 argument-hint: "[filename] [format]"  # Only if skill accepts arguments (omit otherwise)
 disable-model-invocation: true  # Only if skill has side effects (omit for default)
 user-invocable: false           # Only if background knowledge (omit for default)
@@ -123,6 +135,13 @@ the desired style and detail level more clearly than descriptions alone.
 ```
 {Expected output for this variation}
 ```
+
+## Performance Notes
+
+- Take your time to do this thoroughly
+- Quality is more important than speed
+- Do not skip validation steps
+- Complete all checklist items before finishing
 
 ## Output Checklist
 
@@ -193,6 +212,9 @@ When a skill invokes other skills (e.g., a workflow skill that calls `/lint` the
 - [ ] Skills that invoke other skills include `Skill` in allowed-tools
 - [ ] References contain actual domain expertise
 - [ ] Version under metadata.version (not top-level)
+- [ ] Add `compatibility` field if skill uses Claude Code-specific features (context: fork, hooks, etc.)
+- [ ] Include "Performance Notes" section for skills with multi-step workflows (anti-laziness)
+- [ ] Use `## Important` or `## CRITICAL` headers for must-not-skip validation steps
 ```
 
 ## Usage

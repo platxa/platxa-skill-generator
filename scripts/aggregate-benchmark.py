@@ -182,6 +182,26 @@ def aggregate(iteration_dir: Path, skill_name: str) -> dict:
         "run_summary": run_summary,
     }
 
+    # Include trigger test results if available
+    # Look for trigger-results.json in the iteration directory or parent skill directory
+    trigger_results_path = iteration_dir / "trigger-results.json"
+    if not trigger_results_path.exists():
+        trigger_results_path = iteration_dir.parent / "trigger-results.json"
+
+    if trigger_results_path.exists():
+        try:
+            trigger_data = json.loads(trigger_results_path.read_text())
+            benchmark["trigger_testing"] = {
+                "trigger_rate": trigger_data.get("trigger", {}).get("rate", 0),
+                "trigger_target": trigger_data.get("trigger", {}).get("target", 90),
+                "trigger_met": trigger_data.get("trigger", {}).get("met", False),
+                "false_positive_rate": trigger_data.get("false_positive", {}).get("rate", 0),
+                "false_positive_target": trigger_data.get("false_positive", {}).get("target", 0),
+                "false_positive_met": trigger_data.get("false_positive", {}).get("met", True),
+            }
+        except (json.JSONDecodeError, KeyError):
+            pass  # Skip if trigger results are malformed
+
     return benchmark
 
 

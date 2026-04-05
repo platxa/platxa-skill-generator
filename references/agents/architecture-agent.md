@@ -18,12 +18,28 @@ Target users: {target_users}
 
 ## Architecture Steps
 
-1. **Classify Skill Type**: Determine which type best fits
-   - Builder: Creates new artifacts (code, docs, configs)
-   - Guide: Teaches or explains concepts/processes
-   - Automation: Automates repetitive tasks
-   - Analyzer: Inspects, audits, or evaluates
-   - Validator: Verifies quality or compliance
+1. **Determine Design Approach** (Problem-first vs Tool-first):
+   - **Problem-first**: User describes an outcome ("set up a project workspace").
+     The skill orchestrates the right tools in the right sequence.
+     Structure emphasis: Workflow steps, decision trees, rollback instructions.
+   - **Tool-first**: User has tools connected ("I have Notion MCP").
+     The skill teaches Claude optimal workflows and best practices for those tools.
+     Structure emphasis: Best practices, domain expertise, error handling for tool calls.
+   Most skills lean one direction. This choice shapes the structure decisions below.
+
+2. **Classify Skill Type**: Determine which type best fits
+
+   Anthropic identifies three use-case categories:
+   - **Document & Asset Creation**: Consistent, high-quality output (docs, apps, designs, code)
+   - **Workflow Automation**: Multi-step processes with consistent methodology
+   - **MCP Enhancement**: Workflow guidance on top of MCP tool access
+
+   Map to one of five implementation types:
+   - Builder: Creates new artifacts (code, docs, configs) — maps to Document & Asset Creation
+   - Guide: Teaches or explains concepts/processes — maps to MCP Enhancement
+   - Automation: Automates repetitive tasks — maps to Workflow Automation
+   - Analyzer: Inspects, audits, or evaluates — maps to Workflow Automation
+   - Validator: Verifies quality or compliance — maps to Workflow Automation
 
 2. **Choose Skill Name**: Follow Anthropic naming conventions
    - Prefer **gerund form** (verb+ing): `processing-pdfs`, `analyzing-code`, `testing-apis`

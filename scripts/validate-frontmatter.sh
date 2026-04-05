@@ -102,7 +102,10 @@ info "Frontmatter found"
 
 # Validate YAML syntax (if yq is available)
 if command -v yq &>/dev/null; then
-    if echo "$FRONTMATTER" | yq eval '.' - &>/dev/null; then
+    # Support both Go yq (yq eval '.' -) and pip yq (yq '.')
+    if echo "$FRONTMATTER" | yq eval '.' - &>/dev/null 2>&1; then
+        info "Valid YAML syntax"
+    elif echo "$FRONTMATTER" | yq '.' &>/dev/null 2>&1; then
         info "Valid YAML syntax"
     else
         error "Invalid YAML syntax"
@@ -121,6 +124,11 @@ if [[ -z "$NAME" ]]; then
     error "Missing required field: name"
 else
     info "name field present: $NAME"
+
+    # Check for XML angle brackets in name (security: field values appear in system prompt)
+    if echo "$NAME" | grep -qE '[<>]'; then
+        error "name contains XML angle brackets (< or >). Forbidden — frontmatter values appear in Claude's system prompt"
+    fi
 
     # Check name format (hyphen-case)
     if [[ ! "$NAME" =~ ^[a-z][a-z0-9-]*[a-z0-9]$ ]]; then
@@ -143,14 +151,27 @@ else
     if [[ "$NAME" == *"--"* ]]; then
         error "name cannot contain consecutive hyphens"
     fi
+
+    # Check for reserved name segments (Anthropic reserves these for official skills)
+    if echo "$NAME" | grep -qiE '(^|-)claude(-|$)'; then
+        error "name contains reserved word 'claude' — reserved for official Anthropic skills"
+    fi
+    if echo "$NAME" | grep -qiE '(^|-)anthropic(-|$)'; then
+        error "name contains reserved word 'anthropic' — reserved for official Anthropic skills"
+    fi
 fi
 
 # Check description field
+# Extract multiline description (handles YAML block scalars >-, >, |, |-)
 DESC=$(echo "$FRONTMATTER" | sed -n '/^description:/,/^[a-z]/p' | head -n -1 | sed 's/^description:\s*//' | tr -d '\n' | sed 's/^|//' || echo "")
+# Strip YAML block scalar indicators (>-, >, |-, |) from start of extracted value
+DESC=$(echo "$DESC" | sed 's/^[>|]-\?\s*//')
 
 # Try simpler extraction if multiline didn't work
 if [[ -z "$DESC" ]]; then
     DESC=$(echo "$FRONTMATTER" | grep -E '^description:' | sed 's/^description:\s*//' || echo "")
+    # Also strip block scalar indicators from single-line extraction
+    DESC=$(echo "$DESC" | sed 's/^[>|]-\?\s*//')
 fi
 
 if [[ -z "$DESC" ]]; then
@@ -166,6 +187,11 @@ else
         warn "description very short: $DESC_LEN chars"
     else
         info "description length valid: $DESC_LEN chars"
+    fi
+
+    # Check for XML angle brackets in description (security: field values appear in system prompt)
+    if echo "$DESC" | grep -qE '[<>]'; then
+        error "description contains XML angle brackets (< or >). Forbidden — frontmatter values appear in Claude's system prompt"
     fi
 
     # Check for placeholders

@@ -117,6 +117,40 @@ Flag potential issues:
 - Explanations of basic concepts → unnecessary for Opus
 - If skill sets `effort: max` → note this requires Opus 4.6
 
+## Trigger Test Generation (Post-Validation)
+
+After the skill passes validation (score ≥ 7.0), generate trigger tests to verify the skill's
+description activates it correctly. Save to `{skill_directory}/trigger-tests.json`.
+
+### Trigger Test Format
+
+```json
+{
+  "skill_name": "the-skill-name",
+  "should_trigger": [
+    "Obvious task prompt that directly states the skill's purpose",
+    "Paraphrased version with different wording but same intent",
+    "Another paraphrase using casual language",
+    "Contextual prompt where user's situation implies the skill",
+    "Prompt using specific terminology from the skill's domain"
+  ],
+  "should_not_trigger": [
+    "Completely unrelated prompt from a different domain",
+    "Adjacent but distinct prompt that a different skill should handle",
+    "Ambiguous prompt that could be confused but shouldn't trigger"
+  ]
+}
+```
+
+### Trigger Test Rules
+
+1. Generate at least 5 `should_trigger` prompts covering: obvious, paraphrased, contextual
+2. Generate at least 3 `should_not_trigger` prompts covering: unrelated, adjacent, ambiguous
+3. Prompts must be realistic — how a real user would phrase the request
+4. Include trigger phrases from the skill's description in at least 2 `should_trigger` prompts
+5. Include prompts that test adjacent skills (e.g., "review code" should NOT trigger "commit-message")
+6. Run `scripts/test-triggers.sh {skill_directory}` to validate — target: ≥90% trigger, 0% false positive
+
 ## Evaluation Scaffold (Post-Validation)
 
 After the skill passes validation (score ≥ 7.0), generate 3 evaluation scenarios to test

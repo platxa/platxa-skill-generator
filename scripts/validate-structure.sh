@@ -123,8 +123,14 @@ for file in "$SKILL_DIR"/*; do
     if [[ -f "$file" ]]; then
         fname=$(basename "$file")
         case "$fname" in
-            SKILL.md|README.md|LICENSE)
+            SKILL.md|LICENSE)
                 # Expected files
+                ;;
+            README.md)
+                # Anthropic guide: no README.md inside skill folder.
+                # All documentation belongs in SKILL.md or references/.
+                # README.md is for the GitHub repo, not the skill package.
+                warn "README.md found inside skill folder — per Anthropic guidelines, all skill documentation should go in SKILL.md or references/. README.md is for the GitHub repo wrapper, not the skill package itself"
                 ;;
             *)
                 warn "Unexpected file in root: $fname"
