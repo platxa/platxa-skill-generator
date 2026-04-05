@@ -88,14 +88,17 @@ evaluate_trigger() {
     local skill_name="$3"
 
     # Normalize to lowercase for comparison
-    local prompt_lower=$(echo "$prompt" | tr '[:upper:]' '[:lower:]')
-    local desc_lower=$(echo "$description" | tr '[:upper:]' '[:lower:]')
+    local prompt_lower
+    prompt_lower=$(echo "$prompt" | tr '[:upper:]' '[:lower:]')
+    local desc_lower
+    desc_lower=$(echo "$description" | tr '[:upper:]' '[:lower:]')
 
     local score=0
     local max_score=0
 
     # 1. Check if skill name keywords appear in prompt (weight: 3)
-    local name_words=$(echo "$skill_name" | tr '-' '\n')
+    local name_words
+    name_words=$(echo "$skill_name" | tr '-' '\n')
     while IFS= read -r word; do
         [[ -z "$word" ]] && continue
         [[ ${#word} -lt 3 ]] && continue  # Skip short words
@@ -106,10 +109,12 @@ evaluate_trigger() {
     done <<< "$name_words"
 
     # 2. Extract trigger phrases from description ("Use when..." patterns)
-    local trigger_context=$(echo "$desc_lower" | grep -oP '(?:use when|use for|use if|when user|when the user|asks? (?:to|for|about)|says?|mentions?)[^.]*' || echo "")
+    local trigger_context
+    trigger_context=$(echo "$desc_lower" | grep -oP '(?:use when|use for|use if|when user|when the user|asks? (?:to|for|about)|says?|mentions?)[^.]*' || echo "")
     if [[ -n "$trigger_context" ]]; then
         # Extract key action words from trigger phrases
-        local trigger_words=$(echo "$trigger_context" | tr ' "'"'"',' '\n' | sort -u | grep -E '^[a-z]{3,}$' | grep -vE '^(the|and|for|use|when|user|asks|says|that|this|with|from|into|about|also|each|will|your|them|then|they|what|does|have|been|were|here|more|some|such|only|like|just|very|most|many|much|well|over|even|also|back|into|than|upon|used|been|make|made|give|need|want|help)$' || echo "")
+        local trigger_words
+        trigger_words=$(echo "$trigger_context" | tr ' "'"'"',' '\n' | sort -u | grep -E '^[a-z]{3,}$' | grep -vE '^(the|and|for|use|when|user|asks|says|that|this|with|from|into|about|also|each|will|your|them|then|they|what|does|have|been|were|here|more|some|such|only|like|just|very|most|many|much|well|over|even|also|back|into|than|upon|used|been|make|made|give|need|want|help)$' || echo "")
         while IFS= read -r tw; do
             [[ -z "$tw" ]] && continue
             ((max_score += 2)) || true
@@ -120,7 +125,8 @@ evaluate_trigger() {
     fi
 
     # 3. Extract domain keywords from description (weight: 1)
-    local desc_words=$(echo "$desc_lower" | tr ' ,.;:!?()[]{}/"'"'"'' '\n' | sort -u | grep -E '^[a-z]{4,}$' | grep -vE '^(the|and|for|use|when|user|asks|this|with|from|into|that|will|your|them|then|they|what|does|have|been|were|here|more|some|such|only|like|just|very|most|many|much|well|over|even|also|back|into|than|upon|used|been|make|made|each|code|file|tool|following|including|across|specific|based|using|create|check|should|after|before|during|between)$' || echo "")
+    local desc_words
+    desc_words=$(echo "$desc_lower" | tr ' ,.;:!?()[]{}/"'"'"'' '\n' | sort -u | grep -E '^[a-z]{4,}$' | grep -vE '^(the|and|for|use|when|user|asks|this|with|from|into|that|will|your|them|then|they|what|does|have|been|were|here|more|some|such|only|like|just|very|most|many|much|well|over|even|also|back|into|than|upon|used|been|make|made|each|code|file|tool|following|including|across|specific|based|using|create|check|should|after|before|during|between)$' || echo "")
     while IFS= read -r dw; do
         [[ -z "$dw" ]] && continue
         ((max_score += 1)) || true
@@ -130,9 +136,11 @@ evaluate_trigger() {
     done <<< "$desc_words"
 
     # 4. Check for negative triggers ("Do NOT use for..." patterns)
-    local negative_context=$(echo "$desc_lower" | grep -oP '(?:do not|don.t|not for|not use for|not when)[^.]*' || echo "")
+    local negative_context
+    negative_context=$(echo "$desc_lower" | grep -oP '(?:do not|don.t|not for|not use for|not when)[^.]*' || echo "")
     if [[ -n "$negative_context" ]]; then
-        local neg_words=$(echo "$negative_context" | tr ' "'"'"',' '\n' | sort -u | grep -E '^[a-z]{3,}$' | grep -vE '^(the|and|for|use|when|not|don|this|with|from)$' || echo "")
+        local neg_words
+        neg_words=$(echo "$negative_context" | tr ' "'"'"',' '\n' | sort -u | grep -E '^[a-z]{3,}$' | grep -vE '^(the|and|for|use|when|not|don|this|with|from)$' || echo "")
         while IFS= read -r nw; do
             [[ -z "$nw" ]] && continue
             if echo "$prompt_lower" | grep -qiw "$nw"; then
