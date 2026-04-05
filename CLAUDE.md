@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Platxa Skill Generator creates production-ready Claude Code skills by orchestrating specialized subagents through a multi-phase workflow: Discovery → Architecture → Generation → Validation → Eval Loop → Installation. It follows both the Agent Skills open standard (agentskills.io) and Claude Code extensions, with eval infrastructure inspired by Anthropic's skill-creator. Supports advanced patterns (parallel sub-agents, auto-fix, CLAUDE.md integration, description optimization) matching Anthropic's bundled skills like /simplify.
+Platxa Skill Generator creates production-ready Claude Code skills by orchestrating specialized subagents through a multi-phase workflow: Discovery → Architecture → Generation → Validation → Eval Loop → Installation. It follows both the Agent Skills open standard (agentskills.io) and Claude Code extensions, aligned with Anthropic's "Complete Guide to Building Skills for Claude". Supports advanced patterns (parallel sub-agents, auto-fix, CLAUDE.md integration, trigger testing, description optimization, negative triggers) matching Anthropic's bundled skills like /simplify.
 
 ## Commands
 
@@ -20,13 +20,15 @@ python3 scripts/score-skill.py <skill-directory>   # 5-dimension quality scorer 
 ./scripts/security-check.sh <skill-directory>     # Security validation
 ```
 
-### Evaluation
+### Evaluation & Trigger Testing
 ```bash
 ./scripts/run-eval.sh <skill-directory>                    # Run evals against skill
 ./scripts/run-eval.sh <skill-directory> --baseline         # Run without skill (comparison)
 ./scripts/run-eval.sh <skill-directory> --iteration 2      # Second iteration
+./scripts/test-triggers.sh <skill-directory>               # Test trigger accuracy (>=90% target)
+./scripts/test-triggers.sh <skill-directory> --json        # Machine-readable trigger results
 python3 scripts/aggregate-benchmark.py <iter-dir> --skill-name <name>  # Aggregate results
-python3 scripts/optimize-description.py <skill-directory> --json       # Optimize triggers
+python3 scripts/optimize-description.py <skill-directory> --json       # Optimize triggers + negative triggers
 ```
 
 ### Packaging
@@ -99,31 +101,31 @@ Defined in `scripts/count-tokens.py`:
 ## Key Directories
 
 ```
-references/             # 140 domain knowledge files
+references/             # 145 domain knowledge files
 ├── agents/             # 9 subagent prompt definitions (incl. grader, comparator)
-├── patterns/           # 56 implementation patterns (parallel, auto-fix, CLAUDE.md, filtering)
+├── patterns/           # 60 implementation patterns (parallel, auto-fix, trigger testing, skill packs)
 ├── templates/          # 9 skill type templates (with advanced workflow variants)
 ├── orchestration/      # 7 workflow patterns
 ├── discovery/          # 3 research patterns
 ├── generation/         # 13 content generation patterns
-├── validation/         # 6 quality validation patterns (incl. eval-schema)
+├── validation/         # 7 quality validation patterns (incl. eval-schema, trigger-test-schema)
 ├── installation/       # 10 install/export patterns
 ├── interaction/        # 9 user interaction patterns
 ├── architecture/       # 2 architecture patterns
 ├── scripts/            # 11 script generation patterns
 ├── spec/               # 2 specification references
 └── examples/           # 2 example skills
-scripts/                # 19 Bash/Python scripts (validation, eval, installation, packaging)
+scripts/                # 20 Bash/Python scripts (validation, eval, trigger testing, installation)
 catalog/                # 17 production-ready skills
-tests/                  # 155 tests across 9 files (uses real file operations, no mocks)
+tests/                  # 164 tests across 7 files (uses real file operations, no mocks)
 ```
 
 ## SKILL.md Frontmatter Requirements
 
 ```yaml
 ---
-name: hyphen-case-name  # Required, ≤64 chars, no consecutive hyphens
-description: ...        # Required, ≤1024 chars, no placeholders
+name: hyphen-case-name  # Required, ≤64 chars, no consecutive hyphens, no "claude"/"anthropic"
+description: ...        # Required, ≤1024 chars, no placeholders, no XML tags (<>)
 allowed-tools:          # Optional, supports constraint patterns like Bash(git:*)
   - Read
   - Write

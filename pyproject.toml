@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "platxa-skill-generator"
-version = "3.0.0"
-description = "Autonomous skill creator for Claude Code CLI with multi-agent patterns, quality scoring, eval infrastructure, dependency management, and 17-skill catalog"
+version = "3.1.0"
+description = "Autonomous skill creator for Claude Code CLI with multi-agent patterns, quality scoring, trigger testing, eval infrastructure, dependency management, and 17-skill catalog — aligned with Anthropic's Complete Guide to Building Skills"
 readme = "README.md"
 license = {text = "MIT"}
 authors = [
@@ -20,6 +20,7 @@ keywords = [
     "skill-generator",
     "agent-skills",
     "quality-scoring",
+    "trigger-testing",
     "automation",
     "anthropic"
 ]

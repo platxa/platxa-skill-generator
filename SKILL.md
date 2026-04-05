@@ -20,7 +20,7 @@ allowed-tools:
   - AskUserQuestion
   - TodoWrite
 metadata:
-  version: "3.0.0"
+  version: "3.1.0"
   author: "DJ Patel — Founder & CEO, Platxa | https://platxa.com"
   tags:
     - skill-creation

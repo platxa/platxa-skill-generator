@@ -104,9 +104,11 @@ Use `--claude-ai` flag on validation scripts to check open-standard-only complia
 | **Script Security** | ShellCheck + security pattern scanning |
 | **Skill Packaging** | .skill archive creation for distribution |
 | **Web Research** | Automatic domain knowledge discovery |
-| **140 Reference Files** | Domain knowledge across 56 patterns, 9 templates, 9 agents |
-| **19 Scripts** | Validation, installation, scoring, eval, dependency, packaging |
-| **155 Tests** | Comprehensive test suite across 9 test files with catalog regression |
+| **Trigger Testing** | Keyword-based trigger accuracy testing with should/should-not-trigger prompts |
+| **Anthropic Guide Alignment** | 3-part description structure, XML security, reserved names, negative triggers |
+| **145 Reference Files** | Domain knowledge across 60 patterns, 9 templates, 9 agents |
+| **20 Scripts** | Validation, installation, scoring, eval, trigger testing, dependency, packaging |
+| **164 Tests** | Comprehensive test suite across 7 test files with catalog regression |
 
 ---
 
@@ -119,7 +121,7 @@ Use `--claude-ai` flag on validation scripts to check open-standard-only complia
 | **Python** | 3.10+ | Token counting, quality scoring, eval infrastructure |
 | **Git** | 2.0+ | Clone the repository |
 
-Optional: `tiktoken` (pip install) for precise token counting, `shellcheck` for script linting, `jq` for eval runner.
+Optional: `tiktoken` (pip install) for precise token counting, `shellcheck` for script linting, `jq` for eval runner and trigger testing, `yq` for YAML syntax validation.
 
 ---
 
@@ -194,13 +196,14 @@ cd platxa-skill-generator
 | `score-skill.py <dir>` | 5-dimension quality scorer (--json, --verbose) |
 | `security-check.sh <dir>` | Scan scripts for dangerous patterns |
 
-### Evaluation
+### Evaluation & Trigger Testing
 
 | Script | Purpose |
 |--------|---------|
 | `run-eval.sh <dir> [--baseline] [--iteration N]` | Run eval prompts against a skill via `claude -p` |
+| `test-triggers.sh <dir> [--json] [--dry-run]` | Test trigger accuracy (should-trigger vs should-NOT-trigger prompts) |
 | `aggregate-benchmark.py <iter-dir> --skill-name <name>` | Aggregate grading/timing into benchmark.json (mean/stddev) |
-| `optimize-description.py <dir> [--json] [--verbose]` | Optimize description trigger accuracy (train/test split) |
+| `optimize-description.py <dir> [--json] [--verbose]` | Optimize description trigger accuracy with negative trigger generation |
 
 ### Installation & Distribution
 
@@ -224,6 +227,7 @@ cd platxa-skill-generator
 | Script | Purpose |
 |--------|---------|
 | `test-scripts.sh` | Test runner for script validation |
+| `test-triggers.sh <dir>` | Trigger accuracy testing (90% trigger rate, 0% false positive target) |
 
 ---
 
@@ -362,10 +366,31 @@ Create `evals/evals.json` in your skill directory:
 python3 scripts/aggregate-benchmark.py my-skill/eval-workspace/iteration-1 --skill-name my-skill
 ```
 
+### Trigger Testing
+
+Test that your skill's description activates it for relevant queries and NOT for irrelevant ones:
+
+```bash
+# Create trigger-tests.json in your skill directory
+cat > my-skill/trigger-tests.json << 'EOF'
+{
+  "skill_name": "my-skill",
+  "should_trigger": ["Help me format JSON", "Format this JSON file"],
+  "should_not_trigger": ["What's the weather?", "Write Python code"]
+}
+EOF
+
+# Run trigger tests (goal: >=90% trigger rate, 0% false positives)
+./scripts/test-triggers.sh my-skill/
+./scripts/test-triggers.sh my-skill/ --json    # Machine-readable output
+```
+
+See `references/validation/trigger-test-schema.md` for the full schema.
+
 ### Description Optimization
 
 ```bash
-# Optimize description for trigger accuracy (train/test split)
+# Optimize description for trigger accuracy (with negative trigger generation)
 python3 scripts/optimize-description.py my-skill/ --json --verbose
 ```
 
@@ -390,7 +415,7 @@ platxa-skill-generator/
 ├── pyproject.toml              # Python project config
 ├── LICENSE                     # MIT License
 │
-├── scripts/                    # 19 executable scripts
+├── scripts/                    # 20 executable scripts
 │   ├── validate-all.sh         # Master validation orchestrator
 │   ├── validate-structure.sh   # Directory structure checks
 │   ├── validate-frontmatter.sh # YAML frontmatter validation (--claude-ai mode)
@@ -406,6 +431,7 @@ platxa-skill-generator/
 │   ├── skill-graph.sh          # DOT graph output
 │   ├── list-installed.sh       # Installed skills lister
 │   ├── test-scripts.sh         # Script test runner
+│   ├── test-triggers.sh        # Trigger accuracy testing
 │   ├── run-eval.sh             # Eval prompt runner (claude -p)
 │   ├── aggregate-benchmark.py  # Benchmark aggregation (mean/stddev)
 │   ├── optimize-description.py # Description trigger optimizer
@@ -430,14 +456,14 @@ platxa-skill-generator/
 │   ├── platxa-testing/
 │   └── platxa-yjs-server/
 │
-├── references/                 # 140 domain knowledge files
+├── references/                 # 145 domain knowledge files
 │   ├── agents/                 # 9 subagent definitions (incl. grader, comparator)
-│   ├── patterns/               # 56 implementation patterns
+│   ├── patterns/               # 60 implementation patterns
 │   ├── templates/              # 9 skill type templates
 │   ├── orchestration/          # 7 workflow patterns
 │   ├── discovery/              # 3 research patterns
 │   ├── generation/             # 13 content generation patterns
-│   ├── validation/             # 6 quality validation patterns (incl. eval-schema)
+│   ├── validation/             # 7 quality validation patterns (incl. eval-schema, trigger-test-schema)
 │   ├── installation/           # 10 install/export patterns
 │   ├── interaction/            # 9 user interaction patterns
 │   ├── architecture/           # 2 architecture patterns
@@ -445,11 +471,11 @@ platxa-skill-generator/
 │   ├── spec/                   # 2 specification references
 │   └── examples/               # 2 example skills
 │
-├── tests/                      # 155 tests across 9 files
-│   ├── test_validate_frontmatter.py  # 49 frontmatter tests (incl. claude-ai mode)
-│   ├── test_validate_structure.py    # 16 structure tests
+├── tests/                      # 164 tests across 7 test files
+│   ├── test_validate_frontmatter.py  # 56 frontmatter tests (XML, reserved names, claude-ai mode)
+│   ├── test_validate_structure.py    # 18 structure tests (README.md presence check)
 │   ├── test_count_tokens.py          # 10 token tests
-│   ├── test_score_skill.py           # 50 quality scorer tests
+│   ├── test_score_skill.py           # 50 quality scorer tests (3-part structure, actionability)
 │   ├── test_check_dependencies.py    # 8 dependency tests
 │   ├── test_circular_deps.py         # 9 cycle detection tests
 │   ├── test_integration.py           # 13 integration tests (incl. catalog regression)
@@ -471,11 +497,11 @@ Every generated skill is scored across 5 dimensions:
 
 | Dimension | Weight | What It Checks |
 |-----------|--------|----------------|
-| **Spec Compliance** | 25% | Frontmatter validity, name format, description trigger context in first 250 chars, deprecated field penalties (`when_to_use` -0.5, top-level `version` -0.3) |
-| **Content Depth** | 25% | Placeholders, generic filler, vocabulary diversity, advanced pattern bonuses |
+| **Spec Compliance** | 25% | Frontmatter validity, name format, Anthropic 3-part description structure [What]+[When]+[Capabilities], XML tag security, reserved name check, trigger context in first 250 chars, deprecated field penalties |
+| **Content Depth** | 25% | Placeholders, generic filler, vocabulary diversity, instruction actionability, advanced pattern bonuses |
 | **Example Quality** | 20% | Code blocks, language labels, substance, YAML/JSON validity |
 | **Structure** | 15% | Required sections, heading count, hierarchy, progressive disclosure |
-| **Token Efficiency** | 15% | Line count, word count, sentence length, references |
+| **Token Efficiency** | 15% | Line count, word count (5,000-word Anthropic limit), sentence length, references |
 
 | Score | Level | Decision |
 |-------|-------|----------|
@@ -509,6 +535,12 @@ python3 scripts/score-skill.py catalog/code-documenter --verbose   # Detailed si
 - SKILL.md > 3000 tokens without `references/` triggers progressive disclosure penalty
 - Quoted trigger phrases in description beyond first 250 chars get penalized
 - Non-string metadata values warned for claude.ai compatibility
+- XML angle brackets (`<`, `>`) in frontmatter field values are rejected (security)
+- Reserved names containing `claude` or `anthropic` segments are rejected
+- README.md inside skill folder generates a warning (all docs go in SKILL.md or references/)
+- Vague instructions ("validate the data before proceeding") get penalized vs specific actionable ones
+- Descriptions missing Anthropic 3-part structure [What]+[When]+[Capabilities] lose points
+- SKILL.md exceeding 5,000 words triggers large context warning (Anthropic limit)
 
 ### Execution Tiers
 
@@ -523,7 +555,7 @@ python3 scripts/score-skill.py catalog/code-documenter --verbose   # Detailed si
 ## Testing
 
 ```bash
-# Run all 155 tests
+# Run all 164 tests
 pytest tests/ -v
 
 # Run specific test file
@@ -584,7 +616,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md). Run before submitting:
 
 ```bash
 ./scripts/validate-all.sh .    # All validators pass
-pytest tests/ -v               # All 155 tests pass
+pytest tests/ -v               # All 164 tests pass
 shellcheck scripts/*.sh        # No warnings
 ruff check scripts/            # Python linting
 ```
@@ -597,6 +629,6 @@ MIT License -- See [LICENSE](LICENSE) for details.
 
 ---
 
-**Version**: 3.0.0
+**Version**: 3.1.0
 **Created by**: DJ Patel -- Founder & CEO, Platxa | https://platxa.com
-**Based on**: Anthropic's [Agent Skills](https://agentskills.io) Open Standard + [skill-creator](https://github.com/anthropics/skills/tree/main/skills/skill-creator)
+**Based on**: Anthropic's [Agent Skills](https://agentskills.io) Open Standard + [The Complete Guide to Building Skills for Claude](https://docs.anthropic.com) + [skill-creator](https://github.com/anthropics/skills/tree/main/skills/skill-creator)
